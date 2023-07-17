@@ -17,6 +17,7 @@ asr = { git = "https://github.com/LiveSplit/asr", features = [
     # "gba", # Accessing Game Boy Advance emulators.
     # "genesis", # Accessing Genesis emulators.
     # "ps1", # Accessing PlayStation emulators.
+    "unity"
 ] }
 
 # Bytemuck can be used to define structs that are being read from the game's process.
