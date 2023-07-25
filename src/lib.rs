@@ -1,12 +1,15 @@
 // #![no_std]
 
+mod splits;
+
 use std::string::String;
 use asr::future::{next_tick, retry};
 use asr::Process;
 use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::string::ArrayCString;
-use asr::timer::TimerState;
 // use asr::time::Duration;
+// use asr::timer::TimerState;
+use asr::watcher::Pair;
 
 asr::async_main!(stable);
 // asr::panic_handler!();
@@ -29,13 +32,26 @@ async fn main() {
                 // TODO: Load some initial information from the process.
                 let scene_manager = SceneManager::wait_attach(&process).await;
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_manager).await);
-                on_new_scene(&scene_name);
+                let splits = splits::default_splits();
+                let mut i = 0;
                 loop {
-                    // TODO: Do something on every tick.
+                    let current_split = &splits[i];
                     if let Ok(next_scene_name) = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
                         if next_scene_name != scene_name {
+                            asr::print_message(&next_scene_name);
+                            let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
                             scene_name = next_scene_name;
-                            on_new_scene(&scene_name);
+                            if splits::transition_splits(current_split, &scene_pair) {
+                                if i == 0 {
+                                    asr::timer::start();
+                                } else {
+                                    asr::timer::split();
+                                }
+                                i += 1;
+                                if splits.len() <= i {
+                                    i = 0;
+                                }
+                            }
                         }
                     }
                     next_tick().await;
@@ -51,21 +67,4 @@ async fn wait_get_current_scene_path<const N: usize>(process: &Process, scene_ma
 
 fn get_scene_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String {
     String::from_utf8(get_scene_name(&scene_path).to_vec()).unwrap()
-}
-
-fn on_new_scene(scene_name: &str) {
-    asr::print_message(scene_name);
-    match asr::timer::state() {
-        TimerState::NotRunning => {
-            if scene_name == "Tutorial_01" {
-                asr::timer::start();
-            }
-        }
-        TimerState::Running => {
-            if scene_name.starts_with("Cinematic_Ending") {
-                asr::timer::split();
-            }
-        }
-        _ => ()
-    }
 }
