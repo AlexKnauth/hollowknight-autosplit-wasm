@@ -26,7 +26,9 @@ async fn main() {
     asr::print_message("Hello, World!");
 
     loop {
-        let process = Process::wait_attach("hollow_knight.exe").await;
+        let process = retry(|| {
+            ["hollow_knight.exe", "Hollow Knight", "hollow_knight.app"].into_iter().find_map(Process::attach)
+        }).await;
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
