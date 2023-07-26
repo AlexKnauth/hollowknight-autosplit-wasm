@@ -2,6 +2,7 @@
 
 mod splits;
 
+use std::collections::HashMap;
 use std::string::String;
 use asr::future::{next_tick, retry};
 use asr::Process;
@@ -39,13 +40,27 @@ async fn main() {
                 // TODO: Load some initial information from the process.
                 let scene_manager = SceneManager::wait_attach(&process).await;
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_manager).await);
+                let mut scene_table: HashMap<i32, String> = HashMap::new();
+                let mut on_scene = |s: &String| {
+                    let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
+                    scene_table.insert(si, s.clone());
+                    if s == "Menu_Title" {
+                        asr::print_message("scene_table:");
+                        for (k, v) in scene_table.iter() {
+                            asr::print_message(&format!("  {}: {}", k, v));
+                        }
+                    }
+                };
+                on_scene(&scene_name);
+
                 let splits = splits::default_splits();
                 let mut i = 0;
                 loop {
                     let current_split = &splits[i];
                     if let Ok(next_scene_name) = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
                         if next_scene_name != scene_name {
-                            asr::print_message(&next_scene_name);
+                            on_scene(&next_scene_name);
+                            // asr::print_message(&next_scene_name);
                             let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
                             scene_name = next_scene_name;
                             if splits::transition_splits(current_split, &scene_pair) {
