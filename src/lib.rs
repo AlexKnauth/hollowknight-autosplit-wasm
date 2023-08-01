@@ -46,25 +46,7 @@ async fn main() {
                 let scene_manager = SceneManager::wait_attach(&process).await;
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_manager).await);
                 let mut scene_table: HashMap<i32, SceneInfo> = HashMap::new();
-                let mut on_scene = || {
-                    let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
-                    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_manager.get_current_scene_path(&process).unwrap_or_default();
-                    let sn = get_scene_name_string(sp);
-                    scene_table.insert(si, SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()});
-                    if sn == "Menu_Title" {
-                        asr::print_message("begin scene_table");
-                        let mut ks = scene_table.keys().collect::<Vec<&i32>>();
-                        ks.sort();
-                        let wi = 1 + ks.last().unwrap_or(&&0).to_string().len();
-                        let wn = scene_table.values().map(|s| s.name.len()).max().unwrap_or(1);
-                        for k in ks.iter() {
-                            let v = scene_table.get(k).unwrap();
-                            asr::print_message(&format!("  {1:0$}\t{3:2$}\t{4}", wi,  k, wn, v.name, v.path));
-                        }
-                        asr::print_message("end scene_table");
-                    }
-                };
-                on_scene();
+                on_scene(&process, &scene_manager, &mut scene_table);
 
                 let splits = splits::default_splits();
                 let mut i = 0;
@@ -72,7 +54,7 @@ async fn main() {
                     let current_split = &splits[i];
                     if let Ok(next_scene_name) = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
                         if next_scene_name != scene_name {
-                            on_scene();
+                            on_scene(&process, &scene_manager, &mut scene_table);
                             // asr::print_message(&next_scene_name);
                             let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
                             scene_name = next_scene_name;
@@ -102,4 +84,30 @@ async fn wait_get_current_scene_path<const N: usize>(process: &Process, scene_ma
 
 fn get_scene_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String {
     String::from_utf8(get_scene_name(&scene_path).to_vec()).unwrap()
+}
+
+// --------------------------------------------------------
+
+fn log_scene_table(scene_table: &HashMap<i32, SceneInfo>) {
+    // Log scene_table as rows and tab-separated columns
+    asr::print_message("begin scene_table");
+    let mut ks = scene_table.keys().collect::<Vec<&i32>>();
+    ks.sort();
+    let wi = 1 + ks.last().unwrap_or(&&0).to_string().len();
+    let wn = scene_table.values().map(|s| s.name.len()).max().unwrap_or(1);
+    for k in ks.iter() {
+        let v = scene_table.get(k).unwrap();
+        asr::print_message(&format!("  {1:0$}\t{3:2$}\t{4}", wi,  k, wn, v.name, v.path));
+    }
+    asr::print_message("end scene_table");
+}
+
+fn on_scene(process: &Process, scene_manager: &SceneManager, scene_table: &mut HashMap<i32, SceneInfo>) {
+    let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
+    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_manager.get_current_scene_path(&process).unwrap_or_default();
+    let sn = get_scene_name_string(sp);
+    scene_table.insert(si, SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()});
+    if sn == "Menu_Title" {
+        log_scene_table(scene_table);
+    }
 }
