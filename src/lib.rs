@@ -46,8 +46,10 @@ async fn main() {
                     scene_table.insert(si, s.clone());
                     if s == "Menu_Title" {
                         asr::print_message("scene_table:");
-                        for (k, v) in scene_table.iter() {
-                            asr::print_message(&format!("  {}: {}", k, v));
+                        let mut ks = scene_table.keys().collect::<Vec<&i32>>();
+                        ks.sort();
+                        for k in ks.iter() {
+                            asr::print_message(&format!("  {}: {}", k, scene_table.get(k).unwrap()));
                         }
                     }
                 };
