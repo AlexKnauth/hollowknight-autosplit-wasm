@@ -22,6 +22,11 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
     "Hollow Knight", // Mac
 ];
 
+struct SceneInfo {
+    name: String,
+    path: String
+}
+
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
@@ -40,20 +45,26 @@ async fn main() {
                 // TODO: Load some initial information from the process.
                 let scene_manager = SceneManager::wait_attach(&process).await;
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_manager).await);
-                let mut scene_table: HashMap<i32, String> = HashMap::new();
-                let mut on_scene = |s: &String| {
+                let mut scene_table: HashMap<i32, SceneInfo> = HashMap::new();
+                let mut on_scene = || {
                     let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
-                    scene_table.insert(si, s.clone());
-                    if s == "Menu_Title" {
-                        asr::print_message("scene_table:");
+                    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_manager.get_current_scene_path(&process).unwrap_or_default();
+                    let sn = get_scene_name_string(sp);
+                    scene_table.insert(si, SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()});
+                    if sn == "Menu_Title" {
+                        asr::print_message("begin scene_table");
                         let mut ks = scene_table.keys().collect::<Vec<&i32>>();
                         ks.sort();
+                        let wi = 1 + ks.last().unwrap_or(&&0).to_string().len();
+                        let wn = scene_table.values().map(|s| s.name.len()).max().unwrap_or(1);
                         for k in ks.iter() {
-                            asr::print_message(&format!("  {}: {}", k, scene_table.get(k).unwrap()));
+                            let v = scene_table.get(k).unwrap();
+                            asr::print_message(&format!("  {1:0$}\t{3:2$}\t{4}", wi,  k, wn, v.name, v.path));
                         }
+                        asr::print_message("end scene_table");
                     }
                 };
-                on_scene(&scene_name);
+                on_scene();
 
                 let splits = splits::default_splits();
                 let mut i = 0;
@@ -61,7 +72,7 @@ async fn main() {
                     let current_split = &splits[i];
                     if let Ok(next_scene_name) = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
                         if next_scene_name != scene_name {
-                            on_scene(&next_scene_name);
+                            on_scene();
                             // asr::print_message(&next_scene_name);
                             let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
                             scene_name = next_scene_name;
