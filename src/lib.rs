@@ -2,7 +2,7 @@
 
 mod splits;
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::string::String;
 use asr::future::{next_tick, retry};
 use asr::Process;
@@ -11,6 +11,7 @@ use asr::string::ArrayCString;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use asr::watcher::Pair;
+use serde::{Deserialize, Serialize};
 
 asr::async_main!(stable);
 // asr::panic_handler!();
@@ -22,6 +23,7 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
     "Hollow Knight", // Mac
 ];
 
+#[derive(Deserialize, Serialize)]
 struct SceneInfo {
     name: String,
     path: String
@@ -45,7 +47,7 @@ async fn main() {
                 // TODO: Load some initial information from the process.
                 let scene_manager = SceneManager::wait_attach(&process).await;
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_manager).await);
-                let mut scene_table: HashMap<i32, SceneInfo> = HashMap::new();
+                let mut scene_table: BTreeMap<i32, SceneInfo> = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
                 on_scene(&process, &scene_manager, &mut scene_table);
 
                 let splits = splits::default_splits();
@@ -88,21 +90,15 @@ fn get_scene_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String 
 
 // --------------------------------------------------------
 
-fn log_scene_table(scene_table: &HashMap<i32, SceneInfo>) {
-    // Log scene_table as rows and tab-separated columns
-    asr::print_message("begin scene_table");
-    let mut ks = scene_table.keys().collect::<Vec<&i32>>();
-    ks.sort();
-    let wi = 1 + ks.last().unwrap_or(&&0).to_string().len();
-    let wn = scene_table.values().map(|s| s.name.len()).max().unwrap_or(1);
-    for k in ks.iter() {
-        let v = scene_table.get(k).unwrap();
-        asr::print_message(&format!("  {1:0$}\t{3:2$}\t{4}", wi,  k, wn, v.name, v.path));
+fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
+    // Log scene_table as json
+    if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
+        asr::print_message("begin scene_table.json");
+        asr::print_message(&j);
     }
-    asr::print_message("end scene_table");
 }
 
-fn on_scene(process: &Process, scene_manager: &SceneManager, scene_table: &mut HashMap<i32, SceneInfo>) {
+fn on_scene(process: &Process, scene_manager: &SceneManager, scene_table: &mut BTreeMap<i32, SceneInfo>) {
     let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
     let sp: ArrayCString<SCENE_PATH_SIZE> = scene_manager.get_current_scene_path(&process).unwrap_or_default();
     let sn = get_scene_name_string(sp);
