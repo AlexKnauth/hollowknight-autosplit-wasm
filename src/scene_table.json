@@ -31,6 +31,10 @@
     "name": "Room_Town_Stag_Station",
     "path": "Assets/Scenes/Room_Town_Stag_Station.unity"
   },
+  "10": {
+    "name": "Room_Charm_Shop",
+    "path": "Assets/Scenes/Room_Charm_Shop.unity"
+  },
   "12": {
     "name": "Room_mapper",
     "path": "Assets/Scenes/Room_mapper.unity"
@@ -38,6 +42,10 @@
   "19": {
     "name": "Room_temple",
     "path": "Assets/Scenes/Room_temple.unity"
+  },
+  "20": {
+    "name": "Room_ruinhouse",
+    "path": "Assets/Scenes/Room_ruinhouse.unity"
   },
   "37": {
     "name": "Crossroads_01",
@@ -51,9 +59,17 @@
     "name": "Crossroads_03",
     "path": "Assets/Scenes/Crossroads/Crossroads_03.unity"
   },
+  "40": {
+    "name": "Crossroads_04",
+    "path": "Assets/Scenes/Crossroads/Crossroads_04.unity"
+  },
   "41": {
     "name": "Crossroads_05",
     "path": "Assets/Scenes/Crossroads/Crossroads_05.unity"
+  },
+  "42": {
+    "name": "Crossroads_06",
+    "path": "Assets/Scenes/Crossroads/Crossroads_06.unity"
   },
   "43": {
     "name": "Crossroads_07",
@@ -62,6 +78,14 @@
   "44": {
     "name": "Crossroads_08",
     "path": "Assets/Scenes/Crossroads/Crossroads_08.unity"
+  },
+  "46": {
+    "name": "Crossroads_10",
+    "path": "Assets/Scenes/Crossroads/Crossroads_10.unity"
+  },
+  "48": {
+    "name": "Crossroads_10_boss",
+    "path": "Assets/Scenes/Crossroads/Crossroads_10_boss.unity"
   },
   "50": {
     "name": "Crossroads_11_alt",
@@ -79,6 +103,10 @@
     "name": "Crossroads_14",
     "path": "Assets/Scenes/Crossroads/Crossroads_14.unity"
   },
+  "54": {
+    "name": "Crossroads_15",
+    "path": "Assets/Scenes/Crossroads/Crossroads_15.unity"
+  },
   "55": {
     "name": "Crossroads_16",
     "path": "Assets/Scenes/Crossroads/Crossroads_16.unity"
@@ -91,13 +119,25 @@
     "name": "Crossroads_19",
     "path": "Assets/Scenes/Crossroads/Crossroads_19.unity"
   },
+  "58": {
+    "name": "Crossroads_21",
+    "path": "Assets/Scenes/Crossroads/Crossroads_21.unity"
+  },
   "60": {
     "name": "Crossroads_25",
     "path": "Assets/Scenes/Crossroads/Crossroads_25.unity"
   },
+  "61": {
+    "name": "Crossroads_27",
+    "path": "Assets/Scenes/Crossroads/Crossroads_27.unity"
+  },
   "62": {
     "name": "Crossroads_30",
     "path": "Assets/Scenes/Crossroads/Crossroads_30.unity"
+  },
+  "63": {
+    "name": "Crossroads_31",
+    "path": "Assets/Scenes/Crossroads/Crossroads_31.unity"
   },
   "64": {
     "name": "Crossroads_33",
@@ -123,6 +163,14 @@
     "name": "Crossroads_45",
     "path": "Assets/Scenes/Crossroads/Crossroads_45.unity"
   },
+  "74": {
+    "name": "Crossroads_46",
+    "path": "Assets/Scenes/Crossroads/Crossroads_46.unity"
+  },
+  "76": {
+    "name": "Crossroads_ShamanTemple",
+    "path": "Assets/Scenes/Crossroads/Crossroads_ShamanTemple.unity"
+  },
   "77": {
     "name": "Crossroads_47",
     "path": "Assets/Scenes/Crossroads/Crossroads_47.unity"
@@ -130,5 +178,9 @@
   "78": {
     "name": "Crossroads_48",
     "path": "Assets/Scenes/Crossroads/Crossroads_48.unity"
+  },
+  "272": {
+    "name": "Mines_33",
+    "path": "Assets/Scenes/Mines/Mines_33.unity"
   }
 }
