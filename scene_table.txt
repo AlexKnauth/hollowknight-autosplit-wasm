@@ -7,6 +7,7 @@ begin scene_table
     7	Town                  	Assets/Scenes/Town.unity
     8	Cinematic_Stag_travel 	Assets/Scenes/Cinematic_Stag_travel.unity
     9	Room_Town_Stag_Station	Assets/Scenes/Room_Town_Stag_Station.unity
+   12	Room_mapper           	Assets/Scenes/Room_mapper.unity
    19	Room_temple           	Assets/Scenes/Room_temple.unity
    37	Crossroads_01         	Assets/Scenes/Crossroads/Crossroads_01.unity
    38	Crossroads_02         	Assets/Scenes/Crossroads/Crossroads_02.unity
