@@ -15,6 +15,7 @@ source = "git+https://github.com/LiveSplit/asr#38760c71ae329c299a723ab06b1467be0
 dependencies = [
  "arrayvec",
  "asr-derive",
+ "bitflags",
  "bytemuck",
  "memchr",
  "time",
@@ -30,6 +31,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "bitflags"
+version = "2.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "630be753d4e58660abd17930c71b647fe46c27ea6b63cc59e1e3851406972e42"
 
 [[package]]
 name = "bytemuck"
@@ -175,6 +182,7 @@ version = "0.1.0"
 dependencies = [
  "asr",
  "bytemuck",
+ "memchr",
  "serde",
  "serde_json",
 ]
