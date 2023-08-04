@@ -28,6 +28,7 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET: u64 = 27372592;
 
 const MODULE_NAMES: [&str; 4] = ["UnityPlayer.dll", "UnityPlayer.dylib", "Assembly-CSharp.dll", "Assembly-CSharp-firstpass.dll"];
 
@@ -80,6 +81,14 @@ impl SceneFinder {
         if let Some(scene_manager) = maybe_scene_manager {
             wait_get_current_scene_path::<SCENE_PATH_SIZE>(process, &scene_manager).await;
             return SceneFinder::SceneManager(scene_manager, Box::new(None))
+        }
+        if let Some((addr, _)) = get_unity_player_range(process) {
+            asr::print_message("Found UnityPlayer.");
+            let uphas = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET));
+            if !uphas.get_current_scene_name(process).is_empty() {
+                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET.");
+                return SceneFinder::UnityPlayerHasActiveScene(uphas);
+            }
         }
         if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &["Assets/Scenes/Menu_Title.unity"]).await {
             return SceneFinder::UnityPlayerHasActiveScene(uphas);
