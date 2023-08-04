@@ -35,6 +35,98 @@ struct SceneInfo {
     path: String
 }
 
+type SceneTable = BTreeMap<i32, SceneInfo>;
+
+struct UnityPlayerHasActiveScene(Address);
+
+impl UnityPlayerHasActiveScene {
+    async fn attempt_scan(process: &Process, scene_paths: &[&String]) -> Option<UnityPlayerHasActiveScene> {
+        Some(UnityPlayerHasActiveScene(attempt_scan_scene_paths(process, scene_paths).await?))
+    }
+
+    fn get_current_scene_name(&self, process: &Process) -> String {
+        match self {
+            UnityPlayerHasActiveScene(address_has_active_scene) => {
+                process.read::<Address64>(*address_has_active_scene).and_then(|has_active_scene| {
+                    process.read::<Address64>(has_active_scene.add(ACTIVE_SCENE_OFFSET))
+                }).and_then(|active_scene| {
+                    process.read::<Address64>(active_scene.add(SCENE_ASSET_PATH_OFFSET))
+                }).and_then(|scene_asset_path| {
+                    process.read::<ArrayCString<SCENE_PATH_SIZE>>(scene_asset_path)
+                }).map(get_scene_name_string).unwrap_or("".to_string())
+            }
+        }
+    }
+}
+
+enum SceneFinder {
+    SceneManager(SceneManager, Box<Option<UnityPlayerHasActiveScene>>),
+    UnityPlayerHasActiveScene(UnityPlayerHasActiveScene)
+}
+
+impl SceneFinder {
+    async fn wait_attach(process: &Process, scene_table: &SceneTable) -> SceneFinder {
+        let mut fuel = 10000;
+        let maybe_scene_manager = retry(|| {
+            if 0 < fuel {
+                fuel -= 1;
+                SceneManager::attach(&process).map(Some)
+            } else {
+                Some(None)
+            }
+        }).await;
+        if let Some(scene_manager) = maybe_scene_manager {
+            wait_get_current_scene_path::<SCENE_PATH_SIZE>(process, &scene_manager).await;
+            return SceneFinder::SceneManager(scene_manager, Box::new(None))
+        }
+        let scene_paths: Vec<&String> = scene_table.values().map(|si| &si.path).collect();
+        loop {
+            if let Some(scene_manager) = SceneManager::attach(&process) {
+                wait_get_current_scene_path::<SCENE_PATH_SIZE>(process, &scene_manager).await;
+                return SceneFinder::SceneManager(scene_manager, Box::new(None));
+            }
+            if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &scene_paths).await {
+                return SceneFinder::UnityPlayerHasActiveScene(uphas);
+            }
+            next_tick().await;
+        }
+    }
+
+    async fn attempt_scan(&mut self, process: &Process) {
+        match self {
+            SceneFinder::SceneManager(scene_manager, b) => {
+                if b.is_none() {
+                    let maybe_scene_path: Option<String> = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(process).ok().and_then(|scene_path_bytes| {
+                        String::from_utf8(scene_path_bytes.to_vec()).ok()
+                    });
+                    if let Some(scene_path) = &maybe_scene_path {
+                        if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &[scene_path]).await {
+                            **b = Some(uphas);
+                            asr::print_message("And now with both.");
+                        }
+                    }
+                }
+            }
+            _ => ()
+        }
+    }
+
+    fn get_current_scene_name(&self, process: &Process) -> String {
+        match self {
+            SceneFinder::SceneManager(scene_manager, muphas) => {
+                let s = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(process).map(get_scene_name_string).unwrap_or("".to_string());
+                if let Some(uphas) = muphas.as_ref() {
+                    assert_eq!(uphas.get_current_scene_name(process), s);
+                }
+                s
+            }
+            SceneFinder::UnityPlayerHasActiveScene(uphas) => {
+                uphas.get_current_scene_name(process)
+            }
+        }
+    }
+}
+
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
@@ -51,55 +143,36 @@ async fn main() {
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
-                asr::print_message("Trying to attach SceneManager");
-                let mut fuel = 1000;
-                let maybe_scene_manager = retry(|| {
-                    if 0 < fuel {
-                        fuel -= 1;
-                        SceneManager::attach(&process).map(Some)
-                    } else {
-                        Some(None)
-                    }
-                }).await;
-                let mut scene_name = if let Some(scene_manager) = &maybe_scene_manager {
-                    asr::print_message("Attached SceneManager.");
-                    get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_manager).await)
-                } else {
-                    asr::print_message("SceneManager not found.");
-                    "".to_owned()
-                };
-                 
-                let mut scene_table: BTreeMap<i32, SceneInfo> = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
-                if let Some(scene_manager) = &maybe_scene_manager {
-                    on_scene(&process, &scene_manager, &mut scene_table);
-                }
-                on_scan(&process, maybe_scene_manager.as_ref(),  &scene_table).await;
+                let scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
+                asr::print_message("Trying to attach SceneFinder...");
+                let mut scene_finder = SceneFinder::wait_attach(&process, &scene_table).await;
+                asr::print_message("Attached SceneFinder.");
+                let mut scene_name = scene_finder.get_current_scene_name(&process);
+                asr::print_message(&scene_name);
+
+                scene_finder.attempt_scan(&process).await;
 
                 let splits = splits::default_splits();
                 let mut i = 0;
                 loop {
                     let current_split = &splits[i];
-                    if let Some(scene_manager) = &maybe_scene_manager {
-                        if let Ok(next_scene_name) = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
-                            if next_scene_name != scene_name {
-                                on_scene(&process, &scene_manager, &mut scene_table);
-                                // asr::print_message(&next_scene_name);
-                                let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
-                                scene_name = next_scene_name;
-                                if splits::transition_splits(current_split, &scene_pair) {
-                                    if i == 0 {
-                                        asr::timer::start();
-                                    } else {
-                                        asr::timer::split();
-                                    }
-                                    i += 1;
-                                    if splits.len() <= i {
-                                        i = 0;
-                                    }
-                                }
-                                on_scan(&process, maybe_scene_manager.as_ref(), &scene_table).await;
+                    let next_scene_name = scene_finder.get_current_scene_name(&process);
+                    if !next_scene_name.is_empty() && next_scene_name != scene_name {
+                        asr::print_message(&next_scene_name);
+                        let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
+                        scene_name = next_scene_name;
+                        if splits::transition_splits(current_split, &scene_pair) {
+                            if i == 0 {
+                                asr::timer::start();
+                            } else {
+                                asr::timer::split();
+                            }
+                            i += 1;
+                            if splits.len() <= i {
+                                i = 0;
                             }
                         }
+                        scene_finder.attempt_scan(&process).await;
                     }
                     next_tick().await;
                 }
@@ -118,6 +191,7 @@ fn get_scene_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String 
 
 // --------------------------------------------------------
 
+/*
 fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
     // Log scene_table as json
     if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
@@ -135,28 +209,9 @@ fn on_scene(process: &Process, scene_manager: &SceneManager, scene_table: &mut B
         log_scene_table(scene_table);
     }
 }
+*/
 
-async fn on_scan(process: &Process, maybe_scene_manager: Option<&SceneManager>, scene_table: &BTreeMap<i32, SceneInfo>) {
-    let maybe_scene_path: Option<String> = maybe_scene_manager.and_then(|scene_manager| {
-        scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(process).ok()
-    }).and_then(|scene_path_bytes| {
-        String::from_utf8(scene_path_bytes.to_vec()).ok()
-    });
-    match maybe_scene_path {
-        Some(scene_path) => {
-            asr::print_message(&format!("Starting scan with {}...", scene_path));
-            attempt_scan_scene_paths(process, vec![&scene_path]).await;
-        }
-        None => {
-            let scene_paths: Vec<&String> = scene_table.values().map(|si| &si.path).collect();
-            asr::print_message(&format!("Starting scan with {}...", scene_paths.len()));
-            attempt_scan_scene_paths(process, scene_paths).await;
-        }
-    }
-    asr::print_message("Scan finished.")
-}
-
-async fn attempt_scan_scene_paths(process: &Process, scene_paths: Vec<&String>) -> Option<Address> {
+async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&String]) -> Option<Address> {
     asr::print_message("Searching for scene path contents...");
     let mut scene_path_contents_addrs: Vec<Address> = vec![];
     for scene_path in scene_paths.into_iter() {
