@@ -28,13 +28,15 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_1: u64 = 0x01A1AC30;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_2: u64 = 0x01ACDA50;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_3: u64 = 0x01A862E8;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_4: u64 = 0x01A41D10;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_5: u64 = 0x01ACC660;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_6: u64 = 0x01ACC668;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_7: u64 = 0x01A83FF0;
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 7] = [
+    0x01A1AC30,
+    0x01ACDA50,
+    0x01A862E8,
+    0x01A41D10,
+    0x01ACC660,
+    0x01ACC668,
+    0x01A83FF0,
+];
 
 const MODULE_NAMES: [&str; 4] = ["UnityPlayer.dll", "UnityPlayer.dylib", "Assembly-CSharp.dll", "Assembly-CSharp-firstpass.dll"];
 
@@ -90,40 +92,12 @@ impl SceneFinder {
         }
         if let Some((addr, _)) = get_unity_player_range(process) {
             asr::print_message("Found UnityPlayer.");
-            let uphas1 = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_1));
-            if !uphas1.get_current_scene_name(process).is_empty() {
-                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_1.");
-                return SceneFinder::UnityPlayerHasActiveScene(uphas1);
-            }
-            let uphas2 = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_2));
-            if !uphas2.get_current_scene_name(process).is_empty() {
-                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_2.");
-                return SceneFinder::UnityPlayerHasActiveScene(uphas2);
-            }
-            let uphas3 = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_3));
-            if !uphas3.get_current_scene_name(process).is_empty() {
-                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_3.");
-                return SceneFinder::UnityPlayerHasActiveScene(uphas3);
-            }
-            let uphas4 = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_4));
-            if !uphas4.get_current_scene_name(process).is_empty() {
-                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_4.");
-                return SceneFinder::UnityPlayerHasActiveScene(uphas4);
-            }
-            let uphas5 = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_5));
-            if !uphas5.get_current_scene_name(process).is_empty() {
-                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_5.");
-                return SceneFinder::UnityPlayerHasActiveScene(uphas5);
-            }
-            let uphas6 = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_6));
-            if !uphas6.get_current_scene_name(process).is_empty() {
-                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_6.");
-                return SceneFinder::UnityPlayerHasActiveScene(uphas6);
-            }
-            let uphas7 = UnityPlayerHasActiveScene(addr.add(UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_7));
-            if !uphas7.get_current_scene_name(process).is_empty() {
-                asr::print_message("Found UnityPlayer + UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSET_7.");
-                return SceneFinder::UnityPlayerHasActiveScene(uphas7);
+            for offset in UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS.iter() {
+                let uphas = UnityPlayerHasActiveScene(addr.add(*offset));
+                if !uphas.get_current_scene_name(process).is_empty() {
+                    asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
+                    return SceneFinder::UnityPlayerHasActiveScene(uphas);
+                }
             }
         }
         if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &["Assets/Scenes/Menu_Title.unity"]).await {
