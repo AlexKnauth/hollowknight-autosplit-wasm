@@ -40,7 +40,7 @@ type SceneTable = BTreeMap<i32, SceneInfo>;
 struct UnityPlayerHasActiveScene(Address);
 
 impl UnityPlayerHasActiveScene {
-    async fn attempt_scan(process: &Process, scene_paths: &[&String]) -> Option<UnityPlayerHasActiveScene> {
+    async fn attempt_scan(process: &Process, scene_paths: &[&str]) -> Option<UnityPlayerHasActiveScene> {
         Some(UnityPlayerHasActiveScene(attempt_scan_scene_paths(process, scene_paths).await?))
     }
 
@@ -66,7 +66,7 @@ enum SceneFinder {
 
 impl SceneFinder {
     async fn wait_attach(process: &Process, scene_table: &SceneTable) -> SceneFinder {
-        let mut fuel = 10000;
+        let mut fuel = 1000;
         let maybe_scene_manager = retry(|| {
             if 0 < fuel {
                 fuel -= 1;
@@ -79,7 +79,10 @@ impl SceneFinder {
             wait_get_current_scene_path::<SCENE_PATH_SIZE>(process, &scene_manager).await;
             return SceneFinder::SceneManager(scene_manager, Box::new(None))
         }
-        let scene_paths: Vec<&String> = scene_table.values().map(|si| &si.path).collect();
+        if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &["Assets/Scenes/"]).await {
+            return SceneFinder::UnityPlayerHasActiveScene(uphas);
+        }
+        let scene_paths: Vec<&str> = scene_table.values().map(|si| si.path.as_ref()).collect();
         loop {
             if let Some(scene_manager) = SceneManager::attach(&process) {
                 wait_get_current_scene_path::<SCENE_PATH_SIZE>(process, &scene_manager).await;
@@ -211,7 +214,7 @@ fn on_scene(process: &Process, scene_manager: &SceneManager, scene_table: &mut B
 }
 */
 
-async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&String]) -> Option<Address> {
+async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&str]) -> Option<Address> {
     asr::print_message("Searching for scene path contents...");
     let mut scene_path_contents_addrs: Vec<Address> = vec![];
     for scene_path in scene_paths.into_iter() {
@@ -247,7 +250,7 @@ async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&String]) ->
         let addr64 = Address64::new(scene_has_asset_path_addr.value() - ACTIVE_SCENE_OFFSET);
         let needle = bytemuck::bytes_of(&addr64);
         let finder = Finder::new(needle);
-        has_active_scene_addrs.extend(scan_unity_player(process, &finder));
+        has_active_scene_addrs.extend(scan_unity_player(process, &finder).await);
     }
     if has_active_scene_addrs.is_empty() { return None; }
     asr::print_message(&format!("Found has active scene pointer: {}", has_active_scene_addrs.len()));
@@ -278,7 +281,7 @@ async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&String]) ->
 async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Address> {
     let mut rs: Vec<Address> = vec![];
     let finder = Finder::new(needle);
-    let addrs = scan_unity_player(&process, &finder);
+    let addrs = scan_unity_player(&process, &finder).await;
     if !addrs.is_empty() {
         asr::print_message("Found in UnityPlayer");
         rs.extend(addrs);
@@ -292,9 +295,9 @@ async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Addres
     rs
 }
 
-fn scan_unity_player(process: &Process, finder: &Finder<'_>) -> Vec<Address> {
+async fn scan_unity_player(process: &Process, finder: &Finder<'_>) -> Vec<Address> {
     if let Ok(unity_player) = process.get_module_range("UnityPlayer.dll") {
-        scan_memory_range(process, unity_player, &finder)
+        scan_memory_range(process, unity_player, &finder).await
     } else {
         vec![]
     }
@@ -304,7 +307,7 @@ async fn scan_all_memory_ranges<'a>(process: &'a Process, finder: &Finder<'_>) -
     let mut rs: Vec<(MemoryRange<'a>, Vec<Address>)> = vec![];
     for mr in process.memory_ranges() {
         if let Ok(r) = mr.range() {
-            let addrs = scan_memory_range(process, r, finder);
+            let addrs = scan_memory_range(process, r, finder).await;
             next_tick().await;
             if !addrs.is_empty() {
                 rs.push((mr, addrs));
@@ -314,7 +317,7 @@ async fn scan_all_memory_ranges<'a>(process: &'a Process, finder: &Finder<'_>) -
     rs
 }
 
-fn scan_memory_range(process: &Process, range: (Address, u64), finder: &Finder<'_>) -> Vec<Address> {
+async fn scan_memory_range(process: &Process, range: (Address, u64), finder: &Finder<'_>) -> Vec<Address> {
     let mut rs: Vec<Address> = vec![];
     let (addr, len) = range;
     let mut addr: Address = Into::into(addr);
@@ -338,6 +341,7 @@ fn scan_memory_range(process: &Process, range: (Address, u64), finder: &Finder<'
             rs.extend(ps.map(move |pos| addr_here.add(pos as u64)));
         };
         addr = Address::new(end);
+        next_tick().await;
     }
     rs
 }
