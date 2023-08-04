@@ -255,7 +255,7 @@ async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&str]) -> Op
     if has_active_scene_addrs.is_empty() { return None; }
     asr::print_message(&format!("Found has active scene pointer: {}", has_active_scene_addrs.len()));
     let the_addr = has_active_scene_addrs[0];
-    if let Ok((addr, len)) = process.get_module_range("UnityPlayer.dll") {
+    if let Some((addr, len)) = get_unity_player_range(process) {
         let offset = the_addr.value() - addr.value();
         if offset < len {
             asr::print_message(&format!("  {} = UnityPlayer + {}", the_addr, offset));
@@ -295,8 +295,14 @@ async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Addres
     rs
 }
 
+fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
+    ["UnityPlayer.dll", "UnityPlayer.dylib"].into_iter().find_map(|name| {
+        process.get_module_range(name).ok()
+    })
+}
+
 async fn scan_unity_player(process: &Process, finder: &Finder<'_>) -> Vec<Address> {
-    if let Ok(unity_player) = process.get_module_range("UnityPlayer.dll") {
+    if let Some(unity_player) = get_unity_player_range(process) {
         scan_memory_range(process, unity_player, &finder).await
     } else {
         vec![]
