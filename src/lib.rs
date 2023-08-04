@@ -258,24 +258,10 @@ async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&str]) -> Op
     if let Some((addr, len)) = get_unity_player_range(process) {
         let offset = the_addr.value() - addr.value();
         if offset < len {
-            asr::print_message(&format!("  {} = UnityPlayer + {}", the_addr, offset));
+            asr::print_message(&format!("  {} = UnityPlayer + 0x{:X}", the_addr, offset));
         }
     }
     Some(the_addr)
-    /*
-    next_tick().await;
-    asr::print_message("Searching UnityPlayer for SceneManager address...");
-    let mut scene_manager_addrs: Vec<Address> = vec![];
-    for has_active_scene_addr in has_active_scene_addrs {
-        let addr64 = Address64::new(has_active_scene_addr.value());
-        let needle = bytemuck::bytes_of(&addr64);
-        let finder = Finder::new(needle);
-        scene_manager_addrs.extend(scan_unity_player(process, &finder));
-    }
-    if scene_manager_addrs.is_empty() { return None; }
-    asr::print_message(&format!("Found scene manager address: {}", scene_manager_addrs.len()));
-    Some(scene_manager_addrs[0])
-    */
 }
 
 async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Address> {
