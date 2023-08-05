@@ -1,0 +1,206 @@
+{
+  "0": {
+    "name": "Pre_Menu_Intro",
+    "path": "Assets/Scenes/Pre_Menu_Intro.unity"
+  },
+  "1": {
+    "name": "Menu_Title",
+    "path": "Assets/Scenes/Menu_Title.unity"
+  },
+  "2": {
+    "name": "Quit_To_Menu",
+    "path": "Assets/Scenes/Quit_To_Menu.unity"
+  },
+  "5": {
+    "name": "Opening_Sequence",
+    "path": "Assets/Scenes/Opening_Sequence.unity"
+  },
+  "6": {
+    "name": "Tutorial_01",
+    "path": "Assets/Scenes/Tutorial_01.unity"
+  },
+  "7": {
+    "name": "Town",
+    "path": "Assets/Scenes/Town.unity"
+  },
+  "8": {
+    "name": "Cinematic_Stag_travel",
+    "path": "Assets/Scenes/Cinematic_Stag_travel.unity"
+  },
+  "9": {
+    "name": "Room_Town_Stag_Station",
+    "path": "Assets/Scenes/Room_Town_Stag_Station.unity"
+  },
+  "10": {
+    "name": "Room_Charm_Shop",
+    "path": "Assets/Scenes/Room_Charm_Shop.unity"
+  },
+  "12": {
+    "name": "Room_mapper",
+    "path": "Assets/Scenes/Room_mapper.unity"
+  },
+  "17": {
+    "name": "Room_shop",
+    "path": "Assets/Scenes/Room_shop.unity"
+  },
+  "19": {
+    "name": "Room_temple",
+    "path": "Assets/Scenes/Room_temple.unity"
+  },
+  "20": {
+    "name": "Room_ruinhouse",
+    "path": "Assets/Scenes/Room_ruinhouse.unity"
+  },
+  "37": {
+    "name": "Crossroads_01",
+    "path": "Assets/Scenes/Crossroads/Crossroads_01.unity"
+  },
+  "38": {
+    "name": "Crossroads_02",
+    "path": "Assets/Scenes/Crossroads/Crossroads_02.unity"
+  },
+  "39": {
+    "name": "Crossroads_03",
+    "path": "Assets/Scenes/Crossroads/Crossroads_03.unity"
+  },
+  "40": {
+    "name": "Crossroads_04",
+    "path": "Assets/Scenes/Crossroads/Crossroads_04.unity"
+  },
+  "41": {
+    "name": "Crossroads_05",
+    "path": "Assets/Scenes/Crossroads/Crossroads_05.unity"
+  },
+  "42": {
+    "name": "Crossroads_06",
+    "path": "Assets/Scenes/Crossroads/Crossroads_06.unity"
+  },
+  "43": {
+    "name": "Crossroads_07",
+    "path": "Assets/Scenes/Crossroads/Crossroads_07.unity"
+  },
+  "44": {
+    "name": "Crossroads_08",
+    "path": "Assets/Scenes/Crossroads/Crossroads_08.unity"
+  },
+  "46": {
+    "name": "Crossroads_10",
+    "path": "Assets/Scenes/Crossroads/Crossroads_10.unity"
+  },
+  "48": {
+    "name": "Crossroads_10_boss",
+    "path": "Assets/Scenes/Crossroads/Crossroads_10_boss.unity"
+  },
+  "50": {
+    "name": "Crossroads_11_alt",
+    "path": "Assets/Scenes/Crossroads/Crossroads_11_alt.unity"
+  },
+  "51": {
+    "name": "Crossroads_12",
+    "path": "Assets/Scenes/Crossroads/Crossroads_12.unity"
+  },
+  "52": {
+    "name": "Crossroads_13",
+    "path": "Assets/Scenes/Crossroads/Crossroads_13.unity"
+  },
+  "53": {
+    "name": "Crossroads_14",
+    "path": "Assets/Scenes/Crossroads/Crossroads_14.unity"
+  },
+  "54": {
+    "name": "Crossroads_15",
+    "path": "Assets/Scenes/Crossroads/Crossroads_15.unity"
+  },
+  "55": {
+    "name": "Crossroads_16",
+    "path": "Assets/Scenes/Crossroads/Crossroads_16.unity"
+  },
+  "56": {
+    "name": "Crossroads_18",
+    "path": "Assets/Scenes/Crossroads/Crossroads_18.unity"
+  },
+  "57": {
+    "name": "Crossroads_19",
+    "path": "Assets/Scenes/Crossroads/Crossroads_19.unity"
+  },
+  "58": {
+    "name": "Crossroads_21",
+    "path": "Assets/Scenes/Crossroads/Crossroads_21.unity"
+  },
+  "60": {
+    "name": "Crossroads_25",
+    "path": "Assets/Scenes/Crossroads/Crossroads_25.unity"
+  },
+  "61": {
+    "name": "Crossroads_27",
+    "path": "Assets/Scenes/Crossroads/Crossroads_27.unity"
+  },
+  "62": {
+    "name": "Crossroads_30",
+    "path": "Assets/Scenes/Crossroads/Crossroads_30.unity"
+  },
+  "63": {
+    "name": "Crossroads_31",
+    "path": "Assets/Scenes/Crossroads/Crossroads_31.unity"
+  },
+  "64": {
+    "name": "Crossroads_33",
+    "path": "Assets/Scenes/Crossroads/Crossroads_33.unity"
+  },
+  "65": {
+    "name": "Crossroads_35",
+    "path": "Assets/Scenes/Crossroads/Crossroads_35.unity"
+  },
+  "68": {
+    "name": "Crossroads_38",
+    "path": "Assets/Scenes/Crossroads/Crossroads_38.unity"
+  },
+  "69": {
+    "name": "Crossroads_39",
+    "path": "Assets/Scenes/Crossroads/Crossroads_39.unity"
+  },
+  "70": {
+    "name": "Crossroads_40",
+    "path": "Assets/Scenes/Crossroads/Crossroads_40.unity"
+  },
+  "71": {
+    "name": "Crossroads_42",
+    "path": "Assets/Scenes/Crossroads/Crossroads_42.unity"
+  },
+  "72": {
+    "name": "Crossroads_43",
+    "path": "Assets/Scenes/Crossroads/Crossroads_43.unity"
+  },
+  "73": {
+    "name": "Crossroads_45",
+    "path": "Assets/Scenes/Crossroads/Crossroads_45.unity"
+  },
+  "74": {
+    "name": "Crossroads_46",
+    "path": "Assets/Scenes/Crossroads/Crossroads_46.unity"
+  },
+  "76": {
+    "name": "Crossroads_ShamanTemple",
+    "path": "Assets/Scenes/Crossroads/Crossroads_ShamanTemple.unity"
+  },
+  "77": {
+    "name": "Crossroads_47",
+    "path": "Assets/Scenes/Crossroads/Crossroads_47.unity"
+  },
+  "78": {
+    "name": "Crossroads_48",
+    "path": "Assets/Scenes/Crossroads/Crossroads_48.unity"
+  },
+  "79": {
+    "name": "Crossroads_49",
+    "path": "Assets/Scenes/Crossroads/Crossroads_49.unity"
+  },
+  "248": {
+    "name": "Mines_01",
+    "path": "Assets/Scenes/Mines/Mines_01.unity"
+  },
+  "272": {
+    "name": "Mines_33",
+    "path": "Assets/Scenes/Mines/Mines_33.unity"
+  }
+}
