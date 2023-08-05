@@ -100,6 +100,7 @@ impl SceneFinder {
                 }
             }
         }
+        asr::print_message("Searching for Assets/Scenes/Menu_Title.unity...");
         if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &["Assets/Scenes/Menu_Title.unity"]).await {
             return SceneFinder::UnityPlayerHasActiveScene(uphas);
         }
@@ -293,6 +294,8 @@ async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Addres
         asr::print_message("Found in UnityPlayer");
         rs.extend(addrs);
         return rs;
+    } else {
+        asr::print_message("Not found in UnityPlayer, scanning other memory ranges...");
     }
     next_tick().await;
     for (mr, addrs) in scan_all_memory_ranges(process, &finder).await {
