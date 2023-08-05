@@ -198,7 +198,7 @@ async fn main() {
                 asr::print_message("Trying to attach SceneFinder...");
                 let mut scene_finder = SceneFinder::wait_attach(&process, &scene_table).await;
                 asr::print_message("Attached SceneFinder.");
-                let mut scene_name = scene_finder.get_current_scene_name(&process);
+                let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
                 asr::print_message(&scene_name);
 
                 scene_finder.attempt_scan(&process).await;
@@ -232,6 +232,10 @@ async fn main() {
             })
             .await;
     }
+}
+
+async fn wait_get_current_scene_path<const N: usize>(process: &Process, scene_finder: &SceneFinder) -> ArrayCString<N> {
+    retry(|| scene_finder.get_current_scene_path(&process)).await
 }
 
 fn get_scene_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String {
