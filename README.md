@@ -27,3 +27,30 @@ Make sure too look into the [API documentation](https://livesplit.org/asr/asr/) 
 You can use the [debugger](https://github.com/CryZe/asr-debugger) while
 developing the auto splitter to more easily see the log messages, statistics,
 dump memory and more.
+
+## Instructions for livesplit-one-desktop
+
+Clone `livesplit-one-desktop` from https://github.com/CryZe/livesplit-one-desktop
+
+In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that it contains
+```yaml
+general:
+  splits: <path-to-splits.lss>
+  auto-splitter: <path-to-wasm_hollowknight_autosplit.wasm>
+```
+where you replace `<path-to-splits.lss>` with the path to your splits file, and you replace `<path-to-wasm_hollowknight_autosplit.wasm>` with a path to the compiled `wasm` file found at `target/wasm32-unknown-unknown/release/wasm_hollowknight_autosplit.wasm` of this repository.
+
+If you're running anything other than the specific placeholder splits in the `src/splits.json` file of this repository, you should modify that file to have the splits you want, in the order you want, and then re-compile this repository with
+```sh
+cargo b
+```
+
+When you run either `livesplit-one-desktop` or the `asr-debugger`, it needs to have permission to read memory of other processes.
+On Mac, that might require running it under `sudo`.
+For example in the `livesplit-one-desktop` repository, you can run
+```sh
+sudo cargo run --release
+```
+
+Finally, do not manually split, skip, or undo splits while running with this autosplitter.
+The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with `livesplit-one-desktop`'s state.
