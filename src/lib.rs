@@ -200,7 +200,7 @@ async fn main() {
                 scene_finder.attempt_scan(&process).await;
                 on_scene(&process, &scene_finder, &mut scene_table);
 
-                let splits = splits::default_splits();
+                let splits = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
                 let mut i = 0;
                 loop {
                     let current_split = &splits[i];

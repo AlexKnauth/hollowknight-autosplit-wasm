@@ -1,5 +1,7 @@
 use asr::watcher::Pair;
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum Split {
     // Start and End
     StartNewGame,
@@ -96,28 +98,5 @@ fn is_menu(s: &str) -> bool {
 
 pub fn default_splits() -> Vec<Split> {
     vec![Split::StartNewGame,
-         Split::AncestralMound,
-         Split::EnterGreenpath,
-         Split::MenuCloak,
-         Split::MenuMantisJournal,
-         Split::SalubraExit,
-         Split::DreamNailExit,
-         Split::TransGorgeousHusk,
-         Split::MenuStoreroomsSimpleKey,
-         Split::SlyShopExit,
-         Split::MenuSlyKey,
-         Split::DungDefenderExit,
-         Split::Abyss19from18,
-         Split::MenuWings,
-         Split::MenuIsmasTear,
-         Split::MenuShadeSoul,
-         Split::EnterBlackKnight,
-         Split::BlackKnightTrans,
-         Split::Lurien,
-         Split::TeachersArchive,
-         Split::Monomon,
-         Split::QueensGardensEntry,
-         Split::Hegemol,
-         Split::EnterHollowKnight,
          Split::EndingSplit]
 }
