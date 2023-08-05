@@ -28,7 +28,7 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 7] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 8] = [
     0x01A1AC30,
     0x01ACDA50,
     0x01A862E8,
@@ -36,6 +36,7 @@ const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 7] = [
     0x01ACC660,
     0x01ACC668,
     0x01A83FF0,
+    0x01A982E8,
 ];
 
 const MODULE_NAMES: [&str; 4] = ["UnityPlayer.dll", "UnityPlayer.dylib", "Assembly-CSharp.dll", "Assembly-CSharp-firstpass.dll"];
@@ -76,7 +77,7 @@ enum SceneFinder {
 }
 
 impl SceneFinder {
-    async fn wait_attach(process: &Process, scene_table: &SceneTable) -> SceneFinder {
+    async fn wait_attach(process: &Process, _scene_table: &SceneTable) -> SceneFinder {
         let mut fuel = 1000;
         let maybe_scene_manager = retry(|| {
             if 0 < fuel {
@@ -90,7 +91,7 @@ impl SceneFinder {
             wait_get_current_scene_path::<SCENE_PATH_SIZE>(process, &scene_manager).await;
             return SceneFinder::SceneManager(scene_manager, Box::new(None))
         }
-        if let Some((addr, _)) = get_unity_player_range(process) {
+        if let Some((addr, len)) = get_unity_player_range(process) {
             asr::print_message("Found UnityPlayer.");
             for offset in UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS.iter() {
                 let uphas = UnityPlayerHasActiveScene(addr.add(*offset));
@@ -99,7 +100,25 @@ impl SceneFinder {
                     return SceneFinder::UnityPlayerHasActiveScene(uphas);
                 }
             }
+            let end = addr.add(len);
+            for i in (addr.value() / 8) .. (end.value() / 8) {
+                let a = Address::new(i * 8);
+                if let Ok(s) = process.read_pointer_path64::<u8>(a, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0]) {
+                    let c = char::from(s);
+                    if c != 'A' { continue; }
+                    let offset = a.value() - addr.value();
+                    asr::print_message(&format!("from address {}, offset 0x{:X}, found c {}", a, offset, c));
+                    if let Ok(s) = process.read_pointer_path64::<ArrayCString<14>>(a, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0]) {
+                        if String::from_utf8(s.to_vec()).as_ref().map(String::as_str) == Ok("Assets/Scenes/") {
+                            asr::print_message(&format!("from address {}, offset 0x{:X}, found s {:?}", a, offset, String::from_utf8(s.to_vec())));
+                            return SceneFinder::UnityPlayerHasActiveScene(UnityPlayerHasActiveScene(a));
+                        }
+                    }
+                }
+            }
         }
+        panic!("Stopping for now.");
+        /*
         asr::print_message("Searching for Assets/Scenes/Menu_Title.unity...");
         if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &["Assets/Scenes/Menu_Title.unity"]).await {
             return SceneFinder::UnityPlayerHasActiveScene(uphas);
@@ -115,6 +134,7 @@ impl SceneFinder {
             }
             next_tick().await;
         }
+        */
     }
 
     async fn attempt_scan(&mut self, process: &Process) {
