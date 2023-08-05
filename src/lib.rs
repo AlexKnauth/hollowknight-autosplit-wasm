@@ -172,10 +172,6 @@ impl SceneFinder {
             }
         }
     }
-
-    fn get_current_scene_name(&self, process: &Process) -> String {
-        self.get_current_scene_path::<SCENE_PATH_SIZE>(process).map(get_scene_name_string).unwrap_or("".to_string())
-    }
 }
 
 async fn main() {
@@ -208,24 +204,25 @@ async fn main() {
                 let mut i = 0;
                 loop {
                     let current_split = &splits[i];
-                    let next_scene_name = scene_finder.get_current_scene_name(&process);
-                    if !next_scene_name.is_empty() && next_scene_name != scene_name {
-                        asr::print_message(&next_scene_name);
-                        let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
-                        scene_name = next_scene_name;
-                        if splits::transition_splits(current_split, &scene_pair) {
-                            if i == 0 {
-                                asr::timer::start();
-                            } else {
-                                asr::timer::split();
+                    if let Ok(next_scene_name) = scene_finder.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
+                        if next_scene_name != scene_name {
+                            asr::print_message(&next_scene_name);
+                            let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
+                            scene_name = next_scene_name;
+                            if splits::transition_splits(current_split, &scene_pair) {
+                                if i == 0 {
+                                    asr::timer::start();
+                                } else {
+                                    asr::timer::split();
+                                }
+                                i += 1;
+                                if splits.len() <= i {
+                                    i = 0;
+                                }
                             }
-                            i += 1;
-                            if splits.len() <= i {
-                                i = 0;
-                            }
+                            scene_finder.attempt_scan(&process).await;
+                            on_scene(&process, &scene_finder, &mut scene_table);
                         }
-                        scene_finder.attempt_scan(&process).await;
-                        on_scene(&process, &scene_finder, &mut scene_table);
                     }
                     next_tick().await;
                 }
