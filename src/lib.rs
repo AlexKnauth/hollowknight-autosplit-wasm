@@ -25,12 +25,13 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 5] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 6] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
     0x01BBE2E8, // Mac?
     0x01AB02E8, // Mac?
     0x01BB42E8, // Mac?
+    0x01AAF2E8, // Mac?
 ];
 const UNITY_PLAYER_NAMES: [&str; 2] = [
     "UnityPlayer.dll", // Windows
@@ -90,10 +91,6 @@ impl UnityPlayerHasActiveScene {
     fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
         process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0])
     }
-
-    fn get_current_scene_name(&self, process: &Process) -> String {
-        self.get_current_scene_path::<SCENE_PATH_SIZE>(process).map(get_scene_name_string).unwrap_or("".to_string())
-    }
 }
 
 enum SceneFinder {
@@ -141,19 +138,23 @@ impl SceneFinder {
         }
     }
 
-    fn get_current_scene_name(&self, process: &Process) -> String {
+    fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
         match self {
             SceneFinder::SceneManager(scene_manager, muphas) => {
-                let s = scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(process).map(get_scene_name_string).unwrap_or("".to_string());
+                let p = scene_manager.get_current_scene_path::<N>(process)?;
                 if let Some(uphas) = muphas.as_ref() {
-                    assert_eq!(uphas.get_current_scene_name(process), s);
+                    assert_eq!(uphas.get_current_scene_path::<N>(process).expect("uphas get_current_scene_path").as_bytes(), p.as_bytes());
                 }
-                s
+                Ok(p)
             }
             SceneFinder::UnityPlayerHasActiveScene(uphas) => {
-                uphas.get_current_scene_name(process)
+                uphas.get_current_scene_path(process)
             }
         }
+    }
+
+    fn get_current_scene_name(&self, process: &Process) -> String {
+        self.get_current_scene_path::<SCENE_PATH_SIZE>(process).map(get_scene_name_string).unwrap_or("".to_string())
     }
 }
 
