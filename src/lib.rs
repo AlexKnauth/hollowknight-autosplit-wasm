@@ -16,6 +16,11 @@ asr::async_main!(stable);
 
 const SCENE_PATH_SIZE: usize = 64;
 
+const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
+    "hollow_knight.exe", // Windows
+    "Hollow Knight", // Mac
+];
+
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
@@ -27,7 +32,7 @@ async fn main() {
 
     loop {
         let process = retry(|| {
-            ["hollow_knight.exe", "Hollow Knight", "hollow_knight.app"].into_iter().find_map(Process::attach)
+            HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
         }).await;
         process
             .until_closes(async {
