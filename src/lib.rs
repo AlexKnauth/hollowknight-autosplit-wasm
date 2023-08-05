@@ -5,7 +5,7 @@ mod splits;
 use std::collections::BTreeMap;
 use std::string::String;
 use asr::future::{next_tick, retry};
-use asr::{Process, Address, Address64};
+use asr::{Process, Address};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::string::ArrayCString;
 // use asr::time::Duration;
@@ -25,11 +25,12 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 4] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 5] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
     0x01BBE2E8, // Mac?
     0x01AB02E8, // Mac?
+    0x01BB42E8, // Mac?
 ];
 const UNITY_PLAYER_NAMES: [&str; 2] = [
     "UnityPlayer.dll", // Windows
@@ -86,18 +87,12 @@ impl UnityPlayerHasActiveScene {
         })
     }
 
+    fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
+        process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0])
+    }
+
     fn get_current_scene_name(&self, process: &Process) -> String {
-        match self {
-            UnityPlayerHasActiveScene(address_has_active_scene) => {
-                process.read::<Address64>(*address_has_active_scene).and_then(|has_active_scene| {
-                    process.read::<Address64>(has_active_scene.add(ACTIVE_SCENE_OFFSET))
-                }).and_then(|active_scene| {
-                    process.read::<Address64>(active_scene.add(SCENE_ASSET_PATH_OFFSET))
-                }).and_then(|scene_asset_path| {
-                    process.read::<ArrayCString<SCENE_PATH_SIZE>>(scene_asset_path)
-                }).map(get_scene_name_string).unwrap_or("".to_string())
-            }
-        }
+        self.get_current_scene_path::<SCENE_PATH_SIZE>(process).map(get_scene_name_string).unwrap_or("".to_string())
     }
 }
 
