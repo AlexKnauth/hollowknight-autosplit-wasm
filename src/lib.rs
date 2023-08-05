@@ -29,6 +29,8 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 
+const MODULE_NAMES: [&str; 4] = ["UnityPlayer.dll", "UnityPlayer.dylib", "Assembly-CSharp.dll", "Assembly-CSharp-firstpass.dll"];
+
 #[derive(Deserialize, Serialize)]
 struct SceneInfo {
     name: String,
@@ -79,7 +81,7 @@ impl SceneFinder {
             wait_get_current_scene_path::<SCENE_PATH_SIZE>(process, &scene_manager).await;
             return SceneFinder::SceneManager(scene_manager, Box::new(None))
         }
-        if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &["Assets/Scenes/"]).await {
+        if let Some(uphas) = UnityPlayerHasActiveScene::attempt_scan(process, &["Assets/Scenes/Menu_Title.unity"]).await {
             return SceneFinder::UnityPlayerHasActiveScene(uphas);
         }
         let scene_paths: Vec<&str> = scene_table.values().map(|si| si.path.as_ref()).collect();
@@ -250,7 +252,7 @@ async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&str]) -> Op
         let addr64 = Address64::new(scene_has_asset_path_addr.value() - ACTIVE_SCENE_OFFSET);
         let needle = bytemuck::bytes_of(&addr64);
         let finder = Finder::new(needle);
-        has_active_scene_addrs.extend(scan_unity_player(process, &finder).await);
+        has_active_scene_addrs.extend(scan_unity_player(process, &finder));
     }
     if has_active_scene_addrs.is_empty() { return None; }
     asr::print_message(&format!("Found has active scene pointer: {}", has_active_scene_addrs.len()));
@@ -267,15 +269,15 @@ async fn attempt_scan_scene_paths(process: &Process, scene_paths: &[&str]) -> Op
 async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Address> {
     let mut rs: Vec<Address> = vec![];
     let finder = Finder::new(needle);
-    let addrs = scan_unity_player(&process, &finder).await;
+    let addrs = scan_unity_player(&process, &finder);
     if !addrs.is_empty() {
         asr::print_message("Found in UnityPlayer");
         rs.extend(addrs);
         return rs;
     }
     next_tick().await;
-    for (_mr, addrs) in scan_all_memory_ranges(process, &finder).await {
-        // print_memory_range_info(mr).unwrap_or_default();
+    for (mr, addrs) in scan_all_memory_ranges(process, &finder).await {
+        print_memory_range_info(process, mr).unwrap_or_default();
         rs.extend(addrs);
     }
     rs
@@ -287,9 +289,9 @@ fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
     })
 }
 
-async fn scan_unity_player(process: &Process, finder: &Finder<'_>) -> Vec<Address> {
+fn scan_unity_player(process: &Process, finder: &Finder<'_>) -> Vec<Address> {
     if let Some(unity_player) = get_unity_player_range(process) {
-        scan_memory_range(process, unity_player, &finder).await
+        scan_memory_range(process, unity_player, &finder)
     } else {
         vec![]
     }
@@ -299,7 +301,7 @@ async fn scan_all_memory_ranges<'a>(process: &'a Process, finder: &Finder<'_>) -
     let mut rs: Vec<(MemoryRange<'a>, Vec<Address>)> = vec![];
     for mr in process.memory_ranges() {
         if let Ok(r) = mr.range() {
-            let addrs = scan_memory_range(process, r, finder).await;
+            let addrs = scan_memory_range(process, r, finder);
             next_tick().await;
             if !addrs.is_empty() {
                 rs.push((mr, addrs));
@@ -309,7 +311,7 @@ async fn scan_all_memory_ranges<'a>(process: &'a Process, finder: &Finder<'_>) -
     rs
 }
 
-async fn scan_memory_range(process: &Process, range: (Address, u64), finder: &Finder<'_>) -> Vec<Address> {
+fn scan_memory_range(process: &Process, range: (Address, u64), finder: &Finder<'_>) -> Vec<Address> {
     let mut rs: Vec<Address> = vec![];
     let (addr, len) = range;
     let mut addr: Address = Into::into(addr);
@@ -333,16 +335,22 @@ async fn scan_memory_range(process: &Process, range: (Address, u64), finder: &Fi
             rs.extend(ps.map(move |pos| addr_here.add(pos as u64)));
         };
         addr = Address::new(end);
-        next_tick().await;
     }
     rs
 }
 
-fn _print_memory_range_info(mr: MemoryRange<'_>) -> Result<(), asr::Error> {
-    asr::print_message(&format!("memory range:\n  size: {:?}\n  flags: {:?}\n  {:?}\n  {:?}", 
+fn print_memory_range_info(process: &Process, mr: MemoryRange<'_>) -> Result<(), asr::Error> {
+    asr::print_message(&format!("memory range: {:?}\n  size: {:?}\n  flags: {:?}\n  {:?}\n  {:?}",
+        memory_range_name(process, mr),
         mr.size()?,
         mr.flags()?,
         mr.address()?,
         mr.range().map(|(a, l)| Address::new(a.value() + l))?));
     Ok(())
+}
+
+fn memory_range_name(process: &Process, mr: MemoryRange<'_>) -> Option<String> {
+    mr.address().ok().and_then(|a1| {
+        MODULE_NAMES.iter().find(|n| process.get_module_address(n).is_ok_and(|a2| a1 == a2))
+    }).map(|s| s.to_string())
 }
