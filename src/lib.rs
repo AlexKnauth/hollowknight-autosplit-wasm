@@ -24,6 +24,7 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 ];
 
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
+const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 6] = [
     0x01A1AC30, // Windows
@@ -88,6 +89,10 @@ impl UnityPlayerHasActiveScene {
         })
     }
 
+    fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
+        process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_BUILD_INDEX_OFFSET])
+    }
+
     fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
         process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0])
     }
@@ -138,6 +143,21 @@ impl SceneFinder {
         }
     }
 
+    fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
+        match self {
+            SceneFinder::SceneManager(scene_manager, muphas) => {
+                let i = scene_manager.get_current_scene_index(process)?;
+                if let Some(uphas) = muphas.as_ref() {
+                    assert_eq!(uphas.get_current_scene_index(process).expect("uphas get_current_scene_index"), i);
+                }
+                Ok(i)
+            }
+            SceneFinder::UnityPlayerHasActiveScene(uphas) => {
+                uphas.get_current_scene_index(process)
+            }
+        }
+    }
+
     fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
         match self {
             SceneFinder::SceneManager(scene_manager, muphas) => {
@@ -174,7 +194,7 @@ async fn main() {
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
-                let scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
+                let mut scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
                 asr::print_message("Trying to attach SceneFinder...");
                 let mut scene_finder = SceneFinder::wait_attach(&process, &scene_table).await;
                 asr::print_message("Attached SceneFinder.");
@@ -182,6 +202,7 @@ async fn main() {
                 asr::print_message(&scene_name);
 
                 scene_finder.attempt_scan(&process).await;
+                on_scene(&process, &scene_finder, &mut scene_table);
 
                 let splits = splits::default_splits();
                 let mut i = 0;
@@ -204,6 +225,7 @@ async fn main() {
                             }
                         }
                         scene_finder.attempt_scan(&process).await;
+                        on_scene(&process, &scene_finder, &mut scene_table);
                     }
                     next_tick().await;
                 }
@@ -218,7 +240,6 @@ fn get_scene_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String 
 
 // --------------------------------------------------------
 
-/*
 fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
     // Log scene_table as json
     if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
@@ -227,16 +248,18 @@ fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
     }
 }
 
-fn on_scene(process: &Process, scene_manager: &SceneManager, scene_table: &mut BTreeMap<i32, SceneInfo>) {
-    let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
-    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_manager.get_current_scene_path(&process).unwrap_or_default();
+fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTreeMap<i32, SceneInfo>) {
+    let si = scene_finder.get_current_scene_index(&process).unwrap_or(-1);
+    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_finder.get_current_scene_path(&process).unwrap_or_default();
     let sn = get_scene_name_string(sp);
-    scene_table.insert(si, SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()});
-    if sn == "Menu_Title" {
+    let sv = SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()};
+    if let Some(tv) = scene_table.get(&si) {
+        assert_eq!(&sv, tv);
+    } else {
+        scene_table.insert(si, sv);
         log_scene_table(scene_table);
     }
 }
-*/
 
 fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
     UNITY_PLAYER_NAMES.into_iter().find_map(|name| {
