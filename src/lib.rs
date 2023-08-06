@@ -2,7 +2,6 @@
 
 mod splits;
 
-use std::collections::BTreeMap;
 use std::string::String;
 use asr::future::{next_tick, retry};
 use asr::{Process, Address};
@@ -11,6 +10,10 @@ use asr::string::ArrayCString;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use asr::watcher::Pair;
+
+#[cfg(debug_assertions)]
+use std::collections::BTreeMap;
+#[cfg(debug_assertions)]
 use serde::{Deserialize, Serialize};
 
 asr::async_main!(stable);
@@ -24,6 +27,7 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 ];
 
 const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
+#[cfg(debug_assertions)]
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 6] = [
@@ -41,12 +45,14 @@ const UNITY_PLAYER_NAMES: [&str; 2] = [
 const ASSETS_SCENES: &str = "Assets/Scenes/";
 const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
+#[cfg(debug_assertions)]
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 struct SceneInfo {
     name: String,
     path: String
 }
 
+#[cfg(debug_assertions)]
 type SceneTable = BTreeMap<i32, SceneInfo>;
 
 struct UnityPlayerHasActiveScene(Address);
@@ -89,6 +95,7 @@ impl UnityPlayerHasActiveScene {
         })
     }
 
+    #[cfg(debug_assertions)]
     fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
         process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_BUILD_INDEX_OFFSET])
     }
@@ -113,7 +120,7 @@ impl SceneFinder {
         }
         None
     }
-    async fn wait_attach(process: &Process, _scene_table: &SceneTable) -> SceneFinder {
+    async fn wait_attach(process: &Process) -> SceneFinder {
         let mut fuel = 1000;
         let maybe_scene_manager = retry(|| {
             if 0 < fuel {
@@ -129,6 +136,7 @@ impl SceneFinder {
         retry(|| SceneFinder::attach(&process)).await
     }
 
+    #[cfg(debug_assertions)]
     async fn attempt_scan(&mut self, process: &Process) {
         match self {
             SceneFinder::SceneManager(_, b) => {
@@ -143,6 +151,7 @@ impl SceneFinder {
         }
     }
 
+    #[cfg(debug_assertions)]
     fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
         match self {
             SceneFinder::SceneManager(scene_manager, muphas) => {
@@ -190,14 +199,19 @@ async fn main() {
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
+                #[cfg(debug_assertions)]
                 let mut scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
+
                 asr::print_message("Trying to attach SceneFinder...");
-                let mut scene_finder = SceneFinder::wait_attach(&process, &scene_table).await;
+                #[allow(unused_mut)]
+                let mut scene_finder = SceneFinder::wait_attach(&process).await;
                 asr::print_message("Attached SceneFinder.");
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
                 asr::print_message(&scene_name);
 
+                #[cfg(debug_assertions)]
                 scene_finder.attempt_scan(&process).await;
+                #[cfg(debug_assertions)]
                 on_scene(&process, &scene_finder, &mut scene_table);
 
                 let splits = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
@@ -206,7 +220,9 @@ async fn main() {
                     let current_split = &splits[i];
                     if let Ok(next_scene_name) = scene_finder.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
                         if next_scene_name != scene_name {
+                            #[cfg(debug_assertions)]
                             asr::print_message(&next_scene_name);
+
                             let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
                             scene_name = next_scene_name;
                             if splits::transition_splits(current_split, &scene_pair) {
@@ -220,7 +236,10 @@ async fn main() {
                                     i = 0;
                                 }
                             }
+
+                            #[cfg(debug_assertions)]
                             scene_finder.attempt_scan(&process).await;
+                            #[cfg(debug_assertions)]
                             on_scene(&process, &scene_finder, &mut scene_table);
                         }
                     }
@@ -239,8 +258,17 @@ fn get_scene_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String 
     String::from_utf8(get_scene_name(&scene_path).to_vec()).unwrap()
 }
 
+fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
+    UNITY_PLAYER_NAMES.into_iter().find_map(|name| {
+        process.get_module_range(name).ok()
+    })
+}
+
 // --------------------------------------------------------
 
+// Logging in debug_assertions mode
+
+#[cfg(debug_assertions)]
 fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
     // Log scene_table as json
     if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
@@ -249,6 +277,7 @@ fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
     }
 }
 
+#[cfg(debug_assertions)]
 fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTreeMap<i32, SceneInfo>) {
     let si = scene_finder.get_current_scene_index(&process).unwrap_or(-1);
     let sp: ArrayCString<SCENE_PATH_SIZE> = scene_finder.get_current_scene_path(&process).unwrap_or_default();
@@ -260,10 +289,4 @@ fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTr
         scene_table.insert(si, sv);
         log_scene_table(scene_table);
     }
-}
-
-fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
-    UNITY_PLAYER_NAMES.into_iter().find_map(|name| {
-        process.get_module_range(name).ok()
-    })
 }
