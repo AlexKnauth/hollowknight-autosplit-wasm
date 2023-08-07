@@ -30,13 +30,14 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 #[cfg(debug_assertions)]
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 6] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 7] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
     0x01BBE2E8, // Mac?
     0x01AB02E8, // Mac?
     0x01BB42E8, // Mac?
     0x01AAF2E8, // Mac?
+    0x01AA32E8, // Mac?
 ];
 const UNITY_PLAYER_NAMES: [&str; 2] = [
     "UnityPlayer.dll", // Windows
