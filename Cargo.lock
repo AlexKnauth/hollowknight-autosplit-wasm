@@ -175,6 +175,7 @@ version = "0.1.0"
 dependencies = [
  "asr",
  "bytemuck",
+ "memchr",
  "serde",
  "serde_json",
 ]

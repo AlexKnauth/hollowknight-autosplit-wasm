@@ -3,13 +3,17 @@
 mod splits;
 
 use std::string::String;
+use std::mem::MaybeUninit;
 use asr::future::{next_tick, retry};
-use asr::{Process, Address};
+use asr::{Process, Address, Address64, MemoryRange};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::string::ArrayCString;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use asr::watcher::Pair;
+
+use memchr;
+use memchr::memmem::Finder;
 
 #[cfg(debug_assertions)]
 use std::collections::BTreeMap;
@@ -45,6 +49,10 @@ const UNITY_PLAYER_NAMES: [&str; 2] = [
 ];
 const ASSETS_SCENES: &str = "Assets/Scenes/";
 const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
+
+const GEO_POOL: i32 = 355335698;
+const GEO_POOL_OFFSET: u64 = 0x248;
+const PLAYER_DATA_OFFSET: u64 = 0xc8;
 
 #[cfg(debug_assertions)]
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -210,6 +218,8 @@ async fn main() {
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
                 asr::print_message(&scene_name);
 
+                asr::print_message(&format!("{:?}", attempt_scan_geo_pool_leaves(&process).await));
+
                 #[cfg(debug_assertions)]
                 scene_finder.attempt_scan(&process).await;
                 #[cfg(debug_assertions)]
@@ -291,3 +301,181 @@ fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTr
         log_scene_table(scene_table);
     }
 }
+
+// --------------------------------------------------------
+
+// Scanning for values in memory
+
+fn scan_memory_range(process: &Process, range: (Address, u64), finder: &Finder<'_>) -> Vec<Address> {
+    let mut rs: Vec<Address> = vec![];
+    let (addr, len) = range;
+    let mut addr: Address = Into::into(addr);
+    // TODO: Handle the case where a signature may be cut in half by a page
+    // boundary.
+    let overall_end = addr.value() + len;
+    // asr::print_message(&format!("Scanning length {}:\n  {}\n  {}", len, addr, Address::new(overall_end)));
+    let mut buf = [MaybeUninit::uninit(); 4 << 10];
+    while addr.value() < overall_end {
+        // We round up to the 4 KiB address boundary as that's a single
+        // page, which is safe to read either fully or not at all. We do
+        // this to do a single read rather than many small ones as the
+        // syscall overhead is a quite high.
+        let end = (addr.value() & !((4 << 10) - 1)) + (4 << 10).min(overall_end);
+        let len = end - addr.value();
+        let current_read_buf = &mut buf[..len as usize];
+        if let Ok(current_read_buf) = process.read_into_uninit_buf(addr, current_read_buf) {
+            let haystack = current_read_buf;
+            let ps = finder.find_iter(haystack);
+            let addr_here = addr;
+            rs.extend(ps.map(move |pos| addr_here.add(pos as u64)));
+        };
+        addr = Address::new(end);
+    }
+    rs
+}
+
+fn scan_unity_player(process: &Process, finder: &Finder<'_>) -> Vec<Address> {
+    if let Some(unity_player) = get_unity_player_range(process) {
+        scan_memory_range(process, unity_player, &finder)
+    } else {
+        vec![]
+    }
+}
+
+async fn scan_all_memory_ranges<'a>(process: &'a Process, finder: &Finder<'_>) -> Vec<Address> {
+    let mut rs: Vec<Address> = vec![];
+    for mr in process.memory_ranges() {
+        if let Ok(r) = mr.range() {
+            let addrs = scan_memory_range(process, r, finder);
+            next_tick().await;
+            if !addrs.is_empty() {
+                rs.extend(addrs);
+            }
+        }
+    }
+    rs
+}
+
+async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Address> {
+    let mut rs: Vec<Address> = vec![];
+    let finder = Finder::new(needle);
+    let addrs = scan_unity_player(&process, &finder);
+    if !addrs.is_empty() {
+        asr::print_message("Found in UnityPlayer");
+        rs.extend(addrs);
+        return rs;
+    } else {
+        asr::print_message("Not found in UnityPlayer, scanning other memory ranges...");
+    }
+    next_tick().await;
+    rs.extend(scan_all_memory_ranges(process, &finder).await);
+    rs
+}
+
+async fn attempt_scan_geo_pool_leaves(process: &Process) -> Option<Address> {
+    asr::print_message("Searching for geo pool...");
+    let mut geo_pool_addrs: Vec<Address> = vec![];
+    for geo_pool in [GEO_POOL].into_iter() {
+        let needle = bytemuck::bytes_of(&geo_pool);
+        geo_pool_addrs.extend(scan_unity_player_first(process, needle).await);
+    }
+    if geo_pool_addrs.is_empty() { return None; }
+    geo_pool_addrs.sort();
+    geo_pool_addrs.dedup();
+    asr::print_message(&format!("Found geo pool: {}", geo_pool_addrs.len()));
+    next_tick().await;
+    asr::print_message("Searching for player data has geo pool pointers...");
+    if geo_pool_addrs.iter().any(|a| a.to_string().ends_with("48")) {
+        asr::print_message("Filtering by ends_with(\"48\") first...");
+        geo_pool_addrs = geo_pool_addrs.into_iter().filter(|a| a.to_string().ends_with("48")).collect();
+        asr::print_message(&geo_pool_addrs.len().to_string());
+    }
+    let mut player_data_addrs: Vec<Address> = vec![];
+    for geo_pool_addr in geo_pool_addrs {
+        let addr64 = Address64::new(geo_pool_addr.value() - GEO_POOL_OFFSET);
+        let needle = bytemuck::bytes_of(&addr64);
+        player_data_addrs.extend(scan_unity_player_first(process, needle).await);
+    }
+    if player_data_addrs.is_empty() { return None; }
+    player_data_addrs.sort();
+    player_data_addrs.dedup();
+    asr::print_message(&format!("Found player data has geo pool pointer: {}", player_data_addrs.len()));
+    next_tick().await;
+    asr::print_message("Searching for has player data pointers...");
+    if player_data_addrs.iter().any(|a| a.to_string().ends_with("c8")) {
+        asr::print_message("Filtering by ends_with(\"c8\") first...");
+        player_data_addrs = player_data_addrs.into_iter().filter(|a| a.to_string().ends_with("c8")).collect();
+        asr::print_message(&player_data_addrs.len().to_string());
+    }
+    let mut has_player_data_addrs: Vec<Address> = vec![];
+    for player_data_addr in player_data_addrs {
+        let addr64 = Address64::new(player_data_addr.value() - PLAYER_DATA_OFFSET);
+        let needle = bytemuck::bytes_of(&addr64);
+        has_player_data_addrs.extend(scan_unity_player_first(process, needle).await);
+    }
+    if has_player_data_addrs.is_empty() { return None; }
+    has_player_data_addrs.sort();
+    has_player_data_addrs.dedup();
+    asr::print_message(&format!("Found has player data pointer: {}", has_player_data_addrs.len()));
+    next_tick().await;
+    asr::print_message("Searching for has^2 player data pointers...");
+    if has_player_data_addrs.iter().any(|a| a.to_string().ends_with("8")) {
+        asr::print_message("Filtering by ends_with(\"8\") first...");
+        has_player_data_addrs = has_player_data_addrs.into_iter().filter(|a| a.to_string().ends_with("8")).collect();
+        asr::print_message(&has_player_data_addrs.len().to_string());
+    }
+    let mut has_2_player_data_addrs: Vec<Address> = vec![];
+    for has_player_data_addr in has_player_data_addrs {
+        let addr64 = Address64::new(has_player_data_addr.value() - 0x38);
+        let needle = bytemuck::bytes_of(&addr64);
+        has_2_player_data_addrs.extend(scan_unity_player_first(process, needle).await);
+    }
+    if has_2_player_data_addrs.is_empty() { return None; }
+    has_2_player_data_addrs.sort();
+    has_2_player_data_addrs.dedup();
+    asr::print_message(&format!("Found has^2 player data pointer: {}", has_2_player_data_addrs.len()));
+    next_tick().await;
+    asr::print_message("Searching for has^3 player data pointers...");
+    if has_2_player_data_addrs.iter().any(|a| a.to_string().ends_with("8")) {
+        asr::print_message("Filtering by ends_with(\"8\") first...");
+        has_2_player_data_addrs = has_2_player_data_addrs.into_iter().filter(|a| a.to_string().ends_with("8")).collect();
+        asr::print_message(&has_2_player_data_addrs.len().to_string());
+    }
+    let mut has_3_player_data_addrs: Vec<Address> = vec![];
+    for has_player_data_addr in has_2_player_data_addrs {
+        let addr64 = Address64::new(has_player_data_addr.value() - 0x28);
+        let needle = bytemuck::bytes_of(&addr64);
+        has_3_player_data_addrs.extend(scan_unity_player_first(process, needle).await);
+    }
+    if has_3_player_data_addrs.is_empty() { return None; }
+    has_3_player_data_addrs.sort();
+    has_3_player_data_addrs.dedup();
+    asr::print_message(&format!("Found has^3 player data pointer: {}", has_3_player_data_addrs.len()));
+    next_tick().await;
+    // 0x80
+    asr::print_message("Searching for has^4 player data pointers...");
+    let mut has_4_player_data_addrs: Vec<Address> = vec![];
+    for has_player_data_addr in has_3_player_data_addrs {
+        let addr64 = Address64::new(has_player_data_addr.value() - 0x80);
+        let needle = bytemuck::bytes_of(&addr64);
+        has_4_player_data_addrs.extend(scan_unity_player_first(process, needle).await);
+    }
+    if has_4_player_data_addrs.is_empty() { return None; }
+    has_4_player_data_addrs.sort();
+    has_4_player_data_addrs.dedup();
+    asr::print_message(&format!("Found has^4 player data pointer: {}", has_4_player_data_addrs.len()));
+    next_tick().await;
+    
+    // {0x10, 0x18}
+    // "UnityPlayer.dll"+019D7CF0
+    
+    let the_addr = has_4_player_data_addrs[0];
+    if let Some((addr, len)) = get_unity_player_range(process) {
+        let offset = the_addr.value() - addr.value();
+        if offset < len {
+            asr::print_message(&format!("  {} = UnityPlayer + 0x{:X}", the_addr, offset));
+        }
+    }
+    Some(the_addr)
+}
+
