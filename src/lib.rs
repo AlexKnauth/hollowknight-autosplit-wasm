@@ -218,7 +218,15 @@ async fn main() {
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
                 asr::print_message(&scene_name);
 
-                asr::print_message(&format!("{:?}", attempt_scan_geo_pool_leaves(&process).await));
+                asr::print_message("Scanning for geo pool roots...");
+                next_tick().await;
+                let maybe_root = attempt_scan_geo_pool_roots(&process);
+                asr::print_message(&format!("maybe_root: {:?}", maybe_root));
+                next_tick().await;
+                if maybe_root.is_none() {
+                    asr::print_message(&format!("{:?}", attempt_scan_geo_pool_leaves(&process).await));
+                    next_tick().await;
+                }
 
                 #[cfg(debug_assertions)]
                 scene_finder.attempt_scan(&process).await;
@@ -370,6 +378,29 @@ async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Addres
     next_tick().await;
     rs.extend(scan_all_memory_ranges(process, &finder).await);
     rs
+}
+
+fn attach_geo_pool_root(process: &Process, a: Address) -> Option<Address> {
+    let g: i32 = process.read_pointer_path64(a, &[0, 0x10, 0x80, 0x28, 0x38, PLAYER_DATA_OFFSET, GEO_POOL_OFFSET]).ok()?;
+    if g == GEO_POOL {
+        Some(a)
+    } else {
+        None
+    }
+}
+
+fn attempt_scan_geo_pool_roots(process: &Process) -> Option<Address> {
+    let unity_player = get_unity_player_range(process)?;
+    let (addr, len) = unity_player;
+    for i in 0 .. (len / 8) {
+        let a = addr.add(i * 8);
+        if let Some(a) = attach_geo_pool_root(process, a) {
+            let offset = a.value() - addr.value();
+            asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
+            return Some(a);
+        }
+    }
+    None
 }
 
 async fn attempt_scan_geo_pool_leaves(process: &Process) -> Option<Address> {
