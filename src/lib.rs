@@ -5,9 +5,9 @@ mod splits;
 use std::string::String;
 use std::mem::MaybeUninit;
 use asr::future::{next_tick, retry};
-use asr::{Process, Address, Address64, MemoryRange};
+use asr::{Process, Address, Address64};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
-use asr::string::ArrayCString;
+use asr::string::{ArrayCString, ArrayWString};
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use asr::watcher::Pair;
@@ -53,6 +53,20 @@ const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 const GEO_POOL: i32 = 355335698;
 const GEO_POOL_OFFSET: u64 = 0x248;
 const PLAYER_DATA_OFFSET: u64 = 0xc8;
+
+const DREAM_RETURN_SCENE_OFFSET: u64 = 0x58;
+const STRING_CONTENTS_OFFSET: u64 = 0x14;
+const DREAM_RETURN_SCENE_LEN: usize = "Dream_NailCollection".len();
+const DREAM_RETURN_SCENE_PATH: &[u64] = &[
+    0,
+    0x10,
+    0x80,
+    0x28,
+    0x38,
+    PLAYER_DATA_OFFSET,
+    DREAM_RETURN_SCENE_OFFSET,
+    STRING_CONTENTS_OFFSET
+];
 
 #[cfg(debug_assertions)]
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -212,16 +226,23 @@ async fn main() {
                 let mut scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
 
                 asr::print_message("Trying to attach SceneFinder...");
+                next_tick().await;
                 #[allow(unused_mut)]
                 let mut scene_finder = SceneFinder::wait_attach(&process).await;
                 asr::print_message("Attached SceneFinder.");
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
                 asr::print_message(&scene_name);
 
+                next_tick().await;
                 asr::print_message("Scanning for geo pool roots...");
                 next_tick().await;
                 let maybe_root = attempt_scan_geo_pool_roots(&process);
                 asr::print_message(&format!("maybe_root: {:?}", maybe_root));
+                next_tick().await;
+                asr::print_message("Scanning for dream_return_scene roots...");
+                next_tick().await;
+                let maybe_root2 = attempt_scan_dream_return_scene_roots(&process);
+                asr::print_message(&format!("maybe_root2: {:?}", maybe_root2));
                 next_tick().await;
                 if maybe_root.is_none() {
                     asr::print_message(&format!("{:?}", attempt_scan_geo_pool_leaves(&process).await));
@@ -378,6 +399,33 @@ async fn scan_unity_player_first(process: &Process, needle: &[u8]) -> Vec<Addres
     next_tick().await;
     rs.extend(scan_all_memory_ranges(process, &finder).await);
     rs
+}
+
+fn attach_dream_return_scene_root(process: &Process, a: Address) -> Option<Address> {
+    let s1: ArrayWString<DREAM_RETURN_SCENE_LEN> = process.read_pointer_path64(a, DREAM_RETURN_SCENE_PATH).ok()?;
+    let s2: String = String::from_utf16(&s1.to_vec()).ok()?;
+    if s2.is_empty() { return None; }
+    for b in s2.as_bytes() {
+        let c = char::from_u32(*b as u32)?;
+        if !(c.is_ascii_alphanumeric() || c.is_ascii_punctuation()) {
+            return None;
+        }
+    }
+    Some(a)
+}
+
+fn attempt_scan_dream_return_scene_roots(process: &Process) -> Option<Address> {
+    let unity_player = get_unity_player_range(process)?;
+    let (addr, len) = unity_player;
+    for i in 0 .. (len / 8) {
+        let a = addr.add(i * 8);
+        if let Some(a) = attach_dream_return_scene_root(process, a) {
+            let offset = a.value() - addr.value();
+            asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
+            return Some(a);
+        }
+    }
+    None
 }
 
 fn attach_geo_pool_root(process: &Process, a: Address) -> Option<Address> {
