@@ -337,7 +337,7 @@ async fn main() {
                     if let Some(nsn) = game_manager_finder.get_next_scene_name(&process) {
                         if nsn != next_scene_name {
                             next_scene_name = nsn;
-                            new_data_next = true;
+                            new_data_next = !next_scene_name.is_empty();
                             #[cfg(debug_assertions)]
                             asr::print_message(&format!("next_scene_name: {}", next_scene_name));
                         }
