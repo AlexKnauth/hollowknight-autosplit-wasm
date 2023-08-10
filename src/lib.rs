@@ -31,6 +31,7 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 #[cfg(debug_assertions)]
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
+const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
 const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 7] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
@@ -117,35 +118,18 @@ type SceneTable = BTreeMap<i32, SceneInfo>;
 struct UnityPlayerHasActiveScene(Address);
 
 impl UnityPlayerHasActiveScene {
-    fn attach_address(process: &Process, a: Address) -> Option<UnityPlayerHasActiveScene> {
-        let s1: ArrayCString<ASSETS_SCENES_LEN> = process.read_pointer_path64(a, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0]).ok()?;
-        let s2: String = String::from_utf8(s1.to_vec()).ok()?;
-        if s2 == ASSETS_SCENES {
-            Some(UnityPlayerHasActiveScene(a))
-        } else {
-            None
-        }
-    }
     fn attach_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
         let (addr, _) = unity_player;
         for offset in UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS.iter() {
-            if let Some(uphas) = UnityPlayerHasActiveScene::attach_address(process, addr.add(*offset)) {
-                return Some(uphas);
+            if let Some(a) = attach_active_scene_root(process, addr.add(*offset)) {
+                return Some(UnityPlayerHasActiveScene(a));
             }
         }
         None
     }
     fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
-        let (addr, len) = unity_player;
-        for i in 0 .. (len / 8) {
-            let a = addr.add(i * 8);
-            if let Some(uphas) = UnityPlayerHasActiveScene::attach_address(process, a) {
-                let offset = a.value() - addr.value();
-                asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
-                return Some(uphas);
-            }
-        }
-        None
+        let a = attempt_scan_roots(process, unity_player, attach_active_scene_root)?;
+        Some(UnityPlayerHasActiveScene(a))
     }
     fn attach_scan(process: &Process) -> Option<UnityPlayerHasActiveScene> {
         let unity_player = get_unity_player_range(process)?;
@@ -272,7 +256,7 @@ impl PlayerDataFinder {
     fn attempt_scan_unity_player(&mut self, process: &Process, unity_player: (Address, u64)) -> Option<()> {
         if self.unity_player_has_player_data.is_some() { return Some(()); }
         asr::print_message("Scanning for dream_return_scene roots...");
-        let a = attempt_scan_dream_return_scene_roots(process, unity_player)?;
+        let a = attempt_scan_roots(process, unity_player, attach_dream_return_scene_root)?;
         self.unity_player_has_player_data = Some(a);
         Some(())
     }
@@ -407,6 +391,16 @@ fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTr
 
 // Scanning for values in memory
 
+fn attach_active_scene_root(process: &Process, a: Address) -> Option<Address> {
+    let s1: ArrayCString<ASSETS_SCENES_LEN> = process.read_pointer_path64(a, ACTIVE_SCENE_CONTENTS_PATH).ok()?;
+    let s2: String = String::from_utf8(s1.to_vec()).ok()?;
+    if s2 == ASSETS_SCENES {
+        Some(a)
+    } else {
+        None
+    }
+}
+
 fn attach_dream_return_scene_root(process: &Process, a: Address) -> Option<Address> {
     let s0: Address64 = process.read_pointer_path64(a, DREAM_RETURN_SCENE_PATH).ok()?;
     let n: u32 = process.read_pointer_path64(s0, &[STRING_LEN_OFFSET]).ok()?;
@@ -424,11 +418,14 @@ fn attach_dream_return_scene_root(process: &Process, a: Address) -> Option<Addre
     Some(a)
 }
 
-fn attempt_scan_dream_return_scene_roots(process: &Process, unity_player: (Address, u64)) -> Option<Address> {
+fn attempt_scan_roots<F>(process: &Process, unity_player: (Address, u64), attach: F) -> Option<Address>
+where 
+    F: Fn(&Process, Address) -> Option<Address>,
+{
     let (addr, len) = unity_player;
     for i in 0 .. (len / 8) {
         let a = addr.add(i * 8);
-        if let Some(a) = attach_dream_return_scene_root(process, a) {
+        if let Some(a) = attach(process, a) {
             let offset = a.value() - addr.value();
             asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
             return Some(a);
