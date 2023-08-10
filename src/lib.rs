@@ -67,7 +67,8 @@ const NON_PLAY_SCENES: [&str; 15] = [
     "PermaDeath_Unlock",
 ];
 
-const UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS: [u64; 2] = [
+const UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS: [u64; 3] = [
+    0x019D7CF0, // Windows
     0x01C03A80, // Mac?
     0x01BF8A80, // Mac?
 ];
@@ -169,14 +170,11 @@ impl SceneFinder {
     async fn wait_attach(process: &Process) -> SceneFinder {
         asr::print_message("Trying to attach SceneManager...");
         next_tick().await;
-        let orig_fuel = 20;
-        let mut fuel = orig_fuel;
-        while 0 < fuel {
+        for i in 0 .. 10 {
             if let Some(scene_manager) = SceneManager::attach(&process) {
-                asr::print_message(&format!("Attached SceneManager (fuel {}%).", (fuel * 100) / orig_fuel));
+                asr::print_message(&format!("Attached SceneManager ({}).", i));
                 return SceneFinder::SceneManager(scene_manager, Box::new(None))
             }
-            fuel -= 1;
             next_tick().await;
         }
         
