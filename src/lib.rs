@@ -303,7 +303,7 @@ async fn main() {
                 #[allow(unused_mut)]
                 let mut scene_finder = SceneFinder::wait_attach(&process).await;
                 let mut curr_scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
-                // let mut prev_scene_name = curr_scene_name;
+                let mut prev_scene_name = curr_scene_name.clone();
                 let mut next_scene_name = "".to_string();
                 asr::print_message(&curr_scene_name);
 
@@ -320,24 +320,29 @@ async fn main() {
                 let mut i = 0;
                 loop {
                     let current_split = &splits[i];
-                    let mut new_data = false;
+                    let mut new_data_curr = false;
+                    let mut new_data_next = false;
                     if let Some(csn) = game_manager_finder.get_scene_name(&process) {
                         if csn != curr_scene_name {
-                            // prev_scene_name = curr_scene_name;
+                            prev_scene_name = curr_scene_name;
                             curr_scene_name = csn;
-                            new_data = true;
+                            if curr_scene_name != next_scene_name { new_data_curr = true; }
                             asr::print_message(&format!("curr_scene_name: {}", curr_scene_name));
                         }
                     }
                     if let Some(nsn) = game_manager_finder.get_next_scene_name(&process) {
                         if nsn != next_scene_name {
                             next_scene_name = nsn;
-                            new_data = true;
+                            new_data_next = true;
                             asr::print_message(&format!("next_scene_name: {}", next_scene_name));
                         }
                     }
-                    if new_data {
-                        let scene_pair: Pair<&str> = Pair{old: &curr_scene_name.clone(), current: &next_scene_name.clone()};
+                    if new_data_next || new_data_curr {
+                        let scene_pair: Pair<&str> = if new_data_next {
+                            Pair{old: &curr_scene_name, current: &next_scene_name}
+                        } else {
+                            Pair{old: &prev_scene_name, current: &curr_scene_name}
+                        };
                         if splits::transition_splits(current_split, &scene_pair) {
                             if i == 0 {
                                 asr::timer::start();
