@@ -2,9 +2,10 @@
 
 mod splits;
 
+use std::cmp::min;
 use std::string::String;
 use asr::future::{next_tick, retry};
-use asr::{Process, Address};
+use asr::{Process, Address, Address64};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::string::{ArrayCString, ArrayWString};
 // use asr::time::Duration;
@@ -46,20 +47,61 @@ const UNITY_PLAYER_NAMES: [&str; 2] = [
 const ASSETS_SCENES: &str = "Assets/Scenes/";
 const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
+const NON_PLAY_SCENES: [&str; 15] = [
+    "Pre_Menu_Intro",
+    "Menu_Title",
+    "Quit_To_Menu",
+    "Opening_Sequence",
+    "GG_Entrance_Cutscene",
+    "Cinematic_Ending_A",
+    "Cinematic_Ending_B",
+    "Cinematic_Ending_C",
+    "Cinematic_Ending_D",
+    "Cinematic_Ending_E",
+    "End_Credits",
+    "Cinematic_MrMushroom",
+    "End_Game_Completion",
+    "PermaDeath",
+    "PermaDeath_Unlock",
+];
+
+const UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS: [u64; 1] = [
+    0x01C03A80 // Mac
+];
+
 const PLAYER_DATA_OFFSET: u64 = 0xc8;
 
+const UPHPD_OFFSET_0: u64 = 0;
+const UPHPD_OFFSET_1: u64 = 0x10;
+const UPHPD_OFFSET_2: u64 = 0x80;
+const UPHPD_OFFSET_3: u64 = 0x28;
+const UPHPD_OFFSET_4: u64 = 0x38;
+
 const DREAM_RETURN_SCENE_OFFSET: u64 = 0x58;
+const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
 const DREAM_RETURN_SCENE_LEN: usize = "Dream_NailCollection".len();
 const DREAM_RETURN_SCENE_PATH: &[u64] = &[
-    0,
-    0x10,
-    0x80,
-    0x28,
-    0x38,
+    UPHPD_OFFSET_0,
+    UPHPD_OFFSET_1,
+    UPHPD_OFFSET_2,
+    UPHPD_OFFSET_3,
+    UPHPD_OFFSET_4,
     PLAYER_DATA_OFFSET,
-    DREAM_RETURN_SCENE_OFFSET,
-    STRING_CONTENTS_OFFSET
+    DREAM_RETURN_SCENE_OFFSET
+];
+
+#[cfg(debug_assertions)]
+const GEO_OFFSET: u64 = 0x1c4;
+#[cfg(debug_assertions)]
+const GEO_PATH: &[u64] = &[
+    UPHPD_OFFSET_0,
+    UPHPD_OFFSET_1,
+    UPHPD_OFFSET_2,
+    UPHPD_OFFSET_3,
+    UPHPD_OFFSET_4,
+    PLAYER_DATA_OFFSET,
+    GEO_OFFSET
 ];
 
 #[cfg(debug_assertions)]
@@ -200,6 +242,48 @@ impl SceneFinder {
     }
 }
 
+struct PlayerDataFinder {
+    unity_player_has_player_data: Option<Address>
+}
+
+impl PlayerDataFinder {
+    fn new() -> PlayerDataFinder {
+        PlayerDataFinder{ unity_player_has_player_data: None }
+    }
+    fn attach_scan(&mut self, process: &Process, scene_name: &str) -> Option<()> {
+        if self.unity_player_has_player_data.is_some() { return Some(()); }
+        if NON_PLAY_SCENES.contains(&scene_name) { return None; }
+        let unity_player = get_unity_player_range(process)?;
+        self.attach_unity_player(process, unity_player).or_else(|| {
+            self.attempt_scan_unity_player(process, unity_player)
+        })
+    }
+    fn attach_unity_player(&mut self, process: &Process, unity_player: (Address, u64)) -> Option<()> {
+        if self.unity_player_has_player_data.is_some() { return Some(()); }
+        let (addr, _) = unity_player;
+        for offset in UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS.iter() {
+            if let Some(a) = attach_dream_return_scene_root(process, addr.add(*offset)) {
+                self.unity_player_has_player_data = Some(a);
+                return Some(());
+            }
+        }
+        None
+    }
+    fn attempt_scan_unity_player(&mut self, process: &Process, unity_player: (Address, u64)) -> Option<()> {
+        if self.unity_player_has_player_data.is_some() { return Some(()); }
+        asr::print_message("Scanning for dream_return_scene roots...");
+        let a = attempt_scan_dream_return_scene_roots(process, unity_player)?;
+        self.unity_player_has_player_data = Some(a);
+        Some(())
+    }
+
+    #[cfg(debug_assertions)]
+    fn get_geo(&self, process: &Process) -> Option<i32> {
+        let a = self.unity_player_has_player_data?;
+        process.read_pointer_path64(a, GEO_PATH).ok()
+    }
+}
+
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
@@ -228,12 +312,11 @@ async fn main() {
                 asr::print_message(&scene_name);
 
                 next_tick().await;
-                asr::print_message("Scanning for dream_return_scene roots...");
-                next_tick().await;
-                let maybe_root2 = attempt_scan_dream_return_scene_roots(&process);
-                asr::print_message(&format!("maybe_root2: {:?}", maybe_root2));
-                next_tick().await;
+                let mut player_data_finder = PlayerDataFinder::new();
+                player_data_finder.attach_scan(&process, &scene_name).unwrap_or_default();
 
+                #[cfg(debug_assertions)]
+                asr::print_message(&format!("geo: {:?}", player_data_finder.get_geo(&process)));
                 #[cfg(debug_assertions)]
                 scene_finder.attempt_scan(&process).await;
                 #[cfg(debug_assertions)]
@@ -262,6 +345,10 @@ async fn main() {
                                 }
                             }
 
+                            player_data_finder.attach_scan(&process, &scene_name).unwrap_or_default();
+
+                            #[cfg(debug_assertions)]
+                            asr::print_message(&format!("geo: {:?}", player_data_finder.get_geo(&process)));
                             #[cfg(debug_assertions)]
                             scene_finder.attempt_scan(&process).await;
                             #[cfg(debug_assertions)]
@@ -321,7 +408,11 @@ fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTr
 // Scanning for values in memory
 
 fn attach_dream_return_scene_root(process: &Process, a: Address) -> Option<Address> {
-    let s1: ArrayWString<DREAM_RETURN_SCENE_LEN> = process.read_pointer_path64(a, DREAM_RETURN_SCENE_PATH).ok()?;
+    let s0: Address64 = process.read_pointer_path64(a, DREAM_RETURN_SCENE_PATH).ok()?;
+    let n: u32 = process.read_pointer_path64(s0, &[STRING_LEN_OFFSET]).ok()?;
+    if !(n < 2048) { return None; }
+    let s1: ArrayWString<DREAM_RETURN_SCENE_LEN> = process.read_pointer_path64(s0, &[STRING_CONTENTS_OFFSET]).ok()?;
+    if !(s1.len() == min(n as usize, DREAM_RETURN_SCENE_LEN)) { return None; }
     let s2: String = String::from_utf16(&s1.to_vec()).ok()?;
     if s2.is_empty() { return None; }
     for b in s2.as_bytes() {
@@ -333,8 +424,7 @@ fn attach_dream_return_scene_root(process: &Process, a: Address) -> Option<Addre
     Some(a)
 }
 
-fn attempt_scan_dream_return_scene_roots(process: &Process) -> Option<Address> {
-    let unity_player = get_unity_player_range(process)?;
+fn attempt_scan_dream_return_scene_roots(process: &Process, unity_player: (Address, u64)) -> Option<Address> {
     let (addr, len) = unity_player;
     for i in 0 .. (len / 8) {
         let a = addr.add(i * 8);
