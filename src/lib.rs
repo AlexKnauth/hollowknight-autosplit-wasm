@@ -130,6 +130,7 @@ impl UnityPlayerHasActiveScene {
         None
     }
     fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
+        asr::print_message("Scanning for active_scene roots...");
         let a = attempt_scan_roots(process, unity_player, attach_active_scene_root)?;
         Some(UnityPlayerHasActiveScene(a))
     }
@@ -166,19 +167,24 @@ impl SceneFinder {
         None
     }
     async fn wait_attach(process: &Process) -> SceneFinder {
-        let mut fuel = 1000;
-        let maybe_scene_manager = retry(|| {
-            if 0 < fuel {
-                fuel -= 1;
-                SceneManager::attach(&process).map(Some)
-            } else {
-                Some(None)
+        asr::print_message("Trying to attach SceneManager...");
+        next_tick().await;
+        let orig_fuel = 20;
+        let mut fuel = orig_fuel;
+        while 0 < fuel {
+            if let Some(scene_manager) = SceneManager::attach(&process) {
+                asr::print_message(&format!("Attached SceneManager (fuel {}%).", (fuel * 100) / orig_fuel));
+                return SceneFinder::SceneManager(scene_manager, Box::new(None))
             }
-        }).await;
-        if let Some(scene_manager) = maybe_scene_manager {
-            return SceneFinder::SceneManager(scene_manager, Box::new(None))
+            fuel -= 1;
+            next_tick().await;
         }
-        retry(|| SceneFinder::attach(&process)).await
+        
+        asr::print_message("Trying to attach SceneFinder...");
+        next_tick().await;
+        let scene_finder = retry(|| SceneFinder::attach(&process)).await;
+        asr::print_message("Attached SceneFinder.");
+        scene_finder
     }
 
     #[cfg(debug_assertions)]
@@ -293,11 +299,9 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 let mut scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
 
-                asr::print_message("Trying to attach SceneFinder...");
                 next_tick().await;
                 #[allow(unused_mut)]
                 let mut scene_finder = SceneFinder::wait_attach(&process).await;
-                asr::print_message("Attached SceneFinder.");
                 let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
                 asr::print_message(&scene_name);
 
