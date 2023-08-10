@@ -162,14 +162,14 @@ impl UnityPlayerHasActiveScene {
 }
 
 enum SceneFinder {
-    SceneManager(SceneManager, Box<Option<UnityPlayerHasActiveScene>>),
+    SceneManager(SceneManager),
     UnityPlayerHasActiveScene(UnityPlayerHasActiveScene)
 }
 
 impl SceneFinder {
     fn attach(process: &Process) -> Option<SceneFinder> {
         if let Some(scene_manager) = SceneManager::attach(process) {
-            return Some(SceneFinder::SceneManager(scene_manager, Box::new(None)));
+            return Some(SceneFinder::SceneManager(scene_manager));
         }
         if let Some(uphas) = UnityPlayerHasActiveScene::attach_scan(process) {
             return Some(SceneFinder::UnityPlayerHasActiveScene(uphas))
@@ -182,7 +182,7 @@ impl SceneFinder {
         for i in 0 .. 10 {
             if let Some(scene_manager) = SceneManager::attach(&process) {
                 asr::print_message(&format!("Attached SceneManager ({}).", i));
-                return SceneFinder::SceneManager(scene_manager, Box::new(None))
+                return SceneFinder::SceneManager(scene_manager)
             }
             next_tick().await;
         }
@@ -195,29 +195,10 @@ impl SceneFinder {
     }
 
     #[cfg(debug_assertions)]
-    async fn attempt_scan(&mut self, process: &Process) {
-        match self {
-            SceneFinder::SceneManager(_, b) => {
-                if b.is_none() {
-                    if let Some(uphas) = UnityPlayerHasActiveScene::attach_scan(process) {
-                        **b = Some(uphas);
-                        asr::print_message("And now with both.");
-                    }
-                }
-            }
-            _ => ()
-        }
-    }
-
-    #[cfg(debug_assertions)]
     fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
         match self {
-            SceneFinder::SceneManager(scene_manager, muphas) => {
-                let i = scene_manager.get_current_scene_index(process)?;
-                if let Some(uphas) = muphas.as_ref() {
-                    assert_eq!(uphas.get_current_scene_index(process).expect("uphas get_current_scene_index"), i);
-                }
-                Ok(i)
+            SceneFinder::SceneManager(scene_manager) => {
+                scene_manager.get_current_scene_index(process)
             }
             SceneFinder::UnityPlayerHasActiveScene(uphas) => {
                 uphas.get_current_scene_index(process)
@@ -227,12 +208,8 @@ impl SceneFinder {
 
     fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
         match self {
-            SceneFinder::SceneManager(scene_manager, muphas) => {
-                let p = scene_manager.get_current_scene_path::<N>(process)?;
-                if let Some(uphas) = muphas.as_ref() {
-                    assert_eq!(uphas.get_current_scene_path::<N>(process).expect("uphas get_current_scene_path").as_bytes(), p.as_bytes());
-                }
-                Ok(p)
+            SceneFinder::SceneManager(scene_manager) => {
+                scene_manager.get_current_scene_path(process)
             }
             SceneFinder::UnityPlayerHasActiveScene(uphas) => {
                 uphas.get_current_scene_path(process)
@@ -337,8 +314,6 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                 #[cfg(debug_assertions)]
-                scene_finder.attempt_scan(&process).await;
-                #[cfg(debug_assertions)]
                 on_scene(&process, &scene_finder, &mut scene_table);
 
                 let splits = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
@@ -362,9 +337,6 @@ async fn main() {
                         }
                     }
                     if new_data {
-                        #[cfg(debug_assertions)]
-                        asr::print_message(&next_scene_name);
-
                         let scene_pair: Pair<&str> = Pair{old: &curr_scene_name.clone(), current: &next_scene_name.clone()};
                         if splits::transition_splits(current_split, &scene_pair) {
                             if i == 0 {
@@ -380,8 +352,6 @@ async fn main() {
 
                         #[cfg(debug_assertions)]
                         asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
-                        #[cfg(debug_assertions)]
-                        scene_finder.attempt_scan(&process).await;
                         #[cfg(debug_assertions)]
                         on_scene(&process, &scene_finder, &mut scene_table);
                     }
