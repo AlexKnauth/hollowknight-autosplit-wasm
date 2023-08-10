@@ -35,7 +35,7 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 8] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 9] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
     0x01AA32E8, // Mac?
@@ -44,6 +44,7 @@ const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 8] = [
     0x01BB32E8, // Mac?
     0x01BB42E8, // Mac?
     0x01BBE2E8, // Mac?
+    0x01BD82E8, // Mac?
 ];
 const UNITY_PLAYER_NAMES: [&str; 2] = [
     "UnityPlayer.dll", // Windows
@@ -54,10 +55,11 @@ const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 3] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 4] = [
     0x019D7CF0, // Windows
-    0x01C03A80, // Mac?
     0x01BF8A80, // Mac?
+    0x01C03A80, // Mac?
+    0x01C1DA80, // Mac?
 ];
 
 const UPHGM_OFFSET_0: u64 = 0;
@@ -247,15 +249,19 @@ impl GameManagerFinder {
     fn new() -> GameManagerFinder {
         GameManagerFinder{ unity_player_has_game_manager: None }
     }
-    fn attach_scan(&mut self, process: &Process, scene_name: &str) -> Option<()> {
-        if self.unity_player_has_game_manager.is_some() { return Some(()); }
-        if scene_name == PRE_MENU_INTRO { return None; }
+    async fn wait_attach_scan(&mut self, process: &Process, scene_finder: &SceneFinder) {
         asr::print_message("Trying to attach GameManagerFinder...");
+        retry(|| self.attach_scan(process, scene_finder)).await;
+        asr::print_message("Attached GameManagerFinder.");
+    }
+    fn attach_scan(&mut self, process: &Process, scene_finder: &SceneFinder) -> Option<()> {
+        if self.unity_player_has_game_manager.is_some() { return Some(()); }
+        let scene_name = scene_finder.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string).ok()?;
+        if scene_name == PRE_MENU_INTRO { return None; }
         let unity_player = get_unity_player_range(process)?;
-        self.attach_unity_player(process, unity_player, scene_name).or_else(|| {
-            self.attempt_scan_unity_player(process, unity_player, scene_name)
+        self.attach_unity_player(process, unity_player, &scene_name).or_else(|| {
+            self.attempt_scan_unity_player(process, unity_player, &scene_name)
         }).and_then(|_| {
-            asr::print_message("Attached GameManagerFinder.");
             Some(())
         })
     }
@@ -319,15 +325,14 @@ async fn main() {
                 next_tick().await;
                 #[allow(unused_mut)]
                 let mut scene_finder = SceneFinder::wait_attach(&process).await;
-                let mut scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
-                asr::print_message(&scene_name);
+                let mut curr_scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
+                // let mut prev_scene_name = curr_scene_name;
+                let mut next_scene_name = "".to_string();
+                asr::print_message(&curr_scene_name);
 
                 next_tick().await;
                 let mut game_manager_finder = GameManagerFinder::new();
-                game_manager_finder.attach_scan(&process, &scene_name).unwrap_or_default();
-
-                asr::print_message(&format!("game manager scene_name: {:?}", game_manager_finder.get_scene_name(&process)));
-                asr::print_message(&format!("game manager next_scene_name: {:?}", game_manager_finder.get_next_scene_name(&process)));
+                game_manager_finder.wait_attach_scan(&process, &scene_finder).await;
 
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
@@ -340,37 +345,45 @@ async fn main() {
                 let mut i = 0;
                 loop {
                     let current_split = &splits[i];
-                    if let Ok(next_scene_name) = scene_finder.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(get_scene_name_string) {
-                        if next_scene_name != scene_name {
-                            #[cfg(debug_assertions)]
-                            asr::print_message(&next_scene_name);
-
-                            let scene_pair: Pair<&str> = Pair{old: &scene_name.clone(), current: &next_scene_name.clone()};
-                            scene_name = next_scene_name;
-                            if splits::transition_splits(current_split, &scene_pair) {
-                                if i == 0 {
-                                    asr::timer::start();
-                                } else {
-                                    asr::timer::split();
-                                }
-                                i += 1;
-                                if splits.len() <= i {
-                                    i = 0;
-                                }
-                            }
-
-                            game_manager_finder.attach_scan(&process, &scene_name).unwrap_or_default();
-
-                            asr::print_message(&format!("game manager scene_name: {:?}", game_manager_finder.get_scene_name(&process)));
-                            asr::print_message(&format!("game manager next_scene_name: {:?}", game_manager_finder.get_next_scene_name(&process)));
-
-                            #[cfg(debug_assertions)]
-                            asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
-                            #[cfg(debug_assertions)]
-                            scene_finder.attempt_scan(&process).await;
-                            #[cfg(debug_assertions)]
-                            on_scene(&process, &scene_finder, &mut scene_table);
+                    let mut new_data = false;
+                    if let Some(csn) = game_manager_finder.get_scene_name(&process) {
+                        if csn != curr_scene_name {
+                            // prev_scene_name = curr_scene_name;
+                            curr_scene_name = csn;
+                            new_data = true;
+                            asr::print_message(&format!("curr_scene_name: {}", curr_scene_name));
                         }
+                    }
+                    if let Some(nsn) = game_manager_finder.get_next_scene_name(&process) {
+                        if nsn != next_scene_name {
+                            next_scene_name = nsn;
+                            new_data = true;
+                            asr::print_message(&format!("next_scene_name: {}", next_scene_name));
+                        }
+                    }
+                    if new_data {
+                        #[cfg(debug_assertions)]
+                        asr::print_message(&next_scene_name);
+
+                        let scene_pair: Pair<&str> = Pair{old: &curr_scene_name.clone(), current: &next_scene_name.clone()};
+                        if splits::transition_splits(current_split, &scene_pair) {
+                            if i == 0 {
+                                asr::timer::start();
+                            } else {
+                                asr::timer::split();
+                            }
+                            i += 1;
+                            if splits.len() <= i {
+                                i = 0;
+                            }
+                        }
+
+                        #[cfg(debug_assertions)]
+                        asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
+                        #[cfg(debug_assertions)]
+                        scene_finder.attempt_scan(&process).await;
+                        #[cfg(debug_assertions)]
+                        on_scene(&process, &scene_finder, &mut scene_table);
                     }
                     next_tick().await;
                 }
