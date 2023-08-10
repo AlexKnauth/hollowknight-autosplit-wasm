@@ -35,7 +35,7 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 9] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 10] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
     0x01AA32E8, // Mac?
@@ -43,6 +43,7 @@ const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 9] = [
     0x01AB02E8, // Mac?
     0x01BB32E8, // Mac?
     0x01BB42E8, // Mac?
+    0x01BBD2E8, // Mac?
     0x01BBE2E8, // Mac?
     0x01BD82E8, // Mac?
 ];
@@ -55,9 +56,10 @@ const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 4] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 5] = [
     0x019D7CF0, // Windows
     0x01BF8A80, // Mac?
+    0x01C02A80, // Mac?
     0x01C03A80, // Mac?
     0x01C1DA80, // Mac?
 ];
@@ -255,7 +257,7 @@ impl GameManagerFinder {
     }
     fn attempt_scan_unity_player(&mut self, process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<()> {
         if self.unity_player_has_game_manager.is_some() { return Some(()); }
-        asr::print_message("Scanning for game_manager_scene_name...");
+        asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
         let a = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name)?;
         self.unity_player_has_game_manager = Some(a);
         Some(())
@@ -289,6 +291,11 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
+    #[cfg(debug_assertions)]
+    let mut scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
+
+    let splits: Vec<splits::Split> = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
+
     loop {
         let process = retry(|| {
             HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
@@ -296,15 +303,12 @@ async fn main() {
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
-                #[cfg(debug_assertions)]
-                let mut scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
-
-                next_tick().await;
                 #[allow(unused_mut)]
                 let mut scene_finder = SceneFinder::wait_attach(&process).await;
                 let mut curr_scene_name = get_scene_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, &scene_finder).await);
                 let mut prev_scene_name = curr_scene_name.clone();
                 let mut next_scene_name = "".to_string();
+                #[cfg(debug_assertions)]
                 asr::print_message(&curr_scene_name);
 
                 next_tick().await;
@@ -316,7 +320,6 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 on_scene(&process, &scene_finder, &mut scene_table);
 
-                let splits = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
                 let mut i = 0;
                 loop {
                     let current_split = &splits[i];
@@ -327,6 +330,7 @@ async fn main() {
                             prev_scene_name = curr_scene_name;
                             curr_scene_name = csn;
                             if curr_scene_name != next_scene_name { new_data_curr = true; }
+                            #[cfg(debug_assertions)]
                             asr::print_message(&format!("curr_scene_name: {}", curr_scene_name));
                         }
                     }
@@ -334,6 +338,7 @@ async fn main() {
                         if nsn != next_scene_name {
                             next_scene_name = nsn;
                             new_data_next = true;
+                            #[cfg(debug_assertions)]
                             asr::print_message(&format!("next_scene_name: {}", next_scene_name));
                         }
                     }
@@ -355,6 +360,8 @@ async fn main() {
                             }
                         }
 
+                        #[cfg(debug_assertions)]
+                        asr::print_message(&format!("{} -> {}", scene_pair.old, scene_pair.current));
                         #[cfg(debug_assertions)]
                         asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                         #[cfg(debug_assertions)]
@@ -397,8 +404,7 @@ fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option
 fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
     // Log scene_table as json
     if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
-        asr::print_message("begin scene_table.json");
-        asr::print_message(&j);
+        asr::print_message(&format!("begin scene_table.json\n{}", j));
     }
 }
 
