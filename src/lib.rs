@@ -133,7 +133,7 @@ impl UnityPlayerHasActiveScene {
     fn attach_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
         let (addr, _) = unity_player;
         for offset in UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS.iter() {
-            if let Some(a) = attach_active_scene_root(process, addr.add(*offset)) {
+            if let Some(a) = attach_active_scene_root(process, addr.add(*offset), &()) {
                 return Some(UnityPlayerHasActiveScene(a));
             }
         }
@@ -141,7 +141,7 @@ impl UnityPlayerHasActiveScene {
     }
     fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
         asr::print_message("Scanning for active_scene roots...");
-        let a = attempt_scan_roots(process, unity_player, attach_active_scene_root)?;
+        let a = attempt_scan_roots(process, unity_player, attach_active_scene_root, &())?;
         Some(UnityPlayerHasActiveScene(a))
     }
     fn attach_scan(process: &Process) -> Option<UnityPlayerHasActiveScene> {
@@ -256,7 +256,7 @@ impl GameManagerFinder {
     fn attempt_scan_unity_player(&mut self, process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<()> {
         if self.unity_player_has_game_manager.is_some() { return Some(()); }
         asr::print_message("Scanning for game_manager_scene_name...");
-        let a = attempt_scan_roots(process, unity_player, |p, a| attach_game_manager_scene_name(p, a, scene_name))?;
+        let a = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name)?;
         self.unity_player_has_game_manager = Some(a);
         Some(())
     }
@@ -415,7 +415,7 @@ fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTr
 
 // Scanning for values in memory
 
-fn attach_active_scene_root(process: &Process, a: Address) -> Option<Address> {
+fn attach_active_scene_root(process: &Process, a: Address, _v: &()) -> Option<Address> {
     let s1: ArrayCString<ASSETS_SCENES_LEN> = process.read_pointer_path64(a, ACTIVE_SCENE_CONTENTS_PATH).ok()?;
     let s2: String = String::from_utf8(s1.to_vec()).ok()?;
     if s2 == ASSETS_SCENES {
@@ -435,14 +435,15 @@ fn attach_game_manager_scene_name(process: &Process, a: Address, scene_name: &st
     }
 }
 
-fn attempt_scan_roots<F>(process: &Process, unity_player: (Address, u64), attach: F) -> Option<Address>
-where 
-    F: Fn(&Process, Address) -> Option<Address>,
+fn attempt_scan_roots<F, V>(process: &Process, unity_player: (Address, u64), attach: F, v: &V) -> Option<Address>
+where
+    F: Fn(&Process, Address, &V) -> Option<Address>,
+    V: ?Sized,
 {
     let (addr, len) = unity_player;
     for i in 0 .. (len / 8) {
         let a = addr.add(i * 8);
-        if let Some(a) = attach(process, a) {
+        if let Some(a) = attach(process, a, v) {
             let offset = a.value() - addr.value();
             asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
             return Some(a);
