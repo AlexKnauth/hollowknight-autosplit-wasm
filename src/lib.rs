@@ -22,6 +22,9 @@ asr::async_main!(stable);
 
 const SCENE_PATH_SIZE: usize = 64;
 
+const STRING_LEN_OFFSET: u64 = 0x10;
+const STRING_CONTENTS_OFFSET: u64 = 0x14;
+
 const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
     "hollow_knight.exe", // Windows
     "Hollow Knight", // Mac
@@ -73,17 +76,34 @@ const UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS: [u64; 3] = [
     0x01BF8A80, // Mac?
 ];
 
-const PLAYER_DATA_OFFSET: u64 = 0xc8;
-
 const UPHPD_OFFSET_0: u64 = 0;
 const UPHPD_OFFSET_1: u64 = 0x10;
 const UPHPD_OFFSET_2: u64 = 0x80;
 const UPHPD_OFFSET_3: u64 = 0x28;
 const UPHPD_OFFSET_4: u64 = 0x38;
 
+const SCENE_NAME_OFFSET: u64 = 0x18;
+const NEXT_SCENE_NAME_OFFSET: u64 = 0x20;
+const SCENE_NAME_PATH: &[u64] = &[
+    UPHPD_OFFSET_0,
+    UPHPD_OFFSET_1,
+    UPHPD_OFFSET_2,
+    UPHPD_OFFSET_3,
+    UPHPD_OFFSET_4,
+    SCENE_NAME_OFFSET
+];
+const NEXT_SCENE_NAME_PATH: &[u64] = &[
+    UPHPD_OFFSET_0,
+    UPHPD_OFFSET_1,
+    UPHPD_OFFSET_2,
+    UPHPD_OFFSET_3,
+    UPHPD_OFFSET_4,
+    NEXT_SCENE_NAME_OFFSET
+];
+
+const PLAYER_DATA_OFFSET: u64 = 0xc8;
+
 const DREAM_RETURN_SCENE_OFFSET: u64 = 0x58;
-const STRING_LEN_OFFSET: u64 = 0x10;
-const STRING_CONTENTS_OFFSET: u64 = 0x14;
 const DREAM_RETURN_SCENE_LEN: usize = "Dream_NailCollection".len();
 const DREAM_RETURN_SCENE_PATH: &[u64] = &[
     UPHPD_OFFSET_0,
@@ -271,6 +291,18 @@ impl PlayerDataFinder {
         Some(())
     }
 
+    fn get_scene_name(&self, process: &Process) -> Option<String> {
+        let a = self.unity_player_has_player_data?;
+        let s = process.read_pointer_path64(a, SCENE_NAME_PATH).ok()?;
+        read_string_object::<SCENE_PATH_SIZE>(process, s)
+    }
+
+    fn get_next_scene_name(&self, process: &Process) -> Option<String> {
+        let a = self.unity_player_has_player_data?;
+        let s = process.read_pointer_path64(a, NEXT_SCENE_NAME_PATH).ok()?;
+        read_string_object::<SCENE_PATH_SIZE>(process, s)
+    }
+
     #[cfg(debug_assertions)]
     fn get_geo(&self, process: &Process) -> Option<i32> {
         let a = self.unity_player_has_player_data?;
@@ -307,6 +339,9 @@ async fn main() {
                 let mut player_data_finder = PlayerDataFinder::new();
                 player_data_finder.attach_scan(&process, &scene_name).unwrap_or_default();
 
+                asr::print_message(&format!("player data scene_name: {:?}", player_data_finder.get_scene_name(&process)));
+                asr::print_message(&format!("player data next_scene_name: {:?}", player_data_finder.get_next_scene_name(&process)));
+
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", player_data_finder.get_geo(&process)));
                 #[cfg(debug_assertions)]
@@ -339,6 +374,9 @@ async fn main() {
 
                             player_data_finder.attach_scan(&process, &scene_name).unwrap_or_default();
 
+                            asr::print_message(&format!("player data scene_name: {:?}", player_data_finder.get_scene_name(&process)));
+                            asr::print_message(&format!("player data next_scene_name: {:?}", player_data_finder.get_next_scene_name(&process)));
+
                             #[cfg(debug_assertions)]
                             asr::print_message(&format!("geo: {:?}", player_data_finder.get_geo(&process)));
                             #[cfg(debug_assertions)]
@@ -366,6 +404,14 @@ fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
     UNITY_PLAYER_NAMES.into_iter().find_map(|name| {
         process.get_module_range(name).ok()
     })
+}
+
+fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option<String> {
+    let n: u32 = process.read_pointer_path64(a, &[STRING_LEN_OFFSET]).ok()?;
+    if !(n < 2048) { return None; }
+    let w: ArrayWString<N> = process.read_pointer_path64(a, &[STRING_CONTENTS_OFFSET]).ok()?;
+    if !(w.len() == min(n as usize, N)) { return None; }
+    String::from_utf16(&w.to_vec()).ok()
 }
 
 // --------------------------------------------------------
@@ -411,11 +457,7 @@ fn attach_active_scene_root(process: &Process, a: Address) -> Option<Address> {
 
 fn attach_dream_return_scene_root(process: &Process, a: Address) -> Option<Address> {
     let s0: Address64 = process.read_pointer_path64(a, DREAM_RETURN_SCENE_PATH).ok()?;
-    let n: u32 = process.read_pointer_path64(s0, &[STRING_LEN_OFFSET]).ok()?;
-    if !(n < 2048) { return None; }
-    let s1: ArrayWString<DREAM_RETURN_SCENE_LEN> = process.read_pointer_path64(s0, &[STRING_CONTENTS_OFFSET]).ok()?;
-    if !(s1.len() == min(n as usize, DREAM_RETURN_SCENE_LEN)) { return None; }
-    let s2: String = String::from_utf16(&s1.to_vec()).ok()?;
+    let s2: String = read_string_object::<DREAM_RETURN_SCENE_LEN>(process, s0)?;
     if s2.is_empty() { return None; }
     for b in s2.as_bytes() {
         let c = char::from_u32(*b as u32)?;
