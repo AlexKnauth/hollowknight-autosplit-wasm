@@ -32,7 +32,7 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 7] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 8] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
     0x01BBE2E8, // Mac?
@@ -40,6 +40,7 @@ const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 7] = [
     0x01BB42E8, // Mac?
     0x01AAF2E8, // Mac?
     0x01AA32E8, // Mac?
+    0x01BB32E8, // Mac?
 ];
 const UNITY_PLAYER_NAMES: [&str; 2] = [
     "UnityPlayer.dll", // Windows
@@ -66,8 +67,9 @@ const NON_PLAY_SCENES: [&str; 15] = [
     "PermaDeath_Unlock",
 ];
 
-const UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS: [u64; 1] = [
-    0x01C03A80 // Mac
+const UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS: [u64; 2] = [
+    0x01C03A80, // Mac?
+    0x01BF8A80, // Mac?
 ];
 
 const PLAYER_DATA_OFFSET: u64 = 0xc8;
@@ -237,9 +239,13 @@ impl PlayerDataFinder {
     fn attach_scan(&mut self, process: &Process, scene_name: &str) -> Option<()> {
         if self.unity_player_has_player_data.is_some() { return Some(()); }
         if NON_PLAY_SCENES.contains(&scene_name) { return None; }
+        asr::print_message("Trying to attach PlayerDataFinder...");
         let unity_player = get_unity_player_range(process)?;
         self.attach_unity_player(process, unity_player).or_else(|| {
             self.attempt_scan_unity_player(process, unity_player)
+        }).and_then(|_| {
+            asr::print_message("Attached PlayerDataFinder.");
+            Some(())
         })
     }
     fn attach_unity_player(&mut self, process: &Process, unity_player: (Address, u64)) -> Option<()> {
