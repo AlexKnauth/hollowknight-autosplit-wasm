@@ -38,12 +38,12 @@ const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET
 const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 8] = [
     0x01A1AC30, // Windows
     0x01A982E8, // Mac?
-    0x01BBE2E8, // Mac?
-    0x01AB02E8, // Mac?
-    0x01BB42E8, // Mac?
-    0x01AAF2E8, // Mac?
     0x01AA32E8, // Mac?
+    0x01AAF2E8, // Mac?
+    0x01AB02E8, // Mac?
     0x01BB32E8, // Mac?
+    0x01BB42E8, // Mac?
+    0x01BBE2E8, // Mac?
 ];
 const UNITY_PLAYER_NAMES: [&str; 2] = [
     "UnityPlayer.dll", // Windows
@@ -52,65 +52,52 @@ const UNITY_PLAYER_NAMES: [&str; 2] = [
 const ASSETS_SCENES: &str = "Assets/Scenes/";
 const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
-const NON_PLAY_SCENES: [&str; 15] = [
-    "Pre_Menu_Intro",
-    "Menu_Title",
-    "Quit_To_Menu",
-    "Opening_Sequence",
-    "GG_Entrance_Cutscene",
-    "Cinematic_Ending_A",
-    "Cinematic_Ending_B",
-    "Cinematic_Ending_C",
-    "Cinematic_Ending_D",
-    "Cinematic_Ending_E",
-    "End_Credits",
-    "Cinematic_MrMushroom",
-    "End_Game_Completion",
-    "PermaDeath",
-    "PermaDeath_Unlock",
-];
+const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 
-const UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS: [u64; 3] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 3] = [
     0x019D7CF0, // Windows
     0x01C03A80, // Mac?
     0x01BF8A80, // Mac?
 ];
 
-const UPHPD_OFFSET_0: u64 = 0;
-const UPHPD_OFFSET_1: u64 = 0x10;
-const UPHPD_OFFSET_2: u64 = 0x80;
-const UPHPD_OFFSET_3: u64 = 0x28;
-const UPHPD_OFFSET_4: u64 = 0x38;
+const UPHGM_OFFSET_0: u64 = 0;
+const UPHGM_OFFSET_1: u64 = 0x10;
+const UPHGM_OFFSET_2: u64 = 0x80;
+const UPHGM_OFFSET_3: u64 = 0x28;
+const UPHGM_OFFSET_4: u64 = 0x38;
 
 const SCENE_NAME_OFFSET: u64 = 0x18;
 const NEXT_SCENE_NAME_OFFSET: u64 = 0x20;
 const SCENE_NAME_PATH: &[u64] = &[
-    UPHPD_OFFSET_0,
-    UPHPD_OFFSET_1,
-    UPHPD_OFFSET_2,
-    UPHPD_OFFSET_3,
-    UPHPD_OFFSET_4,
+    UPHGM_OFFSET_0,
+    UPHGM_OFFSET_1,
+    UPHGM_OFFSET_2,
+    UPHGM_OFFSET_3,
+    UPHGM_OFFSET_4,
     SCENE_NAME_OFFSET
 ];
 const NEXT_SCENE_NAME_PATH: &[u64] = &[
-    UPHPD_OFFSET_0,
-    UPHPD_OFFSET_1,
-    UPHPD_OFFSET_2,
-    UPHPD_OFFSET_3,
-    UPHPD_OFFSET_4,
+    UPHGM_OFFSET_0,
+    UPHGM_OFFSET_1,
+    UPHGM_OFFSET_2,
+    UPHGM_OFFSET_3,
+    UPHGM_OFFSET_4,
     NEXT_SCENE_NAME_OFFSET
 ];
 
 const PLAYER_DATA_OFFSET: u64 = 0xc8;
 
+#[allow(unused)]
 const DREAM_RETURN_SCENE_OFFSET: u64 = 0x58;
+#[allow(unused)]
 const DREAM_RETURN_SCENE_LEN: usize = "Dream_NailCollection".len();
+#[allow(unused)]
 const DREAM_RETURN_SCENE_PATH: &[u64] = &[
-    UPHPD_OFFSET_0,
-    UPHPD_OFFSET_1,
-    UPHPD_OFFSET_2,
-    UPHPD_OFFSET_3,
-    UPHPD_OFFSET_4,
+    UPHGM_OFFSET_0,
+    UPHGM_OFFSET_1,
+    UPHGM_OFFSET_2,
+    UPHGM_OFFSET_3,
+    UPHGM_OFFSET_4,
     PLAYER_DATA_OFFSET,
     DREAM_RETURN_SCENE_OFFSET
 ];
@@ -119,11 +106,11 @@ const DREAM_RETURN_SCENE_PATH: &[u64] = &[
 const GEO_OFFSET: u64 = 0x1c4;
 #[cfg(debug_assertions)]
 const GEO_PATH: &[u64] = &[
-    UPHPD_OFFSET_0,
-    UPHPD_OFFSET_1,
-    UPHPD_OFFSET_2,
-    UPHPD_OFFSET_3,
-    UPHPD_OFFSET_4,
+    UPHGM_OFFSET_0,
+    UPHGM_OFFSET_1,
+    UPHGM_OFFSET_2,
+    UPHGM_OFFSET_3,
+    UPHGM_OFFSET_4,
     PLAYER_DATA_OFFSET,
     GEO_OFFSET
 ];
@@ -252,60 +239,60 @@ impl SceneFinder {
     }
 }
 
-struct PlayerDataFinder {
-    unity_player_has_player_data: Option<Address>
+struct GameManagerFinder {
+    unity_player_has_game_manager: Option<Address>
 }
 
-impl PlayerDataFinder {
-    fn new() -> PlayerDataFinder {
-        PlayerDataFinder{ unity_player_has_player_data: None }
+impl GameManagerFinder {
+    fn new() -> GameManagerFinder {
+        GameManagerFinder{ unity_player_has_game_manager: None }
     }
     fn attach_scan(&mut self, process: &Process, scene_name: &str) -> Option<()> {
-        if self.unity_player_has_player_data.is_some() { return Some(()); }
-        if NON_PLAY_SCENES.contains(&scene_name) { return None; }
-        asr::print_message("Trying to attach PlayerDataFinder...");
+        if self.unity_player_has_game_manager.is_some() { return Some(()); }
+        if scene_name == PRE_MENU_INTRO { return None; }
+        asr::print_message("Trying to attach GameManagerFinder...");
         let unity_player = get_unity_player_range(process)?;
-        self.attach_unity_player(process, unity_player).or_else(|| {
-            self.attempt_scan_unity_player(process, unity_player)
+        self.attach_unity_player(process, unity_player, scene_name).or_else(|| {
+            self.attempt_scan_unity_player(process, unity_player, scene_name)
         }).and_then(|_| {
-            asr::print_message("Attached PlayerDataFinder.");
+            asr::print_message("Attached GameManagerFinder.");
             Some(())
         })
     }
-    fn attach_unity_player(&mut self, process: &Process, unity_player: (Address, u64)) -> Option<()> {
-        if self.unity_player_has_player_data.is_some() { return Some(()); }
+    fn attach_unity_player(&mut self, process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<()> {
+        if self.unity_player_has_game_manager.is_some() { return Some(()); }
         let (addr, _) = unity_player;
-        for offset in UNITY_PLAYER_HAS_PLAYER_DATA_OFFSETS.iter() {
-            if let Some(a) = attach_dream_return_scene_root(process, addr.add(*offset)) {
-                self.unity_player_has_player_data = Some(a);
+        for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
+            if let Some(a) = attach_game_manager_scene_name(process, addr.add(*offset), scene_name) {
+                self.unity_player_has_game_manager = Some(a);
                 return Some(());
             }
         }
         None
     }
-    fn attempt_scan_unity_player(&mut self, process: &Process, unity_player: (Address, u64)) -> Option<()> {
-        if self.unity_player_has_player_data.is_some() { return Some(()); }
-        asr::print_message("Scanning for dream_return_scene roots...");
-        let a = attempt_scan_roots(process, unity_player, attach_dream_return_scene_root)?;
-        self.unity_player_has_player_data = Some(a);
+    fn attempt_scan_unity_player(&mut self, process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<()> {
+        if self.unity_player_has_game_manager.is_some() { return Some(()); }
+        asr::print_message("Scanning for game_manager_scene_name...");
+        let a = attempt_scan_roots(process, unity_player, |p, a| attach_game_manager_scene_name(p, a, scene_name))?;
+        self.unity_player_has_game_manager = Some(a);
         Some(())
     }
 
     fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let a = self.unity_player_has_player_data?;
+        let a = self.unity_player_has_game_manager?;
         let s = process.read_pointer_path64(a, SCENE_NAME_PATH).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let a = self.unity_player_has_player_data?;
+        let a = self.unity_player_has_game_manager?;
         let s = process.read_pointer_path64(a, NEXT_SCENE_NAME_PATH).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     #[cfg(debug_assertions)]
     fn get_geo(&self, process: &Process) -> Option<i32> {
-        let a = self.unity_player_has_player_data?;
+        let a = self.unity_player_has_game_manager?;
         process.read_pointer_path64(a, GEO_PATH).ok()
     }
 }
@@ -336,14 +323,14 @@ async fn main() {
                 asr::print_message(&scene_name);
 
                 next_tick().await;
-                let mut player_data_finder = PlayerDataFinder::new();
-                player_data_finder.attach_scan(&process, &scene_name).unwrap_or_default();
+                let mut game_manager_finder = GameManagerFinder::new();
+                game_manager_finder.attach_scan(&process, &scene_name).unwrap_or_default();
 
-                asr::print_message(&format!("player data scene_name: {:?}", player_data_finder.get_scene_name(&process)));
-                asr::print_message(&format!("player data next_scene_name: {:?}", player_data_finder.get_next_scene_name(&process)));
+                asr::print_message(&format!("game manager scene_name: {:?}", game_manager_finder.get_scene_name(&process)));
+                asr::print_message(&format!("game manager next_scene_name: {:?}", game_manager_finder.get_next_scene_name(&process)));
 
                 #[cfg(debug_assertions)]
-                asr::print_message(&format!("geo: {:?}", player_data_finder.get_geo(&process)));
+                asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                 #[cfg(debug_assertions)]
                 scene_finder.attempt_scan(&process).await;
                 #[cfg(debug_assertions)]
@@ -372,13 +359,13 @@ async fn main() {
                                 }
                             }
 
-                            player_data_finder.attach_scan(&process, &scene_name).unwrap_or_default();
+                            game_manager_finder.attach_scan(&process, &scene_name).unwrap_or_default();
 
-                            asr::print_message(&format!("player data scene_name: {:?}", player_data_finder.get_scene_name(&process)));
-                            asr::print_message(&format!("player data next_scene_name: {:?}", player_data_finder.get_next_scene_name(&process)));
+                            asr::print_message(&format!("game manager scene_name: {:?}", game_manager_finder.get_scene_name(&process)));
+                            asr::print_message(&format!("game manager next_scene_name: {:?}", game_manager_finder.get_next_scene_name(&process)));
 
                             #[cfg(debug_assertions)]
-                            asr::print_message(&format!("geo: {:?}", player_data_finder.get_geo(&process)));
+                            asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                             #[cfg(debug_assertions)]
                             scene_finder.attempt_scan(&process).await;
                             #[cfg(debug_assertions)]
@@ -455,17 +442,14 @@ fn attach_active_scene_root(process: &Process, a: Address) -> Option<Address> {
     }
 }
 
-fn attach_dream_return_scene_root(process: &Process, a: Address) -> Option<Address> {
-    let s0: Address64 = process.read_pointer_path64(a, DREAM_RETURN_SCENE_PATH).ok()?;
-    let s2: String = read_string_object::<DREAM_RETURN_SCENE_LEN>(process, s0)?;
-    if s2.is_empty() { return None; }
-    for b in s2.as_bytes() {
-        let c = char::from_u32(*b as u32)?;
-        if !(c.is_ascii_alphanumeric() || c.is_ascii_punctuation()) {
-            return None;
-        }
+fn attach_game_manager_scene_name(process: &Process, a: Address, scene_name: &str) -> Option<Address> {
+    let s0: Address64 = process.read_pointer_path64(a, SCENE_NAME_PATH).ok()?;
+    let s2: String = read_string_object::<SCENE_PATH_SIZE>(process, s0)?;
+    if s2 == scene_name {
+        Some(a)
+    } else {
+        None
     }
-    Some(a)
 }
 
 fn attempt_scan_roots<F>(process: &Process, unity_player: (Address, u64), attach: F) -> Option<Address>
