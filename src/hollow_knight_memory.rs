@@ -27,9 +27,11 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 10] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 12] = [
     0x01A1AC30, // Windows
+    0x01A862E8, // Mac?
     0x01A982E8, // Mac?
+    0x01AA22E8, // Mac?
     0x01AA32E8, // Mac?
     0x01AAF2E8, // Mac?
     0x01AB02E8, // Mac?
@@ -45,9 +47,12 @@ const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 5] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 8] = [
     0x019D7CF0, // Windows
+    0x01ADDA80, // Mac?
+    0x01AE7A80, // Mac?
     0x01BF8A80, // Mac?
+    0x01BF9A80, // Mac?
     0x01C02A80, // Mac?
     0x01C03A80, // Mac?
     0x01C1DA80, // Mac?
@@ -80,6 +85,17 @@ const NEXT_SCENE_NAME_PATH: &[u64] = &[
 
 #[allow(unused)]
 const PLAYER_DATA_OFFSET: u64 = 0xc8;
+
+const FIREBALL_LEVEL_OFFSET: u64 = 0x260;
+const FIREBALL_LEVEL_PATH: &[u64] = &[
+    UPHGM_OFFSET_0,
+    UPHGM_OFFSET_1,
+    UPHGM_OFFSET_2,
+    UPHGM_OFFSET_3,
+    UPHGM_OFFSET_4,
+    PLAYER_DATA_OFFSET,
+    FIREBALL_LEVEL_OFFSET
+];
 
 #[cfg(debug_assertions)]
 const GEO_OFFSET: u64 = 0x1c4;
@@ -235,6 +251,10 @@ impl GameManagerFinder {
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
         let s = process.read_pointer_path64(self.0, NEXT_SCENE_NAME_PATH).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
+    }
+
+    pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
+        process.read_pointer_path64(self.0, FIREBALL_LEVEL_PATH).ok()
     }
 
     #[cfg(debug_assertions)]

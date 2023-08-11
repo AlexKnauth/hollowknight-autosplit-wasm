@@ -1,5 +1,8 @@
+use asr::Process;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
+
+use super::hollow_knight_memory::GameManagerFinder;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum Split {
@@ -16,6 +19,7 @@ pub enum Split {
     SlyShopExit,
     // Crossroads
     AncestralMound,
+    VengefulSpirit,
     SalubraExit,
     EnterHollowKnight,
     // Greenpath
@@ -28,6 +32,7 @@ pub enum Split {
     // City
     TransGorgeousHusk,
     MenuStoreroomsSimpleKey,
+    ShadeSoul,
     MenuShadeSoul,
     EnterBlackKnight,
     BlackKnightTrans,
@@ -89,6 +94,16 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
         Split::TeachersArchive => p.current.starts_with("Fungus3_Archive") && !p.old.starts_with("Fungus3_Archive"),
         // Queen's Gardens
         Split::QueensGardensEntry => (p.current.starts_with("Fungus3_34") || p.current.starts_with("Deepnest_43")) && p.current != p.old,
+        // else
+        _ => false
+    }
+}
+
+pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder) -> bool {
+    match s {
+        Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
+        Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),
+        _ => false
     }
 }
 

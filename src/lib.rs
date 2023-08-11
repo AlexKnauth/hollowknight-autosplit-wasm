@@ -68,8 +68,14 @@ async fn main() {
                 on_scene(&process, &scene_finder, &mut scene_table);
 
                 let mut i = 0;
+                let n = splits.len();
                 loop {
                     let current_split = &splits[i];
+                    if splits::continuous_splits(current_split, &process, &game_manager_finder) {
+                        split_index(&mut i, n);
+                        next_tick().await;
+                        continue;
+                    }
                     let mut new_data_curr = false;
                     let mut new_data_next = false;
                     if let Some(csn) = game_manager_finder.get_scene_name(&process) {
@@ -96,19 +102,13 @@ async fn main() {
                             Pair{old: &prev_scene_name, current: &curr_scene_name}
                         };
                         if splits::transition_splits(current_split, &scene_pair) {
-                            if i == 0 {
-                                asr::timer::start();
-                            } else {
-                                asr::timer::split();
-                            }
-                            i += 1;
-                            if splits.len() <= i {
-                                i = 0;
-                            }
+                            split_index(&mut i, n);
                         }
 
                         #[cfg(debug_assertions)]
                         asr::print_message(&format!("{} -> {}", scene_pair.old, scene_pair.current));
+                        #[cfg(debug_assertions)]
+                        asr::print_message(&format!("fireballLevel: {:?}", game_manager_finder.get_fireball_level(&process)));
                         #[cfg(debug_assertions)]
                         asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                         #[cfg(debug_assertions)]
@@ -118,6 +118,18 @@ async fn main() {
                 }
             })
             .await;
+    }
+}
+
+fn split_index(i: &mut usize, n: usize) {
+    if *i == 0 {
+        asr::timer::start();
+    } else {
+        asr::timer::split();
+    }
+    *i += 1;
+    if n <= *i {
+        *i = 0;
     }
 }
 
