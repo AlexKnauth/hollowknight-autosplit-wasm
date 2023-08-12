@@ -63,23 +63,22 @@ const UPHGM_OFFSET_1: u64 = 0x10;
 const UPHGM_OFFSET_2: u64 = 0x80;
 const UPHGM_OFFSET_3: u64 = 0x28;
 const UPHGM_OFFSET_4: u64 = 0x38;
+const GAME_MANAGER_PATH: &[u64] = &[
+    UPHGM_OFFSET_0,
+    UPHGM_OFFSET_1,
+    UPHGM_OFFSET_2,
+    UPHGM_OFFSET_3,
+    UPHGM_OFFSET_4
+];
 
 const SCENE_NAME_OFFSET: u64 = 0x18;
 const NEXT_SCENE_NAME_OFFSET: u64 = 0x20;
 const SCENE_NAME_PATH: &[u64] = &[
-    UPHGM_OFFSET_0,
-    UPHGM_OFFSET_1,
-    UPHGM_OFFSET_2,
-    UPHGM_OFFSET_3,
-    UPHGM_OFFSET_4,
+    // from game_manager
     SCENE_NAME_OFFSET
 ];
 const NEXT_SCENE_NAME_PATH: &[u64] = &[
-    UPHGM_OFFSET_0,
-    UPHGM_OFFSET_1,
-    UPHGM_OFFSET_2,
-    UPHGM_OFFSET_3,
-    UPHGM_OFFSET_4,
+    // from game_manager
     NEXT_SCENE_NAME_OFFSET
 ];
 
@@ -88,11 +87,7 @@ const PLAYER_DATA_OFFSET: u64 = 0xc8;
 
 const FIREBALL_LEVEL_OFFSET: u64 = 0x260;
 const FIREBALL_LEVEL_PATH: &[u64] = &[
-    UPHGM_OFFSET_0,
-    UPHGM_OFFSET_1,
-    UPHGM_OFFSET_2,
-    UPHGM_OFFSET_3,
-    UPHGM_OFFSET_4,
+    // from game_manager
     PLAYER_DATA_OFFSET,
     FIREBALL_LEVEL_OFFSET
 ];
@@ -101,11 +96,7 @@ const FIREBALL_LEVEL_PATH: &[u64] = &[
 const GEO_OFFSET: u64 = 0x1c4;
 #[cfg(debug_assertions)]
 const GEO_PATH: &[u64] = &[
-    UPHGM_OFFSET_0,
-    UPHGM_OFFSET_1,
-    UPHGM_OFFSET_2,
-    UPHGM_OFFSET_3,
-    UPHGM_OFFSET_4,
+    // from game_manager
     PLAYER_DATA_OFFSET,
     GEO_OFFSET
 ];
@@ -202,6 +193,10 @@ impl SceneFinder {
         }
     }
 
+    pub fn get_current_scene_name(&self, process: &Process) -> Result<String, asr::Error> {
+        self.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(scene_path_to_name_string)
+    }
+
     async fn wait_get_current_scene_path<const N: usize>(&self, process: &Process) -> ArrayCString<N> {
         retry(|| self.get_current_scene_path(&process)).await
     }
@@ -211,7 +206,10 @@ impl SceneFinder {
     }
 }
 
-pub struct GameManagerFinder(Address);
+pub struct GameManagerFinder {
+    // unity_player_has_game_manager: Address,
+    game_manager: Address64
+}
 
 impl GameManagerFinder {
     pub async fn wait_attach(process: &Process, scene_finder: &SceneFinder) -> GameManagerFinder {
@@ -221,7 +219,7 @@ impl GameManagerFinder {
         g
     }
     fn attach_scan(process: &Process, scene_finder: &SceneFinder) -> Option<GameManagerFinder> {
-        let scene_name = scene_finder.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(scene_path_to_name_string).ok()?;
+        let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
         if scene_name == PRE_MENU_INTRO { return None; }
         let unity_player = get_unity_player_range(process)?;
         GameManagerFinder::attach_unity_player(process, unity_player, &scene_name).or_else(|| {
@@ -232,7 +230,8 @@ impl GameManagerFinder {
         let (addr, _) = unity_player;
         for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
             if let Some(a) = attach_game_manager_scene_name(process, addr.add(*offset), scene_name) {
-                return Some(GameManagerFinder(a));
+                let game_manager: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
+                return Some(GameManagerFinder{game_manager});
             }
         }
         None
@@ -240,26 +239,27 @@ impl GameManagerFinder {
     fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
         asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
         let a = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name)?;
-        Some(GameManagerFinder(a))
+        let game_manager: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
+        Some(GameManagerFinder{game_manager})
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.0, SCENE_NAME_PATH).ok()?;
+        let s = process.read_pointer_path64(self.game_manager, SCENE_NAME_PATH).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.0, NEXT_SCENE_NAME_PATH).ok()?;
+        let s = process.read_pointer_path64(self.game_manager, NEXT_SCENE_NAME_PATH).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.0, FIREBALL_LEVEL_PATH).ok()
+        process.read_pointer_path64(self.game_manager, FIREBALL_LEVEL_PATH).ok()
     }
 
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.0, GEO_PATH).ok()
+        process.read_pointer_path64(self.game_manager, GEO_PATH).ok()
     }
 }
 
@@ -304,7 +304,8 @@ fn attach_active_scene_root(process: &Process, a: Address, _v: &()) -> Option<Ad
 }
 
 fn attach_game_manager_scene_name(process: &Process, a: Address, scene_name: &str) -> Option<Address> {
-    let s0: Address64 = process.read_pointer_path64(a, SCENE_NAME_PATH).ok()?;
+    let gm: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
+    let s0: Address64 = process.read_pointer_path64(gm, SCENE_NAME_PATH).ok()?;
     let s2: String = read_string_object::<SCENE_PATH_SIZE>(process, s0)?;
     if s2 == scene_name {
         Some(a)

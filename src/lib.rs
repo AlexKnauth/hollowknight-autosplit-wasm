@@ -4,6 +4,7 @@ mod hollow_knight_memory;
 mod splits;
 
 use asr::future::next_tick;
+use asr::Process;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use asr::watcher::Pair;
@@ -11,8 +12,6 @@ use hollow_knight_memory::*;
 
 #[cfg(debug_assertions)]
 use std::string::String;
-#[cfg(debug_assertions)]
-use asr::Process;
 #[cfg(debug_assertions)]
 use asr::string::ArrayCString;
 #[cfg(debug_assertions)]
@@ -78,7 +77,7 @@ async fn main() {
                     }
                     let mut new_data_curr = false;
                     let mut new_data_next = false;
-                    if let Some(csn) = game_manager_finder.get_scene_name(&process) {
+                    if let Some(csn) = either_get_scene_name(&process, &game_manager_finder, &scene_finder) {
                         if csn != curr_scene_name {
                             prev_scene_name = curr_scene_name;
                             curr_scene_name = csn;
@@ -131,6 +130,17 @@ fn split_index(i: &mut usize, n: usize) {
     if n <= *i {
         *i = 0;
     }
+}
+
+fn either_get_scene_name(process: &Process, game_manager_finder: &GameManagerFinder, scene_finder: &SceneFinder) -> Option<String> {
+    let gmf = game_manager_finder.get_scene_name(&process);
+    if gmf.is_some() { return gmf; }
+    let sf = scene_finder.get_current_scene_name(&process).ok();
+    if sf.is_some() {
+        asr::print_message(&format!("GameManagerFinder failed to find scene name, using SceneFinder as backup: {:?}", sf));
+        return sf;
+    }
+    None
 }
 
 // --------------------------------------------------------
