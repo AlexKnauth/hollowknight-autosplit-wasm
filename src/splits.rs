@@ -15,11 +15,27 @@ pub enum Split {
     Monomon,
     Hegemol,
 
+    // Spell Levels
+    VengefulSpirit,
+    ShadeSoul,
+
+    // Movement Abilities
+    MothwingCloak,
+    ShadeCloak,
+    MantisClaw,
+    MonarchWings,
+    CrystalHeart,
+    IsmasTear,
+
+    // Dream Nail Levels
+    DreamNail,
+    DreamGate,
+    DreamNail2,
+
     // Dirtmouth
     SlyShopExit,
     // Crossroads
     AncestralMound,
-    VengefulSpirit,
     SalubraExit,
     EnterHollowKnight,
     // Greenpath
@@ -32,7 +48,6 @@ pub enum Split {
     // City
     TransGorgeousHusk,
     MenuStoreroomsSimpleKey,
-    ShadeSoul,
     MenuShadeSoul,
     EnterBlackKnight,
     BlackKnightTrans,
@@ -101,8 +116,21 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
 
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder) -> bool {
     match s {
+        // Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
         Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),
+        // Movement Abilities
+        Split::MothwingCloak => g.has_dash(p).is_some_and(|d| d),
+        Split::ShadeCloak => g.has_shadow_dash(p).is_some_and(|s| s),
+        Split::MantisClaw => g.has_wall_jump(p).is_some_and(|w| w),
+        Split::MonarchWings => g.has_double_jump(p).is_some_and(|w| w),
+        Split::CrystalHeart => g.has_super_dash(p).is_some_and(|s| s),
+        Split::IsmasTear => g.has_acid_armour(p).is_some_and(|a| a),
+        // Dream Nail Levels
+        Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
+        Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
+        Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
+        // else
         _ => false
     }
 }

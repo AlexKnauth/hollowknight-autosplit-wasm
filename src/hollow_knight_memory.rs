@@ -92,6 +92,69 @@ const FIREBALL_LEVEL_PATH: &[u64] = &[
     FIREBALL_LEVEL_OFFSET
 ];
 
+const HAS_DASH_OFFSET: u64 = 0x284;
+const HAS_DASH_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_DASH_OFFSET
+];
+
+const HAS_SHADOW_DASH_OFFSET: u64 = 0x287;
+const HAS_SHADOW_DASH_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_SHADOW_DASH_OFFSET
+];
+
+const HAS_WALL_JUMP_OFFSET: u64 = 0x285;
+const HAS_WALL_JUMP_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_WALL_JUMP_OFFSET
+];
+
+const HAS_DOUBLE_JUMP_OFFSET: u64 = 0x289;
+const HAS_DOUBLE_JUMP_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_DOUBLE_JUMP_OFFSET
+];
+
+const HAS_SUPER_DASH_OFFSET: u64 = 0x286;
+const HAS_SUPER_DASH_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_SUPER_DASH_OFFSET
+];
+
+const HAS_ACID_ARMOR_OFFSET: u64 = 0x288;
+const HAS_ACID_ARMOR_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_ACID_ARMOR_OFFSET
+];
+
+const HAS_DREAM_NAIL_OFFSET: u64 = 0x271;
+const HAS_DREAM_NAIL_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_DREAM_NAIL_OFFSET
+];
+
+const HAS_DREAM_GATE_OFFSET: u64 = 0x272;
+const HAS_DREAM_GATE_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_DREAM_GATE_OFFSET
+];
+
+const DREAM_NAIL_UPGRADED_OFFSET: u64 = 0x273;
+const DREAM_NAIL_UPGRADED_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    DREAM_NAIL_UPGRADED_OFFSET
+];
+
 #[cfg(debug_assertions)]
 const GEO_OFFSET: u64 = 0x1c4;
 #[cfg(debug_assertions)]
@@ -255,6 +318,42 @@ impl GameManagerFinder {
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
         process.read_pointer_path64(self.game_manager, FIREBALL_LEVEL_PATH).ok()
+    }
+
+    pub fn has_dash(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_DASH_PATH).ok()
+    }
+
+    pub fn has_shadow_dash(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_SHADOW_DASH_PATH).ok()
+    }
+
+    pub fn has_wall_jump(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_WALL_JUMP_PATH).ok()
+    }
+
+    pub fn has_double_jump(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_DOUBLE_JUMP_PATH).ok()
+    }
+
+    pub fn has_super_dash(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_SUPER_DASH_PATH).ok()
+    }
+
+    pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_ACID_ARMOR_PATH).ok()
+    }
+
+    pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_DREAM_NAIL_PATH).ok()
+    }
+
+    pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_DREAM_GATE_PATH).ok()
+    }
+    
+    pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, DREAM_NAIL_UPGRADED_PATH).ok()
     }
 
     #[cfg(debug_assertions)]
