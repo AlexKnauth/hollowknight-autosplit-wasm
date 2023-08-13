@@ -317,6 +317,10 @@ impl GameManagerFinder {
     pub fn attempt_clean(&mut self, process: &Process, scene_finder: &SceneFinder) -> Option<()> {
         if !self.is_dirty() { return Some(()); }
         let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
+        if self.get_scene_name(process).is_some_and(|s| s == scene_name) {
+            self.dirty = false;
+            return Some(());
+        }
         if scene_name == PRE_MENU_INTRO { return None; }
         let unity_player = get_unity_player_range(process)?;
         if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, self.unity_player_has_game_manager, &scene_name) {

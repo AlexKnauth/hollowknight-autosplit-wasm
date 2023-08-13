@@ -140,7 +140,7 @@ fn check_get_scene_name(process: &Process, game_manager_finder: &mut GameManager
         gmf
     } else  {
         if !game_manager_finder.is_dirty() {
-            asr::print_message(&format!("GameManagerFinder failed to find scene name, using SceneFinder as backup: {:?}", sf));
+            asr::print_message(&format!("scene name mismatch:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
         }
         game_manager_finder.set_dirty();
         sf
