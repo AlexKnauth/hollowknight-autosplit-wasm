@@ -59,7 +59,7 @@ async fn main() {
                 asr::print_message(&curr_scene_name);
 
                 next_tick().await;
-                let game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_finder).await;
+                let mut game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_finder).await;
 
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
@@ -77,7 +77,7 @@ async fn main() {
                     }
                     let mut new_data_curr = false;
                     let mut new_data_next = false;
-                    if let Some(csn) = either_get_scene_name(&process, &game_manager_finder, &scene_finder) {
+                    if let Some(csn) = check_get_scene_name(&process, &mut game_manager_finder, &scene_finder) {
                         if csn != curr_scene_name {
                             prev_scene_name = curr_scene_name;
                             curr_scene_name = csn;
@@ -113,6 +113,7 @@ async fn main() {
                         #[cfg(debug_assertions)]
                         on_scene(&process, &scene_finder, &mut scene_table);
                     }
+                    game_manager_finder.attempt_clean(&process, &scene_finder).unwrap_or_default();
                     next_tick().await;
                 }
             })
@@ -132,15 +133,18 @@ fn split_index(i: &mut usize, n: usize) {
     }
 }
 
-fn either_get_scene_name(process: &Process, game_manager_finder: &GameManagerFinder, scene_finder: &SceneFinder) -> Option<String> {
+fn check_get_scene_name(process: &Process, game_manager_finder: &mut GameManagerFinder, scene_finder: &SceneFinder) -> Option<String> {
     let gmf = game_manager_finder.get_scene_name(&process);
-    if gmf.is_some() { return gmf; }
     let sf = scene_finder.get_current_scene_name(&process).ok();
-    if sf.is_some() {
-        asr::print_message(&format!("GameManagerFinder failed to find scene name, using SceneFinder as backup: {:?}", sf));
-        return sf;
+    if sf.is_none() || gmf == sf {
+        gmf
+    } else  {
+        if !game_manager_finder.is_dirty() {
+            asr::print_message(&format!("GameManagerFinder failed to find scene name, using SceneFinder as backup: {:?}", sf));
+        }
+        game_manager_finder.set_dirty();
+        sf
     }
-    None
 }
 
 // --------------------------------------------------------

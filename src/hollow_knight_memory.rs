@@ -270,8 +270,9 @@ impl SceneFinder {
 }
 
 pub struct GameManagerFinder {
-    // unity_player_has_game_manager: Address,
-    game_manager: Address64
+    unity_player_has_game_manager: Address,
+    game_manager: Address64,
+    dirty: bool
 }
 
 impl GameManagerFinder {
@@ -292,18 +293,55 @@ impl GameManagerFinder {
     fn attach_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
         let (addr, _) = unity_player;
         for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
-            if let Some(a) = attach_game_manager_scene_name(process, addr.add(*offset), scene_name) {
-                let game_manager: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
-                return Some(GameManagerFinder{game_manager});
+            if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, addr.add(*offset), scene_name) {
+                let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
+                return Some(GameManagerFinder{unity_player_has_game_manager, game_manager, dirty: false});
             }
         }
         None
     }
     fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
         asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
-        let a = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name)?;
-        let game_manager: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
-        Some(GameManagerFinder{game_manager})
+        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name)?;
+        let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
+        Some(GameManagerFinder{unity_player_has_game_manager, game_manager, dirty: false})
+    }
+
+    pub fn is_dirty(&self) -> bool {
+        self.dirty
+    }
+    pub fn set_dirty(&mut self) {
+        self.dirty = true;
+    }
+
+    pub fn attempt_clean(&mut self, process: &Process, scene_finder: &SceneFinder) -> Option<()> {
+        if !self.is_dirty() { return Some(()); }
+        let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
+        if scene_name == PRE_MENU_INTRO { return None; }
+        let unity_player = get_unity_player_range(process)?;
+        if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, self.unity_player_has_game_manager, &scene_name) {
+            let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
+            self.game_manager = game_manager;
+            self.dirty = false;
+            return Some(());
+        }
+        let (addr, _) = unity_player;
+        for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
+            if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, addr.add(*offset), &scene_name) {
+                let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
+                self.unity_player_has_game_manager = unity_player_has_game_manager;
+                self.game_manager = game_manager;
+                self.dirty = false;
+                return Some(());
+            }
+        }
+        asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
+        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, &scene_name)?;
+        let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
+        self.unity_player_has_game_manager = unity_player_has_game_manager;
+        self.game_manager = game_manager;
+        self.dirty = false;
+        Some(())
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
