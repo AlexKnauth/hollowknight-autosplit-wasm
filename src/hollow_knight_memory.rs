@@ -52,6 +52,18 @@ const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
 pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
 
+const BAD_SCENE_NAMES: [&str; 9] = [
+    "Untagged",
+    "left1",
+    "oncomplete",
+    "Attack Range",
+    "onstart",
+    "position",
+    "looptype",
+    "integer1",
+    "gameObject",
+];
+
 const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 8] = [
     0x019D7CF0, // Windows
     0x01ADDA80, // Mac?
@@ -491,6 +503,16 @@ impl SceneStore {
                 self.new_curr_scene_name(Some(a));
                 (false, false)
             }
+            (Some(good), Some(bad)) if BAD_SCENE_NAMES.contains(&bad.as_str()) && !BAD_SCENE_NAMES.contains(&good.as_str()) => {
+                self.old_scene_name = bad;
+                self.new_curr_scene_name(Some(good));
+                (false, true)
+            }
+            (Some(bad), Some(good)) if BAD_SCENE_NAMES.contains(&bad.as_str()) && !BAD_SCENE_NAMES.contains(&good.as_str()) => {
+                self.old_scene_name = bad;
+                self.new_curr_scene_name(Some(good));
+                (true, false)
+            }
             (Some(a), Some(b)) => {
                 // A is at least as up-to-date as B if: B == old || (B == curr && A != curr && A != old)
                 if b == self.old_scene_name || (b == self.curr_scene_name && a != self.curr_scene_name && a != self.old_scene_name) {
@@ -519,6 +541,19 @@ impl SceneStore {
             _ => ()
         }
     }
+    pub fn new_next_scene_name1(&mut self, mnsn: Option<String>) -> bool {
+        match mnsn {
+            None => false,
+            Some(bad) if BAD_SCENE_NAMES.contains(&bad.as_str()) => {
+                true
+            }
+            Some(nsn) => {
+                self.new_next_scene_name(Some(nsn));
+                false
+            }
+        }
+    }
+
     pub fn transition_pair(&mut self) -> Option<Pair<&str>> {
         if self.new_data_next {
             self.new_data_curr = false;
@@ -551,9 +586,6 @@ impl PlayerDataStore {
         if let Some(simple_keys) = player_data_simple_keys {
             if simple_keys != 0 || game_manager_finder.player_data_ready(process).is_some() {
                 self.map_i32.insert(SIMPLE_KEYS_OFFSET, simple_keys);
-            } else {
-                #[cfg(debug_assertions)]
-                asr::print_message("PlayerData not ready yet");
             }
         }
         match (store_simple_keys, player_data_simple_keys) {

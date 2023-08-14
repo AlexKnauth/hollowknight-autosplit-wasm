@@ -82,7 +82,12 @@ async fn main() {
                     if sf_dirty {
                         asr::print_message(&format!("SceneFinder dirty:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
                     }
-                    scene_store.new_next_scene_name(game_manager_finder.get_next_scene_name(&process));
+                    let gmfn = game_manager_finder.get_next_scene_name(&process);
+                    let gmfn_dirty = scene_store.new_next_scene_name1(gmfn.clone());
+                    if gmfn_dirty && !game_manager_finder.is_dirty() {
+                        asr::print_message(&format!("GameManagerFinder dirty next_scene_name: {:?}", gmfn));
+                        game_manager_finder.set_dirty();
+                    }
                     if let Some(scene_pair) = scene_store.transition_pair() {
                         if splits::transition_splits(current_split, &scene_pair) {
                             split_index(&mut i, n);
