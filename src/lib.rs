@@ -72,7 +72,7 @@ async fn main() {
                         next_tick().await;
                         continue;
                     }
-                    scene_store.new_curr_scene_name(check_get_scene_name(&process, &mut game_manager_finder, &scene_finder));
+                    scene_store.new_curr_scene_name(check_get_scene_name(&process, &mut game_manager_finder, &scene_finder, &scene_store));
                     scene_store.new_next_scene_name(game_manager_finder.get_next_scene_name(&process));
                     if let Some(scene_pair) = scene_store.transition_pair() {
                         if splits::transition_splits(current_split, &scene_pair) {
@@ -108,12 +108,21 @@ fn split_index(i: &mut usize, n: usize) {
     }
 }
 
-fn check_get_scene_name(process: &Process, game_manager_finder: &mut GameManagerFinder, scene_finder: &SceneFinder) -> Option<String> {
+fn check_get_scene_name(process: &Process, game_manager_finder: &mut GameManagerFinder, scene_finder: &SceneFinder, scene_store: &SceneStore) -> Option<String> {
     let gmf = game_manager_finder.get_scene_name(&process);
     let sf = scene_finder.get_current_scene_name(&process).ok();
     if sf.is_none() || gmf == sf {
+        return gmf
+    } else if gmf.is_none() {
+        return sf
+    }
+    let g = gmf.as_ref().unwrap();
+    let s = sf.as_ref().unwrap();
+    if s == &scene_store.curr_scene_name && g != &scene_store.curr_scene_name && g != &scene_store.prev_scene_name {
         gmf
-    } else  {
+    } else if g == &scene_store.curr_scene_name && s != &scene_store.curr_scene_name && s != &scene_store.prev_scene_name {
+        sf
+    } else {
         if !game_manager_finder.is_dirty() {
             asr::print_message(&format!("scene name mismatch:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
         }
@@ -142,6 +151,8 @@ fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTr
     let sv = SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()};
     if let Some(tv) = scene_table.get(&si) {
         assert_eq!(&sv, tv);
+    } else if si == -1 {
+        assert_eq!(sv, SceneInfo{name: "".to_string(), path: "".to_string()});
     } else {
         scene_table.insert(si, sv);
         log_scene_table(scene_table);
