@@ -407,6 +407,7 @@ impl GameManagerFinder {
 }
 
 pub struct SceneStore {
+    pub old_scene_name: String,
     pub prev_scene_name: String,
     pub curr_scene_name: String,
     pub next_scene_name: String,
@@ -417,7 +418,8 @@ pub struct SceneStore {
 impl SceneStore {
     pub fn new(init_scene_name: String) -> SceneStore {
         SceneStore {
-            prev_scene_name: init_scene_name.clone(),
+            old_scene_name: "".to_string(),
+            prev_scene_name: "".to_string(),
             curr_scene_name: init_scene_name,
             next_scene_name: "".to_string(),
             new_data_curr: false,
@@ -433,6 +435,36 @@ impl SceneStore {
                 self.new_data_curr = self.curr_scene_name != self.next_scene_name;
             }
             _ => ()
+        }
+    }
+    pub fn new_curr_scene_name2(&mut self, ma: Option<String>, mb: Option<String>) -> (bool, bool) {
+        match (ma, mb) {
+            (None, None) => (false, false),
+            (Some(ab), None) | (None, Some(ab)) => {
+                self.old_scene_name = ab.clone();
+                self.new_curr_scene_name(Some(ab));
+                (false, false)
+            }
+            (Some(a), Some(b)) if a == b => {
+                self.old_scene_name = b;
+                self.new_curr_scene_name(Some(a));
+                (false, false)
+            }
+            (Some(a), Some(b)) => {
+                // A is at least as up-to-date as B if: B == old || (B == curr && A != curr && A != old)
+                if b == self.old_scene_name || (b == self.curr_scene_name && a != self.curr_scene_name && a != self.old_scene_name) {
+                    self.old_scene_name = b;
+                    self.new_curr_scene_name(Some(a));
+                    (false, self.old_scene_name != self.prev_scene_name)
+                } else if a == self.old_scene_name || (a == self.curr_scene_name && b != self.curr_scene_name && b != self.old_scene_name) {
+                    self.old_scene_name = a;
+                    self.new_curr_scene_name(Some(b));
+                    (self.old_scene_name != self.prev_scene_name, false)
+                } else {
+                    asr::print_message(&format!("scene name mismatch: {} vs {}", a, b));
+                    (a != self.prev_scene_name, b != self.prev_scene_name)
+                }
+            }
         }
     }
     pub fn new_next_scene_name(&mut self, mnsn: Option<String>) {

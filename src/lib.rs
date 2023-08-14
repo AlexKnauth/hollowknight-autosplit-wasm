@@ -4,6 +4,7 @@ mod hollow_knight_memory;
 mod splits;
 
 use asr::future::next_tick;
+#[cfg(debug_assertions)]
 use asr::Process;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
@@ -72,7 +73,16 @@ async fn main() {
                         next_tick().await;
                         continue;
                     }
-                    scene_store.new_curr_scene_name(check_get_scene_name(&process, &mut game_manager_finder, &scene_finder, &scene_store));
+                    let gmf = game_manager_finder.get_scene_name(&process);
+                    let sf = scene_finder.get_current_scene_name(&process).ok();
+                    let (gmf_dirty, sf_dirty) = scene_store.new_curr_scene_name2(gmf.clone(), sf.clone());
+                    if gmf_dirty && !game_manager_finder.is_dirty() {
+                        asr::print_message(&format!("GameManagerFinder dirty:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
+                        game_manager_finder.set_dirty();
+                    }
+                    if sf_dirty {
+                        asr::print_message(&format!("SceneFinder dirty:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
+                    }
                     scene_store.new_next_scene_name(game_manager_finder.get_next_scene_name(&process));
                     if let Some(scene_pair) = scene_store.transition_pair() {
                         if splits::transition_splits(current_split, &scene_pair) {
@@ -105,30 +115,6 @@ fn split_index(i: &mut usize, n: usize) {
     *i += 1;
     if n <= *i {
         *i = 0;
-    }
-}
-
-fn check_get_scene_name(process: &Process, game_manager_finder: &mut GameManagerFinder, scene_finder: &SceneFinder, scene_store: &SceneStore) -> Option<String> {
-    let gmf = game_manager_finder.get_scene_name(&process);
-    let sf = scene_finder.get_current_scene_name(&process).ok();
-    if sf.is_none() || gmf == sf {
-        return gmf
-    } else if gmf.is_none() {
-        return sf
-    }
-    let g = gmf.as_ref().unwrap();
-    let s = sf.as_ref().unwrap();
-    // A is at least as up-to-date as B if: B == prev || (B == curr && A != curr && A != prev)
-    if s == &scene_store.prev_scene_name || (s == &scene_store.curr_scene_name && g != &scene_store.curr_scene_name && g != &scene_store.prev_scene_name) {
-        gmf
-    } else if g == &scene_store.prev_scene_name || (g == &scene_store.curr_scene_name && s != &scene_store.curr_scene_name && s != &scene_store.prev_scene_name) {
-        sf
-    } else {
-        if !game_manager_finder.is_dirty() {
-            asr::print_message(&format!("scene name mismatch:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
-        }
-        game_manager_finder.set_dirty();
-        sf
     }
 }
 
