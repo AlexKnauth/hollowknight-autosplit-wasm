@@ -7,7 +7,6 @@ use asr::future::next_tick;
 use asr::Process;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
-use asr::watcher::Pair;
 use hollow_knight_memory::*;
 
 #[cfg(debug_assertions)]
@@ -52,11 +51,9 @@ async fn main() {
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let scene_finder = SceneFinder::wait_attach(&process).await;
-                let mut curr_scene_name = scene_finder.wait_get_current_scene_name(&process).await;
-                let mut prev_scene_name = curr_scene_name.clone();
-                let mut next_scene_name = "".to_string();
+                let mut scene_store = SceneStore::new(scene_finder.wait_get_current_scene_name(&process).await);
                 #[cfg(debug_assertions)]
-                asr::print_message(&curr_scene_name);
+                asr::print_message(&scene_store.curr_scene_name);
 
                 next_tick().await;
                 let mut game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_finder).await;
@@ -75,31 +72,9 @@ async fn main() {
                         next_tick().await;
                         continue;
                     }
-                    let mut new_data_curr = false;
-                    let mut new_data_next = false;
-                    if let Some(csn) = check_get_scene_name(&process, &mut game_manager_finder, &scene_finder) {
-                        if csn != curr_scene_name {
-                            prev_scene_name = curr_scene_name;
-                            curr_scene_name = csn;
-                            if curr_scene_name != next_scene_name { new_data_curr = true; }
-                            #[cfg(debug_assertions)]
-                            asr::print_message(&format!("curr_scene_name: {}", curr_scene_name));
-                        }
-                    }
-                    if let Some(nsn) = game_manager_finder.get_next_scene_name(&process) {
-                        if nsn != next_scene_name {
-                            next_scene_name = nsn;
-                            new_data_next = !next_scene_name.is_empty();
-                            #[cfg(debug_assertions)]
-                            asr::print_message(&format!("next_scene_name: {}", next_scene_name));
-                        }
-                    }
-                    if new_data_next || new_data_curr {
-                        let scene_pair: Pair<&str> = if new_data_next {
-                            Pair{old: &curr_scene_name, current: &next_scene_name}
-                        } else {
-                            Pair{old: &prev_scene_name, current: &curr_scene_name}
-                        };
+                    scene_store.new_curr_scene_name(check_get_scene_name(&process, &mut game_manager_finder, &scene_finder));
+                    scene_store.new_next_scene_name(game_manager_finder.get_next_scene_name(&process));
+                    if let Some(scene_pair) = scene_store.transition_pair() {
                         if splits::transition_splits(current_split, &scene_pair) {
                             split_index(&mut i, n);
                         }

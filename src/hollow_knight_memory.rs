@@ -1,6 +1,8 @@
 
 use std::cmp::min;
+use std::mem;
 use asr::future::{next_tick, retry};
+use asr::watcher::Pair;
 use asr::{Process, Address, Address64};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::string::{ArrayCString, ArrayWString};
@@ -401,6 +403,60 @@ impl GameManagerFinder {
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
         process.read_pointer_path64(self.game_manager, GEO_PATH).ok()
+    }
+}
+
+pub struct SceneStore {
+    pub prev_scene_name: String,
+    pub curr_scene_name: String,
+    pub next_scene_name: String,
+    new_data_curr: bool,
+    new_data_next: bool
+}
+
+impl SceneStore {
+    pub fn new(init_scene_name: String) -> SceneStore {
+        SceneStore {
+            prev_scene_name: init_scene_name.clone(),
+            curr_scene_name: init_scene_name,
+            next_scene_name: "".to_string(),
+            new_data_curr: false,
+            new_data_next: false
+        }
+    }
+    pub fn new_curr_scene_name(&mut self, mcsn: Option<String>) {
+        match mcsn {
+            Some(csn) if csn != self.curr_scene_name => {
+                self.prev_scene_name = mem::replace(&mut self.curr_scene_name, csn);
+                #[cfg(debug_assertions)]
+                asr::print_message(&format!("curr_scene_name: {}", self.curr_scene_name));
+                self.new_data_curr = self.curr_scene_name != self.next_scene_name;
+            }
+            _ => ()
+        }
+    }
+    pub fn new_next_scene_name(&mut self, mnsn: Option<String>) {
+        match mnsn {
+            Some(nsn) if nsn != self.next_scene_name => {
+                self.next_scene_name = nsn;
+                #[cfg(debug_assertions)]
+                asr::print_message(&format!("next_scene_name: {}", self.next_scene_name));
+                self.new_data_next = !self.next_scene_name.is_empty();
+            }
+            _ => ()
+        }
+    }
+    pub fn transition_pair(&mut self) -> Option<Pair<&str>> {
+        if self.new_data_next {
+            self.new_data_curr = false;
+            self.new_data_next = false;
+            Some(Pair{old: &self.curr_scene_name, current: &self.next_scene_name})
+        } else if self.new_data_curr {
+            self.new_data_curr = false;
+            Some(Pair{old: &self.prev_scene_name, current: &self.curr_scene_name})
+        } else {
+            None
+        }
     }
 }
 
