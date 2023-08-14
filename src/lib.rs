@@ -56,6 +56,7 @@ async fn main() {
 
                 next_tick().await;
                 let mut game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_finder).await;
+                let mut player_data_store = PlayerDataStore::new();
 
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
@@ -66,7 +67,7 @@ async fn main() {
                 let n = splits.len();
                 loop {
                     let current_split = &splits[i];
-                    if splits::continuous_splits(current_split, &process, &game_manager_finder) {
+                    if splits::continuous_splits(current_split, &process, &game_manager_finder, &mut player_data_store) {
                         split_index(&mut i, n);
                         next_tick().await;
                         continue;
@@ -85,6 +86,10 @@ async fn main() {
                     if let Some(scene_pair) = scene_store.transition_pair() {
                         if splits::transition_splits(current_split, &scene_pair) {
                             split_index(&mut i, n);
+                        }
+
+                        if scene_pair.old == MENU_TITLE {
+                            player_data_store.reset();
                         }
 
                         #[cfg(debug_assertions)]

@@ -2,7 +2,7 @@ use asr::Process;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
 
-use super::hollow_knight_memory::GameManagerFinder;
+use super::hollow_knight_memory::*;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum Split {
@@ -31,6 +31,9 @@ pub enum Split {
     DreamNail,
     DreamGate,
     DreamNail2,
+
+    // Other Items
+    OnObtainSimpleKey,
 
     // Dirtmouth
     SlyShopExit,
@@ -114,7 +117,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
     }
 }
 
-pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder) -> bool {
+pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
         // Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
@@ -130,13 +133,15 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder) -> bool 
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
+        // Other Items
+        Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
         // else
         _ => false
     }
 }
 
 fn is_menu(s: &str) -> bool {
-    s == "Menu_Title" || s == "Quit_To_Menu"
+    s == MENU_TITLE || s == QUIT_TO_MENU
 }
 
 pub fn default_splits() -> Vec<Split> {

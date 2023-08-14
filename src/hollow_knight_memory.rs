@@ -1,6 +1,7 @@
 
 use std::cmp::min;
 use std::mem;
+use std::collections::BTreeMap;
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
 use asr::{Process, Address, Address64};
@@ -48,6 +49,8 @@ const ASSETS_SCENES: &str = "Assets/Scenes/";
 const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
+pub const MENU_TITLE: &str = "Menu_Title";
+pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
 
 const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 8] = [
     0x019D7CF0, // Windows
@@ -155,6 +158,13 @@ const DREAM_NAIL_UPGRADED_PATH: &[u64] = &[
     // from game_manager
     PLAYER_DATA_OFFSET,
     DREAM_NAIL_UPGRADED_OFFSET
+];
+
+const SIMPLE_KEYS_OFFSET: u64 = 0x2d8;
+const SIMPLE_KEYS_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    SIMPLE_KEYS_OFFSET
 ];
 
 #[cfg(debug_assertions)]
@@ -400,6 +410,10 @@ impl GameManagerFinder {
         process.read_pointer_path64(self.game_manager, DREAM_NAIL_UPGRADED_PATH).ok()
     }
 
+    pub fn get_simple_keys(&self, process: &Process) -> Option<i32> {
+        process.read_pointer_path64(self.game_manager, SIMPLE_KEYS_PATH).ok()
+    }
+
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
         process.read_pointer_path64(self.game_manager, GEO_PATH).ok()
@@ -490,6 +504,33 @@ impl SceneStore {
             Some(Pair{old: &self.prev_scene_name, current: &self.curr_scene_name})
         } else {
             None
+        }
+    }
+}
+
+pub struct PlayerDataStore {
+    map_i32: BTreeMap<u64, i32>
+}
+
+impl PlayerDataStore {
+    pub fn new() -> PlayerDataStore {
+        PlayerDataStore { map_i32: BTreeMap::new() }
+    }
+    pub fn reset(&mut self) {
+        self.map_i32.clear();
+    }
+    
+    pub fn incremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_simple_keys = self.map_i32.get(&SIMPLE_KEYS_OFFSET).cloned();
+        let player_data_simple_keys = game_manager_finder.get_simple_keys(process);
+        if let Some(simple_keys) = player_data_simple_keys {
+            self.map_i32.insert(SIMPLE_KEYS_OFFSET, simple_keys);
+        }
+        match (store_simple_keys, player_data_simple_keys) {
+            (Some(prev_simple_keys), Some(simple_keys)) => {
+                simple_keys == prev_simple_keys + 1
+            }
+            _ => false
         }
     }
 }
