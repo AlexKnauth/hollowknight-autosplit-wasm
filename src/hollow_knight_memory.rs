@@ -407,16 +407,18 @@ impl GameManagerFinder {
 }
 
 pub struct SceneStore {
-    pub old_scene_name: String,
-    pub prev_scene_name: String,
-    pub curr_scene_name: String,
-    pub next_scene_name: String,
+    old_scene_name: String,
+    prev_scene_name: String,
+    curr_scene_name: String,
+    next_scene_name: String,
     new_data_curr: bool,
     new_data_next: bool
 }
 
 impl SceneStore {
     pub fn new(init_scene_name: String) -> SceneStore {
+        #[cfg(debug_assertions)]
+        asr::print_message(&format!("init_scene_name: {}", init_scene_name));
         SceneStore {
             old_scene_name: "".to_string(),
             prev_scene_name: "".to_string(),

@@ -53,8 +53,6 @@ async fn main() {
                 // TODO: Load some initial information from the process.
                 let scene_finder = SceneFinder::wait_attach(&process).await;
                 let mut scene_store = SceneStore::new(scene_finder.wait_get_current_scene_name(&process).await);
-                #[cfg(debug_assertions)]
-                asr::print_message(&scene_store.curr_scene_name);
 
                 next_tick().await;
                 let mut game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_finder).await;
