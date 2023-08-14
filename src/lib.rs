@@ -118,9 +118,10 @@ fn check_get_scene_name(process: &Process, game_manager_finder: &mut GameManager
     }
     let g = gmf.as_ref().unwrap();
     let s = sf.as_ref().unwrap();
-    if s == &scene_store.curr_scene_name && g != &scene_store.curr_scene_name && g != &scene_store.prev_scene_name {
+    // A is at least as up-to-date as B if: B == prev || (B == curr && A != curr && A != prev)
+    if s == &scene_store.prev_scene_name || (s == &scene_store.curr_scene_name && g != &scene_store.curr_scene_name && g != &scene_store.prev_scene_name) {
         gmf
-    } else if g == &scene_store.curr_scene_name && s != &scene_store.curr_scene_name && s != &scene_store.prev_scene_name {
+    } else if g == &scene_store.prev_scene_name || (g == &scene_store.curr_scene_name && s != &scene_store.curr_scene_name && s != &scene_store.prev_scene_name) {
         sf
     } else {
         if !game_manager_finder.is_dirty() {
