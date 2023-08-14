@@ -51,6 +51,18 @@
     "name": "Room_ruinhouse",
     "path": "Assets/Scenes/Room_ruinhouse.unity"
   },
+  "28": {
+    "name": "Room_Ouiji",
+    "path": "Assets/Scenes/Room_Ouiji.unity"
+  },
+  "31": {
+    "name": "Room_Colosseum_02",
+    "path": "Assets/Scenes/Room_Colosseum_02.unity"
+  },
+  "35": {
+    "name": "Room_Colosseum_Spectate",
+    "path": "Assets/Scenes/Room_Colosseum_Spectate.unity"
+  },
   "37": {
     "name": "Crossroads_01",
     "path": "Assets/Scenes/Crossroads/Crossroads_01.unity"
@@ -250,6 +262,14 @@
   "105": {
     "name": "Ruins1_27",
     "path": "Assets/Scenes/City/Ruins1_27.unity"
+  },
+  "106": {
+    "name": "Ruins1_28",
+    "path": "Assets/Scenes/City/Ruins1_28.unity"
+  },
+  "107": {
+    "name": "Ruins1_29",
+    "path": "Assets/Scenes/City/Ruins1_29.unity"
   },
   "108": {
     "name": "Ruins1_31",
@@ -458,6 +478,10 @@
   "342": {
     "name": "Abyss_18",
     "path": "Assets/Scenes/Abyss/Abyss_18.unity"
+  },
+  "343": {
+    "name": "Abyss_19",
+    "path": "Assets/Scenes/Abyss/Abyss_19.unity"
   },
   "349": {
     "name": "Waterways_01",
