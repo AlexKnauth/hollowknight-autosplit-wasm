@@ -387,6 +387,14 @@
     "name": "Fungus1_32",
     "path": "Assets/Scenes/Fungus/Fungus1_32.unity"
   },
+  "165": {
+    "name": "Fungus2_01",
+    "path": "Assets/Scenes/Fungus/Fungus2_01.unity"
+  },
+  "166": {
+    "name": "Fungus2_02",
+    "path": "Assets/Scenes/Fungus/Fungus2_02.unity"
+  },
   "167": {
     "name": "Fungus2_03",
     "path": "Assets/Scenes/Fungus/Fungus2_03.unity"
@@ -443,6 +451,14 @@
     "name": "Fungus2_18",
     "path": "Assets/Scenes/Fungus/Fungus2_18.unity"
   },
+  "184": {
+    "name": "Fungus2_19",
+    "path": "Assets/Scenes/Fungus/Fungus2_19.unity"
+  },
+  "185": {
+    "name": "Fungus2_20",
+    "path": "Assets/Scenes/Fungus/Fungus2_20.unity"
+  },
   "187": {
     "name": "Fungus2_23",
     "path": "Assets/Scenes/Fungus/Fungus2_23.unity"
@@ -450,6 +466,18 @@
   "190": {
     "name": "Fungus2_28",
     "path": "Assets/Scenes/Fungus/Fungus2_28.unity"
+  },
+  "196": {
+    "name": "Fungus2_34",
+    "path": "Assets/Scenes/Fungus/Fungus2_34.unity"
+  },
+  "198": {
+    "name": "Fungus3_02",
+    "path": "Assets/Scenes/Fungus/Fungus3_02.unity"
+  },
+  "199": {
+    "name": "Fungus3_03",
+    "path": "Assets/Scenes/Fungus/Fungus3_03.unity"
   },
   "213": {
     "name": "Fungus3_26",
@@ -459,9 +487,29 @@
     "name": "Fungus3_27",
     "path": "Assets/Scenes/Fungus/Fungus3_27.unity"
   },
+  "218": {
+    "name": "Fungus3_35",
+    "path": "Assets/Scenes/Fungus/Fungus3_35.unity"
+  },
+  "219": {
+    "name": "Fungus3_39",
+    "path": "Assets/Scenes/Fungus/Fungus3_39.unity"
+  },
   "223": {
     "name": "Fungus3_47",
     "path": "Assets/Scenes/Fungus/Fungus3_47.unity"
+  },
+  "227": {
+    "name": "Fungus3_archive",
+    "path": "Assets/Scenes/Fungus/Fungus3_archive.unity"
+  },
+  "228": {
+    "name": "Fungus3_archive_02",
+    "path": "Assets/Scenes/Fungus/Fungus3_archive_02.unity"
+  },
+  "229": {
+    "name": "Fungus3_archive_02_boss",
+    "path": "Assets/Scenes/Fungus/Fungus3_archive_02_boss.unity"
   },
   "237": {
     "name": "RestingGrounds_02",
@@ -535,6 +583,54 @@
     "name": "Mines_33",
     "path": "Assets/Scenes/Mines/Mines_33.unity"
   },
+  "277": {
+    "name": "Deepnest_01",
+    "path": "Assets/Scenes/Deepnest/Deepnest_01.unity"
+  },
+  "278": {
+    "name": "Deepnest_01b",
+    "path": "Assets/Scenes/Deepnest/Deepnest_01b.unity"
+  },
+  "280": {
+    "name": "Deepnest_03",
+    "path": "Assets/Scenes/Deepnest/Deepnest_03.unity"
+  },
+  "281": {
+    "name": "Deepnest_09",
+    "path": "Assets/Scenes/Deepnest/Deepnest_09.unity"
+  },
+  "282": {
+    "name": "Deepnest_10",
+    "path": "Assets/Scenes/Deepnest/Deepnest_10.unity"
+  },
+  "283": {
+    "name": "Deepnest_14",
+    "path": "Assets/Scenes/Deepnest/Deepnest_14.unity"
+  },
+  "285": {
+    "name": "Deepnest_17",
+    "path": "Assets/Scenes/Deepnest/Deepnest_17.unity"
+  },
+  "288": {
+    "name": "Deepnest_30",
+    "path": "Assets/Scenes/Deepnest/Deepnest_30.unity"
+  },
+  "292": {
+    "name": "Deepnest_34",
+    "path": "Assets/Scenes/Deepnest/Deepnest_34.unity"
+  },
+  "297": {
+    "name": "Deepnest_39",
+    "path": "Assets/Scenes/Deepnest/Deepnest_39.unity"
+  },
+  "299": {
+    "name": "Deepnest_41",
+    "path": "Assets/Scenes/Deepnest/Deepnest_41.unity"
+  },
+  "304": {
+    "name": "Deepnest_Spider_Town",
+    "path": "Assets/Scenes/Deepnest/Deepnest_Spider_Town.unity"
+  },
   "308": {
     "name": "Deepnest_East_03",
     "path": "Assets/Scenes/Deepnest/Deepnest_East_03.unity"
@@ -607,12 +703,36 @@
     "name": "Dream_Nailcollection",
     "path": "Assets/Scenes/Dream/Dream_Nailcollection.unity"
   },
+  "400": {
+    "name": "Dream_Guardian_Hegemol",
+    "path": "Assets/Scenes/Dream/Dream_Guardian_Hegemol.unity"
+  },
   "401": {
     "name": "Dream_Guardian_Lurien",
     "path": "Assets/Scenes/Dream/Dream_Guardian_Lurien.unity"
   },
+  "402": {
+    "name": "Dream_Guardian_Monomon",
+    "path": "Assets/Scenes/Dream/Dream_Guardian_Monomon.unity"
+  },
   "403": {
     "name": "Cutscene_Boss_Door",
     "path": "Assets/Scenes/Cutscene_Boss_Door.unity"
+  },
+  "408": {
+    "name": "Room_Final_Boss_Atrium",
+    "path": "Assets/Scenes/Room_Final_Boss_Atrium.unity"
+  },
+  "409": {
+    "name": "Room_Final_Boss_Core",
+    "path": "Assets/Scenes/Room_Final_Boss_Core.unity"
+  },
+  "410": {
+    "name": "Cinematic_Ending_A",
+    "path": "Assets/Scenes/Cinematic_Ending_A.unity"
+  },
+  "415": {
+    "name": "End_Credits",
+    "path": "Assets/Scenes/End_Credits.unity"
   }
 }
