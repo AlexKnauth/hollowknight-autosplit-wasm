@@ -52,7 +52,25 @@ const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
 pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
 
-const BAD_SCENE_NAMES: [&str; 9] = [
+const NON_PLAY_SCENES: [&str; 15] = [
+    PRE_MENU_INTRO,
+    MENU_TITLE,
+    QUIT_TO_MENU,
+    "Opening_Sequence",
+    "GG_Entrance_Cutscene",
+    "Cinematic_Ending_A",
+    "Cinematic_Ending_B",
+    "Cinematic_Ending_C",
+    "Cinematic_Ending_D",
+    "Cinematic_Ending_E",
+    "End_Credits",
+    "Cinematic_MrMushroom",
+    "End_Game_Completion",
+    "PermaDeath",
+    "PermaDeath_Unlock",
+];
+
+const BAD_SCENE_NAMES: [&str; 10] = [
     "Untagged",
     "left1",
     "oncomplete",
@@ -62,6 +80,7 @@ const BAD_SCENE_NAMES: [&str; 9] = [
     "looptype",
     "integer1",
     "gameObject",
+    "eventTarget",
 ];
 
 const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 8] = [
@@ -407,10 +426,14 @@ impl GameManagerFinder {
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
-    fn get_game_state(&self, process: &Process) -> Option<i32> {
+    pub fn get_game_state(&self, process: &Process) -> Option<i32> {
         let ui_manager_vanilla: Address64 = process.read_pointer_path64(self.game_manager, &[UI_MANAGER_VANILLA_OFFSET]).ok()?;
         let game_state_offset = if ui_manager_vanilla.is_null() { GAME_STATE_MODDING_API_OFFSET } else { GAME_STATE_VANILLA_OFFSET };
         process.read_pointer_path64(self.game_manager, &[game_state_offset]).ok()
+    }
+
+    fn is_game_state_playing(&self, process: &Process) -> bool {
+        self.get_game_state(process) == Some(GAME_STATE_PLAYING)
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
@@ -602,7 +625,7 @@ impl PlayerDataStore {
         let store_simple_keys = self.map_i32.get(&SIMPLE_KEYS_OFFSET).cloned();
         let player_data_simple_keys = game_manager_finder.get_simple_keys(process);
         if let Some(simple_keys) = player_data_simple_keys {
-            if simple_keys != 0 || game_manager_finder.get_game_state(process) == Some(GAME_STATE_PLAYING) {
+            if simple_keys != 0 || game_manager_finder.is_game_state_playing(process) {
                 self.map_i32.insert(SIMPLE_KEYS_OFFSET, simple_keys);
             }
         }
@@ -681,4 +704,10 @@ where
         }
     }
     None
+}
+
+// --------------------------------------------------------
+
+pub fn is_play_scene(ms: Option<&String>) -> bool {
+    ms.is_some_and(|s| !NON_PLAY_SCENES.contains(&s.as_str()) && !BAD_SCENE_NAMES.contains(&s.as_str()))
 }
