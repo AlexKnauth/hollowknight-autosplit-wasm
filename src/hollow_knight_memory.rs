@@ -99,16 +99,12 @@ const NEXT_SCENE_NAME_PATH: &[u64] = &[
     NEXT_SCENE_NAME_OFFSET
 ];
 
-#[allow(unused)]
-const PLAYER_DATA_OFFSET: u64 = 0xc8;
+const UI_MANAGER_VANILLA_OFFSET: u64 = 0xa0;
+const GAME_STATE_VANILLA_OFFSET: u64 = 0x174;
+const GAME_STATE_MODDING_API_OFFSET: u64 = 0x184;
+const GAME_STATE_PLAYING: i32 = 4;
 
-const DREAM_RETURN_SCENE_OFFSET: u64 = 0x58;
-const DREAM_RETURN_SCENE_LEN: usize = "Dream_NailCollection".len();
-const DREAM_RETURN_SCENE_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    DREAM_RETURN_SCENE_OFFSET
-];
+const PLAYER_DATA_OFFSET: u64 = 0xc8;
 
 const FIREBALL_LEVEL_OFFSET: u64 = 0x260;
 const FIREBALL_LEVEL_PATH: &[u64] = &[
@@ -390,21 +386,10 @@ impl GameManagerFinder {
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
-    fn get_dream_return_scene(&self, process: &Process) -> Option<String> {
-        let s0: Address64 = process.read_pointer_path64(self.game_manager, DREAM_RETURN_SCENE_PATH).ok()?;
-        read_string_object::<DREAM_RETURN_SCENE_LEN>(process, s0)
-    }
-
-    fn player_data_ready(&self, process: &Process) -> Option<()> {
-        let s = self.get_dream_return_scene(process)?;
-        if s.is_empty() { return None; }
-        for b in s.as_bytes() {
-            let c = char::from_u32(*b as u32)?;
-            if !(c.is_ascii_alphanumeric() || c.is_ascii_punctuation()) {
-                return None;
-            }
-        }
-        Some(())
+    fn get_game_state(&self, process: &Process) -> Option<i32> {
+        let ui_manager_vanilla: Address64 = process.read_pointer_path64(self.game_manager, &[UI_MANAGER_VANILLA_OFFSET]).ok()?;
+        let game_state_offset = if ui_manager_vanilla.is_null() { GAME_STATE_MODDING_API_OFFSET } else { GAME_STATE_VANILLA_OFFSET };
+        process.read_pointer_path64(self.game_manager, &[game_state_offset]).ok()
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
@@ -584,7 +569,7 @@ impl PlayerDataStore {
         let store_simple_keys = self.map_i32.get(&SIMPLE_KEYS_OFFSET).cloned();
         let player_data_simple_keys = game_manager_finder.get_simple_keys(process);
         if let Some(simple_keys) = player_data_simple_keys {
-            if simple_keys != 0 || game_manager_finder.player_data_ready(process).is_some() {
+            if simple_keys != 0 || game_manager_finder.get_game_state(process) == Some(GAME_STATE_PLAYING) {
                 self.map_i32.insert(SIMPLE_KEYS_OFFSET, simple_keys);
             }
         }

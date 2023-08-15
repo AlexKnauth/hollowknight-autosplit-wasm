@@ -55,6 +55,10 @@
     "name": "Room_Ouiji",
     "path": "Assets/Scenes/Room_Ouiji.unity"
   },
+  "30": {
+    "name": "Room_Colosseum_01",
+    "path": "Assets/Scenes/Room_Colosseum_01.unity"
+  },
   "31": {
     "name": "Room_Colosseum_02",
     "path": "Assets/Scenes/Room_Colosseum_02.unity"
@@ -102,6 +106,10 @@
   "48": {
     "name": "Crossroads_10_boss",
     "path": "Assets/Scenes/Crossroads/Crossroads_10_boss.unity"
+  },
+  "49": {
+    "name": "Crossroads_10_boss_defeated",
+    "path": "Assets/Scenes/Crossroads/Crossroads_10_boss_defeated.unity"
   },
   "50": {
     "name": "Crossroads_11_alt",
@@ -291,6 +299,10 @@
     "name": "Ruins2_06",
     "path": "Assets/Scenes/City/Ruins2_06.unity"
   },
+  "119": {
+    "name": "Ruins2_07",
+    "path": "Assets/Scenes/City/Ruins2_07.unity"
+  },
   "120": {
     "name": "Ruins2_08",
     "path": "Assets/Scenes/City/Ruins2_08.unity"
@@ -302,6 +314,10 @@
   "123": {
     "name": "Ruins2_10b",
     "path": "Assets/Scenes/City/Ruins2_10b.unity"
+  },
+  "125": {
+    "name": "Ruins2_11_b",
+    "path": "Assets/Scenes/City/Ruins2_11_b.unity"
   },
   "128": {
     "name": "Fungus1_01",
@@ -347,6 +363,18 @@
     "name": "Fungus1_32",
     "path": "Assets/Scenes/Fungus/Fungus1_32.unity"
   },
+  "167": {
+    "name": "Fungus2_03",
+    "path": "Assets/Scenes/Fungus/Fungus2_03.unity"
+  },
+  "168": {
+    "name": "Fungus2_04",
+    "path": "Assets/Scenes/Fungus/Fungus2_04.unity"
+  },
+  "169": {
+    "name": "Fungus2_05",
+    "path": "Assets/Scenes/Fungus/Fungus2_05.unity"
+  },
   "170": {
     "name": "Fungus2_06",
     "path": "Assets/Scenes/Fungus/Fungus2_06.unity"
@@ -387,9 +415,17 @@
     "name": "Fungus2_17",
     "path": "Assets/Scenes/Fungus/Fungus2_17.unity"
   },
+  "183": {
+    "name": "Fungus2_18",
+    "path": "Assets/Scenes/Fungus/Fungus2_18.unity"
+  },
   "187": {
     "name": "Fungus2_23",
     "path": "Assets/Scenes/Fungus/Fungus2_23.unity"
+  },
+  "190": {
+    "name": "Fungus2_28",
+    "path": "Assets/Scenes/Fungus/Fungus2_28.unity"
   },
   "237": {
     "name": "RestingGrounds_02",
@@ -443,6 +479,10 @@
     "name": "Mines_11",
     "path": "Assets/Scenes/Mines/Mines_11.unity"
   },
+  "257": {
+    "name": "Mines_13",
+    "path": "Assets/Scenes/Mines/Mines_13.unity"
+  },
   "260": {
     "name": "Mines_18",
     "path": "Assets/Scenes/Mines/Mines_18.unity"
@@ -458,6 +498,38 @@
   "272": {
     "name": "Mines_33",
     "path": "Assets/Scenes/Mines/Mines_33.unity"
+  },
+  "308": {
+    "name": "Deepnest_East_03",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_03.unity"
+  },
+  "309": {
+    "name": "Deepnest_East_04",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_04.unity"
+  },
+  "310": {
+    "name": "Deepnest_East_06",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_06.unity"
+  },
+  "311": {
+    "name": "Deepnest_East_07",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_07.unity"
+  },
+  "312": {
+    "name": "Deepnest_East_08",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_08.unity"
+  },
+  "313": {
+    "name": "Deepnest_East_09",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_09.unity"
+  },
+  "315": {
+    "name": "Deepnest_East_11",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_11.unity"
+  },
+  "323": {
+    "name": "Deepnest_East_18",
+    "path": "Assets/Scenes/Deepnest/Deepnest_East_18.unity"
   },
   "327": {
     "name": "Abyss_01",
