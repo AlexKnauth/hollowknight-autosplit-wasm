@@ -4,33 +4,12 @@ mod hollow_knight_memory;
 mod splits;
 
 use asr::future::next_tick;
-#[cfg(debug_assertions)]
-use asr::Process;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use hollow_knight_memory::*;
 
-#[cfg(debug_assertions)]
-use std::string::String;
-#[cfg(debug_assertions)]
-use asr::string::ArrayCString;
-#[cfg(debug_assertions)]
-use std::collections::BTreeMap;
-#[cfg(debug_assertions)]
-use serde::{Deserialize, Serialize};
-
 asr::async_main!(stable);
 // asr::panic_handler!();
-
-#[cfg(debug_assertions)]
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
-struct SceneInfo {
-    name: String,
-    path: String
-}
-
-#[cfg(debug_assertions)]
-type SceneTable = BTreeMap<i32, SceneInfo>;
 
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
@@ -61,7 +40,7 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                 #[cfg(debug_assertions)]
-                on_scene(&process, &scene_finder, &mut scene_table);
+                update_scene_table(&process, &scene_finder, &mut scene_table);
 
                 let mut i = 0;
                 let n = splits.len();
@@ -74,6 +53,9 @@ async fn main() {
                     }
                     let gmf = game_manager_finder.get_scene_name(&process);
                     let sf = scene_finder.get_current_scene_name(&process).ok();
+                    #[cfg(debug_assertions)]
+                    let new_curr_scene = sf.as_ref().is_some_and(|s| s != scene_store.curr_scene_name());
+
                     let (gmf_dirty, sf_dirty) = scene_store.new_curr_scene_name2(gmf.clone(), sf.clone());
                     if gmf_dirty && !game_manager_finder.is_dirty() {
                         asr::print_message(&format!("GameManagerFinder dirty:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
@@ -103,8 +85,10 @@ async fn main() {
                         asr::print_message(&format!("fireballLevel: {:?}", game_manager_finder.get_fireball_level(&process)));
                         #[cfg(debug_assertions)]
                         asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
-                        #[cfg(debug_assertions)]
-                        on_scene(&process, &scene_finder, &mut scene_table);
+                    }
+                    #[cfg(debug_assertions)]
+                    if new_curr_scene {
+                        update_scene_table(&process, &scene_finder, &mut scene_table);
                     }
                     let gs = game_manager_finder.get_game_state(&process);
                     if gmf.is_none() && gmfn.is_none() && !game_manager_finder.is_dirty() && sf.is_some_and(|s| is_play_scene(&s)) {
@@ -128,33 +112,5 @@ fn split_index(i: &mut usize, n: usize) {
     *i += 1;
     if n <= *i {
         *i = 0;
-    }
-}
-
-// --------------------------------------------------------
-
-// Logging in debug_assertions mode
-
-#[cfg(debug_assertions)]
-fn log_scene_table(scene_table: &BTreeMap<i32, SceneInfo>) {
-    // Log scene_table as json
-    if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
-        asr::print_message(&format!("begin scene_table.json\n{}", j));
-    }
-}
-
-#[cfg(debug_assertions)]
-fn on_scene(process: &Process, scene_finder: &SceneFinder, scene_table: &mut BTreeMap<i32, SceneInfo>) {
-    let si = scene_finder.get_current_scene_index(&process).unwrap_or(-1);
-    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_finder.get_current_scene_path(&process).unwrap_or_default();
-    let sn = scene_path_to_name_string(sp);
-    let sv = SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()};
-    if let Some(tv) = scene_table.get(&si) {
-        assert_eq!(&sv, tv);
-    } else if si == -1 {
-        assert_eq!(sv, SceneInfo{name: "".to_string(), path: "".to_string()});
-    } else {
-        scene_table.insert(si, sv);
-        log_scene_table(scene_table);
     }
 }

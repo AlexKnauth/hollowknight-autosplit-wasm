@@ -8,6 +8,11 @@ use asr::{Process, Address, Address64};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::string::{ArrayCString, ArrayWString};
 
+#[cfg(debug_assertions)]
+use std::string::String;
+#[cfg(debug_assertions)]
+use serde::{Deserialize, Serialize};
+
 // --------------------------------------------------------
 
 const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
@@ -263,6 +268,18 @@ const SPIDER_CAPTURE_PATH: &[u64] = &[
     PLAYER_DATA_OFFSET,
     SPIDER_CAPTURE_OFFSET
 ];
+
+// --------------------------------------------------------
+
+#[cfg(debug_assertions)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+pub struct SceneInfo {
+    name: String,
+    path: String
+}
+
+#[cfg(debug_assertions)]
+pub type SceneTable = BTreeMap<i32, SceneInfo>;
 
 // --------------------------------------------------------
 
@@ -568,6 +585,12 @@ impl SceneStore {
             new_data_next: false
         }
     }
+
+    #[cfg(debug_assertions)]
+    pub fn curr_scene_name(&self) -> &str {
+        &self.curr_scene_name
+    }
+
     pub fn new_curr_scene_name(&mut self, mcsn: Option<String>) {
         match mcsn {
             Some(csn) if csn != self.curr_scene_name => {
@@ -762,4 +785,32 @@ pub fn is_menu(s: &str) -> bool {
 
 pub fn is_play_scene(s: &str) -> bool {
     !NON_PLAY_SCENES.contains(&s) && !BAD_SCENE_NAMES.contains(&s)
+}
+
+// --------------------------------------------------------
+
+// Logging in debug_assertions mode
+
+#[cfg(debug_assertions)]
+fn log_scene_table(scene_table: &SceneTable) {
+    // Log scene_table as json
+    if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
+        asr::print_message(&format!("begin scene_table.json\n{}", j));
+    }
+}
+
+#[cfg(debug_assertions)]
+pub fn update_scene_table(process: &Process, scene_finder: &SceneFinder, scene_table: &mut SceneTable) {
+    let si = scene_finder.get_current_scene_index(&process).unwrap_or(-1);
+    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_finder.get_current_scene_path(&process).unwrap_or_default();
+    let sn = scene_path_to_name_string(sp);
+    let sv = SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()};
+    if let Some(tv) = scene_table.get(&si) {
+        assert_eq!(&sv, tv);
+    } else if si == -1 {
+        assert_eq!(sv, SceneInfo{name: "".to_string(), path: "".to_string()});
+    } else {
+        scene_table.insert(si, sv);
+        log_scene_table(scene_table);
+    }
 }

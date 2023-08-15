@@ -734,5 +734,9 @@
   "415": {
     "name": "End_Credits",
     "path": "Assets/Scenes/End_Credits.unity"
+  },
+  "418": {
+    "name": "End_Game_Completion",
+    "path": "Assets/Scenes/End_Game_Completion.unity"
   }
 }
