@@ -30,12 +30,13 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 12] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 13] = [
     0x01A1AC30, // Windows
     0x01A862E8, // Mac?
     0x01A982E8, // Mac?
     0x01AA22E8, // Mac?
     0x01AA32E8, // Mac?
+    0x01AA52E8, // Mac?
     0x01AAF2E8, // Mac?
     0x01AB02E8, // Mac?
     0x01BB32E8, // Mac?
@@ -85,10 +86,11 @@ const BAD_SCENE_NAMES: [&str; 10] = [
     "eventTarget",
 ];
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 8] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 9] = [
     0x019D7CF0, // Windows
     0x01ADDA80, // Mac?
     0x01AE7A80, // Mac?
+    0x01AEAA80, // Mac?
     0x01BF8A80, // Mac?
     0x01BF9A80, // Mac?
     0x01C02A80, // Mac?
@@ -232,6 +234,34 @@ const GEO_PATH: &[u64] = &[
     // from game_manager
     PLAYER_DATA_OFFSET,
     GEO_OFFSET
+];
+
+const WATCHER_CHANDELIER_OFFSET: u64 = 0xc8d;
+const WATCHER_CHANDELIER_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    WATCHER_CHANDELIER_OFFSET
+];
+
+const KILLED_BLACK_KNIGHT_OFFSET: u64 = 0x7f9;
+const KILLED_BLACK_KNIGHT_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    KILLED_BLACK_KNIGHT_OFFSET
+];
+
+const KILLED_MEGA_JELLYFISH_OFFSET: u64 = 0x7a1;
+const KILLED_MEGA_JELLYFISH_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    KILLED_MEGA_JELLYFISH_OFFSET
+];
+
+const SPIDER_CAPTURE_OFFSET: u64 = 0xca0;
+const SPIDER_CAPTURE_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    SPIDER_CAPTURE_OFFSET
 ];
 
 // --------------------------------------------------------
@@ -497,6 +527,22 @@ impl GameManagerFinder {
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
         process.read_pointer_path64(self.game_manager, GEO_PATH).ok()
+    }
+
+    pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, WATCHER_CHANDELIER_PATH).ok()
+    }
+
+    pub fn killed_black_knight(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, KILLED_BLACK_KNIGHT_PATH).ok()
+    }
+
+    pub fn killed_mega_jellyfish(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, KILLED_MEGA_JELLYFISH_PATH).ok()
+    }
+
+    pub fn spider_capture(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, SPIDER_CAPTURE_PATH).ok()
     }
 }
 
