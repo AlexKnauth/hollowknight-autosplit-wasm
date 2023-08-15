@@ -1,16 +1,43 @@
+use asr::Process;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
+
+use super::hollow_knight_memory::*;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum Split {
     // Start and End
     StartNewGame,
+    StartAnyGame,
     EndingSplit,
 
     // Dreamers
     Lurien,
     Monomon,
     Hegemol,
+
+    // Spell Levels
+    VengefulSpirit,
+    ShadeSoul,
+
+    // Movement Abilities
+    MothwingCloak,
+    ShadeCloak,
+    MantisClaw,
+    MonarchWings,
+    CrystalHeart,
+    IsmasTear,
+
+    // Dream Nail Levels
+    DreamNail,
+    DreamGate,
+    DreamNail2,
+
+    // Other Items
+    LumaflyLantern,
+    OnObtainSimpleKey,
+    SlyKey,
+    ElegantKey,
 
     // Dirtmouth
     SlyShopExit,
@@ -30,6 +57,8 @@ pub enum Split {
     MenuStoreroomsSimpleKey,
     MenuShadeSoul,
     EnterBlackKnight,
+    WatcherChandelier,
+    BlackKnight,
     BlackKnightTrans,
     // Peak
     MenuSlyKey,
@@ -41,16 +70,22 @@ pub enum Split {
     MenuWings,
     // Fog Canyon
     TeachersArchive,
+    Uumuu,
     // Queen's Gardens
     QueensGardensEntry,
+    // Deepnest
+    BeastsDenTrapBench,
 }
 
 pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
     match s {
         // Start and End
         Split::StartNewGame => {
-            (p.old == "Opening_Sequence" && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == "GG_Entrance_Cutscene")
+            (p.old == OPENING_SEQUENCE && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
         },
+        Split::StartAnyGame => {
+            (is_menu(p.old) || p.old == OPENING_SEQUENCE) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
+        }
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
         
         // Dreamers
@@ -86,14 +121,45 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
         Split::Abyss19from18 => p.old == "Abyss_18" && p.current == "Abyss_19",
         Split::MenuWings => is_menu(p.current) && p.old == "Abyss_21",
         // Fog Canyon
-        Split::TeachersArchive => p.current.starts_with("Fungus3_Archive") && !p.old.starts_with("Fungus3_Archive"),
+        Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
         // Queen's Gardens
         Split::QueensGardensEntry => (p.current.starts_with("Fungus3_34") || p.current.starts_with("Deepnest_43")) && p.current != p.old,
+        // else
+        _ => false
     }
 }
 
-fn is_menu(s: &str) -> bool {
-    s == "Menu_Title" || s == "Quit_To_Menu"
+pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
+    match s {
+        // Spell Levels
+        Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
+        Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),
+        // Movement Abilities
+        Split::MothwingCloak => g.has_dash(p).is_some_and(|d| d),
+        Split::ShadeCloak => g.has_shadow_dash(p).is_some_and(|s| s),
+        Split::MantisClaw => g.has_wall_jump(p).is_some_and(|w| w),
+        Split::MonarchWings => g.has_double_jump(p).is_some_and(|w| w),
+        Split::CrystalHeart => g.has_super_dash(p).is_some_and(|s| s),
+        Split::IsmasTear => g.has_acid_armour(p).is_some_and(|a| a),
+        // Dream Nail Levels
+        Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
+        Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
+        Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
+        // Other Items
+        Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
+        Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
+        Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
+        Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
+        // City
+        Split::WatcherChandelier => g.watcher_chandelier(p).is_some_and(|c| c),
+        Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),
+        // Fog Canyon
+        Split::Uumuu => g.killed_mega_jellyfish(p).is_some_and(|k| k),
+        // Deepnest
+        Split::BeastsDenTrapBench => g.spider_capture(p).is_some_and(|c| c),
+        // else
+        _ => false
+    }
 }
 
 pub fn default_splits() -> Vec<Split> {
