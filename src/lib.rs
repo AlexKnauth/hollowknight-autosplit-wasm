@@ -107,7 +107,7 @@ async fn main() {
                         on_scene(&process, &scene_finder, &mut scene_table);
                     }
                     let gs = game_manager_finder.get_game_state(&process);
-                    if gmf.is_none() && gmfn.is_none() && !game_manager_finder.is_dirty() && is_play_scene(sf.as_ref()) {
+                    if gmf.is_none() && gmfn.is_none() && !game_manager_finder.is_dirty() && sf.is_some_and(|s| is_play_scene(&s)) {
                         asr::print_message(&format!("GameManagerFinder not found: game state {:?}", gs));
                         game_manager_finder.set_dirty();
                     }

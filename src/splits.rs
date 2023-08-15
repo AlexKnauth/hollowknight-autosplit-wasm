@@ -8,6 +8,7 @@ use super::hollow_knight_memory::*;
 pub enum Split {
     // Start and End
     StartNewGame,
+    StartAnyGame,
     EndingSplit,
 
     // Dreamers
@@ -75,8 +76,11 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
     match s {
         // Start and End
         Split::StartNewGame => {
-            (p.old == "Opening_Sequence" && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == "GG_Entrance_Cutscene")
+            (p.old == OPENING_SEQUENCE && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
         },
+        Split::StartAnyGame => {
+            (is_menu(p.old) || p.old == OPENING_SEQUENCE) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
+        }
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
         
         // Dreamers
@@ -144,10 +148,6 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // else
         _ => false
     }
-}
-
-fn is_menu(s: &str) -> bool {
-    s == MENU_TITLE || s == QUIT_TO_MENU
 }
 
 pub fn default_splits() -> Vec<Split> {

@@ -51,13 +51,15 @@ const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
 pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
+pub const OPENING_SEQUENCE: &str = "Opening_Sequence";
+pub const GG_ENTRANCE_CUTSCENE: &str = "GG_Entrance_Cutscene";
 
 const NON_PLAY_SCENES: [&str; 15] = [
     PRE_MENU_INTRO,
     MENU_TITLE,
     QUIT_TO_MENU,
-    "Opening_Sequence",
-    "GG_Entrance_Cutscene",
+    OPENING_SEQUENCE,
+    GG_ENTRANCE_CUTSCENE,
     "Cinematic_Ending_A",
     "Cinematic_Ending_B",
     "Cinematic_Ending_C",
@@ -708,6 +710,10 @@ where
 
 // --------------------------------------------------------
 
-pub fn is_play_scene(ms: Option<&String>) -> bool {
-    ms.is_some_and(|s| !NON_PLAY_SCENES.contains(&s.as_str()) && !BAD_SCENE_NAMES.contains(&s.as_str()))
+pub fn is_menu(s: &str) -> bool {
+    s == MENU_TITLE || s == QUIT_TO_MENU
+}
+
+pub fn is_play_scene(s: &str) -> bool {
+    !NON_PLAY_SCENES.contains(&s) && !BAD_SCENE_NAMES.contains(&s)
 }
