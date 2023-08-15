@@ -33,7 +33,10 @@ pub enum Split {
     DreamNail2,
 
     // Other Items
+    LumaflyLantern,
     OnObtainSimpleKey,
+    SlyKey,
+    ElegantKey,
 
     // Dirtmouth
     SlyShopExit,
@@ -134,7 +137,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
         // Other Items
+        Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
+        Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
+        Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
         // else
         _ => false
     }

@@ -176,11 +176,32 @@ const DREAM_NAIL_UPGRADED_PATH: &[u64] = &[
     DREAM_NAIL_UPGRADED_OFFSET
 ];
 
+const HAS_LANTERN_OFFSET: u64 = 0x28a;
+const HAS_LANTERN_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_LANTERN_OFFSET
+];
+
 const SIMPLE_KEYS_OFFSET: u64 = 0x2d8;
 const SIMPLE_KEYS_PATH: &[u64] = &[
     // from game_manager
     PLAYER_DATA_OFFSET,
     SIMPLE_KEYS_OFFSET
+];
+
+const HAS_SLY_KEY_OFFSET: u64 = 0x28e;
+const HAS_SLY_KEY_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_SLY_KEY_OFFSET
+];
+
+const HAS_WHITE_KEY_OFFSET: u64 = 0x290;
+const HAS_WHITE_KEY_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HAS_WHITE_KEY_OFFSET
 ];
 
 #[cfg(debug_assertions)]
@@ -432,8 +453,20 @@ impl GameManagerFinder {
         process.read_pointer_path64(self.game_manager, DREAM_NAIL_UPGRADED_PATH).ok()
     }
 
+    pub fn has_lantern(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_LANTERN_PATH).ok()
+    }
+
     pub fn get_simple_keys(&self, process: &Process) -> Option<i32> {
         process.read_pointer_path64(self.game_manager, SIMPLE_KEYS_PATH).ok()
+    }
+
+    pub fn has_sly_key(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_SLY_KEY_PATH).ok()
+    }
+
+    pub fn has_white_key(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, HAS_WHITE_KEY_PATH).ok()
     }
 
     #[cfg(debug_assertions)]
