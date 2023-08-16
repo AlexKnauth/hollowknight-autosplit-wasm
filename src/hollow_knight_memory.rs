@@ -3,6 +3,7 @@ use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
 use asr::future::{next_tick, retry};
+use asr::signature::Signature;
 use asr::watcher::Pair;
 use asr::{Process, Address, Address64};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
@@ -481,6 +482,19 @@ impl GameManagerFinder {
         loop {
             if let Some(g) = GameManagerFinder::attach_scan(process, scene_finder).await {
                 asr::print_message("Attached GameManagerFinder.");
+                // asr::print_message(&format!("GameManagerFinder found uphgm__ Ok({:?})", g.unity_player_has_game_manager));
+                // asr::print_message(&format!("GameManagerFinder found uphgm_0 {:?}", process.read_pointer_path64::<Address64>(g.unity_player_has_game_manager, &[UPHGM_OFFSET_0])));
+                // asr::print_message(&format!("GameManagerFinder found uphgm_1 {:?}", process.read_pointer_path64::<Address64>(g.unity_player_has_game_manager, &[UPHGM_OFFSET_0, UPHGM_OFFSET_1])));
+                // asr::print_message(&format!("GameManagerFinder found uphgm_2 {:?}", process.read_pointer_path64::<Address64>(g.unity_player_has_game_manager, &[UPHGM_OFFSET_0, UPHGM_OFFSET_1, UPHGM_OFFSET_2])));
+                // asr::print_message(&format!("GameManagerFinder found uphgm_3 {:?}", process.read_pointer_path64::<Address64>(g.unity_player_has_game_manager, &[UPHGM_OFFSET_0, UPHGM_OFFSET_1, UPHGM_OFFSET_2, UPHGM_OFFSET_3])));
+                asr::print_message(&format!("GameManagerFinder found ___gm__ Ok({:?})", g.game_manager));
+                asr::print_message("Scanning for signatures...");
+                if let Some(a) = signature_scan_all(&process) {
+                    asr::print_message(&format!("Sig found a_10? {:?}", process.read_pointer_path64::<Address64>(a, &[10])));
+                    asr::print_message(&format!("Sig found a_10_0? {:?}", process.read_pointer_path64::<Address64>(a, &[10, 0])));
+                } else {
+                    asr::print_message("Sig not found");
+                }
                 return g;
             }
             next_tick().await;
@@ -983,6 +997,48 @@ where
         }
         if 0 == i % ITER_PER_TICK {
             next_tick().await;
+        }
+    }
+    None
+}
+
+/*
+            gameManager = new ProgramPointer(
+                new FindPointerSignature(PointerVersion.Normal64, AutoDeref.Single, "41FFD3E96300000048B8????????????????488B10488BCE488D6424009049BB", 10),
+                new FindPointerSignature(PointerVersion.Normal64, AutoDeref.Single32, "488BCE49BB????????????????41FFD3E9??000000488B1425", 25),
+                new FindPointerSignature(PointerVersion.Normal, AutoDeref.Single, "83C41083EC0C57E8????????83C410EB3D8B05", 19),
+                new FindPointerSignature(PointerVersion.API, AutoDeref.Single, "83C41083EC0C57393FE8????????83C410EB3F8B05", 21)) { UpdatedPointer = UpdatedPointer };
+*/
+
+const SIG_1: Signature<32> = Signature::new("41FFD3E96300000048B8????????????????488B10488BCE488D6424009049BB");
+const SIG_2: Signature<25> = Signature::new("488BCE49BB????????????????41FFD3E9??000000488B1425");
+const SIG_3: Signature<19> = Signature::new("83C41083EC0C57E8????????83C410EB3D8B05");
+const SIG_4: Signature<21> = Signature::new("83C41083EC0C57393FE8????????83C410EB3F8B05");
+
+fn signature_scan_range(process: &Process, range: (Address, u64)) -> Option<Address> {
+    if let Some(a) = SIG_1.scan_process_range(process, range) {
+        asr::print_message(&format!("SIG_1 found {}", a));
+        Some(a)
+    } else if let Some(a) = SIG_2.scan_process_range(process, range) {
+        asr::print_message(&format!("SIG_2 found {}", a));
+        Some(a)
+    } else if let Some(a) =  SIG_3.scan_process_range(process, range) {
+        asr::print_message(&format!("SIG_3 found {}", a));
+        Some(a)
+    } else if let Some(a) = SIG_4.scan_process_range(process, range) {
+        asr::print_message(&format!("SIG_4 found {}", a));
+        Some(a)
+    } else {
+        None
+    }
+}
+
+fn signature_scan_all(process: &Process) -> Option<Address> {
+    for r in process.memory_ranges() {
+        if let Ok(range) = r.range() {
+            if let Some(a) = signature_scan_range(process, range) {
+                return Some(a);
+            }
         }
     }
     None
