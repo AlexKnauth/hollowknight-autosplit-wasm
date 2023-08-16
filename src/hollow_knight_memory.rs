@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use asr::future::{next_tick, retry};
 use asr::signature::Signature;
 use asr::watcher::Pair;
-use asr::{Process, Address, Address64};
+use asr::{Process, Address, Address64, MemoryRange};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::string::{ArrayCString, ArrayWString};
 
@@ -1037,11 +1037,138 @@ fn signature_scan_all(process: &Process) -> Option<Address> {
     for r in process.memory_ranges() {
         if let Ok(range) = r.range() {
             if let Some(a) = signature_scan_range(process, range) {
+                print_memory_range_info(process, r).unwrap_or_default();
                 return Some(a);
             }
         }
     }
     None
+}
+
+const MODULE_NAMES: [&str; 107] = [
+    "UnityPlayer.dll",
+    "UnityPlayer.dylib",
+    "Assembly-CSharp.dll",
+    "Assembly-CSharp-firstpass.dll", 
+    "ConditionalExpression.dll",
+    "GalaxyCSharp.dll",
+    "MMHOOK_Assembly-CSharp.dll",
+    "MMHOOK_PlayMaker.dll",
+    "Mono.Cecil.dll",
+    "Mono.Security.dll",
+    "MonoMod.RuntimeDetour.dll",
+    "MonoMod.Utils.dll",
+    "mscorlib.dll",
+    "netstandard.dll",
+    "Newtonsoft.Json.dll",
+    "PlayMaker.dll",
+    "System.ComponentModel.Composition.dll",
+    "System.Configuration.dll",
+    "System.Core.dll",
+    "System.Data.dll",
+    "System.Diagnostics.StackTrace.dll",
+    "System.dll",
+    "System.Drawing.dll",
+    "System.EnterpriseServices.dll",
+    "System.Globalization.Extensions.dll",
+    "System.IO.Compression.dll",
+    "System.IO.Compression.FileSystem.dll",
+    "System.Net.Http.dll",
+    "System.Numerics.dll",
+    "System.Runtime.Serialization.dll",
+    "System.Runtime.Serialization.Xml.dll",
+    "System.ServiceModel.Internals.dll",
+    "System.Transactions.dll",
+    "System.Xml.dll",
+    "System.Xml.Linq.dll",
+    "System.Xml.XPath.XDocument.dll",
+    "Unity.Timeline.dll",
+    "UnityEngine.AccessibilityModule.dll",
+    "UnityEngine.AIModule.dll",
+    "UnityEngine.AndroidJNIModule.dll",
+    "UnityEngine.AnimationModule.dll",
+    "UnityEngine.ARModule.dll",
+    "UnityEngine.AssetBundleModule.dll",
+    "UnityEngine.AudioModule.dll",
+    "UnityEngine.ClothModule.dll",
+    "UnityEngine.ClusterInputModule.dll",
+    "UnityEngine.ClusterRendererModule.dll",
+    "UnityEngine.CoreModule.dll",
+    "UnityEngine.CrashReportingModule.dll",
+    "UnityEngine.DirectorModule.dll",
+    "UnityEngine.dll",
+    "UnityEngine.DSPGraphModule.dll",
+    "UnityEngine.GameCenterModule.dll",
+    "UnityEngine.GIModule.dll",
+    "UnityEngine.GridModule.dll",
+    "UnityEngine.HotReloadModule.dll",
+    "UnityEngine.ImageConversionModule.dll",
+    "UnityEngine.IMGUIModule.dll",
+    "UnityEngine.InputLegacyModule.dll",
+    "UnityEngine.InputModule.dll",
+    "UnityEngine.JSONSerializeModule.dll",
+    "UnityEngine.LocalizationModule.dll",
+    "UnityEngine.ParticleSystemModule.dll",
+    "UnityEngine.PerformanceReportingModule.dll",
+    "UnityEngine.Physics2DModule.dll",
+    "UnityEngine.PhysicsModule.dll",
+    "UnityEngine.ProfilerModule.dll",
+    "UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+    "UnityEngine.ScreenCaptureModule.dll",
+    "UnityEngine.SharedInternalsModule.dll",
+    "UnityEngine.SpriteMaskModule.dll",
+    "UnityEngine.SpriteShapeModule.dll",
+    "UnityEngine.StreamingModule.dll",
+    "UnityEngine.SubstanceModule.dll",
+    "UnityEngine.SubsystemsModule.dll",
+    "UnityEngine.TerrainModule.dll",
+    "UnityEngine.TerrainPhysicsModule.dll",
+    "UnityEngine.TextCoreModule.dll",
+    "UnityEngine.TextRenderingModule.dll",
+    "UnityEngine.TilemapModule.dll",
+    "UnityEngine.TLSModule.dll",
+    "UnityEngine.UI.dll",
+    "UnityEngine.UIElementsModule.dll",
+    "UnityEngine.UIElementsNativeModule.dll",
+    "UnityEngine.UIModule.dll",
+    "UnityEngine.UmbraModule.dll",
+    "UnityEngine.UNETModule.dll",
+    "UnityEngine.UnityAnalyticsModule.dll",
+    "UnityEngine.UnityConnectModule.dll",
+    "UnityEngine.UnityCurlModule.dll",
+    "UnityEngine.UnityTestProtocolModule.dll",
+    "UnityEngine.UnityWebRequestAssetBundleModule.dll",
+    "UnityEngine.UnityWebRequestAudioModule.dll",
+    "UnityEngine.UnityWebRequestModule.dll",
+    "UnityEngine.UnityWebRequestTextureModule.dll",
+    "UnityEngine.UnityWebRequestWWWModule.dll",
+    "UnityEngine.VehiclesModule.dll",
+    "UnityEngine.VFXModule.dll",
+    "UnityEngine.VideoModule.dll",
+    "UnityEngine.VirtualTexturingModule.dll",
+    "UnityEngine.VRModule.dll",
+    "UnityEngine.WindModule.dll",
+    "UnityEngine.XRModule.dll",
+    "XGamingRuntime.dll",
+    "zlib.net.dll",
+    "mono-2.0-bdwgc.dll",
+    "MonoPosixHelper.dll",
+];
+
+fn print_memory_range_info(process: &Process, mr: MemoryRange<'_>) -> Result<(), asr::Error> {
+    asr::print_message(&format!("memory range: {:?}\n  size: {:?}\n  flags: {:?}\n  {:?}\n  {:?}",
+        memory_range_name(process, mr),
+        mr.size()?,
+        mr.flags()?,
+        mr.address()?,
+        mr.range().map(|(a, l)| Address::new(a.value() + l))?));
+    Ok(())
+}
+
+fn memory_range_name(process: &Process, mr: MemoryRange<'_>) -> Option<String> {
+    mr.address().ok().and_then(|a1| {
+        MODULE_NAMES.iter().find(|n| process.get_module_address(n).is_ok_and(|a2| a1 == a2))
+    }).map(|s| s.to_string())
 }
 
 // --------------------------------------------------------

@@ -9,7 +9,7 @@ edition = "2021"
 asr = { git = "https://github.com/LiveSplit/asr", features = [
     # "alloc", # Working with allocations.
     # "derive", # Defining your own settings structs and converting endianness.
-    # "flags", # Working with bit flags.
+    "flags", # Working with bit flags.
     # "float-vars", # Setting floating point variables.
     # "float-vars-small", # Setting floating point variables (small binary size).
     # "integer-vars", # Setting integer variables.
