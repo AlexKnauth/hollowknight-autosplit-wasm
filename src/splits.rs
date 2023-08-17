@@ -33,6 +33,9 @@ pub enum Split {
     DreamGate,
     DreamNail2,
 
+    // Charms
+    Dashmaster,
+
     // Other Items
     LumaflyLantern,
     OnObtainSimpleKey,
@@ -45,6 +48,7 @@ pub enum Split {
     AncestralMound,
     SalubraExit,
     EnterHollowKnight,
+    UnchainedHollowKnight,
     // Greenpath
     EnterGreenpath,
     MenuCloak,
@@ -54,6 +58,7 @@ pub enum Split {
     DreamNailExit,
     // City
     TransGorgeousHusk,
+    Lemm2,
     MenuStoreroomsSimpleKey,
     MenuShadeSoul,
     EnterBlackKnight,
@@ -145,12 +150,17 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
+        // Charms
+        Split::Dashmaster => g.got_charm_31(p).is_some_and(|c| c),
         // Other Items
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
         Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
         Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
+        // Crossroads
+        Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
         // City
+        Split::Lemm2 => g.met_relic_dealer_shop(p).is_some_and(|m| m),
         Split::WatcherChandelier => g.watcher_chandelier(p).is_some_and(|c| c),
         Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),
         // Fog Canyon

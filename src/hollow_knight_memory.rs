@@ -241,6 +241,22 @@ const GEO_PATH: &[u64] = &[
     GEO_OFFSET
 ];
 
+// Dashmaster
+const GOT_CHARM_31_OFFSET: u64 = 0x5c9;
+const GOT_CHARM_31_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    GOT_CHARM_31_OFFSET
+];
+
+// Lemm
+const MET_RELIC_DEALER_SHOP_OFFSET: u64 = 0x34a;
+const MET_RELIC_DEALER_SHOP_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    MET_RELIC_DEALER_SHOP_OFFSET
+];
+
 const WATCHER_CHANDELIER_OFFSET: u64 = 0xc8d;
 const WATCHER_CHANDELIER_PATH: &[u64] = &[
     // from game_manager
@@ -267,6 +283,13 @@ const SPIDER_CAPTURE_PATH: &[u64] = &[
     // from game_manager
     PLAYER_DATA_OFFSET,
     SPIDER_CAPTURE_OFFSET
+];
+
+const UNCHAINED_HOLLOW_KNIGHT_OFFSET: u64 = 0xcc9;
+const UNCHAINED_HOLLOW_KNIGHT_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    UNCHAINED_HOLLOW_KNIGHT_OFFSET
 ];
 
 // --------------------------------------------------------
@@ -546,6 +569,16 @@ impl GameManagerFinder {
         process.read_pointer_path64(self.game_manager, GEO_PATH).ok()
     }
 
+    // Dashmaster
+    pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, GOT_CHARM_31_PATH).ok()
+    }
+
+    // Lemm
+    pub fn met_relic_dealer_shop(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, MET_RELIC_DEALER_SHOP_PATH).ok()
+    }
+
     pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
         process.read_pointer_path64(self.game_manager, WATCHER_CHANDELIER_PATH).ok()
     }
@@ -560,6 +593,10 @@ impl GameManagerFinder {
 
     pub fn spider_capture(&self, process: &Process) -> Option<bool> {
         process.read_pointer_path64(self.game_manager, SPIDER_CAPTURE_PATH).ok()
+    }
+
+    pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, UNCHAINED_HOLLOW_KNIGHT_PATH).ok()
     }
 }
 
