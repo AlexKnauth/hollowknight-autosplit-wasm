@@ -6,10 +6,11 @@ use super::hollow_knight_memory::*;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum Split {
-    // Start and End
+    // Start, End, and Menu
     StartNewGame,
     StartAnyGame,
     EndingSplit,
+    Menu,
 
     // Dreamers
     Lurien,
@@ -48,8 +49,10 @@ pub enum Split {
     ElegantKey,
 
     // Dirtmouth
+    KingsPass,
     SlyShopExit,
     // Crossroads
+    EnterBroodingMawlek,
     AncestralMound,
     SalubraExit,
     EnterHollowKnight,
@@ -87,7 +90,7 @@ pub enum Split {
 
 pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
-        // Start and End
+        // Start, End, and Menu
         Split::StartNewGame => {
             (p.old == OPENING_SEQUENCE && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
         },
@@ -95,6 +98,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
             (is_menu(p.old) || p.old == OPENING_SEQUENCE) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
         }
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
+        Split::Menu => is_menu(p.current),
         
         // Dreamers
         Split::Lurien => p.old == "Dream_Guardian_Lurien" && p.current == "Cutscene_Boss_Door",
@@ -102,8 +106,10 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::Hegemol => p.old == "Dream_Guardian_Hegemol" && p.current == "Cutscene_Boss_Door",
 
         // Dirtmouth
+        Split::KingsPass => p.old == "Tutorial_01" && p.current == "Town",
         Split::SlyShopExit => p.old == "Room_shop" && p.current != p.old,
         // Crossroads
+        Split::EnterBroodingMawlek => p.current == "Crossroads_09" && p.current != p.old,
         Split::AncestralMound => p.current == "Crossroads_ShamanTemple" && p.current != p.old,
         Split::SalubraExit => p.old == "Room_Charm_Shop" && p.current != p.old,
         Split::EnterHollowKnight => p.current == "Room_Final_Boss_Core" && p.current != p.old,

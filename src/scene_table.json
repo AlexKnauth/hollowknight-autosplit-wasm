@@ -99,6 +99,10 @@
     "name": "Crossroads_08",
     "path": "Assets/Scenes/Crossroads/Crossroads_08.unity"
   },
+  "45": {
+    "name": "Crossroads_09",
+    "path": "Assets/Scenes/Crossroads/Crossroads_09.unity"
+  },
   "46": {
     "name": "Crossroads_10",
     "path": "Assets/Scenes/Crossroads/Crossroads_10.unity"
@@ -170,6 +174,10 @@
   "65": {
     "name": "Crossroads_35",
     "path": "Assets/Scenes/Crossroads/Crossroads_35.unity"
+  },
+  "66": {
+    "name": "Crossroads_36",
+    "path": "Assets/Scenes/Crossroads/Crossroads_36.unity"
   },
   "68": {
     "name": "Crossroads_38",
