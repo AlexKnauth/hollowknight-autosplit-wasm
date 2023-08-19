@@ -744,7 +744,67 @@ impl PlayerDataStore {
         self.map_i32.clear();
         self.map_bool.clear();
     }
-    
+
+    pub fn get_fireball_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
+        match game_manager_finder.get_fireball_level(process) {
+            Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
+                self.map_i32.insert(FIREBALL_LEVEL_OFFSET, l);
+                l
+            }
+            _ => {
+                *self.map_i32.get(&FIREBALL_LEVEL_OFFSET).unwrap_or(&0)
+            }
+        }
+    }
+
+    pub fn has_dash(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.has_dash(process) {
+            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert(HAS_DASH_OFFSET, k);
+                k
+            }
+            _ => {
+                *self.map_bool.get(&HAS_DASH_OFFSET).unwrap_or(&false)
+            }
+        }
+    }
+
+    pub fn has_wall_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.has_wall_jump(process) {
+            Some(w) if w || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert(HAS_WALL_JUMP_OFFSET, w);
+                w
+            }
+            _ => {
+                *self.map_bool.get(&HAS_WALL_JUMP_OFFSET).unwrap_or(&false)
+            }
+        }
+    }
+
+    pub fn has_double_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.has_double_jump(process) {
+            Some(d) if d || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert(HAS_DOUBLE_JUMP_OFFSET, d);
+                d
+            }
+            _ => {
+                *self.map_bool.get(&HAS_DOUBLE_JUMP_OFFSET).unwrap_or(&false)
+            }
+        }
+    }
+
+    pub fn has_acid_armour(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.has_acid_armour(process) {
+            Some(a) if a || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert(HAS_ACID_ARMOR_OFFSET, a);
+                a
+            }
+            _ => {
+                *self.map_bool.get(&HAS_ACID_ARMOR_OFFSET).unwrap_or(&false)
+            }
+        }
+    }
+
     pub fn incremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         let store_simple_keys = self.map_i32.get(&SIMPLE_KEYS_OFFSET).cloned();
         let player_data_simple_keys = game_manager_finder.get_simple_keys(process);

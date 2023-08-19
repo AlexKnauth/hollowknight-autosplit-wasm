@@ -19,14 +19,19 @@ pub enum Split {
     // Spell Levels
     VengefulSpirit,
     ShadeSoul,
+    MenuShadeSoul,
 
     // Movement Abilities
     MothwingCloak,
+    MenuCloak,
     ShadeCloak,
     MantisClaw,
+    MenuClaw,
     MonarchWings,
+    MenuWings,
     CrystalHeart,
     IsmasTear,
+    MenuIsmasTear,
 
     // Dream Nail Levels
     DreamNail,
@@ -51,7 +56,6 @@ pub enum Split {
     UnchainedHollowKnight,
     // Greenpath
     EnterGreenpath,
-    MenuCloak,
     // Fungal
     MenuMantisJournal,
     // Resting Grounds
@@ -62,7 +66,6 @@ pub enum Split {
     MenuGorgeousHusk,
     Lemm2,
     MenuStoreroomsSimpleKey,
-    MenuShadeSoul,
     EnterBlackKnight,
     WatcherChandelier,
     BlackKnight,
@@ -71,10 +74,8 @@ pub enum Split {
     MenuSlyKey,
     // Waterways
     DungDefenderExit,
-    MenuIsmasTear,
     // Basin
     Abyss19from18,
-    MenuWings,
     // Fog Canyon
     TeachersArchive,
     Uumuu,
@@ -108,8 +109,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterHollowKnight => p.current == "Room_Final_Boss_Core" && p.current != p.old,
         // Greenpath
         Split::EnterGreenpath => p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"),
-        Split::MenuCloak => is_menu(p.current) && p.old == "Fungus1_04",
+        Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
         // Fungal
+        Split::MenuClaw => pds.has_wall_jump(prc, g) && is_menu(p.current),
         Split::MenuMantisJournal => is_menu(p.current) && p.old == "Fungus2_17",
         // Resting Grounds
         Split::DreamNailExit => p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07",
@@ -117,17 +119,17 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::TransGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && p.current != p.old,
         Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && is_menu(p.current),
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
-        Split::MenuShadeSoul => is_menu(p.current) && p.old.starts_with("Ruins1_31"),
+        Split::MenuShadeSoul => 2 <= pds.get_fireball_level(prc, g) && is_menu(p.current),
         Split::EnterBlackKnight => p.current == "Ruins2_03" && p.current != p.old,
         Split::BlackKnightTrans => p.current == "Ruins2_Watcher_Room" && p.old == "Ruins2_03",
         // Peak
         Split::MenuSlyKey => is_menu(p.current) && p.old == "Mines_11",
         // Waterways
         Split::DungDefenderExit => p.old == "Waterways_05" && p.current == "Abyss_01",
-        Split::MenuIsmasTear => is_menu(p.current) && p.old == "Waterways_13",
+        Split::MenuIsmasTear => pds.has_acid_armour(prc, g) && is_menu(p.current),
         // Basin
         Split::Abyss19from18 => p.old == "Abyss_18" && p.current == "Abyss_19",
-        Split::MenuWings => is_menu(p.current) && p.old == "Abyss_21",
+        Split::MenuWings => pds.has_double_jump(prc, g) && is_menu(p.current),
         // Fog Canyon
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
         // Queen's Gardens
@@ -142,13 +144,18 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
         Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),
+        Split::MenuShadeSoul => 2 <= pds.get_fireball_level(p, g) && false,
         // Movement Abilities
         Split::MothwingCloak => g.has_dash(p).is_some_and(|d| d),
+        Split::MenuCloak => pds.has_dash(p, g) && false,
         Split::ShadeCloak => g.has_shadow_dash(p).is_some_and(|s| s),
         Split::MantisClaw => g.has_wall_jump(p).is_some_and(|w| w),
+        Split::MenuClaw => pds.has_wall_jump(p, g) && false,
         Split::MonarchWings => g.has_double_jump(p).is_some_and(|w| w),
+        Split::MenuWings => pds.has_double_jump(p, g) && false,
         Split::CrystalHeart => g.has_super_dash(p).is_some_and(|s| s),
         Split::IsmasTear => g.has_acid_armour(p).is_some_and(|a| a),
+        Split::MenuIsmasTear => pds.has_acid_armour(p, g) && false,
         // Dream Nail Levels
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
