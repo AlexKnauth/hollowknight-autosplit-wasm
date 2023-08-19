@@ -1,0 +1,34 @@
+[2023-08-19T02:20:30Z][Auto Splitter][INFO] curr_scene_name: Room_shop
+[2023-08-19T02:20:45Z][Auto Splitter][INFO] curr_scene_name: Quit_To_Menu
+[2023-08-19T02:20:45Z][Auto Splitter][INFO] Room_shop -> Quit_To_Menu
+[2023-08-19T02:20:45Z][Auto Splitter][INFO] fireballLevel: Some(1)
+[2023-08-19T02:20:45Z][Auto Splitter][INFO] geo: Some(186)
+[2023-08-19T02:20:46Z][Auto Splitter][INFO] curr_scene_name: Menu_Title
+[2023-08-19T02:20:46Z][Auto Splitter][INFO] Quit_To_Menu -> Menu_Title
+[2023-08-19T02:20:46Z][Auto Splitter][INFO] fireballLevel: Some(0)
+[2023-08-19T02:20:46Z][Auto Splitter][INFO] geo: Some(0)
+[2023-08-19T02:20:53Z][Auto Splitter][INFO] curr_scene_name: Ruins2_08
+[2023-08-19T02:20:53Z][Auto Splitter][INFO] GameManagerFinder dirty:
+  SceneFinder: Some("Ruins2_08")
+  GameManagerFinder: Some("Quit_To_Menu")
+[2023-08-19T02:20:53Z][Auto Splitter][INFO] Menu_Title -> Ruins2_08
+[2023-08-19T02:20:53Z][Auto Splitter][INFO] fireballLevel: Some(0)
+[2023-08-19T02:20:53Z][Auto Splitter][INFO] geo: Some(0)
+[2023-08-19T02:20:54Z][Auto Splitter][INFO] Scanning for game_manager_scene_name Ruins2_08...
+[2023-08-19T02:20:58Z][Auto Splitter][ERROR] Unloaded due to failure: error while executing at wasm backtrace:
+    0: 0x79d7c - <unknown>!<core::result::Result<T,E> as core::ops::try_trait::Try>::branch::hbdc72ffa99cc27cd
+    1: 0x7aed6 - <unknown>!asr::runtime::process::Process::read::h7317abb596c483e8
+    2: 0x4f996 - <unknown>!asr::runtime::process::Process::read_pointer_path64::h8862af1851f5086f
+    3: 0xe197 - <unknown>!wasm_hollowknight_autosplit::hollow_knight_memory::attach_game_manager_scene_name::he090aa5bd99ed985
+    4: 0x38c2a - <unknown>!core::ops::function::Fn::call::h5fad06300c134a83
+    5: 0x1a8b2 - <unknown>!wasm_hollowknight_autosplit::hollow_knight_memory::attempt_scan_roots::h371ce5bb60798dd5
+    6: 0xf16c - <unknown>!wasm_hollowknight_autosplit::hollow_knight_memory::GameManagerFinder::attempt_clean::hf152e5662ddc2d74
+    7: 0x3ef86 - <unknown>!wasm_hollowknight_autosplit::main::{{closure}}::{{closure}}::h4c6078257c1d7f2c
+    8: 0x7094 - <unknown>!<asr::future::UntilProcessCloses<F> as core::future::future::Future>::poll::h22ac9c713bce841c
+    9: 0x3c52f - <unknown>!wasm_hollowknight_autosplit::main::{{closure}}::h560fa81a59544334
+   10: 0xa9ca - <unknown>!<core::pin::Pin<P> as core::future::future::Future>::poll::h7d83129744e5dac2
+   11: 0x51e28 - <unknown>!update
+note: using the `WASMTIME_BACKTRACE_DETAILS=1` environment variable may show more debugging information
+
+Caused by:
+    wasm trap: interrupt
