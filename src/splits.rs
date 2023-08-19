@@ -57,7 +57,9 @@ pub enum Split {
     // Resting Grounds
     DreamNailExit,
     // City
+    GorgeousHusk,
     TransGorgeousHusk,
+    MenuGorgeousHusk,
     Lemm2,
     MenuStoreroomsSimpleKey,
     MenuShadeSoul,
@@ -82,7 +84,7 @@ pub enum Split {
     BeastsDenTrapBench,
 }
 
-pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
+pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
         // Start and End
         Split::StartNewGame => {
@@ -112,7 +114,8 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>) -> bool {
         // Resting Grounds
         Split::DreamNailExit => p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07",
         // City
-        Split::TransGorgeousHusk => p.old == "Ruins_House_02" && p.current == "Ruins2_04",
+        Split::TransGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && p.current != p.old,
+        Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && is_menu(p.current),
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
         Split::MenuShadeSoul => is_menu(p.current) && p.old.starts_with("Ruins1_31"),
         Split::EnterBlackKnight => p.current == "Ruins2_03" && p.current != p.old,
@@ -160,6 +163,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // Crossroads
         Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
         // City
+        Split::GorgeousHusk => pds.killed_gorgeous_husk(p, g),
+        Split::TransGorgeousHusk => pds.killed_gorgeous_husk(p, g) && false,
+        Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(p, g) && false,
         Split::Lemm2 => g.met_relic_dealer_shop(p).is_some_and(|m| m),
         Split::WatcherChandelier => g.watcher_chandelier(p).is_some_and(|c| c),
         Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),

@@ -71,7 +71,7 @@ async fn main() {
                         game_manager_finder.set_dirty();
                     }
                     if let Some(scene_pair) = scene_store.transition_pair() {
-                        if splits::transition_splits(current_split, &scene_pair) {
+                        if splits::transition_splits(current_split, &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
                             split_index(&mut i, n);
                         }
 

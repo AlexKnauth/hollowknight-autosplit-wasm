@@ -249,6 +249,13 @@ const GOT_CHARM_31_PATH: &[u64] = &[
     GOT_CHARM_31_OFFSET
 ];
 
+const KILLED_GORGEOUS_HUSK_OFFSET: u64 = 0x879;
+const KILLED_GORGEOUS_HUSK_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    KILLED_GORGEOUS_HUSK_OFFSET
+];
+
 // Lemm
 const MET_RELIC_DEALER_SHOP_OFFSET: u64 = 0x34a;
 const MET_RELIC_DEALER_SHOP_PATH: &[u64] = &[
@@ -574,6 +581,10 @@ impl GameManagerFinder {
         process.read_pointer_path64(self.game_manager, GOT_CHARM_31_PATH).ok()
     }
 
+    pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, KILLED_GORGEOUS_HUSK_PATH).ok()
+    }
+
     // Lemm
     pub fn met_relic_dealer_shop(&self, process: &Process) -> Option<bool> {
         process.read_pointer_path64(self.game_manager, MET_RELIC_DEALER_SHOP_PATH).ok()
@@ -718,15 +729,20 @@ impl SceneStore {
 }
 
 pub struct PlayerDataStore {
-    map_i32: BTreeMap<u64, i32>
+    map_i32: BTreeMap<u64, i32>,
+    map_bool: BTreeMap<u64, bool>,
 }
 
 impl PlayerDataStore {
     pub fn new() -> PlayerDataStore {
-        PlayerDataStore { map_i32: BTreeMap::new() }
+        PlayerDataStore { 
+            map_i32: BTreeMap::new(),
+            map_bool: BTreeMap::new(),
+        }
     }
     pub fn reset(&mut self) {
         self.map_i32.clear();
+        self.map_bool.clear();
     }
     
     pub fn incremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
@@ -742,6 +758,18 @@ impl PlayerDataStore {
                 simple_keys == prev_simple_keys + 1
             }
             _ => false
+        }
+    }
+
+    pub fn killed_gorgeous_husk(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.killed_gorgeous_husk(process) {
+            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert(KILLED_GORGEOUS_HUSK_OFFSET, k);
+                k
+            }
+            _ => {
+                *self.map_bool.get(&KILLED_GORGEOUS_HUSK_OFFSET).unwrap_or(&false)
+            }
         }
     }
 }
