@@ -271,6 +271,13 @@ const GOT_CHARM_31_PATH: &[u64] = &[
     GOT_CHARM_31_OFFSET
 ];
 
+const GRUBS_COLLECTED_OFFSET: u64 = 0xb94;
+const GRUBS_COLLECTED_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    GRUBS_COLLECTED_OFFSET
+];
+
 // Gruz Mother
 const KILLED_BIG_FLY_OFFSET: u64 = 0x6c1;
 const KILLED_BIG_FLY_PATH: &[u64] = &[
@@ -624,6 +631,10 @@ impl GameManagerFinder {
     // Dashmaster
     pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
         process.read_pointer_path64(self.game_manager, GOT_CHARM_31_PATH).ok()
+    }
+
+    pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
+        process.read_pointer_path64(self.game_manager, GRUBS_COLLECTED_PATH).ok()
     }
 
     // Gruz Mother

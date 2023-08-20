@@ -54,6 +54,13 @@ pub enum Split {
     SlyKey,
     ElegantKey,
 
+    // Grubs
+    Grub1,
+    Grub2,
+    Grub3,
+    Grub4,
+    Grub5,
+
     // Dirtmouth
     KingsPass,
     SlyShopExit,
@@ -186,6 +193,12 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
         Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
         Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
+        // Grubs
+        Split::Grub1 => g.grubs_collected(p).is_some_and(|g| g == 1),
+        Split::Grub2 => g.grubs_collected(p).is_some_and(|g| g == 2),
+        Split::Grub3 => g.grubs_collected(p).is_some_and(|g| g == 3),
+        Split::Grub4 => g.grubs_collected(p).is_some_and(|g| g == 4),
+        Split::Grub5 => g.grubs_collected(p).is_some_and(|g| g == 5),
         // Crossroads
         Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
         Split::SlyRescued => g.sly_rescued(p).is_some_and(|s| s),
