@@ -54,6 +54,8 @@ pub enum Split {
     // Crossroads
     EnterBroodingMawlek,
     AncestralMound,
+    GruzMother,
+    SlyRescued,
     SalubraExit,
     EnterHollowKnight,
     UnchainedHollowKnight,
@@ -174,6 +176,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
         Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
         // Crossroads
+        Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
+        Split::SlyRescued => g.sly_rescued(p).is_some_and(|s| s),
         Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
         // City
         Split::GorgeousHusk => pds.killed_gorgeous_husk(p, g),

@@ -35,10 +35,11 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 13] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 14] = [
     0x01A1AC30, // Windows
     0x01A862E8, // Mac?
     0x01A982E8, // Mac?
+    0x01AA12E8, // Mac?
     0x01AA22E8, // Mac?
     0x01AA32E8, // Mac?
     0x01AA52E8, // Mac?
@@ -91,9 +92,10 @@ const BAD_SCENE_NAMES: [&str; 10] = [
     "eventTarget",
 ];
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 9] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 10] = [
     0x019D7CF0, // Windows
     0x01ADDA80, // Mac?
+    0x01AE6A80, // Mac?
     0x01AE7A80, // Mac?
     0x01AEAA80, // Mac?
     0x01BF8A80, // Mac?
@@ -247,6 +249,21 @@ const GOT_CHARM_31_PATH: &[u64] = &[
     // from game_manager
     PLAYER_DATA_OFFSET,
     GOT_CHARM_31_OFFSET
+];
+
+// Gruz Mother
+const KILLED_BIG_FLY_OFFSET: u64 = 0x6c1;
+const KILLED_BIG_FLY_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    KILLED_BIG_FLY_OFFSET
+];
+
+const SLY_RESCUED_OFFSET: u64 = 0x389;
+const SLY_RESCUED_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    SLY_RESCUED_OFFSET
 ];
 
 const KILLED_GORGEOUS_HUSK_OFFSET: u64 = 0x879;
@@ -579,6 +596,15 @@ impl GameManagerFinder {
     // Dashmaster
     pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
         process.read_pointer_path64(self.game_manager, GOT_CHARM_31_PATH).ok()
+    }
+
+    // Gruz Mother
+    pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, KILLED_BIG_FLY_PATH).ok()
+    }
+
+    pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
+        process.read_pointer_path64(self.game_manager, SLY_RESCUED_PATH).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
