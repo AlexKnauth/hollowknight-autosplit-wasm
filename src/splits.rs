@@ -39,6 +39,12 @@ pub enum Split {
     DreamGate,
     DreamNail2,
 
+    // Masks and Mask Shards
+    MaskFragment1,
+    MaskFragment2,
+    MaskFragment3,
+    Mask1,
+
     // Charms
     Dashmaster,
 
@@ -168,6 +174,11 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
+        // Masks and Mask Shards
+        Split::MaskFragment1 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 1),
+        Split::MaskFragment2 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 2),
+        Split::MaskFragment3 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 3),
+        Split::Mask1 => g.max_health_base(p).is_some_and(|h| h == 6),
         // Charms
         Split::Dashmaster => g.got_charm_31(p).is_some_and(|c| c),
         // Other Items

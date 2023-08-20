@@ -206,6 +206,26 @@ const DREAM_NAIL_UPGRADED_PATH: &[u64] = &[
     DREAM_NAIL_UPGRADED_OFFSET
 ];
 
+// Base number of masks, without any charms, bindings, lifeblood, or damage taken
+const MAX_HEALTH_BASE_OFFSET: u64 = 0x198;
+const MAX_HEALTH_BASE_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    MAX_HEALTH_BASE_OFFSET
+];
+
+// Heart pieces represents one of:
+//  - number of heart pieces including the ones assembled into masks: 0-3 4-7 8-11 12-15 16
+//  - number of heart pieces excluding the ones assembled into masks: 0-3 0-3 0-3  0-3   0
+//  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
+// and I'm not sure which one
+const HEART_PIECES_OFFSET: u64 = 0x1a8;
+const HEART_PIECES_PATH: &[u64] = &[
+    // from game_manager
+    PLAYER_DATA_OFFSET,
+    HEART_PIECES_OFFSET
+];
+
 const HAS_LANTERN_OFFSET: u64 = 0x28a;
 const HAS_LANTERN_PATH: &[u64] = &[
     // from game_manager
@@ -570,6 +590,14 @@ impl GameManagerFinder {
     
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
         process.read_pointer_path64(self.game_manager, DREAM_NAIL_UPGRADED_PATH).ok()
+    }
+
+    pub fn max_health_base(&self, process: &Process) -> Option<i32> {
+        process.read_pointer_path64(self.game_manager, MAX_HEALTH_BASE_PATH).ok()
+    }
+
+    pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
+        process.read_pointer_path64(self.game_manager, HEART_PIECES_PATH).ok()
     }
 
     pub fn has_lantern(&self, process: &Process) -> Option<bool> {
