@@ -105,6 +105,7 @@ async fn main() {
 
 fn split_index(i: &mut usize, n: usize) {
     if *i == 0 {
+        asr::timer::reset();
         asr::timer::start();
     } else {
         asr::timer::split();
