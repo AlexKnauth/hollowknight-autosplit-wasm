@@ -52,6 +52,8 @@ const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 14] = [
     0x01BD82E8, // Mac?
 ];
 
+const ITER_PER_TICK: u64 = 16384;
+
 const ASSETS_SCENES: &str = "Assets/Scenes/";
 const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
@@ -369,16 +371,19 @@ impl UnityPlayerHasActiveScene {
         }
         None
     }
-    fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
+    async fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
         asr::print_message("Scanning for active_scene roots...");
-        let a = attempt_scan_roots(process, unity_player, attach_active_scene_root, &())?;
+        let a = attempt_scan_roots(process, unity_player, attach_active_scene_root, &()).await?;
         Some(UnityPlayerHasActiveScene(a))
     }
-    fn attach_scan(process: &Process) -> Option<UnityPlayerHasActiveScene> {
+    async fn attach_scan(process: &Process) -> Option<UnityPlayerHasActiveScene> {
         let unity_player = get_unity_player_range(process)?;
-        UnityPlayerHasActiveScene::attach_unity_player(process, unity_player).or_else(|| {
-            UnityPlayerHasActiveScene::attempt_scan_unity_player(process, unity_player)
-        })
+        if let Some(uphas) = UnityPlayerHasActiveScene::attach_unity_player(process, unity_player) {
+            Some(uphas)
+        } else {
+            next_tick().await;
+            UnityPlayerHasActiveScene::attempt_scan_unity_player(process, unity_player).await
+        }
     }
 
     #[cfg(debug_assertions)]
@@ -397,11 +402,11 @@ pub enum SceneFinder {
 }
 
 impl SceneFinder {
-    fn attach(process: &Process) -> Option<SceneFinder> {
+    async fn attach(process: &Process) -> Option<SceneFinder> {
         if let Some(scene_manager) = SceneManager::attach(process) {
             return Some(SceneFinder::SceneManager(scene_manager));
         }
-        if let Some(uphas) = UnityPlayerHasActiveScene::attach_scan(process) {
+        if let Some(uphas) = UnityPlayerHasActiveScene::attach_scan(process).await {
             return Some(SceneFinder::UnityPlayerHasActiveScene(uphas))
         }
         None
@@ -419,9 +424,13 @@ impl SceneFinder {
         
         asr::print_message("Trying to attach SceneFinder...");
         next_tick().await;
-        let scene_finder = retry(|| SceneFinder::attach(&process)).await;
-        asr::print_message("Attached SceneFinder.");
-        scene_finder
+        loop {
+            if let Some(scene_finder) = SceneFinder::attach(&process).await {
+                asr::print_message("Attached SceneFinder.");
+                return scene_finder;
+            }
+            next_tick().await;
+        }
     }
 
     #[cfg(debug_assertions)]
@@ -469,17 +478,24 @@ pub struct GameManagerFinder {
 impl GameManagerFinder {
     pub async fn wait_attach(process: &Process, scene_finder: &SceneFinder) -> GameManagerFinder {
         asr::print_message("Trying to attach GameManagerFinder...");
-        let g = retry(|| GameManagerFinder::attach_scan(process, scene_finder)).await;
-        asr::print_message("Attached GameManagerFinder.");
-        g
+        loop {
+            if let Some(g) = GameManagerFinder::attach_scan(process, scene_finder).await {
+                asr::print_message("Attached GameManagerFinder.");
+                return g;
+            }
+            next_tick().await;
+        }
     }
-    fn attach_scan(process: &Process, scene_finder: &SceneFinder) -> Option<GameManagerFinder> {
+    async fn attach_scan(process: &Process, scene_finder: &SceneFinder) -> Option<GameManagerFinder> {
         let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
         if scene_name == PRE_MENU_INTRO { return None; }
         let unity_player = get_unity_player_range(process)?;
-        GameManagerFinder::attach_unity_player(process, unity_player, &scene_name).or_else(|| {
-            GameManagerFinder::attempt_scan_unity_player(process, unity_player, &scene_name)
-        })
+        if let Some(g) = GameManagerFinder::attach_unity_player(process, unity_player, &scene_name) {
+            Some(g)
+        } else {
+            next_tick().await;
+            GameManagerFinder::attempt_scan_unity_player(process, unity_player, &scene_name).await
+        }
     }
     fn attach_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
         let (addr, _) = unity_player;
@@ -491,9 +507,10 @@ impl GameManagerFinder {
         }
         None
     }
-    fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
+    async fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
         asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
-        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name)?;
+        next_tick().await;
+        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name).await?;
         let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
         Some(GameManagerFinder{unity_player_has_game_manager, game_manager, dirty: false})
     }
@@ -505,7 +522,7 @@ impl GameManagerFinder {
         self.dirty = true;
     }
 
-    pub fn attempt_clean(&mut self, process: &Process, scene_finder: &SceneFinder) -> Option<()> {
+    pub async fn attempt_clean(&mut self, process: &Process, scene_finder: &SceneFinder) -> Option<()> {
         if !self.is_dirty() { return Some(()); }
         let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
         if self.get_scene_name(process).is_some_and(|s| s == scene_name) {
@@ -531,7 +548,8 @@ impl GameManagerFinder {
             }
         }
         asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
-        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, &scene_name)?;
+        next_tick().await;
+        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, &scene_name).await?;
         let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
         self.unity_player_has_game_manager = unity_player_has_game_manager;
         self.game_manager = game_manager;
@@ -950,7 +968,7 @@ fn attach_game_manager_scene_name(process: &Process, a: Address, scene_name: &st
     }
 }
 
-fn attempt_scan_roots<F, V>(process: &Process, unity_player: (Address, u64), attach: F, v: &V) -> Option<Address>
+async fn attempt_scan_roots<F, V>(process: &Process, unity_player: (Address, u64), attach: F, v: &V) -> Option<Address>
 where
     F: Fn(&Process, Address, &V) -> Option<Address>,
     V: ?Sized,
@@ -962,6 +980,9 @@ where
             let offset = a.value() - addr.value();
             asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
             return Some(a);
+        }
+        if 0 == i % ITER_PER_TICK {
+            next_tick().await;
         }
     }
     None

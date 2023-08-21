@@ -95,7 +95,7 @@ async fn main() {
                         asr::print_message(&format!("GameManagerFinder not found: game state {:?}", gs));
                         game_manager_finder.set_dirty();
                     }
-                    game_manager_finder.attempt_clean(&process, &scene_finder).unwrap_or_default();
+                    game_manager_finder.attempt_clean(&process, &scene_finder).await.unwrap_or_default();
                     next_tick().await;
                 }
             })
