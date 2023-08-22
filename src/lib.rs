@@ -24,6 +24,7 @@ async fn main() {
     let mut scene_table: SceneTable = serde_json::from_str(include_str!("scene_table.json")).unwrap_or_default();
 
     let splits: Vec<splits::Split> = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
+    let auto_reset = splits::auto_reset_safe(&splits);
 
     loop {
         let process = wait_attach_hollow_knight().await;
@@ -72,6 +73,9 @@ async fn main() {
                     }
                     if let Some(scene_pair) = scene_store.transition_pair() {
                         if splits::transition_splits(current_split, &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
+                            split_index(&mut i, n);
+                        } else if auto_reset && splits::transition_splits(&splits[0], &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
+                            i = 0;
                             split_index(&mut i, n);
                         }
 

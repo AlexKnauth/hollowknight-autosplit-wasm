@@ -223,3 +223,9 @@ pub fn default_splits() -> Vec<Split> {
     vec![Split::StartNewGame,
          Split::EndingSplit]
 }
+
+pub fn auto_reset_safe(s: &[Split]) -> bool {
+    s.first() == Some(&Split::StartNewGame)
+    && !s[1..].contains(&Split::StartNewGame)
+    && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
+}
