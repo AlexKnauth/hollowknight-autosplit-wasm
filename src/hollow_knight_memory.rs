@@ -489,7 +489,8 @@ impl GameManagerFinder {
                 // asr::print_message(&format!("GameManagerFinder found uphgm_3 {:?}", process.read_pointer_path64::<Address64>(g.unity_player_has_game_manager, &[UPHGM_OFFSET_0, UPHGM_OFFSET_1, UPHGM_OFFSET_2, UPHGM_OFFSET_3])));
                 asr::print_message(&format!("GameManagerFinder found ___gm__ Ok({:?})", g.game_manager));
                 asr::print_message("Scanning for signatures...");
-                if let Some(a) = signature_scan_all(&process) {
+                next_tick().await;
+                if let Some(a) = signature_scan_all(&process).await {
                     asr::print_message(&format!("Sig found a_10? {:?}", process.read_pointer_path64::<Address64>(a, &[10])));
                     asr::print_message(&format!("Sig found a_10_0? {:?}", process.read_pointer_path64::<Address64>(a, &[10, 0])));
                 } else {
@@ -1033,13 +1034,17 @@ fn signature_scan_range(process: &Process, range: (Address, u64)) -> Option<Addr
     }
 }
 
-fn signature_scan_all(process: &Process) -> Option<Address> {
+async fn signature_scan_all(process: &Process) -> Option<Address> {
     for r in process.memory_ranges() {
-        if let Ok(range) = r.range() {
-            if let Some(a) = signature_scan_range(process, range) {
-                print_memory_range_info(process, r).unwrap_or_default();
-                return Some(a);
+        match r.range() {
+            Ok(range) if range.1 <= 0x100000 => {
+                if let Some(a) = signature_scan_range(process, range) {
+                    print_memory_range_info(process, r).unwrap_or_default();
+                    return Some(a);
+                }
+                next_tick().await;
             }
+            _ => ()
         }
     }
     None
