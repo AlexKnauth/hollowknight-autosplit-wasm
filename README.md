@@ -54,3 +54,8 @@ sudo cargo run --release
 
 Finally, do not manually split, skip, or undo splits while running with this autosplitter.
 The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with `livesplit-one-desktop`'s state.
+
+The keyboard shortcuts of `livesplit-one-desktop` assume the Qwerty keyboard layout,
+so you may need to press where the key would be if you were using Qwerty.
+For example to save splits is "Control S" on Qwerty, but on a Dvorak keyboard,
+the Qwerty key "S" is where the Dvorak key "O" is, so use Dvorak "Control O" to save instead.
