@@ -35,7 +35,7 @@ const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
 const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
 const ACTIVE_SCENE_OFFSET: u64 = 0x48;
 const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 14] = [
+const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 15] = [
     0x01A1AC30, // Windows
     0x01A862E8, // Mac?
     0x01A982E8, // Mac?
@@ -50,6 +50,7 @@ const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 14] = [
     0x01BBD2E8, // Mac?
     0x01BBE2E8, // Mac?
     0x01BD82E8, // Mac?
+    0x01BE12E8, // Mac?
 ];
 
 const ITER_PER_TICK: u64 = 16384;
@@ -94,7 +95,7 @@ const BAD_SCENE_NAMES: [&str; 10] = [
     "eventTarget",
 ];
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 10] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 11] = [
     0x019D7CF0, // Windows
     0x01ADDA80, // Mac?
     0x01AE6A80, // Mac?
@@ -105,6 +106,7 @@ const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 10] = [
     0x01C02A80, // Mac?
     0x01C03A80, // Mac?
     0x01C1DA80, // Mac?
+    0x01C26A80, // Mac?
 ];
 
 const UPHGM_OFFSET_0: u64 = 0;
