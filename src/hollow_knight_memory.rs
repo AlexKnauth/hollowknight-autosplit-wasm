@@ -84,7 +84,7 @@ const NON_PLAY_SCENES: [&str; 15] = [
     "PermaDeath_Unlock",
 ];
 
-const BAD_SCENE_NAMES: [&str; 10] = [
+const BAD_SCENE_NAMES: [&str; 11] = [
     "Untagged",
     "left1",
     "oncomplete",
@@ -95,6 +95,7 @@ const BAD_SCENE_NAMES: [&str; 10] = [
     "integer1",
     "gameObject",
     "eventTarget",
+    "material",
 ];
 
 const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 13] = [
