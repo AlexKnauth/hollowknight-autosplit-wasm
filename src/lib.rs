@@ -4,6 +4,7 @@ mod hollow_knight_memory;
 mod splits;
 
 use asr::future::next_tick;
+use asr::game_engine::unity::SceneManager;
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use hollow_knight_memory::*;
@@ -31,17 +32,17 @@ async fn main() {
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
-                let scene_finder = SceneFinder::wait_attach(&process).await;
-                let mut scene_store = SceneStore::new(scene_finder.wait_get_current_scene_name(&process).await);
+                let scene_manager = SceneManager::wait_attach(&process).await;
+                let mut scene_store = SceneStore::new(wait_get_current_scene_name(&process, &scene_manager).await);
 
                 next_tick().await;
-                let mut game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_finder).await;
+                let mut game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_manager).await;
                 let mut player_data_store = PlayerDataStore::new();
 
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                 #[cfg(debug_assertions)]
-                update_scene_table(&process, &scene_finder, &mut scene_table);
+                update_scene_table(&process, &scene_manager, &mut scene_table);
 
                 let mut i = 0;
                 let n = splits.len();
@@ -53,17 +54,17 @@ async fn main() {
                         continue;
                     }
                     let gmf = game_manager_finder.get_scene_name(&process);
-                    let sf = scene_finder.get_current_scene_name(&process).ok();
+                    let sf = get_current_scene_name(&process, &scene_manager).ok();
                     #[cfg(debug_assertions)]
                     let new_curr_scene = sf.as_ref().is_some_and(|s| s != scene_store.curr_scene_name());
 
                     let (gmf_dirty, sf_dirty) = scene_store.new_curr_scene_name2(gmf.clone(), sf.clone());
                     if gmf_dirty && !game_manager_finder.is_dirty() {
-                        asr::print_message(&format!("GameManagerFinder dirty:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
+                        asr::print_message(&format!("GameManagerFinder dirty:\n  SceneManager: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
                         game_manager_finder.set_dirty();
                     }
                     if sf_dirty {
-                        asr::print_message(&format!("SceneFinder dirty:\n  SceneFinder: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
+                        asr::print_message(&format!("SceneManager dirty:\n  SceneManager: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
                     }
                     let gmfn = game_manager_finder.get_next_scene_name(&process);
                     let gmfn_dirty = scene_store.new_next_scene_name1(gmfn.clone());
@@ -92,14 +93,14 @@ async fn main() {
                     }
                     #[cfg(debug_assertions)]
                     if new_curr_scene {
-                        update_scene_table(&process, &scene_finder, &mut scene_table);
+                        update_scene_table(&process, &scene_manager, &mut scene_table);
                     }
                     let gs = game_manager_finder.get_game_state(&process);
                     if gmf.is_none() && gmfn.is_none() && !game_manager_finder.is_dirty() && sf.is_some_and(|s| is_play_scene(&s)) {
                         asr::print_message(&format!("GameManagerFinder not found: game state {:?}", gs));
                         game_manager_finder.set_dirty();
                     }
-                    game_manager_finder.attempt_clean(&process, &scene_finder).await.unwrap_or_default();
+                    game_manager_finder.attempt_clean(&process, &scene_manager).await.unwrap_or_default();
                     next_tick().await;
                 }
             })

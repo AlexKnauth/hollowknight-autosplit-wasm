@@ -30,35 +30,7 @@ pub const SCENE_PATH_SIZE: usize = 64;
 const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
 
-const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
-#[cfg(debug_assertions)]
-const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
-const ACTIVE_SCENE_OFFSET: u64 = 0x48;
-const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 17] = [
-    0x01A1AC30, // Windows
-    0x01A862E8, // Mac?
-    0x01A982E8, // Mac?
-    0x01AA12E8, // Mac?
-    0x01AA22E8, // Mac?
-    0x01AA32E8, // Mac?
-    0x01AA52E8, // Mac?
-    0x01AAF2E8, // Mac?
-    0x01AB02E8, // Mac?
-    0x01B2B2E8, // Mac?
-    0x01B3D2E8, // Mac?
-    0x01BB32E8, // Mac?
-    0x01BB42E8, // Mac?
-    0x01BBD2E8, // Mac?
-    0x01BBE2E8, // Mac?
-    0x01BD82E8, // Mac?
-    0x01BE12E8, // Mac?
-];
-
 const ITER_PER_TICK: u64 = 16384;
-
-const ASSETS_SCENES: &str = "Assets/Scenes/";
-const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
@@ -367,114 +339,16 @@ pub type SceneTable = BTreeMap<i32, SceneInfo>;
 
 // --------------------------------------------------------
 
-pub struct UnityPlayerHasActiveScene(Address);
-
-impl UnityPlayerHasActiveScene {
-    fn attach_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
-        let (addr, _) = unity_player;
-        for offset in UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS.iter() {
-            if let Some(a) = attach_active_scene_root(process, addr.add(*offset), &()) {
-                return Some(UnityPlayerHasActiveScene(a));
-            }
-        }
-        None
-    }
-    async fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
-        asr::print_message("Scanning for active_scene roots...");
-        let a = attempt_scan_roots(process, unity_player, attach_active_scene_root, &()).await?;
-        Some(UnityPlayerHasActiveScene(a))
-    }
-    async fn attach_scan(process: &Process) -> Option<UnityPlayerHasActiveScene> {
-        let unity_player = get_unity_player_range(process)?;
-        if let Some(uphas) = UnityPlayerHasActiveScene::attach_unity_player(process, unity_player) {
-            Some(uphas)
-        } else {
-            next_tick().await;
-            UnityPlayerHasActiveScene::attempt_scan_unity_player(process, unity_player).await
-        }
-    }
-
-    #[cfg(debug_assertions)]
-    fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
-        process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_BUILD_INDEX_OFFSET])
-    }
-
-    fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
-        process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0])
-    }
+pub fn get_current_scene_name(process: &Process, scene_manager: &SceneManager) -> Result<String, asr::Error> {
+    scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(scene_path_to_name_string)
 }
 
-pub enum SceneFinder {
-    SceneManager(SceneManager),
-    UnityPlayerHasActiveScene(UnityPlayerHasActiveScene)
+async fn wait_get_current_scene_path<const N: usize>(process: &Process, scene_manager: &SceneManager) -> ArrayCString<N> {
+    retry(|| scene_manager.get_current_scene_path(&process)).await
 }
 
-impl SceneFinder {
-    async fn attach(process: &Process) -> Option<SceneFinder> {
-        if let Some(scene_manager) = SceneManager::attach(process) {
-            return Some(SceneFinder::SceneManager(scene_manager));
-        }
-        if let Some(uphas) = UnityPlayerHasActiveScene::attach_scan(process).await {
-            return Some(SceneFinder::UnityPlayerHasActiveScene(uphas))
-        }
-        None
-    }
-    pub async fn wait_attach(process: &Process) -> SceneFinder {
-        asr::print_message("Trying to attach SceneManager...");
-        next_tick().await;
-        for i in 0 .. 10 {
-            if let Some(scene_manager) = SceneManager::attach(&process) {
-                asr::print_message(&format!("Attached SceneManager ({}).", i));
-                return SceneFinder::SceneManager(scene_manager)
-            }
-            next_tick().await;
-        }
-        
-        asr::print_message("Trying to attach SceneFinder...");
-        next_tick().await;
-        loop {
-            if let Some(scene_finder) = SceneFinder::attach(&process).await {
-                asr::print_message("Attached SceneFinder.");
-                return scene_finder;
-            }
-            next_tick().await;
-        }
-    }
-
-    #[cfg(debug_assertions)]
-    pub fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
-        match self {
-            SceneFinder::SceneManager(scene_manager) => {
-                scene_manager.get_current_scene_index(process)
-            }
-            SceneFinder::UnityPlayerHasActiveScene(uphas) => {
-                uphas.get_current_scene_index(process)
-            }
-        }
-    }
-
-    pub fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
-        match self {
-            SceneFinder::SceneManager(scene_manager) => {
-                scene_manager.get_current_scene_path(process)
-            }
-            SceneFinder::UnityPlayerHasActiveScene(uphas) => {
-                uphas.get_current_scene_path(process)
-            }
-        }
-    }
-
-    pub fn get_current_scene_name(&self, process: &Process) -> Result<String, asr::Error> {
-        self.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(scene_path_to_name_string)
-    }
-
-    async fn wait_get_current_scene_path<const N: usize>(&self, process: &Process) -> ArrayCString<N> {
-        retry(|| self.get_current_scene_path(&process)).await
-    }
-
-    pub async fn wait_get_current_scene_name(&self, process: &Process) -> String {
-        scene_path_to_name_string(self.wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process).await)
-    }
+pub async fn wait_get_current_scene_name(process: &Process, scene_manager: &SceneManager) -> String {
+    scene_path_to_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, scene_manager).await)
 }
 
 pub struct GameManagerFinder {
@@ -484,18 +358,18 @@ pub struct GameManagerFinder {
 }
 
 impl GameManagerFinder {
-    pub async fn wait_attach(process: &Process, scene_finder: &SceneFinder) -> GameManagerFinder {
+    pub async fn wait_attach(process: &Process, scene_manager: &SceneManager) -> GameManagerFinder {
         asr::print_message("Trying to attach GameManagerFinder...");
         loop {
-            if let Some(g) = GameManagerFinder::attach_scan(process, scene_finder).await {
+            if let Some(g) = GameManagerFinder::attach_scan(process, scene_manager).await {
                 asr::print_message("Attached GameManagerFinder.");
                 return g;
             }
             next_tick().await;
         }
     }
-    async fn attach_scan(process: &Process, scene_finder: &SceneFinder) -> Option<GameManagerFinder> {
-        let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
+    async fn attach_scan(process: &Process, scene_manager: &SceneManager) -> Option<GameManagerFinder> {
+        let scene_name = get_current_scene_name(process, scene_manager).ok()?;
         if scene_name == PRE_MENU_INTRO { return None; }
         let unity_player = get_unity_player_range(process)?;
         if let Some(g) = GameManagerFinder::attach_unity_player(process, unity_player, &scene_name) {
@@ -530,9 +404,9 @@ impl GameManagerFinder {
         self.dirty = true;
     }
 
-    pub async fn attempt_clean(&mut self, process: &Process, scene_finder: &SceneFinder) -> Option<()> {
+    pub async fn attempt_clean(&mut self, process: &Process, scene_manager: &SceneManager) -> Option<()> {
         if !self.is_dirty() { return Some(()); }
-        let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
+        let scene_name = get_current_scene_name(process, scene_manager).ok()?;
         if self.get_scene_name(process).is_some_and(|s| s == scene_name) {
             self.dirty = false;
             return Some(());
@@ -955,16 +829,6 @@ fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option
 
 // Scanning for values in memory
 
-fn attach_active_scene_root(process: &Process, a: Address, _v: &()) -> Option<Address> {
-    let s1: ArrayCString<ASSETS_SCENES_LEN> = process.read_pointer_path64(a, ACTIVE_SCENE_CONTENTS_PATH).ok()?;
-    let s2: String = String::from_utf8(s1.to_vec()).ok()?;
-    if s2 == ASSETS_SCENES {
-        Some(a)
-    } else {
-        None
-    }
-}
-
 fn attach_game_manager_scene_name(process: &Process, a: Address, scene_name: &str) -> Option<Address> {
     let gm: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
     let s0: Address64 = process.read_pointer_path64(gm, SCENE_NAME_PATH).ok()?;
@@ -1019,9 +883,9 @@ fn log_scene_table(scene_table: &SceneTable) {
 }
 
 #[cfg(debug_assertions)]
-pub fn update_scene_table(process: &Process, scene_finder: &SceneFinder, scene_table: &mut SceneTable) {
-    let si = scene_finder.get_current_scene_index(&process).unwrap_or(-1);
-    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_finder.get_current_scene_path(&process).unwrap_or_default();
+pub fn update_scene_table(process: &Process, scene_manager: &SceneManager, scene_table: &mut SceneTable) {
+    let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
+    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_manager.get_current_scene_path(&process).unwrap_or_default();
     let sn = scene_path_to_name_string(sp);
     let sv = SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()};
     if let Some(tv) = scene_table.get(&si) {
