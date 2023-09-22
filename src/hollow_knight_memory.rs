@@ -98,13 +98,14 @@ const BAD_SCENE_NAMES: [&str; 11] = [
     "material",
 ];
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 13] = [
+const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 14] = [
     0x019D7CF0, // Windows
     0x01ADDA80, // Mac?
     0x01AE6A80, // Mac?
     0x01AE7A80, // Mac?
     0x01AEAA80, // Mac?
     0x01B70A80, // Mac?
+    0x01B79A80, // Mac?
     0x01B82A80, // Mac?
     0x01BF8A80, // Mac?
     0x01BF9A80, // Mac?
