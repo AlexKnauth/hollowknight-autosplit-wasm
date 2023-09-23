@@ -23,6 +23,8 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 
 pub const SCENE_PATH_SIZE: usize = 64;
 
+const INIT_MAX_DIRTYNESS: usize = 0x10;
+
 const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
 
@@ -320,7 +322,8 @@ pub struct GameManagerFinder {
     image: mono::Image,
     class: mono::Class,
     game_manager: Address,
-    dirty: bool
+    max_dirtyness: usize,
+    dirtyness: usize,
 }
 
 impl GameManagerFinder {
@@ -329,15 +332,25 @@ impl GameManagerFinder {
         let image = module.wait_get_default_image(process).await;
         let class = image.wait_get_class(process, &module, "GameManager").await;
         let game_manager = class.wait_get_static_instance(process, &module, "_instance").await;
-        let dirty = false;
-        GameManagerFinder { module, image, class, game_manager, dirty }
+        let max_dirtyness = INIT_MAX_DIRTYNESS;
+        let dirtyness = 0;
+        GameManagerFinder { module, image, class, game_manager, max_dirtyness, dirtyness }
     }
 
     pub fn is_dirty(&self) -> bool {
-        self.dirty
+        self.max_dirtyness < self.dirtyness
     }
-    pub fn set_dirty(&mut self) {
-        self.dirty = true;
+
+    pub fn set_dirty(&mut self, dirty: bool) {
+        if dirty {
+            self.dirtyness += 1;
+        } else {
+            if 0 < self.dirtyness {
+                asr::print_message(&format!("GameManagerFinder dirtyness: {}", self.dirtyness))
+            }
+            self.dirtyness = 0;
+            self.max_dirtyness = INIT_MAX_DIRTYNESS;
+        }
     }
 
     pub async fn attempt_clean(&mut self, process: &Process) -> Option<()> {
@@ -358,7 +371,8 @@ impl GameManagerFinder {
         // TODO: when can this fail? return None in those cases
         let game_manager = self.class.wait_get_static_instance(process, &self.module, "_instance").await;
         self.game_manager = game_manager;
-        self.dirty = false;
+        self.dirtyness = 0;
+        self.max_dirtyness *= 2;
         Some(())
     }
 
