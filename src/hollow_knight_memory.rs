@@ -2,10 +2,11 @@
 use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
-use asr::future::{next_tick, retry};
+use asr::future::retry;
 use asr::watcher::Pair;
 use asr::{Process, Address, Address64};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
+use asr::game_engine::unity::mono;
 use asr::string::{ArrayCString, ArrayWString};
 
 #[cfg(debug_assertions)]
@@ -20,17 +21,10 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
     "Hollow Knight", // Mac
 ];
 
-const UNITY_PLAYER_NAMES: [&str; 2] = [
-    "UnityPlayer.dll", // Windows
-    "UnityPlayer.dylib", // Mac
-];
-
 pub const SCENE_PATH_SIZE: usize = 64;
 
 const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
-
-const ITER_PER_TICK: u64 = 16384;
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
@@ -68,36 +62,6 @@ const BAD_SCENE_NAMES: [&str; 11] = [
     "gameObject",
     "eventTarget",
     "material",
-];
-
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 14] = [
-    0x019D7CF0, // Windows
-    0x01ADDA80, // Mac?
-    0x01AE6A80, // Mac?
-    0x01AE7A80, // Mac?
-    0x01AEAA80, // Mac?
-    0x01B70A80, // Mac?
-    0x01B79A80, // Mac?
-    0x01B82A80, // Mac?
-    0x01BF8A80, // Mac?
-    0x01BF9A80, // Mac?
-    0x01C02A80, // Mac?
-    0x01C03A80, // Mac?
-    0x01C1DA80, // Mac?
-    0x01C26A80, // Mac?
-];
-
-const UPHGM_OFFSET_0: u64 = 0;
-const UPHGM_OFFSET_1: u64 = 0x10;
-const UPHGM_OFFSET_2: u64 = 0x80;
-const UPHGM_OFFSET_3: u64 = 0x28;
-const UPHGM_OFFSET_4: u64 = 0x38;
-const GAME_MANAGER_PATH: &[u64] = &[
-    UPHGM_OFFSET_0,
-    UPHGM_OFFSET_1,
-    UPHGM_OFFSET_2,
-    UPHGM_OFFSET_3,
-    UPHGM_OFFSET_4
 ];
 
 const SCENE_NAME_OFFSET: u64 = 0x18;
@@ -352,49 +316,21 @@ pub async fn wait_get_current_scene_name(process: &Process, scene_manager: &Scen
 }
 
 pub struct GameManagerFinder {
-    unity_player_has_game_manager: Address,
-    game_manager: Address64,
+    module: mono::Module,
+    image: mono::Image,
+    class: mono::Class,
+    game_manager: Address,
     dirty: bool
 }
 
 impl GameManagerFinder {
-    pub async fn wait_attach(process: &Process, scene_manager: &SceneManager) -> GameManagerFinder {
-        asr::print_message("Trying to attach GameManagerFinder...");
-        loop {
-            if let Some(g) = GameManagerFinder::attach_scan(process, scene_manager).await {
-                asr::print_message("Attached GameManagerFinder.");
-                return g;
-            }
-            next_tick().await;
-        }
-    }
-    async fn attach_scan(process: &Process, scene_manager: &SceneManager) -> Option<GameManagerFinder> {
-        let scene_name = get_current_scene_name(process, scene_manager).ok()?;
-        if scene_name == PRE_MENU_INTRO { return None; }
-        let unity_player = get_unity_player_range(process)?;
-        if let Some(g) = GameManagerFinder::attach_unity_player(process, unity_player, &scene_name) {
-            Some(g)
-        } else {
-            next_tick().await;
-            GameManagerFinder::attempt_scan_unity_player(process, unity_player, &scene_name).await
-        }
-    }
-    fn attach_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
-        let (addr, _) = unity_player;
-        for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
-            if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, addr.add(*offset), scene_name) {
-                let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-                return Some(GameManagerFinder{unity_player_has_game_manager, game_manager, dirty: false});
-            }
-        }
-        None
-    }
-    async fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
-        asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
-        next_tick().await;
-        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name).await?;
-        let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-        Some(GameManagerFinder{unity_player_has_game_manager, game_manager, dirty: false})
+    pub async fn wait_attach(process: &Process) -> GameManagerFinder {
+        let module = mono::Module::wait_attach_auto_detect(process).await;
+        let image = module.wait_get_default_image(process).await;
+        let class = image.wait_get_class(process, &module, "GameManager").await;
+        let game_manager = class.wait_get_static_instance(process, &module, "_instance").await;
+        let dirty = false;
+        GameManagerFinder { module, image, class, game_manager, dirty }
     }
 
     pub fn is_dirty(&self) -> bool {
@@ -404,36 +340,23 @@ impl GameManagerFinder {
         self.dirty = true;
     }
 
-    pub async fn attempt_clean(&mut self, process: &Process, scene_manager: &SceneManager) -> Option<()> {
+    pub async fn attempt_clean(&mut self, process: &Process) -> Option<()> {
         if !self.is_dirty() { return Some(()); }
-        let scene_name = get_current_scene_name(process, scene_manager).ok()?;
-        if self.get_scene_name(process).is_some_and(|s| s == scene_name) {
-            self.dirty = false;
-            return Some(());
-        }
-        if scene_name == PRE_MENU_INTRO { return None; }
-        let unity_player = get_unity_player_range(process)?;
-        if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, self.unity_player_has_game_manager, &scene_name) {
-            let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-            self.game_manager = game_manager;
-            self.dirty = false;
-            return Some(());
-        }
-        let (addr, _) = unity_player;
-        for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
-            if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, addr.add(*offset), &scene_name) {
-                let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-                self.unity_player_has_game_manager = unity_player_has_game_manager;
-                self.game_manager = game_manager;
-                self.dirty = false;
-                return Some(());
+        if self.class.get_static_table(process, &self.module).is_none() {
+            if let Some(class) = self.image.get_class(process, &self.module, "GameManager") {
+                self.class = class;
+            } else {
+                if let Some(image) = self.module.get_default_image(process) {
+                    self.image = image;
+                } else {
+                    self.module = mono::Module::wait_attach_auto_detect(process).await;
+                    self.image = self.module.wait_get_default_image(process).await;
+                }
+                self.class = self.image.wait_get_class(process, &self.module, "GameManager").await;
             }
         }
-        asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
-        next_tick().await;
-        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, &scene_name).await?;
-        let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-        self.unity_player_has_game_manager = unity_player_has_game_manager;
+        // TODO: when can this fail? return None in those cases
+        let game_manager = self.class.wait_get_static_instance(process, &self.module, "_instance").await;
         self.game_manager = game_manager;
         self.dirty = false;
         Some(())
@@ -811,12 +734,6 @@ pub fn scene_path_to_name_string<const N: usize>(scene_path: ArrayCString<N>) ->
     String::from_utf8(get_scene_name(&scene_path).to_vec()).unwrap()
 }
 
-fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
-    UNITY_PLAYER_NAMES.into_iter().find_map(|name| {
-        process.get_module_range(name).ok()
-    })
-}
-
 fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option<String> {
     let n: u32 = process.read_pointer_path64(a, &[STRING_LEN_OFFSET]).ok()?;
     if !(n < 2048) { return None; }
@@ -826,40 +743,6 @@ fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option
 }
 
 // --------------------------------------------------------
-
-// Scanning for values in memory
-
-fn attach_game_manager_scene_name(process: &Process, a: Address, scene_name: &str) -> Option<Address> {
-    let gm: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
-    let s0: Address64 = process.read_pointer_path64(gm, SCENE_NAME_PATH).ok()?;
-    let s2: String = read_string_object::<SCENE_PATH_SIZE>(process, s0)?;
-    if s2 == scene_name {
-        Some(a)
-    } else {
-        None
-    }
-}
-
-async fn attempt_scan_roots<F, V>(process: &Process, unity_player: (Address, u64), attach: F, v: &V) -> Option<Address>
-where
-    F: Fn(&Process, Address, &V) -> Option<Address>,
-    V: ?Sized,
-{
-    let (addr, len) = unity_player;
-    for i in 0 .. (len / 8) {
-        let a = addr.add(i * 8);
-        if let Some(a) = attach(process, a, v) {
-            let offset = a.value() - addr.value();
-            asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
-            return Some(a);
-        }
-        if 0 == i % ITER_PER_TICK {
-            next_tick().await;
-        }
-    }
-    None
-}
-
 // --------------------------------------------------------
 
 pub fn is_menu(s: &str) -> bool {

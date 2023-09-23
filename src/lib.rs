@@ -36,7 +36,7 @@ async fn main() {
                 let mut scene_store = SceneStore::new(wait_get_current_scene_name(&process, &scene_manager).await);
 
                 next_tick().await;
-                let mut game_manager_finder = GameManagerFinder::wait_attach(&process, &scene_manager).await;
+                let mut game_manager_finder = GameManagerFinder::wait_attach(&process).await;
                 let mut player_data_store = PlayerDataStore::new();
 
                 #[cfg(debug_assertions)]
@@ -100,7 +100,7 @@ async fn main() {
                         asr::print_message(&format!("GameManagerFinder not found: game state {:?}", gs));
                         game_manager_finder.set_dirty();
                     }
-                    game_manager_finder.attempt_clean(&process, &scene_manager).await.unwrap_or_default();
+                    game_manager_finder.attempt_clean(&process).await.unwrap_or_default();
                     next_tick().await;
                 }
             })
