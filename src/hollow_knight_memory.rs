@@ -66,6 +66,8 @@ const BAD_SCENE_NAMES: [&str; 11] = [
     "material",
 ];
 
+// --------------------------------------------------------
+
 const SCENE_NAME_OFFSET: u64 = 0x18;
 const NEXT_SCENE_NAME_OFFSET: u64 = 0x20;
 
@@ -75,6 +77,66 @@ const GAME_STATE_MODDING_API_OFFSET: u64 = 0x184;
 const GAME_STATE_PLAYING: i32 = 4;
 
 const PLAYER_DATA_OFFSET: u64 = 0xc8;
+
+#[derive(Debug, PartialEq)]
+struct GameManagerOffsets {
+    instance: u64,
+    scene_name: u64,
+    next_scene_name: u64,
+    player_data: u64,
+}
+
+const GAME_MANAGER_OFFSETS: GameManagerOffsets = GameManagerOffsets {
+    instance: 0x8,
+    scene_name: SCENE_NAME_OFFSET,
+    next_scene_name: NEXT_SCENE_NAME_OFFSET,
+    player_data: PLAYER_DATA_OFFSET,
+};
+
+impl GameManagerOffsets {
+    async fn wait_new(process: &Process, module: &mono::Module, class: &mono::Class) -> GameManagerOffsets {
+        let offsets = GameManagerOffsets {
+            instance: class.wait_get_field(process, module, "_instance").await as u64,
+            scene_name: class.wait_get_field(process, module, "sceneName").await as u64,
+            next_scene_name: class.wait_get_field(process, module, "nextSceneName").await as u64,
+            player_data: class.wait_get_field(process, module, "playerData").await as u64,
+        };
+        if offsets != GAME_MANAGER_OFFSETS {
+            asr::print_message("GameManagerOffsets mismatch");
+        }
+        offsets
+    }
+    fn clean(&mut self, process: &Process, module: &mono::Module, class: &mono::Class) -> bool {
+        let mut dirty = false;
+        if let Some(instance) = class.get_field(process, module, "_instance") {
+            self.instance = instance as u64;
+        } else {
+            dirty = true;
+        }
+        if let Some(scene_name) = class.get_field(process, module, "sceneName") {
+            self.scene_name = scene_name as u64;
+        } else {
+            dirty = true;
+        }
+        if let Some(next_scene_name) = class.get_field(process, module, "nextSceneName") {
+            self.next_scene_name = next_scene_name as u64;
+        } else {
+            dirty = true;
+        }
+        if let Some(player_data) = class.get_field(process, module, "playerData") {
+            self.player_data = player_data as u64;
+        } else {
+            dirty = true;
+        }
+        if self != &GAME_MANAGER_OFFSETS {
+            asr::print_message("GameManagerOffsets mismatch");
+            dirty = true;
+        }
+        !dirty
+    }
+}
+
+// --------------------------------------------------------
 
 const FIREBALL_LEVEL_OFFSET: u64 = 0x260;
 
@@ -173,7 +235,7 @@ pub struct GameManagerFinder {
     image: mono::Image,
     class: mono::Class,
     static_table: Address,
-    instance_offset: u64,
+    offsets: GameManagerOffsets,
     max_dirtyness: usize,
     dirtyness: usize,
 }
@@ -184,10 +246,10 @@ impl GameManagerFinder {
         let image = module.wait_get_default_image(process).await;
         let class = image.wait_get_class(process, &module, "GameManager").await;
         let static_table = class.wait_get_static_table(process, &module).await;
-        let instance_offset = class.wait_get_field(process, &module, "_instance").await as u64;
+        let offsets = GameManagerOffsets::wait_new(process, &module, &class).await;
         let max_dirtyness = INIT_MAX_DIRTYNESS;
         let dirtyness = 0;
-        GameManagerFinder { module, image, class, static_table, instance_offset, max_dirtyness, dirtyness }
+        GameManagerFinder { module, image, class, static_table, offsets, max_dirtyness, dirtyness }
     }
 
     pub fn is_dirty(&self) -> bool {
@@ -208,9 +270,8 @@ impl GameManagerFinder {
 
     pub async fn attempt_clean(&mut self, process: &Process) -> Option<()> {
         if !self.is_dirty() { return Some(()); }
-        if let (Some(static_table), Some(instance_offset)) = (self.class.get_static_table(process, &self.module), self.class.get_field(process, &self.module, "_instance")) {
+        if let (Some(static_table), true) = (self.class.get_static_table(process, &self.module), self.offsets.clean(process, &self.module, &self.class)) {
             self.static_table = static_table;
-            self.instance_offset = instance_offset as u64;
         } else {
             if let Some(class) = self.image.get_class(process, &self.module, "GameManager") {
                 self.class = class;
@@ -224,7 +285,7 @@ impl GameManagerFinder {
                 self.class = self.image.wait_get_class(process, &self.module, "GameManager").await;
             }
             self.static_table = self.class.wait_get_static_table(process, &self.module).await;
-            self.instance_offset = self.class.wait_get_field(process, &self.module, "_instance").await as u64;
+            self.offsets = GameManagerOffsets::wait_new(process, &self.module, &self.class).await;
         }
         self.dirtyness = 0;
         self.max_dirtyness *= 2;
@@ -232,19 +293,19 @@ impl GameManagerFinder {
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.static_table, &[self.instance_offset, SCENE_NAME_OFFSET]).ok()?;
+        let s = process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.scene_name]).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.static_table, &[self.instance_offset, NEXT_SCENE_NAME_OFFSET]).ok()?;
+        let s = process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.next_scene_name]).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_game_state(&self, process: &Process) -> Option<i32> {
-        let ui_manager_vanilla: Address64 = process.read_pointer_path64(self.static_table, &[self.instance_offset, UI_MANAGER_VANILLA_OFFSET]).ok()?;
+        let ui_manager_vanilla: Address64 = process.read_pointer_path64(self.static_table, &[self.offsets.instance, UI_MANAGER_VANILLA_OFFSET]).ok()?;
         let game_state_offset = if ui_manager_vanilla.is_null() { GAME_STATE_MODDING_API_OFFSET } else { GAME_STATE_VANILLA_OFFSET };
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, game_state_offset]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, game_state_offset]).ok()
     }
 
     fn is_game_state_playing(&self, process: &Process) -> bool {
@@ -252,119 +313,119 @@ impl GameManagerFinder {
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, FIREBALL_LEVEL_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, FIREBALL_LEVEL_OFFSET]).ok()
     }
 
     pub fn has_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_DASH_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_DASH_OFFSET]).ok()
     }
 
     pub fn has_shadow_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_SHADOW_DASH_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_SHADOW_DASH_OFFSET]).ok()
     }
 
     pub fn has_wall_jump(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_WALL_JUMP_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_WALL_JUMP_OFFSET]).ok()
     }
 
     pub fn has_double_jump(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_DOUBLE_JUMP_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_DOUBLE_JUMP_OFFSET]).ok()
     }
 
     pub fn has_super_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_SUPER_DASH_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_SUPER_DASH_OFFSET]).ok()
     }
 
     pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_ACID_ARMOR_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_ACID_ARMOR_OFFSET]).ok()
     }
 
     pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_DREAM_NAIL_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_DREAM_NAIL_OFFSET]).ok()
     }
 
     pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_DREAM_GATE_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_DREAM_GATE_OFFSET]).ok()
     }
     
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, DREAM_NAIL_UPGRADED_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, DREAM_NAIL_UPGRADED_OFFSET]).ok()
     }
 
     pub fn max_health_base(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, MAX_HEALTH_BASE_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, MAX_HEALTH_BASE_OFFSET]).ok()
     }
 
     pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HEART_PIECES_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HEART_PIECES_OFFSET]).ok()
     }
 
     pub fn has_lantern(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_LANTERN_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_LANTERN_OFFSET]).ok()
     }
 
     pub fn get_simple_keys(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, SIMPLE_KEYS_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, SIMPLE_KEYS_OFFSET]).ok()
     }
 
     pub fn has_sly_key(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_SLY_KEY_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_SLY_KEY_OFFSET]).ok()
     }
 
     pub fn has_white_key(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, HAS_WHITE_KEY_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, HAS_WHITE_KEY_OFFSET]).ok()
     }
 
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, GEO_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, GEO_OFFSET]).ok()
     }
 
     // Dashmaster
     pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, GOT_CHARM_31_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, GOT_CHARM_31_OFFSET]).ok()
     }
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, GRUBS_COLLECTED_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, GRUBS_COLLECTED_OFFSET]).ok()
     }
 
     // Gruz Mother
     pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, KILLED_BIG_FLY_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, KILLED_BIG_FLY_OFFSET]).ok()
     }
 
     pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, SLY_RESCUED_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, SLY_RESCUED_OFFSET]).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, KILLED_GORGEOUS_HUSK_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, KILLED_GORGEOUS_HUSK_OFFSET]).ok()
     }
 
     // Lemm
     pub fn met_relic_dealer_shop(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, MET_RELIC_DEALER_SHOP_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, MET_RELIC_DEALER_SHOP_OFFSET]).ok()
     }
 
     pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, WATCHER_CHANDELIER_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, WATCHER_CHANDELIER_OFFSET]).ok()
     }
 
     pub fn killed_black_knight(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, KILLED_BLACK_KNIGHT_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, KILLED_BLACK_KNIGHT_OFFSET]).ok()
     }
 
     pub fn killed_mega_jellyfish(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, KILLED_MEGA_JELLYFISH_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, KILLED_MEGA_JELLYFISH_OFFSET]).ok()
     }
 
     pub fn spider_capture(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, SPIDER_CAPTURE_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, SPIDER_CAPTURE_OFFSET]).ok()
     }
 
     pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.instance_offset, PLAYER_DATA_OFFSET, UNCHAINED_HOLLOW_KNIGHT_OFFSET]).ok()
+        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, UNCHAINED_HOLLOW_KNIGHT_OFFSET]).ok()
     }
 }
 
