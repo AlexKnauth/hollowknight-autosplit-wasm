@@ -331,7 +331,15 @@ impl GameManagerFinder {
         let module = mono::Module::wait_attach_auto_detect(process).await;
         let image = module.wait_get_default_image(process).await;
         let class = image.wait_get_class(process, &module, "GameManager").await;
+        let static_table = class.wait_get_static_table(process, &module).await;
+        let static_instance_offset = class.wait_get_field(process, &module, "_instance").await;
+        let static_instance_address = static_table + static_instance_offset;
         let game_manager = class.wait_get_static_instance(process, &module, "_instance").await;
+        if process.read::<Address64>(static_instance_address).ok() == Some(Address64::new(game_manager.value())) {
+            asr::print_message(&format!("attach static_instance_address {} -> game_manager {}", static_instance_address, game_manager));
+        } else {
+            asr::print_message(&format!("attach bad static_instance_address {}", static_instance_address));
+        }
         let max_dirtyness = INIT_MAX_DIRTYNESS;
         let dirtyness = 0;
         GameManagerFinder { module, image, class, game_manager, max_dirtyness, dirtyness }
@@ -368,8 +376,16 @@ impl GameManagerFinder {
                 self.class = self.image.wait_get_class(process, &self.module, "GameManager").await;
             }
         }
+        let static_table = self.class.wait_get_static_table(process, &self.module).await;
+        let static_instance_offset = self.class.wait_get_field(process, &self.module, "_instance").await;
+        let static_instance_address = static_table + static_instance_offset;
         // TODO: when can this fail? return None in those cases
         let game_manager = self.class.wait_get_static_instance(process, &self.module, "_instance").await;
+        if process.read::<Address64>(static_instance_address).ok() == Some(Address64::new(game_manager.value())) {
+            asr::print_message(&format!("clean static_instance_address {} -> game_manager {}", static_instance_address, game_manager));
+        } else {
+            asr::print_message(&format!("clean bad static_instance_address {}", static_instance_address));
+        }
         self.game_manager = game_manager;
         self.dirtyness = 0;
         self.max_dirtyness *= 2;
