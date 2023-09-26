@@ -59,3 +59,12 @@ The keyboard shortcuts of `livesplit-one-desktop` assume the Qwerty keyboard lay
 so you may need to press where the key would be if you were using Qwerty.
 For example to save splits is "Control S" on Qwerty, but on a Dvorak keyboard,
 the Qwerty key "S" is where the Dvorak key "O" is, so use Dvorak "Control O" to save instead.
+
+How to keep it on top over a Full Screen game on Mac:
+Start dragging the livesplit-one-desktop window,
+and while dragging it, do a multi-finger swipe motion
+to switch screens to the Full Screen game,
+and then stop dragging.
+It will stay on top of the Full Screen game temporarily,
+as long as you don't do any more screen-switching after
+that.
