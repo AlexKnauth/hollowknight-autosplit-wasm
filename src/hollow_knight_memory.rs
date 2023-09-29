@@ -4,9 +4,9 @@ use std::mem;
 use std::collections::BTreeMap;
 use asr::future::retry;
 use asr::watcher::Pair;
-use asr::{Process, Address, Address64};
+use asr::{Process, Address64};
 use asr::game_engine::unity::{SceneManager, get_scene_name};
-use asr::game_engine::unity::mono;
+use asr::game_engine::unity::mono::{self, Pointer};
 use asr::string::{ArrayCString, ArrayWString};
 
 #[cfg(debug_assertions)]
@@ -22,8 +22,6 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
 ];
 
 pub const SCENE_PATH_SIZE: usize = 64;
-
-const INIT_MAX_DIRTYNESS: usize = 0x10;
 
 const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
@@ -68,206 +66,102 @@ const BAD_SCENE_NAMES: [&str; 11] = [
 
 // --------------------------------------------------------
 
-const SCENE_NAME_OFFSET: u64 = 0x18;
-const NEXT_SCENE_NAME_OFFSET: u64 = 0x20;
-
-const UI_MANAGER_VANILLA_OFFSET: u64 = 0xa0;
-const GAME_STATE_VANILLA_OFFSET: u64 = 0x174;
-const GAME_STATE_MODDING_API_OFFSET: u64 = 0x184;
 const GAME_STATE_PLAYING: i32 = 4;
 
-const PLAYER_DATA_OFFSET: u64 = 0xc8;
-
-#[derive(Debug, PartialEq)]
-struct GameManagerOffsets {
-    instance: u64,
-    scene_name: u64,
-    next_scene_name: u64,
-    player_data: u64,
+struct GameManagerPointers {
+    scene_name: Pointer<2>,
+    next_scene_name: Pointer<2>,
+    game_state: Pointer<2>,
 }
 
-const GAME_MANAGER_OFFSETS: GameManagerOffsets = GameManagerOffsets {
-    instance: 0x8,
-    scene_name: SCENE_NAME_OFFSET,
-    next_scene_name: NEXT_SCENE_NAME_OFFSET,
-    player_data: PLAYER_DATA_OFFSET,
-};
-
-impl GameManagerOffsets {
-    async fn wait_new(process: &Process, module: &mono::Module, class: &mono::Class) -> GameManagerOffsets {
-        let offsets = GameManagerOffsets {
-            instance: class.wait_get_field(process, module, "_instance").await as u64,
-            scene_name: class.wait_get_field(process, module, "sceneName").await as u64,
-            next_scene_name: class.wait_get_field(process, module, "nextSceneName").await as u64,
-            player_data: class.wait_get_field(process, module, "playerData").await as u64,
-        };
-        if offsets != GAME_MANAGER_OFFSETS {
-            asr::print_message("GameManagerOffsets mismatch");
+impl GameManagerPointers {
+    fn new() -> GameManagerPointers {
+        GameManagerPointers {
+            scene_name: Pointer::new("GameManager", 0, &["_instance", "sceneName"]),
+            next_scene_name: Pointer::new("GameManager", 0, &["_instance", "nextSceneName"]),
+            game_state: Pointer::new("GameManager", 0, &["_instance", "gameState"]),
         }
-        offsets
-    }
-    fn clean(&mut self, process: &Process, module: &mono::Module, class: &mono::Class) -> bool {
-        let mut dirty = false;
-        if let Some(instance) = class.get_field(process, module, "_instance") {
-            self.instance = instance as u64;
-        } else {
-            dirty = true;
-        }
-        if let Some(scene_name) = class.get_field(process, module, "sceneName") {
-            self.scene_name = scene_name as u64;
-        } else {
-            dirty = true;
-        }
-        if let Some(next_scene_name) = class.get_field(process, module, "nextSceneName") {
-            self.next_scene_name = next_scene_name as u64;
-        } else {
-            dirty = true;
-        }
-        if let Some(player_data) = class.get_field(process, module, "playerData") {
-            self.player_data = player_data as u64;
-        } else {
-            dirty = true;
-        }
-        if self != &GAME_MANAGER_OFFSETS {
-            asr::print_message("GameManagerOffsets mismatch");
-            dirty = true;
-        }
-        !dirty
     }
 }
 
 // --------------------------------------------------------
 
-const FIREBALL_LEVEL_OFFSET: u64 = 0x260;
-
-const HAS_DASH_OFFSET: u64 = 0x284;
-
-const HAS_SHADOW_DASH_OFFSET: u64 = 0x287;
-
-const HAS_WALL_JUMP_OFFSET: u64 = 0x285;
-
-const HAS_DOUBLE_JUMP_OFFSET: u64 = 0x289;
-
-const HAS_SUPER_DASH_OFFSET: u64 = 0x286;
-
-const HAS_ACID_ARMOR_OFFSET: u64 = 0x288;
-
-const HAS_DREAM_NAIL_OFFSET: u64 = 0x271;
-
-const HAS_DREAM_GATE_OFFSET: u64 = 0x272;
-
-const DREAM_NAIL_UPGRADED_OFFSET: u64 = 0x273;
-
-// Base number of masks, without any charms, bindings, lifeblood, or damage taken
-const MAX_HEALTH_BASE_OFFSET: u64 = 0x198;
-
-// Heart pieces represents one of:
-//  - number of heart pieces including the ones assembled into masks: 0-3 4-7 8-11 12-15 16
-//  - number of heart pieces excluding the ones assembled into masks: 0-3 0-3 0-3  0-3   0
-//  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
-// and I'm not sure which one
-const HEART_PIECES_OFFSET: u64 = 0x1a8;
-
-const HAS_LANTERN_OFFSET: u64 = 0x28a;
-
-const SIMPLE_KEYS_OFFSET: u64 = 0x2d8;
-
-const HAS_SLY_KEY_OFFSET: u64 = 0x28e;
-
-const HAS_WHITE_KEY_OFFSET: u64 = 0x290;
-
-#[cfg(debug_assertions)]
-const GEO_OFFSET: u64 = 0x1c4;
-
-// Dashmaster
-const GOT_CHARM_31_OFFSET: u64 = 0x5c9;
-
-const GRUBS_COLLECTED_OFFSET: u64 = 0xb94;
-
-// Gruz Mother
-const KILLED_BIG_FLY_OFFSET: u64 = 0x6c1;
-
-const SLY_RESCUED_OFFSET: u64 = 0x389;
-
-const KILLED_GORGEOUS_HUSK_OFFSET: u64 = 0x879;
-
-// Lemm
-const MET_RELIC_DEALER_SHOP_OFFSET: u64 = 0x34a;
-
-const WATCHER_CHANDELIER_OFFSET: u64 = 0xc8d;
-
-const KILLED_BLACK_KNIGHT_OFFSET: u64 = 0x7f9;
-
-const KILLED_MEGA_JELLYFISH_OFFSET: u64 = 0x7a1;
-
-const SPIDER_CAPTURE_OFFSET: u64 = 0xca0;
-
-const UNCHAINED_HOLLOW_KNIGHT_OFFSET: u64 = 0xcc9;
-
-#[derive(Debug, PartialEq)]
-struct PlayerDataOffsets {
-    fireball_level: u64,
-    has_dash: u64,
-    has_shadow_dash: u64,
-    has_wall_jump: u64,
-    has_double_jump: u64,
-    has_super_dash: u64,
-    has_acid_armor: u64,
-    has_dream_nail: u64,
-    has_dream_gate: u64,
-    dream_nail_upgraded: u64,
-    max_health_base: u64,
-    heart_pieces: u64,
-    has_lantern: u64,
-    simple_keys: u64,
-    has_sly_key: u64,
-    has_white_key: u64,
+struct PlayerDataPointers {
+    fireball_level: Pointer<3>,
+    has_dash: Pointer<3>,
+    has_shadow_dash: Pointer<3>,
+    has_wall_jump: Pointer<3>,
+    has_double_jump: Pointer<3>,
+    has_super_dash: Pointer<3>,
+    has_acid_armor: Pointer<3>,
+    has_dream_nail: Pointer<3>,
+    has_dream_gate: Pointer<3>,
+    dream_nail_upgraded: Pointer<3>,
+    // Base number of masks, without any charms, bindings, lifeblood, or damage taken
+    max_health_base: Pointer<3>,
+    // Heart pieces represents one of:
+    //  - number of heart pieces including the ones assembled into masks: 0-3 4-7 8-11 12-15 16
+    //  - number of heart pieces excluding the ones assembled into masks: 0-3 0-3 0-3  0-3   0
+    //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
+    // and I'm not sure which one
+    heart_pieces: Pointer<3>,
+    has_lantern: Pointer<3>,
+    simple_keys: Pointer<3>,
+    has_sly_key: Pointer<3>,
+    has_white_key: Pointer<3>,
     #[cfg(debug_assertions)]
-    geo: u64,
-    got_charm_31: u64,
-    grubs_collected: u64,
-    killed_big_fly: u64,
-    sly_rescued: u64,
-    killed_gorgeous_husk: u64,
-    met_relic_dealer_shop: u64,
-    watcher_chandelier: u64,
-    killed_black_knight: u64,
-    killed_mega_jellyfish: u64,
-    spider_capture: u64,
-    unchained_hollow_knight: u64,
+    geo: Pointer<3>,
+    // Dashmaster
+    got_charm_31: Pointer<3>,
+    grubs_collected: Pointer<3>,
+    // Gruz Mother
+    killed_big_fly: Pointer<3>,
+    sly_rescued: Pointer<3>,
+    killed_gorgeous_husk: Pointer<3>,
+    // Lemm
+    met_relic_dealer_shop: Pointer<3>,
+    watcher_chandelier: Pointer<3>,
+    killed_black_knight: Pointer<3>,
+    killed_mega_jellyfish: Pointer<3>,
+    spider_capture: Pointer<3>,
+    unchained_hollow_knight: Pointer<3>,
 }
 
-const PLAYER_DATA_OFFSETS: PlayerDataOffsets = PlayerDataOffsets {
-    fireball_level: FIREBALL_LEVEL_OFFSET,
-    has_dash: HAS_DASH_OFFSET,
-    has_shadow_dash: HAS_SHADOW_DASH_OFFSET,
-    has_wall_jump: HAS_WALL_JUMP_OFFSET,
-    has_double_jump: HAS_DOUBLE_JUMP_OFFSET,
-    has_super_dash: HAS_SUPER_DASH_OFFSET,
-    has_acid_armor: HAS_ACID_ARMOR_OFFSET,
-    has_dream_nail: HAS_DREAM_NAIL_OFFSET,
-    has_dream_gate: HAS_DREAM_GATE_OFFSET,
-    dream_nail_upgraded: DREAM_NAIL_UPGRADED_OFFSET,
-    max_health_base: MAX_HEALTH_BASE_OFFSET,
-    heart_pieces: HEART_PIECES_OFFSET,
-    has_lantern: HAS_LANTERN_OFFSET,
-    simple_keys: SIMPLE_KEYS_OFFSET,
-    has_sly_key: HAS_SLY_KEY_OFFSET,
-    has_white_key: HAS_WHITE_KEY_OFFSET,
-    #[cfg(debug_assertions)]
-    geo: GEO_OFFSET,
-    got_charm_31: GOT_CHARM_31_OFFSET,
-    grubs_collected: GRUBS_COLLECTED_OFFSET,
-    killed_big_fly: KILLED_BIG_FLY_OFFSET,
-    sly_rescued: SLY_RESCUED_OFFSET,
-    killed_gorgeous_husk: KILLED_GORGEOUS_HUSK_OFFSET,
-    met_relic_dealer_shop: MET_RELIC_DEALER_SHOP_OFFSET,
-    watcher_chandelier: WATCHER_CHANDELIER_OFFSET,
-    killed_black_knight: KILLED_BLACK_KNIGHT_OFFSET,
-    killed_mega_jellyfish: KILLED_MEGA_JELLYFISH_OFFSET,
-    spider_capture: SPIDER_CAPTURE_OFFSET,
-    unchained_hollow_knight: UNCHAINED_HOLLOW_KNIGHT_OFFSET,
-};
+impl PlayerDataPointers {
+    fn new() -> PlayerDataPointers {
+        PlayerDataPointers {
+            fireball_level: Pointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
+            has_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDash"]),
+            has_shadow_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasShadowDash"]),
+            has_wall_jump: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasWalljump"]),
+            has_double_jump: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDoubleJump"]),
+            has_super_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasSuperDash"]),
+            has_acid_armor: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasAcidArmour"]),
+            has_dream_nail: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamNail"]),
+            has_dream_gate: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamGate"]),
+            dream_nail_upgraded: Pointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
+            max_health_base: Pointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
+            heart_pieces: Pointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            has_lantern: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
+            simple_keys: Pointer::new("GameManager", 0, &["_instance", "playerData", "simpleKeys"]),
+            has_sly_key: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasSlykey"]),
+            has_white_key: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
+            #[cfg(debug_assertions)]
+            geo: Pointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
+            got_charm_31: Pointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_31"]),
+            grubs_collected: Pointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
+            killed_big_fly: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
+            sly_rescued: Pointer::new("GameManager", 0, &["_instance", "playerData", "slyRescued"]),
+            killed_gorgeous_husk: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
+            met_relic_dealer_shop: Pointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
+            watcher_chandelier: Pointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
+            killed_black_knight: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
+            killed_mega_jellyfish: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
+            spider_capture: Pointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
+            unchained_hollow_knight: Pointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
+        }
+    }
+}
 
 // --------------------------------------------------------
 
@@ -298,81 +192,31 @@ pub async fn wait_get_current_scene_name(process: &Process, scene_manager: &Scen
 pub struct GameManagerFinder {
     module: mono::Module,
     image: mono::Image,
-    class: mono::Class,
-    static_table: Address,
-    offsets: GameManagerOffsets,
-    player_data_offsets: PlayerDataOffsets,
-    max_dirtyness: usize,
-    dirtyness: usize,
+    pointers: GameManagerPointers,
+    player_data_pointers: PlayerDataPointers,
 }
 
 impl GameManagerFinder {
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
         let module = mono::Module::wait_attach_auto_detect(process).await;
         let image = module.wait_get_default_image(process).await;
-        let class = image.wait_get_class(process, &module, "GameManager").await;
-        let static_table = class.wait_get_static_table(process, &module).await;
-        let offsets = GameManagerOffsets::wait_new(process, &module, &class).await;
-        let player_data_offsets = PLAYER_DATA_OFFSETS;
-        let max_dirtyness = INIT_MAX_DIRTYNESS;
-        let dirtyness = 0;
-        GameManagerFinder { module, image, class, static_table, offsets, player_data_offsets, max_dirtyness, dirtyness }
-    }
-
-    pub fn is_dirty(&self) -> bool {
-        self.max_dirtyness < self.dirtyness
-    }
-
-    pub fn set_dirty(&mut self, dirty: bool) {
-        if dirty {
-            self.dirtyness += 1;
-        } else {
-            if 0 < self.dirtyness {
-                asr::print_message(&format!("GameManagerFinder dirtyness: {}", self.dirtyness))
-            }
-            self.dirtyness = 0;
-            self.max_dirtyness = INIT_MAX_DIRTYNESS;
-        }
-    }
-
-    pub async fn attempt_clean(&mut self, process: &Process) -> Option<()> {
-        if !self.is_dirty() { return Some(()); }
-        if let (Some(static_table), true) = (self.class.get_static_table(process, &self.module), self.offsets.clean(process, &self.module, &self.class)) {
-            self.static_table = static_table;
-        } else {
-            if let Some(class) = self.image.get_class(process, &self.module, "GameManager") {
-                self.class = class;
-            } else {
-                if let Some(image) = self.module.get_default_image(process) {
-                    self.image = image;
-                } else {
-                    self.module = mono::Module::wait_attach_auto_detect(process).await;
-                    self.image = self.module.wait_get_default_image(process).await;
-                }
-                self.class = self.image.wait_get_class(process, &self.module, "GameManager").await;
-            }
-            self.static_table = self.class.wait_get_static_table(process, &self.module).await;
-            self.offsets = GameManagerOffsets::wait_new(process, &self.module, &self.class).await;
-        }
-        self.dirtyness = 0;
-        self.max_dirtyness *= 2;
-        Some(())
+        let pointers = GameManagerPointers::new();
+        let player_data_pointers = PlayerDataPointers::new();
+        GameManagerFinder { module, image, pointers, player_data_pointers }
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.scene_name]).ok()?;
+        let s = self.pointers.scene_name.read(process, &self.module, &self.image).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.next_scene_name]).ok()?;
+        let s = self.pointers.next_scene_name.read(process, &self.module, &self.image).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_game_state(&self, process: &Process) -> Option<i32> {
-        let ui_manager_vanilla: Address64 = process.read_pointer_path64(self.static_table, &[self.offsets.instance, UI_MANAGER_VANILLA_OFFSET]).ok()?;
-        let game_state_offset = if ui_manager_vanilla.is_null() { GAME_STATE_MODDING_API_OFFSET } else { GAME_STATE_VANILLA_OFFSET };
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, game_state_offset]).ok()
+        self.pointers.game_state.read(process, &self.module, &self.image).ok()
     }
 
     fn is_game_state_playing(&self, process: &Process) -> bool {
@@ -380,119 +224,119 @@ impl GameManagerFinder {
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.fireball_level]).ok()
+        self.player_data_pointers.fireball_level.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_dash]).ok()
+        self.player_data_pointers.has_dash.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_shadow_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_shadow_dash]).ok()
+        self.player_data_pointers.has_shadow_dash.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_wall_jump(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_wall_jump]).ok()
+        self.player_data_pointers.has_wall_jump.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_double_jump(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_double_jump]).ok()
+        self.player_data_pointers.has_double_jump.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_super_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_super_dash]).ok()
+        self.player_data_pointers.has_super_dash.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_acid_armor]).ok()
+        self.player_data_pointers.has_acid_armor.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_dream_nail]).ok()
+        self.player_data_pointers.has_dream_nail.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_dream_gate]).ok()
+        self.player_data_pointers.has_dream_gate.read(process, &self.module, &self.image).ok()
     }
     
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.dream_nail_upgraded]).ok()
+        self.player_data_pointers.dream_nail_upgraded.read(process, &self.module, &self.image).ok()
     }
 
     pub fn max_health_base(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.max_health_base]).ok()
+        self.player_data_pointers.max_health_base.read(process, &self.module, &self.image).ok()
     }
 
     pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.heart_pieces]).ok()
+        self.player_data_pointers.heart_pieces.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_lantern(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_lantern]).ok()
+        self.player_data_pointers.has_lantern.read(process, &self.module, &self.image).ok()
     }
 
     pub fn get_simple_keys(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.simple_keys]).ok()
+        self.player_data_pointers.simple_keys.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_sly_key(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_sly_key]).ok()
+        self.player_data_pointers.has_sly_key.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_white_key(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.has_white_key]).ok()
+        self.player_data_pointers.has_white_key.read(process, &self.module, &self.image).ok()
     }
 
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.geo]).ok()
+        self.player_data_pointers.geo.read(process, &self.module, &self.image).ok()
     }
 
     // Dashmaster
     pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.got_charm_31]).ok()
+        self.player_data_pointers.got_charm_31.read(process, &self.module, &self.image).ok()
     }
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.grubs_collected]).ok()
+        self.player_data_pointers.grubs_collected.read(process, &self.module, &self.image).ok()
     }
 
     // Gruz Mother
     pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.killed_big_fly]).ok()
+        self.player_data_pointers.killed_big_fly.read(process, &self.module, &self.image).ok()
     }
 
     pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.sly_rescued]).ok()
+        self.player_data_pointers.sly_rescued.read(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.killed_gorgeous_husk]).ok()
+        self.player_data_pointers.killed_gorgeous_husk.read(process, &self.module, &self.image).ok()
     }
 
     // Lemm
     pub fn met_relic_dealer_shop(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.met_relic_dealer_shop]).ok()
+        self.player_data_pointers.met_relic_dealer_shop.read(process, &self.module, &self.image).ok()
     }
 
     pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.watcher_chandelier]).ok()
+        self.player_data_pointers.watcher_chandelier.read(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_black_knight(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.killed_black_knight]).ok()
+        self.player_data_pointers.killed_black_knight.read(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_mega_jellyfish(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.killed_mega_jellyfish]).ok()
+        self.player_data_pointers.killed_mega_jellyfish.read(process, &self.module, &self.image).ok()
     }
 
     pub fn spider_capture(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.spider_capture]).ok()
+        self.player_data_pointers.spider_capture.read(process, &self.module, &self.image).ok()
     }
 
     pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.static_table, &[self.offsets.instance, self.offsets.player_data, self.player_data_offsets.unchained_hollow_knight]).ok()
+        self.player_data_pointers.unchained_hollow_knight.read(process, &self.module, &self.image).ok()
     }
 }
 
@@ -614,8 +458,8 @@ impl SceneStore {
 }
 
 pub struct PlayerDataStore {
-    map_i32: BTreeMap<u64, i32>,
-    map_bool: BTreeMap<u64, bool>,
+    map_i32: BTreeMap<&'static str, i32>,
+    map_bool: BTreeMap<&'static str, bool>,
 }
 
 impl PlayerDataStore {
@@ -633,11 +477,11 @@ impl PlayerDataStore {
     pub fn get_fireball_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
         match game_manager_finder.get_fireball_level(process) {
             Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
-                self.map_i32.insert(game_manager_finder.player_data_offsets.fireball_level, l);
+                self.map_i32.insert("fireball_level", l);
                 l
             }
             _ => {
-                *self.map_i32.get(&game_manager_finder.player_data_offsets.fireball_level).unwrap_or(&0)
+                *self.map_i32.get("fireball_level").unwrap_or(&0)
             }
         }
     }
@@ -645,11 +489,11 @@ impl PlayerDataStore {
     pub fn has_dash(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_dash(process) {
             Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(game_manager_finder.player_data_offsets.has_dash, k);
+                self.map_bool.insert("has_dash", k);
                 k
             }
             _ => {
-                *self.map_bool.get(&game_manager_finder.player_data_offsets.has_dash).unwrap_or(&false)
+                *self.map_bool.get("has_dash").unwrap_or(&false)
             }
         }
     }
@@ -657,11 +501,11 @@ impl PlayerDataStore {
     pub fn has_wall_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_wall_jump(process) {
             Some(w) if w || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(game_manager_finder.player_data_offsets.has_wall_jump, w);
+                self.map_bool.insert("has_wall_jump", w);
                 w
             }
             _ => {
-                *self.map_bool.get(&game_manager_finder.player_data_offsets.has_wall_jump).unwrap_or(&false)
+                *self.map_bool.get("has_wall_jump").unwrap_or(&false)
             }
         }
     }
@@ -669,11 +513,11 @@ impl PlayerDataStore {
     pub fn has_double_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_double_jump(process) {
             Some(d) if d || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(game_manager_finder.player_data_offsets.has_double_jump, d);
+                self.map_bool.insert("has_double_jump", d);
                 d
             }
             _ => {
-                *self.map_bool.get(&game_manager_finder.player_data_offsets.has_double_jump).unwrap_or(&false)
+                *self.map_bool.get("has_double_jump").unwrap_or(&false)
             }
         }
     }
@@ -681,21 +525,21 @@ impl PlayerDataStore {
     pub fn has_acid_armour(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_acid_armour(process) {
             Some(a) if a || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(game_manager_finder.player_data_offsets.has_acid_armor, a);
+                self.map_bool.insert("has_acid_armor", a);
                 a
             }
             _ => {
-                *self.map_bool.get(&game_manager_finder.player_data_offsets.has_acid_armor).unwrap_or(&false)
+                *self.map_bool.get("has_acid_armor").unwrap_or(&false)
             }
         }
     }
 
     pub fn incremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_simple_keys = self.map_i32.get(&game_manager_finder.player_data_offsets.simple_keys).cloned();
+        let store_simple_keys = self.map_i32.get("simple_keys").cloned();
         let player_data_simple_keys = game_manager_finder.get_simple_keys(process);
         if let Some(simple_keys) = player_data_simple_keys {
             if simple_keys != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert(game_manager_finder.player_data_offsets.simple_keys, simple_keys);
+                self.map_i32.insert("simple_keys", simple_keys);
             }
         }
         match (store_simple_keys, player_data_simple_keys) {
@@ -709,11 +553,11 @@ impl PlayerDataStore {
     pub fn killed_gorgeous_husk(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.killed_gorgeous_husk(process) {
             Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(game_manager_finder.player_data_offsets.killed_gorgeous_husk, k);
+                self.map_bool.insert("killed_gorgeous_husk", k);
                 k
             }
             _ => {
-                *self.map_bool.get(&game_manager_finder.player_data_offsets.killed_gorgeous_husk).unwrap_or(&false)
+                *self.map_bool.get("killed_gorgeous_husk").unwrap_or(&false)
             }
         }
     }

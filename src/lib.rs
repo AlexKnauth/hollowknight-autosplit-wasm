@@ -36,7 +36,7 @@ async fn main() {
                 let mut scene_store = SceneStore::new(wait_get_current_scene_name(&process, &scene_manager).await);
 
                 next_tick().await;
-                let mut game_manager_finder = GameManagerFinder::wait_attach(&process).await;
+                let game_manager_finder = GameManagerFinder::wait_attach(&process).await;
                 let mut player_data_store = PlayerDataStore::new();
 
                 #[cfg(debug_assertions)]
@@ -58,24 +58,9 @@ async fn main() {
                     #[cfg(debug_assertions)]
                     let new_curr_scene = sf.as_ref().is_some_and(|s| s != scene_store.curr_scene_name());
 
-                    if sf.is_some() {
-                        game_manager_finder.set_dirty(gmf != sf);
-                    }
-
-                    let (gmf_dirty, sf_dirty) = scene_store.new_curr_scene_name2(gmf.clone(), sf.clone());
-                    if gmf_dirty && !game_manager_finder.is_dirty() {
-                        asr::print_message(&format!("GameManagerFinder dirty:\n  SceneManager: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
-                        game_manager_finder.set_dirty(true);
-                    }
-                    if sf_dirty {
-                        asr::print_message(&format!("SceneManager dirty:\n  SceneManager: {:?}\n  GameManagerFinder: {:?}", sf, gmf));
-                    }
+                    scene_store.new_curr_scene_name2(gmf.clone(), sf.clone());
                     let gmfn = game_manager_finder.get_next_scene_name(&process);
-                    let gmfn_dirty = scene_store.new_next_scene_name1(gmfn.clone());
-                    if gmfn_dirty && !game_manager_finder.is_dirty() {
-                        asr::print_message(&format!("GameManagerFinder dirty next_scene_name: {:?}", gmfn));
-                        game_manager_finder.set_dirty(true);
-                    }
+                    scene_store.new_next_scene_name1(gmfn.clone());
                     if let Some(scene_pair) = scene_store.transition_pair() {
                         if splits::transition_splits(current_split, &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
                             split_index(&mut i, n);
@@ -99,12 +84,6 @@ async fn main() {
                     if new_curr_scene {
                         update_scene_table(&process, &scene_manager, &mut scene_table);
                     }
-                    let gs = game_manager_finder.get_game_state(&process);
-                    if gmf.is_none() && gmfn.is_none() && !game_manager_finder.is_dirty() && sf.is_some_and(|s| is_play_scene(&s)) {
-                        asr::print_message(&format!("GameManagerFinder not found: game state {:?}", gs));
-                        game_manager_finder.set_dirty(true);
-                    }
-                    game_manager_finder.attempt_clean(&process).await.unwrap_or_default();
                     next_tick().await;
                 }
             })
