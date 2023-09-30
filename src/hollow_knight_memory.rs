@@ -98,9 +98,9 @@ impl GameManagerPointers {
             ui_state_modded: Pointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
             camera_teleporting: Pointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
             hazard_respawning: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
-            accepting_input: Pointer::new("GameManager", 0, &["_instance", "InputHandler", "acceptingInput"]),
+            accepting_input: Pointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
             hero_transition_state: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
-            tile_map_dirty: Pointer::new("GameManager", 0, &["_instance", "tileMapDirty"]),
+            tile_map_dirty: Pointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
         }
     }
 }
