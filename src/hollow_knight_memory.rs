@@ -5,14 +5,11 @@ use std::collections::BTreeMap;
 use asr::future::retry;
 use asr::watcher::Pair;
 use asr::{Process, Address64};
-use asr::game_engine::unity::{SceneManager, get_scene_name};
 use asr::game_engine::unity::mono::{self, Pointer};
-use asr::string::{ArrayCString, ArrayWString};
+use asr::string::ArrayWString;
 
 #[cfg(debug_assertions)]
 use std::string::String;
-#[cfg(debug_assertions)]
-use serde::{Deserialize, Serialize};
 
 // --------------------------------------------------------
 
@@ -164,30 +161,7 @@ impl PlayerDataPointers {
 }
 
 // --------------------------------------------------------
-
-#[cfg(debug_assertions)]
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
-pub struct SceneInfo {
-    name: String,
-    path: String
-}
-
-#[cfg(debug_assertions)]
-pub type SceneTable = BTreeMap<i32, SceneInfo>;
-
 // --------------------------------------------------------
-
-pub fn get_current_scene_name(process: &Process, scene_manager: &SceneManager) -> Result<String, asr::Error> {
-    scene_manager.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(scene_path_to_name_string)
-}
-
-async fn wait_get_current_scene_path<const N: usize>(process: &Process, scene_manager: &SceneManager) -> ArrayCString<N> {
-    retry(|| scene_manager.get_current_scene_path(&process)).await
-}
-
-pub async fn wait_get_current_scene_name(process: &Process, scene_manager: &SceneManager) -> String {
-    scene_path_to_name_string(wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process, scene_manager).await)
-}
 
 pub struct GameManagerFinder {
     module: mono::Module,
@@ -341,7 +315,6 @@ impl GameManagerFinder {
 }
 
 pub struct SceneStore {
-    old_scene_name: String,
     prev_scene_name: String,
     curr_scene_name: String,
     next_scene_name: String,
@@ -350,22 +323,14 @@ pub struct SceneStore {
 }
 
 impl SceneStore {
-    pub fn new(init_scene_name: String) -> SceneStore {
-        #[cfg(debug_assertions)]
-        asr::print_message(&format!("init_scene_name: {}", init_scene_name));
+    pub fn new() -> SceneStore {
         SceneStore {
-            old_scene_name: "".to_string(),
             prev_scene_name: "".to_string(),
-            curr_scene_name: init_scene_name,
+            curr_scene_name: "".to_string(),
             next_scene_name: "".to_string(),
             new_data_curr: false,
             new_data_next: false
         }
-    }
-
-    #[cfg(debug_assertions)]
-    pub fn curr_scene_name(&self) -> &str {
-        &self.curr_scene_name
     }
 
     pub fn new_curr_scene_name(&mut self, mcsn: Option<String>) {
@@ -379,43 +344,15 @@ impl SceneStore {
             _ => ()
         }
     }
-    pub fn new_curr_scene_name2(&mut self, ma: Option<String>, mb: Option<String>) -> (bool, bool) {
-        match (ma, mb) {
-            (None, None) => (false, false),
-            (Some(ab), None) | (None, Some(ab)) => {
-                self.old_scene_name = ab.clone();
-                self.new_curr_scene_name(Some(ab));
-                (false, false)
+    pub fn new_curr_scene_name1(&mut self, msn: Option<String>) -> bool {
+        match msn {
+            None => false,
+            Some(bad) if BAD_SCENE_NAMES.contains(&bad.as_str()) => {
+                true
             }
-            (Some(a), Some(b)) if a == b => {
-                self.old_scene_name = b;
-                self.new_curr_scene_name(Some(a));
-                (false, false)
-            }
-            (Some(good), Some(bad)) if BAD_SCENE_NAMES.contains(&bad.as_str()) && !BAD_SCENE_NAMES.contains(&good.as_str()) => {
-                self.old_scene_name = bad;
-                self.new_curr_scene_name(Some(good));
-                (false, true)
-            }
-            (Some(bad), Some(good)) if BAD_SCENE_NAMES.contains(&bad.as_str()) && !BAD_SCENE_NAMES.contains(&good.as_str()) => {
-                self.old_scene_name = bad;
-                self.new_curr_scene_name(Some(good));
-                (true, false)
-            }
-            (Some(a), Some(b)) => {
-                // A is at least as up-to-date as B if: B == old || (B == curr && A != curr && A != old)
-                if b == self.old_scene_name || (b == self.curr_scene_name && a != self.curr_scene_name && a != self.old_scene_name) {
-                    self.old_scene_name = b;
-                    self.new_curr_scene_name(Some(a));
-                    (false, self.old_scene_name != self.prev_scene_name)
-                } else if a == self.old_scene_name || (a == self.curr_scene_name && b != self.curr_scene_name && b != self.old_scene_name) {
-                    self.old_scene_name = a;
-                    self.new_curr_scene_name(Some(b));
-                    (self.old_scene_name != self.prev_scene_name, false)
-                } else {
-                    asr::print_message(&format!("scene name mismatch: {} vs {}", a, b));
-                    (a != self.prev_scene_name, b != self.prev_scene_name)
-                }
+            Some(sn) => {
+                self.new_curr_scene_name(Some(sn));
+                false
             }
         }
     }
@@ -571,10 +508,6 @@ pub async fn wait_attach_hollow_knight() -> Process {
     }).await
 }
 
-pub fn scene_path_to_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String {
-    String::from_utf8(get_scene_name(&scene_path).to_vec()).unwrap()
-}
-
 fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option<String> {
     let n: u32 = process.read_pointer_path64(a, &[STRING_LEN_OFFSET]).ok()?;
     if !(n < 2048) { return None; }
@@ -595,29 +528,3 @@ pub fn is_play_scene(s: &str) -> bool {
 }
 
 // --------------------------------------------------------
-
-// Logging in debug_assertions mode
-
-#[cfg(debug_assertions)]
-fn log_scene_table(scene_table: &SceneTable) {
-    // Log scene_table as json
-    if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
-        asr::print_message(&format!("begin scene_table.json\n{}", j));
-    }
-}
-
-#[cfg(debug_assertions)]
-pub fn update_scene_table(process: &Process, scene_manager: &SceneManager, scene_table: &mut SceneTable) {
-    let si = scene_manager.get_current_scene_index(&process).unwrap_or(-1);
-    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_manager.get_current_scene_path(&process).unwrap_or_default();
-    let sn = scene_path_to_name_string(sp);
-    let sv = SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()};
-    if let Some(tv) = scene_table.get(&si) {
-        assert_eq!(&sv, tv);
-    } else if si == -1 {
-        assert_eq!(sv, SceneInfo{name: "".to_string(), path: "".to_string()});
-    } else {
-        scene_table.insert(si, sv);
-        log_scene_table(scene_table);
-    }
-}
