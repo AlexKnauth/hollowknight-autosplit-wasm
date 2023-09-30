@@ -222,8 +222,9 @@ impl GameManagerFinder {
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
-        // TODO: get the uiState offset from the UIManager class
-        const UI_STATE_OFFSET: u32 = 0x2a4;
+        // TODO: save the uiState offset so it doesn't have to find it in the UIManager class every time
+        let ui_manager_class = self.image.get_class(process, &self.module, "UIManager")?;
+        let ui_state_offset = ui_manager_class.get_field(process, &self.module, "uiState")?;
         let ui = if let Ok(ui) = self.pointers.ui_state_vanilla.read(process, &self.module, &self.image) {
             ui
         } else if let Ok(ui) =  self.pointers.ui_state_modded.read(process, &self.module, &self.image) {
@@ -231,7 +232,7 @@ impl GameManagerFinder {
         } else {
             return None;
         };
-        if UI_STATE_OFFSET != 0x124 && ui >= 2 {
+        if ui_state_offset != 0x124 && ui >= 2 {
             Some(ui + 2)
         } else {
             Some(ui)
