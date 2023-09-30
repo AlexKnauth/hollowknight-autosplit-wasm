@@ -222,15 +222,20 @@ impl GameManagerFinder {
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
-        // TODO: handle cases of uiState != 0x124 both true and false,
-        //       UIState enum
-        if let Ok(ui) = self.pointers.ui_state_vanilla.read(process, &self.module, &self.image) {
-            return Some(ui);
+        // TODO: get the uiState offset from the UIManager class
+        const UI_STATE_OFFSET: u32 = 0x2a4;
+        let ui = if let Ok(ui) = self.pointers.ui_state_vanilla.read(process, &self.module, &self.image) {
+            ui
+        } else if let Ok(ui) =  self.pointers.ui_state_modded.read(process, &self.module, &self.image) {
+            ui
+        } else {
+            return None;
+        };
+        if UI_STATE_OFFSET != 0x124 && ui >= 2 {
+            Some(ui + 2)
+        } else {
+            Some(ui)
         }
-        if let Ok(ui) = self.pointers.ui_state_modded.read(process, &self.module, &self.image) {
-            return Some(ui);
-        }
-        None
     }
 
     pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {
