@@ -99,10 +99,10 @@ struct LoadRemover {
     last_game_state: i32,
     #[cfg(debug_assertions)]
     last_paused: bool,
-    hazard_respawning_none: bool,
-    accepting_input_none: bool,
-    hero_transition_state_none: bool,
-    tile_map_dirty_none: bool,
+    last_hazard_respawning: Option<bool>,
+    last_accepting_input: Option<bool>,
+    last_hero_transition_state: Option<i32>,
+    last_tile_map_dirty: Option<bool>,
 }
 
 impl LoadRemover {
@@ -112,10 +112,10 @@ impl LoadRemover {
             last_game_state: GAME_STATE_INACTIVE,
             #[cfg(debug_assertions)]
             last_paused: false,
-            hazard_respawning_none: false,
-            accepting_input_none: false,
-            hero_transition_state_none: false,
-            tile_map_dirty_none: false,
+            last_hazard_respawning: None,
+            last_accepting_input: None,
+            last_hero_transition_state: None,
+            last_tile_map_dirty: None,
         }
     }
 
@@ -146,58 +146,30 @@ impl LoadRemover {
         }
 
         // TODO: look into Current Patch quitout issues. // might have been fixed? cerpin you broke them in a way that made them work, right?
-        let hazard_respawning = if let Some(hr) = game_manager_finder.hazard_respawning(process) {
-            if self.hazard_respawning_none {
-                asr::print_message("hazard_respawning Some");
-                self.hazard_respawning_none = false;
-            }
-            hr
-        } else {
-            if !self.hazard_respawning_none {
-                asr::print_message("hazard_respawning None");
-                self.hazard_respawning_none = true;
-            }
-            bool::default()
-        };
-        let accepting_input = if let Some(ai) = game_manager_finder.accepting_input(process) {
-            if self.accepting_input_none {
-                asr::print_message("accepting_input Some");
-                self.accepting_input_none = false;
-            }
-            ai
-        } else {
-            if !self.accepting_input_none {
-                asr::print_message("accepting_input None");
-                self.accepting_input_none = true;
-            }
-            bool::default()
-        };
-        let hero_transition_state = if let Some(hts) = game_manager_finder.hero_transition_state(process) {
-            if self.hero_transition_state_none {
-                asr::print_message("hero_transition_state Some");
-                self.hero_transition_state_none = false;
-            }
-            hts
-        } else {
-            if !self.hero_transition_state_none {
-                asr::print_message("hero_transition_state None");
-                self.hero_transition_state_none = true;
-            }
-            i32::default()
-        };
-        let tile_map_dirty = if let Some(tmd) = game_manager_finder.tile_map_dirty(process) {
-            if self.tile_map_dirty_none {
-                asr::print_message("tile_map_dirty Some");
-                self.tile_map_dirty_none = false;
-            }
-            tmd
-        } else {
-            if !self.tile_map_dirty_none {
-                asr::print_message("tile_map_dirty None");
-                self.tile_map_dirty_none = true;
-            }
-            bool::default()
-        };
+        let maybe_hazard_respawning = game_manager_finder.hazard_respawning(process);
+        let hazard_respawning = maybe_hazard_respawning.unwrap_or_default();
+        if self.last_hazard_respawning != maybe_hazard_respawning {
+            asr::print_message(&format!("hazard_respawning: {:?}", maybe_hazard_respawning));
+            self.last_hazard_respawning = maybe_hazard_respawning;
+        }
+        let maybe_accepting_input = game_manager_finder.accepting_input(process);
+        let accepting_input = maybe_accepting_input.unwrap_or_default();
+        if self.last_accepting_input != maybe_accepting_input {
+            asr::print_message(&format!("accepting_input: {:?}", maybe_accepting_input));
+            self.last_accepting_input = maybe_accepting_input;
+        }
+        let maybe_hero_transition_state = game_manager_finder.hero_transition_state(process);
+        let hero_transition_state = maybe_hero_transition_state.unwrap_or_default();
+        if self.last_hero_transition_state != maybe_hero_transition_state {
+            asr::print_message(&format!("hero_transition_state: {:?}", maybe_hero_transition_state));
+            self.last_hero_transition_state = maybe_hero_transition_state;
+        }
+        let maybe_tile_map_dirty = game_manager_finder.tile_map_dirty(process);
+        let tile_map_dirty = maybe_tile_map_dirty.unwrap_or_default();
+        if self.last_tile_map_dirty != maybe_tile_map_dirty {
+            asr::print_message(&format!("tile_map_dirty: {:?}", maybe_tile_map_dirty));
+            self.last_tile_map_dirty = maybe_tile_map_dirty;
+        }
         let uses_scene_transition_routine = game_manager_finder.uses_scene_transition_routine()?;
         let is_game_time_paused =
             (game_state == GAME_STATE_PLAYING && teleporting && !hazard_respawning)
