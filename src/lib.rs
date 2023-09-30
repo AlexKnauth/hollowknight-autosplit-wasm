@@ -103,6 +103,7 @@ struct LoadRemover {
     last_scene_name: Option<String>,
     last_next_scene: Option<String>,
     last_teleporting: Option<bool>,
+    last_maybe_game_state: Option<i32>,
     last_hazard_respawning: Option<bool>,
     last_accepting_input: Option<bool>,
     last_hero_transition_state: Option<i32>,
@@ -120,6 +121,7 @@ impl LoadRemover {
             last_scene_name: None,
             last_next_scene: None,
             last_teleporting: None,
+            last_maybe_game_state: None,
             last_hazard_respawning: None,
             last_accepting_input: None,
             last_hero_transition_state: None,
@@ -164,12 +166,21 @@ impl LoadRemover {
             self.last_teleporting = maybe_teleporting;
         }
 
-        let game_state = game_manager_finder.get_game_state(process)?;
+        let maybe_game_state = game_manager_finder.get_game_state(process);
+        let game_state = maybe_game_state.unwrap_or_default();
+        if self.last_maybe_game_state != maybe_game_state {
+            asr::print_message(&format!("maybe_game_state: {:?}", maybe_game_state));
+            self.last_maybe_game_state = maybe_game_state;
+        }
+        let last_look_for_teleporting = self.look_for_teleporting;
         if game_state == GAME_STATE_PLAYING && self.last_game_state == GAME_STATE_MAIN_MENU {
             self.look_for_teleporting = true;
         }
         if self.look_for_teleporting && (teleporting || (game_state != GAME_STATE_PLAYING && game_state != GAME_STATE_ENTERING_LEVEL)) {
             self.look_for_teleporting = false;
+        }
+        if self.look_for_teleporting != last_look_for_teleporting {
+            asr::print_message(&format!("look_for_teleporting: {}", self.look_for_teleporting));
         }
 
         // TODO: look into Current Patch quitout issues. // might have been fixed? cerpin you broke them in a way that made them work, right?
