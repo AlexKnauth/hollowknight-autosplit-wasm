@@ -99,6 +99,10 @@ struct LoadRemover {
     last_game_state: i32,
     #[cfg(debug_assertions)]
     last_paused: bool,
+    last_ui_state: Option<i32>,
+    last_scene_name: Option<String>,
+    last_next_scene: Option<String>,
+    last_teleporting: Option<bool>,
     last_hazard_respawning: Option<bool>,
     last_accepting_input: Option<bool>,
     last_hero_transition_state: Option<i32>,
@@ -112,6 +116,10 @@ impl LoadRemover {
             last_game_state: GAME_STATE_INACTIVE,
             #[cfg(debug_assertions)]
             last_paused: false,
+            last_ui_state: None,
+            last_scene_name: None,
+            last_next_scene: None,
+            last_teleporting: None,
             last_hazard_respawning: None,
             last_accepting_input: None,
             last_hero_transition_state: None,
@@ -124,10 +132,24 @@ impl LoadRemover {
         // only remove loads if timer is running
         if asr::timer::state() != asr::timer::TimerState::Running { return Some(()); }
 
-        let ui_state = game_manager_finder.get_ui_state(process)?;
+        let maybe_ui_state = game_manager_finder.get_ui_state(process);
+        let ui_state = maybe_ui_state.unwrap_or_default();
+        if self.last_ui_state != maybe_ui_state {
+            asr::print_message(&format!("ui_state: {:?}", maybe_ui_state));
+            self.last_ui_state = maybe_ui_state;
+        }
 
-        let scene_name = game_manager_finder.get_scene_name(process)?;
+        let maybe_scene_name =  game_manager_finder.get_scene_name(process);
+        let scene_name = maybe_scene_name.clone().unwrap_or_default();
+        if self.last_scene_name != maybe_scene_name {
+            asr::print_message(&format!("scene_name: {:?}", maybe_scene_name));
+            self.last_scene_name = maybe_scene_name;
+        }
         let maybe_next_scene = game_manager_finder.get_next_scene_name(process);
+        if self.last_next_scene != maybe_next_scene {
+            asr::print_message(&format!("maybe_next_scene: {:?}", maybe_next_scene));
+            self.last_next_scene = maybe_next_scene.clone();
+        }
         fn is_none_or_empty(ms: Option<&str>) -> bool {
             match ms {  None | Some("") => true, Some(_) => false }
         }
@@ -135,7 +157,12 @@ impl LoadRemover {
             || (scene_name != "Menu_Title" && maybe_next_scene.as_deref() == Some("Menu_Title")
                 || (scene_name == "Quit_To_Menu"));
 
-        let teleporting = game_manager_finder.camera_teleporting(process)?;
+        let maybe_teleporting = game_manager_finder.camera_teleporting(process);
+        let teleporting = maybe_teleporting.unwrap_or_default();
+        if self.last_teleporting != maybe_teleporting {
+            asr::print_message(&format!("teleporting: {:?}", maybe_teleporting));
+            self.last_teleporting = maybe_teleporting;
+        }
 
         let game_state = game_manager_finder.get_game_state(process)?;
         if game_state == GAME_STATE_PLAYING && self.last_game_state == GAME_STATE_MAIN_MENU {
