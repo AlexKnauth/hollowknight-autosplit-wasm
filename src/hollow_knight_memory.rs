@@ -1,4 +1,5 @@
 
+use core::cell::OnceCell;
 use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
@@ -192,6 +193,7 @@ pub struct GameManagerFinder {
     image: mono::Image,
     pointers: GameManagerPointers,
     player_data_pointers: PlayerDataPointers,
+    ui_state_offset: OnceCell<u32>,
 }
 
 impl GameManagerFinder {
@@ -200,7 +202,8 @@ impl GameManagerFinder {
         let image = module.wait_get_default_image(process).await;
         let pointers = GameManagerPointers::new();
         let player_data_pointers = PlayerDataPointers::new();
-        GameManagerFinder { module, image, pointers, player_data_pointers }
+        let ui_state_offset = OnceCell::new();
+        GameManagerFinder { module, image, pointers, player_data_pointers, ui_state_offset }
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
@@ -222,9 +225,14 @@ impl GameManagerFinder {
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
-        // TODO: save the uiState offset so it doesn't have to find it in the UIManager class every time
-        let ui_manager_class = self.image.get_class(process, &self.module, "UIManager")?;
-        let ui_state_offset = ui_manager_class.get_field(process, &self.module, "uiState")?;
+        // save the uiState offset so it doesn't have to find it in the UIManager class every time
+        let ui_state_offset = if let Some(ui_state_offset) = self.ui_state_offset.get() {
+            ui_state_offset
+        } else {
+            let ui_manager_class = self.image.get_class(process, &self.module, "UIManager")?;
+            let ui_state_offset = ui_manager_class.get_field(process, &self.module, "uiState")?;
+            self.ui_state_offset.get_or_init(|| ui_state_offset)
+        };
         let ui = if let Ok(ui) = self.pointers.ui_state_vanilla.read(process, &self.module, &self.image) {
             ui
         } else if let Ok(ui) =  self.pointers.ui_state_modded.read(process, &self.module, &self.image) {
@@ -232,7 +240,7 @@ impl GameManagerFinder {
         } else {
             return None;
         };
-        if ui_state_offset != 0x124 && ui >= 2 {
+        if ui_state_offset != &0x124 && ui >= 2 {
             Some(ui + 2)
         } else {
             Some(ui)
