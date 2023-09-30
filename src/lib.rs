@@ -99,15 +99,6 @@ struct LoadRemover {
     last_game_state: i32,
     #[cfg(debug_assertions)]
     last_paused: bool,
-    last_ui_state: Option<i32>,
-    last_scene_name: Option<String>,
-    last_next_scene: Option<String>,
-    last_teleporting: Option<bool>,
-    last_maybe_game_state: Option<i32>,
-    last_hazard_respawning: Option<bool>,
-    last_accepting_input: Option<bool>,
-    last_hero_transition_state: Option<i32>,
-    last_tile_map_dirty: Option<bool>,
 }
 
 impl LoadRemover {
@@ -117,15 +108,6 @@ impl LoadRemover {
             last_game_state: GAME_STATE_INACTIVE,
             #[cfg(debug_assertions)]
             last_paused: false,
-            last_ui_state: None,
-            last_scene_name: None,
-            last_next_scene: None,
-            last_teleporting: None,
-            last_maybe_game_state: None,
-            last_hazard_respawning: None,
-            last_accepting_input: None,
-            last_hero_transition_state: None,
-            last_tile_map_dirty: None,
         }
     }
 
@@ -136,22 +118,10 @@ impl LoadRemover {
 
         let maybe_ui_state = game_manager_finder.get_ui_state(process);
         let ui_state = maybe_ui_state.unwrap_or_default();
-        if self.last_ui_state != maybe_ui_state {
-            asr::print_message(&format!("ui_state: {:?}", maybe_ui_state));
-            self.last_ui_state = maybe_ui_state;
-        }
 
         let maybe_scene_name =  game_manager_finder.get_scene_name(process);
         let scene_name = maybe_scene_name.clone().unwrap_or_default();
-        if self.last_scene_name != maybe_scene_name {
-            asr::print_message(&format!("scene_name: {:?}", maybe_scene_name));
-            self.last_scene_name = maybe_scene_name;
-        }
         let maybe_next_scene = game_manager_finder.get_next_scene_name(process);
-        if self.last_next_scene != maybe_next_scene {
-            asr::print_message(&format!("maybe_next_scene: {:?}", maybe_next_scene));
-            self.last_next_scene = maybe_next_scene.clone();
-        }
         fn is_none_or_empty(ms: Option<&str>) -> bool {
             match ms {  None | Some("") => true, Some(_) => false }
         }
@@ -161,53 +131,25 @@ impl LoadRemover {
 
         let maybe_teleporting = game_manager_finder.camera_teleporting(process);
         let teleporting = maybe_teleporting.unwrap_or_default();
-        if self.last_teleporting != maybe_teleporting {
-            asr::print_message(&format!("teleporting: {:?}", maybe_teleporting));
-            self.last_teleporting = maybe_teleporting;
-        }
 
         let maybe_game_state = game_manager_finder.get_game_state(process);
         let game_state = maybe_game_state.unwrap_or_default();
-        if self.last_maybe_game_state != maybe_game_state {
-            asr::print_message(&format!("maybe_game_state: {:?}", maybe_game_state));
-            self.last_maybe_game_state = maybe_game_state;
-        }
-        let last_look_for_teleporting = self.look_for_teleporting;
         if game_state == GAME_STATE_PLAYING && self.last_game_state == GAME_STATE_MAIN_MENU {
             self.look_for_teleporting = true;
         }
         if self.look_for_teleporting && (teleporting || (game_state != GAME_STATE_PLAYING && game_state != GAME_STATE_ENTERING_LEVEL)) {
             self.look_for_teleporting = false;
         }
-        if self.look_for_teleporting != last_look_for_teleporting {
-            asr::print_message(&format!("look_for_teleporting: {}", self.look_for_teleporting));
-        }
 
         // TODO: look into Current Patch quitout issues. // might have been fixed? cerpin you broke them in a way that made them work, right?
         let maybe_hazard_respawning = game_manager_finder.hazard_respawning(process);
         let hazard_respawning = maybe_hazard_respawning.unwrap_or_default();
-        if self.last_hazard_respawning != maybe_hazard_respawning {
-            asr::print_message(&format!("hazard_respawning: {:?}", maybe_hazard_respawning));
-            self.last_hazard_respawning = maybe_hazard_respawning;
-        }
         let maybe_accepting_input = game_manager_finder.accepting_input(process);
         let accepting_input = maybe_accepting_input.unwrap_or_default();
-        if self.last_accepting_input != maybe_accepting_input {
-            asr::print_message(&format!("accepting_input: {:?}", maybe_accepting_input));
-            self.last_accepting_input = maybe_accepting_input;
-        }
         let maybe_hero_transition_state = game_manager_finder.hero_transition_state(process);
         let hero_transition_state = maybe_hero_transition_state.unwrap_or_default();
-        if self.last_hero_transition_state != maybe_hero_transition_state {
-            asr::print_message(&format!("hero_transition_state: {:?}", maybe_hero_transition_state));
-            self.last_hero_transition_state = maybe_hero_transition_state;
-        }
         let maybe_tile_map_dirty = game_manager_finder.tile_map_dirty(process);
         let tile_map_dirty = maybe_tile_map_dirty.unwrap_or_default();
-        if self.last_tile_map_dirty != maybe_tile_map_dirty {
-            asr::print_message(&format!("tile_map_dirty: {:?}", maybe_tile_map_dirty));
-            self.last_tile_map_dirty = maybe_tile_map_dirty;
-        }
         let uses_scene_transition_routine = game_manager_finder.uses_scene_transition_routine()?;
         let is_game_time_paused =
             (game_state == GAME_STATE_PLAYING && teleporting && !hazard_respawning)
