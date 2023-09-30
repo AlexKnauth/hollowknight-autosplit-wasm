@@ -3,7 +3,7 @@
 mod hollow_knight_memory;
 mod splits;
 
-use asr::future::next_tick;
+use asr::{future::next_tick, Process};
 // use asr::time::Duration;
 // use asr::timer::TimerState;
 use hollow_knight_memory::*;
@@ -29,6 +29,7 @@ async fn main() {
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = SceneStore::new();
+                let mut load_remover = LoadRemover::new();
 
                 next_tick().await;
                 let game_manager_finder = GameManagerFinder::wait_attach(&process).await;
@@ -70,6 +71,9 @@ async fn main() {
                         #[cfg(debug_assertions)]
                         asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                     }
+
+                    load_remover.load_removal(&process, &game_manager_finder);
+
                     next_tick().await;
                 }
             })
@@ -87,5 +91,89 @@ fn split_index(i: &mut usize, n: usize) {
     *i += 1;
     if n <= *i {
         *i = 0;
+    }
+}
+
+struct LoadRemover {
+    look_for_teleporting: bool,
+    last_game_state: i32,
+    #[cfg(debug_assertions)]
+    last_paused: bool,
+}
+
+impl LoadRemover {
+    fn new() -> LoadRemover {
+        LoadRemover { 
+            look_for_teleporting: false,
+            last_game_state: GAME_STATE_INACTIVE,
+            #[cfg(debug_assertions)]
+            last_paused: false,
+        }
+    }
+
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+
+        // only remove loads if timer is running
+        if asr::timer::state() != asr::timer::TimerState::Running { return Some(()); }
+
+        let ui_state = game_manager_finder.get_ui_state(process)?;
+
+        let scene_name = game_manager_finder.get_scene_name(process)?;
+        let maybe_next_scene = game_manager_finder.get_next_scene_name(process);
+        fn is_none_or_empty(ms: Option<&str>) -> bool {
+            match ms {  None | Some("") => true, Some(_) => false }
+        }
+        let loading_menu = (scene_name != "Menu_Title" && is_none_or_empty(maybe_next_scene.as_deref()))
+            || (scene_name != "Menu_Title" && maybe_next_scene.as_deref() == Some("Menu_Title")
+                || (scene_name == "Quit_To_Menu"));
+
+        let teleporting = game_manager_finder.camera_teleporting(process)?;
+
+        let game_state = game_manager_finder.get_game_state(process)?;
+        if game_state == GAME_STATE_PLAYING && self.last_game_state == GAME_STATE_MAIN_MENU {
+            self.look_for_teleporting = true;
+        }
+        if self.look_for_teleporting && (teleporting || (game_state != GAME_STATE_PLAYING && game_state != GAME_STATE_ENTERING_LEVEL)) {
+            self.look_for_teleporting = false;
+        }
+
+        // TODO: look into Current Patch quitout issues. // might have been fixed? cerpin you broke them in a way that made them work, right?
+        asr::print_message("hazard_respawning");
+        let hazard_respawning = game_manager_finder.hazard_respawning(process)?;
+        asr::print_message("accepting_input");
+        let accepting_input = game_manager_finder.accepting_input(process)?;
+        asr::print_message("hero_transition_state");
+        let hero_transition_state = game_manager_finder.hero_transition_state(process)?;
+        asr::print_message("tile_map_dirty");
+        let tile_map_dirty = game_manager_finder.tile_map_dirty(process)?;
+        asr::print_message("uses_scene_transition_routine");
+        let uses_scene_transition_routine = game_manager_finder.uses_scene_transition_routine()?;
+        asr::print_message("is_game_time_paused");
+        let is_game_time_paused =
+            (game_state == GAME_STATE_PLAYING && teleporting && !hazard_respawning)
+            || (self.look_for_teleporting)
+            || ((game_state == GAME_STATE_PLAYING || game_state == GAME_STATE_ENTERING_LEVEL) && ui_state != UI_STATE_PLAYING)
+            || (game_state != GAME_STATE_PLAYING && !accepting_input)
+            || (game_state == GAME_STATE_EXITING_LEVEL || game_state == GAME_STATE_LOADING)
+            || (hero_transition_state == HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL)
+            || (ui_state != UI_STATE_PLAYING
+                && (loading_menu || (ui_state != UI_STATE_PAUSED && (!is_none_or_empty(maybe_next_scene.as_deref()) || scene_name == "_test_charms")))
+                && maybe_next_scene != Some(scene_name))
+            || (tile_map_dirty && !uses_scene_transition_routine);
+        if is_game_time_paused {
+            asr::timer::pause_game_time();
+        } else {
+            asr::timer::resume_game_time();
+        }
+
+        self.last_game_state = game_state;
+        #[cfg(debug_assertions)]
+        {
+            if is_game_time_paused != self.last_paused {
+                asr::print_message(&format!("is_game_time_paused: {}", is_game_time_paused));
+            }
+            self.last_paused = is_game_time_paused;
+        }
+        Some(())
     }
 }

@@ -63,12 +63,29 @@ const BAD_SCENE_NAMES: [&str; 11] = [
 
 // --------------------------------------------------------
 
-const GAME_STATE_PLAYING: i32 = 4;
+pub const GAME_STATE_INACTIVE: i32 = 0;
+pub const GAME_STATE_MAIN_MENU: i32 = 1;
+pub const GAME_STATE_LOADING: i32 = 2;
+pub const GAME_STATE_ENTERING_LEVEL: i32 = 3;
+pub const GAME_STATE_PLAYING: i32 = 4;
+pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
+
+pub const UI_STATE_PLAYING: i32 = 6;
+pub const UI_STATE_PAUSED: i32 = 7;
+
+pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
 
 struct GameManagerPointers {
     scene_name: Pointer<2>,
     next_scene_name: Pointer<2>,
     game_state: Pointer<2>,
+    ui_state_vanilla: Pointer<3>,
+    ui_state_modded: Pointer<3>,
+    camera_teleporting: Pointer<3>,
+    hazard_respawning: Pointer<4>,
+    accepting_input: Pointer<3>,
+    hero_transition_state: Pointer<3>,
+    tile_map_dirty: Pointer<2>,
 }
 
 impl GameManagerPointers {
@@ -77,6 +94,13 @@ impl GameManagerPointers {
             scene_name: Pointer::new("GameManager", 0, &["_instance", "sceneName"]),
             next_scene_name: Pointer::new("GameManager", 0, &["_instance", "nextSceneName"]),
             game_state: Pointer::new("GameManager", 0, &["_instance", "gameState"]),
+            ui_state_vanilla: Pointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
+            ui_state_modded: Pointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
+            camera_teleporting: Pointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
+            hazard_respawning: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
+            accepting_input: Pointer::new("GameManager", 0, &["_instance", "InputHandler", "acceptingInput"]),
+            hero_transition_state: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
+            tile_map_dirty: Pointer::new("GameManager", 0, &["_instance", "tileMapDirty"]),
         }
     }
 }
@@ -195,6 +219,49 @@ impl GameManagerFinder {
 
     fn is_game_state_playing(&self, process: &Process) -> bool {
         self.get_game_state(process) == Some(GAME_STATE_PLAYING)
+    }
+
+    pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
+        // TODO: handle cases of uiState != 0x124 both true and false,
+        //       UIState enum
+        if let Ok(ui) = self.pointers.ui_state_vanilla.read(process, &self.module, &self.image) {
+            return Some(ui);
+        }
+        if let Ok(ui) = self.pointers.ui_state_modded.read(process, &self.module, &self.image) {
+            return Some(ui);
+        }
+        None
+    }
+
+    pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {
+        self.pointers.camera_teleporting.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hazard_respawning(&self, process: &Process) -> Option<bool> {
+        self.pointers.hazard_respawning.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn accepting_input(&self, process: &Process) -> Option<bool> {
+        self.pointers.accepting_input.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hero_transition_state(&self, process: &Process) -> Option<i32> {
+        self.pointers.hero_transition_state.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn tile_map_dirty(&self, process: &Process) -> Option<bool> {
+        self.pointers.tile_map_dirty.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn uses_scene_transition_routine(&self) -> Option<bool> {
+        /*
+         * 1.3.1.5 and above swap from using LoadSceneAdditive to a SceneTransitionRoutine triggered
+         * by BeginSceneTransitionRoutine, which doesn't set tilemapDirty back to false when you enter dnail
+         * However, the early control glitch can only be performed on early patches so we can avoid this check entirely
+         */
+        // On current patch, return true
+        // TODO: on other patches, something something lastVersion?.Minor >= 3
+        Some(true)
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
