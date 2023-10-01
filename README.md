@@ -28,6 +28,39 @@ You can use the [debugger](https://github.com/CryZe/asr-debugger) while
 developing the auto splitter to more easily see the log messages, statistics,
 dump memory and more.
 
+## Instructions for LiveSplit Windows
+
+Create a LiveSplit Layout (`.lsl`) file that you can edit
+to point to this autosplitter.
+Right-click -> `Open Layout` -> `From file...`,
+then navigate to the Layout file that you want to edit.
+Then Right-click -> `Edit Layout...`,
+and you should see a Layout Editor with components like
+`Title`, `Splits`, `Timer`, etc.
+If it does not have a component named `Auto Splitting Runtime`,
+add one using the `+` Plus button -> `Control` -> `Auto Splitting Runtime`.
+Once that's there, click `Layout Settings` -> `Auto Splitting Runtime`,
+and next to `Script Path`, click `Browse...`,
+then navigate to the compiled `wasm` file found at
+`target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+of this repository.
+Click `Ok` and and save the layout with `Save Layout` or `Save Layout As...`.
+
+Deactivate the existing Hollow Knight autosplitter by Right-click -> `Edit Splits...`
+then next to `Configurable Load Remover / Auto Splitter. (By DevilSquirrel)`,
+click `Deactivate`.
+
+Then add this autosplitter via the Layout file you created or edited earlier.
+In the same Splits Editor from Right-click -> `Edit Splits...`,
+below where `Configurable Load Remover / Auto Splitter. (By DevilSquirrel)` was,
+check the `Use Layout` checkbox, click `Browse` next to that,
+and navigate to the Layout file that you saved with the `Auto Splitting Runtime`
+component previously.
+Select it and click `Ok`.
+
+Finally, do not manually split, skip, or undo splits while running with this autosplitter.
+The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with LiveSplit's state.
+
 ## Instructions for livesplit-one-desktop
 
 Clone `livesplit-one-desktop` from https://github.com/CryZe/livesplit-one-desktop
