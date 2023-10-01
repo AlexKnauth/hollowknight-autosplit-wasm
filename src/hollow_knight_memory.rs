@@ -1,17 +1,16 @@
 
+use core::cell::OnceCell;
 use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
-use asr::future::{next_tick, retry};
+use asr::future::retry;
 use asr::watcher::Pair;
-use asr::{Process, Address, Address64};
-use asr::game_engine::unity::{SceneManager, get_scene_name};
-use asr::string::{ArrayCString, ArrayWString};
+use asr::{Process, Address64};
+use asr::game_engine::unity::mono::{self, Pointer};
+use asr::string::ArrayWString;
 
 #[cfg(debug_assertions)]
 use std::string::String;
-#[cfg(debug_assertions)]
-use serde::{Deserialize, Serialize};
 
 // --------------------------------------------------------
 
@@ -20,45 +19,10 @@ const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
     "Hollow Knight", // Mac
 ];
 
-const UNITY_PLAYER_NAMES: [&str; 2] = [
-    "UnityPlayer.dll", // Windows
-    "UnityPlayer.dylib", // Mac
-];
-
 pub const SCENE_PATH_SIZE: usize = 64;
 
 const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
-
-const SCENE_ASSET_PATH_OFFSET: u64 = 0x10;
-#[cfg(debug_assertions)]
-const SCENE_BUILD_INDEX_OFFSET: u64 = 0x98;
-const ACTIVE_SCENE_OFFSET: u64 = 0x48;
-const ACTIVE_SCENE_CONTENTS_PATH: &[u64] = &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0];
-const UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS: [u64; 17] = [
-    0x01A1AC30, // Windows
-    0x01A862E8, // Mac?
-    0x01A982E8, // Mac?
-    0x01AA12E8, // Mac?
-    0x01AA22E8, // Mac?
-    0x01AA32E8, // Mac?
-    0x01AA52E8, // Mac?
-    0x01AAF2E8, // Mac?
-    0x01AB02E8, // Mac?
-    0x01B2B2E8, // Mac?
-    0x01B3D2E8, // Mac?
-    0x01BB32E8, // Mac?
-    0x01BB42E8, // Mac?
-    0x01BBD2E8, // Mac?
-    0x01BBE2E8, // Mac?
-    0x01BD82E8, // Mac?
-    0x01BE12E8, // Mac?
-];
-
-const ITER_PER_TICK: u64 = 16384;
-
-const ASSETS_SCENES: &str = "Assets/Scenes/";
-const ASSETS_SCENES_LEN: usize = ASSETS_SCENES.len();
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
@@ -98,612 +62,340 @@ const BAD_SCENE_NAMES: [&str; 11] = [
     "material",
 ];
 
-const UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS: [u64; 14] = [
-    0x019D7CF0, // Windows
-    0x01ADDA80, // Mac?
-    0x01AE6A80, // Mac?
-    0x01AE7A80, // Mac?
-    0x01AEAA80, // Mac?
-    0x01B70A80, // Mac?
-    0x01B79A80, // Mac?
-    0x01B82A80, // Mac?
-    0x01BF8A80, // Mac?
-    0x01BF9A80, // Mac?
-    0x01C02A80, // Mac?
-    0x01C03A80, // Mac?
-    0x01C1DA80, // Mac?
-    0x01C26A80, // Mac?
-];
+// --------------------------------------------------------
 
-const UPHGM_OFFSET_0: u64 = 0;
-const UPHGM_OFFSET_1: u64 = 0x10;
-const UPHGM_OFFSET_2: u64 = 0x80;
-const UPHGM_OFFSET_3: u64 = 0x28;
-const UPHGM_OFFSET_4: u64 = 0x38;
-const GAME_MANAGER_PATH: &[u64] = &[
-    UPHGM_OFFSET_0,
-    UPHGM_OFFSET_1,
-    UPHGM_OFFSET_2,
-    UPHGM_OFFSET_3,
-    UPHGM_OFFSET_4
-];
+pub const GAME_STATE_INACTIVE: i32 = 0;
+pub const GAME_STATE_MAIN_MENU: i32 = 1;
+pub const GAME_STATE_LOADING: i32 = 2;
+pub const GAME_STATE_ENTERING_LEVEL: i32 = 3;
+pub const GAME_STATE_PLAYING: i32 = 4;
+pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
 
-const SCENE_NAME_OFFSET: u64 = 0x18;
-const NEXT_SCENE_NAME_OFFSET: u64 = 0x20;
-const SCENE_NAME_PATH: &[u64] = &[
-    // from game_manager
-    SCENE_NAME_OFFSET
-];
-const NEXT_SCENE_NAME_PATH: &[u64] = &[
-    // from game_manager
-    NEXT_SCENE_NAME_OFFSET
-];
+pub const UI_STATE_PLAYING: i32 = 6;
+pub const UI_STATE_PAUSED: i32 = 7;
 
-const UI_MANAGER_VANILLA_OFFSET: u64 = 0xa0;
-const GAME_STATE_VANILLA_OFFSET: u64 = 0x174;
-const GAME_STATE_MODDING_API_OFFSET: u64 = 0x184;
-const GAME_STATE_PLAYING: i32 = 4;
+pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
 
-const PLAYER_DATA_OFFSET: u64 = 0xc8;
+struct GameManagerPointers {
+    scene_name: Pointer<2>,
+    next_scene_name: Pointer<2>,
+    game_state: Pointer<2>,
+    ui_state_vanilla: Pointer<3>,
+    ui_state_modded: Pointer<3>,
+    camera_teleporting: Pointer<3>,
+    hazard_respawning: Pointer<4>,
+    accepting_input: Pointer<3>,
+    hero_transition_state: Pointer<3>,
+    tile_map_dirty: Pointer<2>,
+}
 
-const FIREBALL_LEVEL_OFFSET: u64 = 0x260;
-const FIREBALL_LEVEL_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    FIREBALL_LEVEL_OFFSET
-];
-
-const HAS_DASH_OFFSET: u64 = 0x284;
-const HAS_DASH_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_DASH_OFFSET
-];
-
-const HAS_SHADOW_DASH_OFFSET: u64 = 0x287;
-const HAS_SHADOW_DASH_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_SHADOW_DASH_OFFSET
-];
-
-const HAS_WALL_JUMP_OFFSET: u64 = 0x285;
-const HAS_WALL_JUMP_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_WALL_JUMP_OFFSET
-];
-
-const HAS_DOUBLE_JUMP_OFFSET: u64 = 0x289;
-const HAS_DOUBLE_JUMP_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_DOUBLE_JUMP_OFFSET
-];
-
-const HAS_SUPER_DASH_OFFSET: u64 = 0x286;
-const HAS_SUPER_DASH_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_SUPER_DASH_OFFSET
-];
-
-const HAS_ACID_ARMOR_OFFSET: u64 = 0x288;
-const HAS_ACID_ARMOR_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_ACID_ARMOR_OFFSET
-];
-
-const HAS_DREAM_NAIL_OFFSET: u64 = 0x271;
-const HAS_DREAM_NAIL_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_DREAM_NAIL_OFFSET
-];
-
-const HAS_DREAM_GATE_OFFSET: u64 = 0x272;
-const HAS_DREAM_GATE_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_DREAM_GATE_OFFSET
-];
-
-const DREAM_NAIL_UPGRADED_OFFSET: u64 = 0x273;
-const DREAM_NAIL_UPGRADED_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    DREAM_NAIL_UPGRADED_OFFSET
-];
-
-// Base number of masks, without any charms, bindings, lifeblood, or damage taken
-const MAX_HEALTH_BASE_OFFSET: u64 = 0x198;
-const MAX_HEALTH_BASE_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    MAX_HEALTH_BASE_OFFSET
-];
-
-// Heart pieces represents one of:
-//  - number of heart pieces including the ones assembled into masks: 0-3 4-7 8-11 12-15 16
-//  - number of heart pieces excluding the ones assembled into masks: 0-3 0-3 0-3  0-3   0
-//  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
-// and I'm not sure which one
-const HEART_PIECES_OFFSET: u64 = 0x1a8;
-const HEART_PIECES_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HEART_PIECES_OFFSET
-];
-
-const HAS_LANTERN_OFFSET: u64 = 0x28a;
-const HAS_LANTERN_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_LANTERN_OFFSET
-];
-
-const SIMPLE_KEYS_OFFSET: u64 = 0x2d8;
-const SIMPLE_KEYS_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    SIMPLE_KEYS_OFFSET
-];
-
-const HAS_SLY_KEY_OFFSET: u64 = 0x28e;
-const HAS_SLY_KEY_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_SLY_KEY_OFFSET
-];
-
-const HAS_WHITE_KEY_OFFSET: u64 = 0x290;
-const HAS_WHITE_KEY_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    HAS_WHITE_KEY_OFFSET
-];
-
-#[cfg(debug_assertions)]
-const GEO_OFFSET: u64 = 0x1c4;
-#[cfg(debug_assertions)]
-const GEO_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    GEO_OFFSET
-];
-
-// Dashmaster
-const GOT_CHARM_31_OFFSET: u64 = 0x5c9;
-const GOT_CHARM_31_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    GOT_CHARM_31_OFFSET
-];
-
-const GRUBS_COLLECTED_OFFSET: u64 = 0xb94;
-const GRUBS_COLLECTED_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    GRUBS_COLLECTED_OFFSET
-];
-
-// Gruz Mother
-const KILLED_BIG_FLY_OFFSET: u64 = 0x6c1;
-const KILLED_BIG_FLY_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    KILLED_BIG_FLY_OFFSET
-];
-
-const SLY_RESCUED_OFFSET: u64 = 0x389;
-const SLY_RESCUED_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    SLY_RESCUED_OFFSET
-];
-
-const KILLED_GORGEOUS_HUSK_OFFSET: u64 = 0x879;
-const KILLED_GORGEOUS_HUSK_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    KILLED_GORGEOUS_HUSK_OFFSET
-];
-
-// Lemm
-const MET_RELIC_DEALER_SHOP_OFFSET: u64 = 0x34a;
-const MET_RELIC_DEALER_SHOP_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    MET_RELIC_DEALER_SHOP_OFFSET
-];
-
-const WATCHER_CHANDELIER_OFFSET: u64 = 0xc8d;
-const WATCHER_CHANDELIER_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    WATCHER_CHANDELIER_OFFSET
-];
-
-const KILLED_BLACK_KNIGHT_OFFSET: u64 = 0x7f9;
-const KILLED_BLACK_KNIGHT_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    KILLED_BLACK_KNIGHT_OFFSET
-];
-
-const KILLED_MEGA_JELLYFISH_OFFSET: u64 = 0x7a1;
-const KILLED_MEGA_JELLYFISH_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    KILLED_MEGA_JELLYFISH_OFFSET
-];
-
-const SPIDER_CAPTURE_OFFSET: u64 = 0xca0;
-const SPIDER_CAPTURE_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    SPIDER_CAPTURE_OFFSET
-];
-
-const UNCHAINED_HOLLOW_KNIGHT_OFFSET: u64 = 0xcc9;
-const UNCHAINED_HOLLOW_KNIGHT_PATH: &[u64] = &[
-    // from game_manager
-    PLAYER_DATA_OFFSET,
-    UNCHAINED_HOLLOW_KNIGHT_OFFSET
-];
+impl GameManagerPointers {
+    fn new() -> GameManagerPointers {
+        GameManagerPointers {
+            scene_name: Pointer::new("GameManager", 0, &["_instance", "sceneName"]),
+            next_scene_name: Pointer::new("GameManager", 0, &["_instance", "nextSceneName"]),
+            game_state: Pointer::new("GameManager", 0, &["_instance", "gameState"]),
+            ui_state_vanilla: Pointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
+            ui_state_modded: Pointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
+            camera_teleporting: Pointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
+            hazard_respawning: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
+            accepting_input: Pointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
+            hero_transition_state: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
+            tile_map_dirty: Pointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
+        }
+    }
+}
 
 // --------------------------------------------------------
 
-#[cfg(debug_assertions)]
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
-pub struct SceneInfo {
-    name: String,
-    path: String
+struct PlayerDataPointers {
+    fireball_level: Pointer<3>,
+    has_dash: Pointer<3>,
+    has_shadow_dash: Pointer<3>,
+    has_wall_jump: Pointer<3>,
+    has_double_jump: Pointer<3>,
+    has_super_dash: Pointer<3>,
+    has_acid_armor: Pointer<3>,
+    has_dream_nail: Pointer<3>,
+    has_dream_gate: Pointer<3>,
+    dream_nail_upgraded: Pointer<3>,
+    // Base number of masks, without any charms, bindings, lifeblood, or damage taken
+    max_health_base: Pointer<3>,
+    // Heart pieces represents one of:
+    //  - number of heart pieces including the ones assembled into masks: 0-3 4-7 8-11 12-15 16
+    //  - number of heart pieces excluding the ones assembled into masks: 0-3 0-3 0-3  0-3   0
+    //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
+    // and I'm not sure which one
+    heart_pieces: Pointer<3>,
+    has_lantern: Pointer<3>,
+    simple_keys: Pointer<3>,
+    has_sly_key: Pointer<3>,
+    has_white_key: Pointer<3>,
+    #[cfg(debug_assertions)]
+    geo: Pointer<3>,
+    // Dashmaster
+    got_charm_31: Pointer<3>,
+    grubs_collected: Pointer<3>,
+    // Gruz Mother
+    killed_big_fly: Pointer<3>,
+    sly_rescued: Pointer<3>,
+    killed_gorgeous_husk: Pointer<3>,
+    // Lemm
+    met_relic_dealer_shop: Pointer<3>,
+    watcher_chandelier: Pointer<3>,
+    killed_black_knight: Pointer<3>,
+    killed_mega_jellyfish: Pointer<3>,
+    spider_capture: Pointer<3>,
+    unchained_hollow_knight: Pointer<3>,
 }
 
-#[cfg(debug_assertions)]
-pub type SceneTable = BTreeMap<i32, SceneInfo>;
+impl PlayerDataPointers {
+    fn new() -> PlayerDataPointers {
+        PlayerDataPointers {
+            fireball_level: Pointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
+            has_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDash"]),
+            has_shadow_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasShadowDash"]),
+            has_wall_jump: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasWalljump"]),
+            has_double_jump: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDoubleJump"]),
+            has_super_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasSuperDash"]),
+            has_acid_armor: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasAcidArmour"]),
+            has_dream_nail: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamNail"]),
+            has_dream_gate: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamGate"]),
+            dream_nail_upgraded: Pointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
+            max_health_base: Pointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
+            heart_pieces: Pointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            has_lantern: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
+            simple_keys: Pointer::new("GameManager", 0, &["_instance", "playerData", "simpleKeys"]),
+            has_sly_key: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasSlykey"]),
+            has_white_key: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
+            #[cfg(debug_assertions)]
+            geo: Pointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
+            got_charm_31: Pointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_31"]),
+            grubs_collected: Pointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
+            killed_big_fly: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
+            sly_rescued: Pointer::new("GameManager", 0, &["_instance", "playerData", "slyRescued"]),
+            killed_gorgeous_husk: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
+            met_relic_dealer_shop: Pointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
+            watcher_chandelier: Pointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
+            killed_black_knight: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
+            killed_mega_jellyfish: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
+            spider_capture: Pointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
+            unchained_hollow_knight: Pointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
+        }
+    }
+}
 
 // --------------------------------------------------------
-
-pub struct UnityPlayerHasActiveScene(Address);
-
-impl UnityPlayerHasActiveScene {
-    fn attach_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
-        let (addr, _) = unity_player;
-        for offset in UNITY_PLAYER_HAS_ACTIVE_SCENE_OFFSETS.iter() {
-            if let Some(a) = attach_active_scene_root(process, addr.add(*offset), &()) {
-                return Some(UnityPlayerHasActiveScene(a));
-            }
-        }
-        None
-    }
-    async fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64)) -> Option<UnityPlayerHasActiveScene> {
-        asr::print_message("Scanning for active_scene roots...");
-        let a = attempt_scan_roots(process, unity_player, attach_active_scene_root, &()).await?;
-        Some(UnityPlayerHasActiveScene(a))
-    }
-    async fn attach_scan(process: &Process) -> Option<UnityPlayerHasActiveScene> {
-        let unity_player = get_unity_player_range(process)?;
-        if let Some(uphas) = UnityPlayerHasActiveScene::attach_unity_player(process, unity_player) {
-            Some(uphas)
-        } else {
-            next_tick().await;
-            UnityPlayerHasActiveScene::attempt_scan_unity_player(process, unity_player).await
-        }
-    }
-
-    #[cfg(debug_assertions)]
-    fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
-        process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_BUILD_INDEX_OFFSET])
-    }
-
-    fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
-        process.read_pointer_path64(self.0, &[0, ACTIVE_SCENE_OFFSET, SCENE_ASSET_PATH_OFFSET, 0])
-    }
-}
-
-pub enum SceneFinder {
-    SceneManager(SceneManager),
-    UnityPlayerHasActiveScene(UnityPlayerHasActiveScene)
-}
-
-impl SceneFinder {
-    async fn attach(process: &Process) -> Option<SceneFinder> {
-        if let Some(scene_manager) = SceneManager::attach(process) {
-            return Some(SceneFinder::SceneManager(scene_manager));
-        }
-        if let Some(uphas) = UnityPlayerHasActiveScene::attach_scan(process).await {
-            return Some(SceneFinder::UnityPlayerHasActiveScene(uphas))
-        }
-        None
-    }
-    pub async fn wait_attach(process: &Process) -> SceneFinder {
-        asr::print_message("Trying to attach SceneManager...");
-        next_tick().await;
-        for i in 0 .. 10 {
-            if let Some(scene_manager) = SceneManager::attach(&process) {
-                asr::print_message(&format!("Attached SceneManager ({}).", i));
-                return SceneFinder::SceneManager(scene_manager)
-            }
-            next_tick().await;
-        }
-        
-        asr::print_message("Trying to attach SceneFinder...");
-        next_tick().await;
-        loop {
-            if let Some(scene_finder) = SceneFinder::attach(&process).await {
-                asr::print_message("Attached SceneFinder.");
-                return scene_finder;
-            }
-            next_tick().await;
-        }
-    }
-
-    #[cfg(debug_assertions)]
-    pub fn get_current_scene_index(&self, process: &Process) -> Result<i32, asr::Error> {
-        match self {
-            SceneFinder::SceneManager(scene_manager) => {
-                scene_manager.get_current_scene_index(process)
-            }
-            SceneFinder::UnityPlayerHasActiveScene(uphas) => {
-                uphas.get_current_scene_index(process)
-            }
-        }
-    }
-
-    pub fn get_current_scene_path<const N: usize>(&self, process: &Process) -> Result<ArrayCString<N>, asr::Error> {
-        match self {
-            SceneFinder::SceneManager(scene_manager) => {
-                scene_manager.get_current_scene_path(process)
-            }
-            SceneFinder::UnityPlayerHasActiveScene(uphas) => {
-                uphas.get_current_scene_path(process)
-            }
-        }
-    }
-
-    pub fn get_current_scene_name(&self, process: &Process) -> Result<String, asr::Error> {
-        self.get_current_scene_path::<SCENE_PATH_SIZE>(&process).map(scene_path_to_name_string)
-    }
-
-    async fn wait_get_current_scene_path<const N: usize>(&self, process: &Process) -> ArrayCString<N> {
-        retry(|| self.get_current_scene_path(&process)).await
-    }
-
-    pub async fn wait_get_current_scene_name(&self, process: &Process) -> String {
-        scene_path_to_name_string(self.wait_get_current_scene_path::<SCENE_PATH_SIZE>(&process).await)
-    }
-}
+// --------------------------------------------------------
 
 pub struct GameManagerFinder {
-    unity_player_has_game_manager: Address,
-    game_manager: Address64,
-    dirty: bool
+    module: mono::Module,
+    image: mono::Image,
+    pointers: GameManagerPointers,
+    player_data_pointers: PlayerDataPointers,
+    ui_state_offset: OnceCell<u32>,
 }
 
 impl GameManagerFinder {
-    pub async fn wait_attach(process: &Process, scene_finder: &SceneFinder) -> GameManagerFinder {
-        asr::print_message("Trying to attach GameManagerFinder...");
-        loop {
-            if let Some(g) = GameManagerFinder::attach_scan(process, scene_finder).await {
-                asr::print_message("Attached GameManagerFinder.");
-                return g;
-            }
-            next_tick().await;
-        }
-    }
-    async fn attach_scan(process: &Process, scene_finder: &SceneFinder) -> Option<GameManagerFinder> {
-        let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
-        if scene_name == PRE_MENU_INTRO { return None; }
-        let unity_player = get_unity_player_range(process)?;
-        if let Some(g) = GameManagerFinder::attach_unity_player(process, unity_player, &scene_name) {
-            Some(g)
-        } else {
-            next_tick().await;
-            GameManagerFinder::attempt_scan_unity_player(process, unity_player, &scene_name).await
-        }
-    }
-    fn attach_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
-        let (addr, _) = unity_player;
-        for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
-            if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, addr.add(*offset), scene_name) {
-                let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-                return Some(GameManagerFinder{unity_player_has_game_manager, game_manager, dirty: false});
-            }
-        }
-        None
-    }
-    async fn attempt_scan_unity_player(process: &Process, unity_player: (Address, u64), scene_name: &str) -> Option<GameManagerFinder> {
-        asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
-        next_tick().await;
-        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, scene_name).await?;
-        let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-        Some(GameManagerFinder{unity_player_has_game_manager, game_manager, dirty: false})
-    }
-
-    pub fn is_dirty(&self) -> bool {
-        self.dirty
-    }
-    pub fn set_dirty(&mut self) {
-        self.dirty = true;
-    }
-
-    pub async fn attempt_clean(&mut self, process: &Process, scene_finder: &SceneFinder) -> Option<()> {
-        if !self.is_dirty() { return Some(()); }
-        let scene_name = scene_finder.get_current_scene_name(&process).ok()?;
-        if self.get_scene_name(process).is_some_and(|s| s == scene_name) {
-            self.dirty = false;
-            return Some(());
-        }
-        if scene_name == PRE_MENU_INTRO { return None; }
-        let unity_player = get_unity_player_range(process)?;
-        if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, self.unity_player_has_game_manager, &scene_name) {
-            let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-            self.game_manager = game_manager;
-            self.dirty = false;
-            return Some(());
-        }
-        let (addr, _) = unity_player;
-        for offset in UNITY_PLAYER_HAS_GAME_MANAGER_OFFSETS.iter() {
-            if let Some(unity_player_has_game_manager) = attach_game_manager_scene_name(process, addr.add(*offset), &scene_name) {
-                let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-                self.unity_player_has_game_manager = unity_player_has_game_manager;
-                self.game_manager = game_manager;
-                self.dirty = false;
-                return Some(());
-            }
-        }
-        asr::print_message(&format!("Scanning for game_manager_scene_name {}...", scene_name));
-        next_tick().await;
-        let unity_player_has_game_manager = attempt_scan_roots(process, unity_player, attach_game_manager_scene_name, &scene_name).await?;
-        let game_manager: Address64 = process.read_pointer_path64(unity_player_has_game_manager, GAME_MANAGER_PATH).ok()?;
-        self.unity_player_has_game_manager = unity_player_has_game_manager;
-        self.game_manager = game_manager;
-        self.dirty = false;
-        Some(())
+    pub async fn wait_attach(process: &Process) -> GameManagerFinder {
+        let module = mono::Module::wait_attach_auto_detect(process).await;
+        let image = module.wait_get_default_image(process).await;
+        let pointers = GameManagerPointers::new();
+        let player_data_pointers = PlayerDataPointers::new();
+        let ui_state_offset = OnceCell::new();
+        GameManagerFinder { module, image, pointers, player_data_pointers, ui_state_offset }
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.game_manager, SCENE_NAME_PATH).ok()?;
+        let s = self.pointers.scene_name.read(process, &self.module, &self.image).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s = process.read_pointer_path64(self.game_manager, NEXT_SCENE_NAME_PATH).ok()?;
+        let s = self.pointers.next_scene_name.read(process, &self.module, &self.image).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_game_state(&self, process: &Process) -> Option<i32> {
-        let ui_manager_vanilla: Address64 = process.read_pointer_path64(self.game_manager, &[UI_MANAGER_VANILLA_OFFSET]).ok()?;
-        let game_state_offset = if ui_manager_vanilla.is_null() { GAME_STATE_MODDING_API_OFFSET } else { GAME_STATE_VANILLA_OFFSET };
-        process.read_pointer_path64(self.game_manager, &[game_state_offset]).ok()
+        self.pointers.game_state.read(process, &self.module, &self.image).ok()
     }
 
     fn is_game_state_playing(&self, process: &Process) -> bool {
         self.get_game_state(process) == Some(GAME_STATE_PLAYING)
     }
 
+    pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
+        // save the uiState offset so it doesn't have to find it in the UIManager class every time
+        let ui_state_offset = if let Some(ui_state_offset) = self.ui_state_offset.get() {
+            ui_state_offset
+        } else {
+            let ui_manager_class = self.image.get_class(process, &self.module, "UIManager")?;
+            let ui_state_offset = ui_manager_class.get_field(process, &self.module, "uiState")?;
+            self.ui_state_offset.get_or_init(|| ui_state_offset)
+        };
+        let ui = if let Ok(ui) = self.pointers.ui_state_vanilla.read(process, &self.module, &self.image) {
+            ui
+        } else if let Ok(ui) =  self.pointers.ui_state_modded.read(process, &self.module, &self.image) {
+            ui
+        } else {
+            return None;
+        };
+        if ui_state_offset != &0x124 && ui >= 2 {
+            Some(ui + 2)
+        } else {
+            Some(ui)
+        }
+    }
+
+    pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {
+        self.pointers.camera_teleporting.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hazard_respawning(&self, process: &Process) -> Option<bool> {
+        self.pointers.hazard_respawning.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn accepting_input(&self, process: &Process) -> Option<bool> {
+        self.pointers.accepting_input.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hero_transition_state(&self, process: &Process) -> Option<i32> {
+        self.pointers.hero_transition_state.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn tile_map_dirty(&self, process: &Process) -> Option<bool> {
+        self.pointers.tile_map_dirty.read(process, &self.module, &self.image).ok()
+    }
+
+    pub fn uses_scene_transition_routine(&self) -> Option<bool> {
+        /*
+         * 1.3.1.5 and above swap from using LoadSceneAdditive to a SceneTransitionRoutine triggered
+         * by BeginSceneTransitionRoutine, which doesn't set tilemapDirty back to false when you enter dnail
+         * However, the early control glitch can only be performed on early patches so we can avoid this check entirely
+         */
+        // On current patch, return true
+        // TODO: on other patches, something something lastVersion?.Minor >= 3
+        Some(true)
+    }
+
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.game_manager, FIREBALL_LEVEL_PATH).ok()
+        self.player_data_pointers.fireball_level.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_DASH_PATH).ok()
+        self.player_data_pointers.has_dash.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_shadow_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_SHADOW_DASH_PATH).ok()
+        self.player_data_pointers.has_shadow_dash.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_wall_jump(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_WALL_JUMP_PATH).ok()
+        self.player_data_pointers.has_wall_jump.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_double_jump(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_DOUBLE_JUMP_PATH).ok()
+        self.player_data_pointers.has_double_jump.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_super_dash(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_SUPER_DASH_PATH).ok()
+        self.player_data_pointers.has_super_dash.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_ACID_ARMOR_PATH).ok()
+        self.player_data_pointers.has_acid_armor.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_DREAM_NAIL_PATH).ok()
+        self.player_data_pointers.has_dream_nail.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_DREAM_GATE_PATH).ok()
+        self.player_data_pointers.has_dream_gate.read(process, &self.module, &self.image).ok()
     }
     
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, DREAM_NAIL_UPGRADED_PATH).ok()
+        self.player_data_pointers.dream_nail_upgraded.read(process, &self.module, &self.image).ok()
     }
 
     pub fn max_health_base(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.game_manager, MAX_HEALTH_BASE_PATH).ok()
+        self.player_data_pointers.max_health_base.read(process, &self.module, &self.image).ok()
     }
 
     pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.game_manager, HEART_PIECES_PATH).ok()
+        self.player_data_pointers.heart_pieces.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_lantern(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_LANTERN_PATH).ok()
+        self.player_data_pointers.has_lantern.read(process, &self.module, &self.image).ok()
     }
 
     pub fn get_simple_keys(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.game_manager, SIMPLE_KEYS_PATH).ok()
+        self.player_data_pointers.simple_keys.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_sly_key(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_SLY_KEY_PATH).ok()
+        self.player_data_pointers.has_sly_key.read(process, &self.module, &self.image).ok()
     }
 
     pub fn has_white_key(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, HAS_WHITE_KEY_PATH).ok()
+        self.player_data_pointers.has_white_key.read(process, &self.module, &self.image).ok()
     }
 
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.game_manager, GEO_PATH).ok()
+        self.player_data_pointers.geo.read(process, &self.module, &self.image).ok()
     }
 
     // Dashmaster
     pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, GOT_CHARM_31_PATH).ok()
+        self.player_data_pointers.got_charm_31.read(process, &self.module, &self.image).ok()
     }
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
-        process.read_pointer_path64(self.game_manager, GRUBS_COLLECTED_PATH).ok()
+        self.player_data_pointers.grubs_collected.read(process, &self.module, &self.image).ok()
     }
 
     // Gruz Mother
     pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, KILLED_BIG_FLY_PATH).ok()
+        self.player_data_pointers.killed_big_fly.read(process, &self.module, &self.image).ok()
     }
 
     pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, SLY_RESCUED_PATH).ok()
+        self.player_data_pointers.sly_rescued.read(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, KILLED_GORGEOUS_HUSK_PATH).ok()
+        self.player_data_pointers.killed_gorgeous_husk.read(process, &self.module, &self.image).ok()
     }
 
     // Lemm
     pub fn met_relic_dealer_shop(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, MET_RELIC_DEALER_SHOP_PATH).ok()
+        self.player_data_pointers.met_relic_dealer_shop.read(process, &self.module, &self.image).ok()
     }
 
     pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, WATCHER_CHANDELIER_PATH).ok()
+        self.player_data_pointers.watcher_chandelier.read(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_black_knight(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, KILLED_BLACK_KNIGHT_PATH).ok()
+        self.player_data_pointers.killed_black_knight.read(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_mega_jellyfish(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, KILLED_MEGA_JELLYFISH_PATH).ok()
+        self.player_data_pointers.killed_mega_jellyfish.read(process, &self.module, &self.image).ok()
     }
 
     pub fn spider_capture(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, SPIDER_CAPTURE_PATH).ok()
+        self.player_data_pointers.spider_capture.read(process, &self.module, &self.image).ok()
     }
 
     pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
-        process.read_pointer_path64(self.game_manager, UNCHAINED_HOLLOW_KNIGHT_PATH).ok()
+        self.player_data_pointers.unchained_hollow_knight.read(process, &self.module, &self.image).ok()
     }
 }
 
 pub struct SceneStore {
-    old_scene_name: String,
     prev_scene_name: String,
     curr_scene_name: String,
     next_scene_name: String,
@@ -712,22 +404,14 @@ pub struct SceneStore {
 }
 
 impl SceneStore {
-    pub fn new(init_scene_name: String) -> SceneStore {
-        #[cfg(debug_assertions)]
-        asr::print_message(&format!("init_scene_name: {}", init_scene_name));
+    pub fn new() -> SceneStore {
         SceneStore {
-            old_scene_name: "".to_string(),
             prev_scene_name: "".to_string(),
-            curr_scene_name: init_scene_name,
+            curr_scene_name: "".to_string(),
             next_scene_name: "".to_string(),
             new_data_curr: false,
             new_data_next: false
         }
-    }
-
-    #[cfg(debug_assertions)]
-    pub fn curr_scene_name(&self) -> &str {
-        &self.curr_scene_name
     }
 
     pub fn new_curr_scene_name(&mut self, mcsn: Option<String>) {
@@ -741,43 +425,15 @@ impl SceneStore {
             _ => ()
         }
     }
-    pub fn new_curr_scene_name2(&mut self, ma: Option<String>, mb: Option<String>) -> (bool, bool) {
-        match (ma, mb) {
-            (None, None) => (false, false),
-            (Some(ab), None) | (None, Some(ab)) => {
-                self.old_scene_name = ab.clone();
-                self.new_curr_scene_name(Some(ab));
-                (false, false)
+    pub fn new_curr_scene_name1(&mut self, msn: Option<String>) -> bool {
+        match msn {
+            None => false,
+            Some(bad) if BAD_SCENE_NAMES.contains(&bad.as_str()) => {
+                true
             }
-            (Some(a), Some(b)) if a == b => {
-                self.old_scene_name = b;
-                self.new_curr_scene_name(Some(a));
-                (false, false)
-            }
-            (Some(good), Some(bad)) if BAD_SCENE_NAMES.contains(&bad.as_str()) && !BAD_SCENE_NAMES.contains(&good.as_str()) => {
-                self.old_scene_name = bad;
-                self.new_curr_scene_name(Some(good));
-                (false, true)
-            }
-            (Some(bad), Some(good)) if BAD_SCENE_NAMES.contains(&bad.as_str()) && !BAD_SCENE_NAMES.contains(&good.as_str()) => {
-                self.old_scene_name = bad;
-                self.new_curr_scene_name(Some(good));
-                (true, false)
-            }
-            (Some(a), Some(b)) => {
-                // A is at least as up-to-date as B if: B == old || (B == curr && A != curr && A != old)
-                if b == self.old_scene_name || (b == self.curr_scene_name && a != self.curr_scene_name && a != self.old_scene_name) {
-                    self.old_scene_name = b;
-                    self.new_curr_scene_name(Some(a));
-                    (false, self.old_scene_name != self.prev_scene_name)
-                } else if a == self.old_scene_name || (a == self.curr_scene_name && b != self.curr_scene_name && b != self.old_scene_name) {
-                    self.old_scene_name = a;
-                    self.new_curr_scene_name(Some(b));
-                    (self.old_scene_name != self.prev_scene_name, false)
-                } else {
-                    asr::print_message(&format!("scene name mismatch: {} vs {}", a, b));
-                    (a != self.prev_scene_name, b != self.prev_scene_name)
-                }
+            Some(sn) => {
+                self.new_curr_scene_name(Some(sn));
+                false
             }
         }
     }
@@ -820,8 +476,8 @@ impl SceneStore {
 }
 
 pub struct PlayerDataStore {
-    map_i32: BTreeMap<u64, i32>,
-    map_bool: BTreeMap<u64, bool>,
+    map_i32: BTreeMap<&'static str, i32>,
+    map_bool: BTreeMap<&'static str, bool>,
 }
 
 impl PlayerDataStore {
@@ -839,11 +495,11 @@ impl PlayerDataStore {
     pub fn get_fireball_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
         match game_manager_finder.get_fireball_level(process) {
             Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
-                self.map_i32.insert(FIREBALL_LEVEL_OFFSET, l);
+                self.map_i32.insert("fireball_level", l);
                 l
             }
             _ => {
-                *self.map_i32.get(&FIREBALL_LEVEL_OFFSET).unwrap_or(&0)
+                *self.map_i32.get("fireball_level").unwrap_or(&0)
             }
         }
     }
@@ -851,11 +507,11 @@ impl PlayerDataStore {
     pub fn has_dash(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_dash(process) {
             Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(HAS_DASH_OFFSET, k);
+                self.map_bool.insert("has_dash", k);
                 k
             }
             _ => {
-                *self.map_bool.get(&HAS_DASH_OFFSET).unwrap_or(&false)
+                *self.map_bool.get("has_dash").unwrap_or(&false)
             }
         }
     }
@@ -863,11 +519,11 @@ impl PlayerDataStore {
     pub fn has_wall_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_wall_jump(process) {
             Some(w) if w || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(HAS_WALL_JUMP_OFFSET, w);
+                self.map_bool.insert("has_wall_jump", w);
                 w
             }
             _ => {
-                *self.map_bool.get(&HAS_WALL_JUMP_OFFSET).unwrap_or(&false)
+                *self.map_bool.get("has_wall_jump").unwrap_or(&false)
             }
         }
     }
@@ -875,11 +531,11 @@ impl PlayerDataStore {
     pub fn has_double_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_double_jump(process) {
             Some(d) if d || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(HAS_DOUBLE_JUMP_OFFSET, d);
+                self.map_bool.insert("has_double_jump", d);
                 d
             }
             _ => {
-                *self.map_bool.get(&HAS_DOUBLE_JUMP_OFFSET).unwrap_or(&false)
+                *self.map_bool.get("has_double_jump").unwrap_or(&false)
             }
         }
     }
@@ -887,21 +543,21 @@ impl PlayerDataStore {
     pub fn has_acid_armour(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.has_acid_armour(process) {
             Some(a) if a || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(HAS_ACID_ARMOR_OFFSET, a);
+                self.map_bool.insert("has_acid_armor", a);
                 a
             }
             _ => {
-                *self.map_bool.get(&HAS_ACID_ARMOR_OFFSET).unwrap_or(&false)
+                *self.map_bool.get("has_acid_armor").unwrap_or(&false)
             }
         }
     }
 
     pub fn incremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_simple_keys = self.map_i32.get(&SIMPLE_KEYS_OFFSET).cloned();
+        let store_simple_keys = self.map_i32.get("simple_keys").cloned();
         let player_data_simple_keys = game_manager_finder.get_simple_keys(process);
         if let Some(simple_keys) = player_data_simple_keys {
             if simple_keys != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert(SIMPLE_KEYS_OFFSET, simple_keys);
+                self.map_i32.insert("simple_keys", simple_keys);
             }
         }
         match (store_simple_keys, player_data_simple_keys) {
@@ -915,11 +571,11 @@ impl PlayerDataStore {
     pub fn killed_gorgeous_husk(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.killed_gorgeous_husk(process) {
             Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert(KILLED_GORGEOUS_HUSK_OFFSET, k);
+                self.map_bool.insert("killed_gorgeous_husk", k);
                 k
             }
             _ => {
-                *self.map_bool.get(&KILLED_GORGEOUS_HUSK_OFFSET).unwrap_or(&false)
+                *self.map_bool.get("killed_gorgeous_husk").unwrap_or(&false)
             }
         }
     }
@@ -933,16 +589,6 @@ pub async fn wait_attach_hollow_knight() -> Process {
     }).await
 }
 
-pub fn scene_path_to_name_string<const N: usize>(scene_path: ArrayCString<N>) -> String {
-    String::from_utf8(get_scene_name(&scene_path).to_vec()).unwrap()
-}
-
-fn get_unity_player_range(process: &Process) -> Option<(Address, u64)> {
-    UNITY_PLAYER_NAMES.into_iter().find_map(|name| {
-        process.get_module_range(name).ok()
-    })
-}
-
 fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option<String> {
     let n: u32 = process.read_pointer_path64(a, &[STRING_LEN_OFFSET]).ok()?;
     if !(n < 2048) { return None; }
@@ -952,50 +598,6 @@ fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option
 }
 
 // --------------------------------------------------------
-
-// Scanning for values in memory
-
-fn attach_active_scene_root(process: &Process, a: Address, _v: &()) -> Option<Address> {
-    let s1: ArrayCString<ASSETS_SCENES_LEN> = process.read_pointer_path64(a, ACTIVE_SCENE_CONTENTS_PATH).ok()?;
-    let s2: String = String::from_utf8(s1.to_vec()).ok()?;
-    if s2 == ASSETS_SCENES {
-        Some(a)
-    } else {
-        None
-    }
-}
-
-fn attach_game_manager_scene_name(process: &Process, a: Address, scene_name: &str) -> Option<Address> {
-    let gm: Address64 = process.read_pointer_path64(a, GAME_MANAGER_PATH).ok()?;
-    let s0: Address64 = process.read_pointer_path64(gm, SCENE_NAME_PATH).ok()?;
-    let s2: String = read_string_object::<SCENE_PATH_SIZE>(process, s0)?;
-    if s2 == scene_name {
-        Some(a)
-    } else {
-        None
-    }
-}
-
-async fn attempt_scan_roots<F, V>(process: &Process, unity_player: (Address, u64), attach: F, v: &V) -> Option<Address>
-where
-    F: Fn(&Process, Address, &V) -> Option<Address>,
-    V: ?Sized,
-{
-    let (addr, len) = unity_player;
-    for i in 0 .. (len / 8) {
-        let a = addr.add(i * 8);
-        if let Some(a) = attach(process, a, v) {
-            let offset = a.value() - addr.value();
-            asr::print_message(&format!("Found UnityPlayer + 0x{:X}", offset));
-            return Some(a);
-        }
-        if 0 == i % ITER_PER_TICK {
-            next_tick().await;
-        }
-    }
-    None
-}
-
 // --------------------------------------------------------
 
 pub fn is_menu(s: &str) -> bool {
@@ -1007,29 +609,3 @@ pub fn is_play_scene(s: &str) -> bool {
 }
 
 // --------------------------------------------------------
-
-// Logging in debug_assertions mode
-
-#[cfg(debug_assertions)]
-fn log_scene_table(scene_table: &SceneTable) {
-    // Log scene_table as json
-    if let Ok(j) = serde_json::to_string_pretty(&scene_table) {
-        asr::print_message(&format!("begin scene_table.json\n{}", j));
-    }
-}
-
-#[cfg(debug_assertions)]
-pub fn update_scene_table(process: &Process, scene_finder: &SceneFinder, scene_table: &mut SceneTable) {
-    let si = scene_finder.get_current_scene_index(&process).unwrap_or(-1);
-    let sp: ArrayCString<SCENE_PATH_SIZE> = scene_finder.get_current_scene_path(&process).unwrap_or_default();
-    let sn = scene_path_to_name_string(sp);
-    let sv = SceneInfo{name: sn.clone(), path: String::from_utf8(sp.to_vec()).unwrap()};
-    if let Some(tv) = scene_table.get(&si) {
-        assert_eq!(&sv, tv);
-    } else if si == -1 {
-        assert_eq!(sv, SceneInfo{name: "".to_string(), path: "".to_string()});
-    } else {
-        scene_table.insert(si, sv);
-        log_scene_table(scene_table);
-    }
-}

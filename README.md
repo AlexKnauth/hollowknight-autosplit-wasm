@@ -9,7 +9,7 @@ install the Rust compiler: [Install Rust](https://www.rust-lang.org/tools/instal
 
 Afterwards install the WebAssembly target:
 ```sh
-rustup target add wasm32-unknown-unknown --toolchain stable
+rustup target add wasm32-wasi --toolchain stable
 ```
 
 The auto splitter can now be compiled:
@@ -19,7 +19,7 @@ cargo b
 
 The auto splitter is then available at:
 ```
-target/wasm32-unknown-unknown/release/wasm_hollowknight_autosplit.wasm
+target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm
 ```
 
 Make sure too look into the [API documentation](https://livesplit.org/asr/asr/) for the `asr` crate.
@@ -38,7 +38,7 @@ general:
   splits: <path-to-splits.lss>
   auto-splitter: <path-to-wasm_hollowknight_autosplit.wasm>
 ```
-where you replace `<path-to-splits.lss>` with the path to your splits file, and you replace `<path-to-wasm_hollowknight_autosplit.wasm>` with a path to the compiled `wasm` file found at `target/wasm32-unknown-unknown/release/wasm_hollowknight_autosplit.wasm` of this repository.
+where you replace `<path-to-splits.lss>` with the path to your splits file, and you replace `<path-to-wasm_hollowknight_autosplit.wasm>` with a path to the compiled `wasm` file found at `target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm` of this repository.
 
 If you're running anything other than the specific placeholder splits in the `src/splits.json` file of this repository, you should modify that file to have the splits you want, in the order you want, and then re-compile this repository with
 ```sh
