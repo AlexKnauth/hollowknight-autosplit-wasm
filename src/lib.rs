@@ -20,7 +20,8 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
-    let auto_splitter_settings = wait_n_get_auto_splitter_settings(16384).await.unwrap_or_default();
+    // let auto_splitter_settings = wait_n_get_auto_splitter_settings(16384).await.unwrap_or_default();
+    let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
     asr::print_message(&auto_splitter_settings);
 
     let splits: Vec<splits::Split> = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
@@ -84,6 +85,7 @@ async fn main() {
     }
 }
 
+/*
 async fn wait_n_get_auto_splitter_settings(n: usize) -> Result<String, asr::Error> {
     for _ in 0..n {
         let auto_splitter_settings = asr::user_settings::get_auto_splitter_settings();
@@ -94,6 +96,7 @@ async fn wait_n_get_auto_splitter_settings(n: usize) -> Result<String, asr::Erro
     }
     asr::user_settings::get_auto_splitter_settings()
 }
+*/
 
 fn split_index(i: &mut usize, n: usize) {
     if *i == 0 {
