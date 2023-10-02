@@ -11,7 +11,7 @@ checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=unity-2-mono-4#feaeb17b8ab2919f172989985ce22d8174c4659d"
+source = "git+https://github.com/AlexKnauth/asr?branch=auto_splitter_settings#b8ada086a1be2b48edc97c254324d40a9c2c2a9f"
 dependencies = [
  "arrayvec",
  "asr-derive",
@@ -24,7 +24,7 @@ dependencies = [
 [[package]]
 name = "asr-derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=unity-2-mono-4#feaeb17b8ab2919f172989985ce22d8174c4659d"
+source = "git+https://github.com/AlexKnauth/asr?branch=auto_splitter_settings#b8ada086a1be2b48edc97c254324d40a9c2c2a9f"
 dependencies = [
  "heck",
  "quote",
