@@ -20,6 +20,9 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
+    let auto_splitter_settings = asr::user_settings::get_auto_splitter_settings().unwrap_or_default();
+    asr::print_message(&auto_splitter_settings);
+
     let splits: Vec<splits::Split> = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
     let auto_reset = splits::auto_reset_safe(&splits);
 
