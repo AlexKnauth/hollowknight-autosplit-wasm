@@ -28,6 +28,8 @@ bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
 serde = { version = "1", features = ["derive"]}
 serde_json = { version = "1" }
 
+xmltree = { version = "0.10.3" }
+
 [lib]
 crate-type = ["cdylib"]
 
