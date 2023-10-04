@@ -5,7 +5,6 @@ use asr::user_settings::SettingsObject;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
 
-use super::auto_splitter_settings::settings_object_as_list;
 use super::hollow_knight_memory::*;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -276,6 +275,6 @@ pub fn splits_from_settings(s: SettingsObject) -> Vec<Split> {
 }
 
 fn splits_from_settings_split_list(s: SettingsObject) -> Vec<Split> {
-    let l = settings_object_as_list(s).unwrap_or_default();
+    let l = s.as_list().unwrap_or_default();
     l.into_iter().filter_map(Split::from_settings_split).collect()
 }

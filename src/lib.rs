@@ -3,7 +3,6 @@
 extern crate alloc;
 extern crate xmltree;
 
-mod auto_splitter_settings;
 mod hollow_knight_memory;
 mod splits;
 
