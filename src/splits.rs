@@ -1,10 +1,11 @@
 use std::str::FromStr;
 
 use asr::Process;
+use asr::user_settings::SettingsObject;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
 
-use super::auto_splitter_settings::Settings;
+use super::auto_splitter_settings::settings_object_as_list;
 use super::hollow_knight_memory::*;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -114,10 +115,10 @@ impl FromStr for Split {
 }
 
 impl Split {
-    fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
-        Split::from_str(s.as_str()?).ok()
+    fn from_settings_str(s: SettingsObject) -> Option<Split> {
+        Split::from_str(&s.as_str()?).ok()
     }
-    fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
+    fn from_settings_split(s: SettingsObject) -> Option<Split> {
         Split::from_settings_str(s.dict_get("Split")?)
     }
 }
@@ -249,7 +250,7 @@ pub fn auto_reset_safe(s: &[Split]) -> bool {
     && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
 }
 
-pub fn splits_from_settings<S: Settings>(s: S) -> Vec<Split> {
+pub fn splits_from_settings(s: SettingsObject) -> Vec<Split> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
     let maybe_end = s.dict_get("AutosplitEndRuns");
@@ -274,6 +275,7 @@ pub fn splits_from_settings<S: Settings>(s: S) -> Vec<Split> {
     }
 }
 
-fn splits_from_settings_split_list<S: Settings>(s: S) -> Vec<Split> {
-    s.as_list().unwrap_or_default().into_iter().filter_map(Split::from_settings_split).collect()
+fn splits_from_settings_split_list(s: SettingsObject) -> Vec<Split> {
+    let l = settings_object_as_list(s).unwrap_or_default();
+    l.into_iter().filter_map(Split::from_settings_split).collect()
 }

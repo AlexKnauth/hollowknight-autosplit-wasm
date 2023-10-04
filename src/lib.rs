@@ -10,7 +10,6 @@ mod splits;
 use asr::{future::next_tick, Process};
 // use asr::time::Duration;
 // use asr::timer::TimerState;
-use auto_splitter_settings::XMLSettings;
 use hollow_knight_memory::*;
 
 asr::async_main!(stable);
@@ -25,12 +24,9 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
-    // let auto_splitter_settings = wait_n_get_auto_splitter_settings(16384).await.unwrap_or_default();
-    let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
-    asr::print_message(&auto_splitter_settings);
+    let auto_splitter_settings = asr::user_settings::SettingsObject::get_auto_splitter_settings();
 
-    let settings = XMLSettings::from_xml_string(auto_splitter_settings).unwrap_or_default();
-    let splits: Vec<splits::Split> = splits::splits_from_settings(settings);
+    let splits: Vec<splits::Split> = splits::splits_from_settings(auto_splitter_settings);
     asr::print_message(&format!("splits: {:?}", splits));
     let auto_reset = splits::auto_reset_safe(&splits);
 

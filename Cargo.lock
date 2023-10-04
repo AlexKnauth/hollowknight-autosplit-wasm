@@ -11,7 +11,7 @@ checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=auto_splitter_settings_query#b0ba784f0ae3ea7ec2445400c343f3c11aea5552"
+source = "git+https://github.com/AlexKnauth/asr?branch=auto_splitter_settings_query#c58da09385f7ceaec2e947acba99fb3aa546ad70"
 dependencies = [
  "arrayvec",
  "asr-derive",
@@ -24,7 +24,7 @@ dependencies = [
 [[package]]
 name = "asr-derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=auto_splitter_settings_query#b0ba784f0ae3ea7ec2445400c343f3c11aea5552"
+source = "git+https://github.com/AlexKnauth/asr?branch=auto_splitter_settings_query#c58da09385f7ceaec2e947acba99fb3aa546ad70"
 dependencies = [
  "heck",
  "quote",
