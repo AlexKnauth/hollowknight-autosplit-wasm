@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use asr::future::retry;
 use asr::watcher::Pair;
 use asr::{Process, Address64};
-use asr::game_engine::unity::mono::{self, Pointer};
+use asr::game_engine::unity::mono::{self, UnityPointer};
 use asr::string::ArrayWString;
 
 #[cfg(debug_assertions)]
@@ -77,31 +77,31 @@ pub const UI_STATE_PAUSED: i32 = 7;
 pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
 
 struct GameManagerPointers {
-    scene_name: Pointer<2>,
-    next_scene_name: Pointer<2>,
-    game_state: Pointer<2>,
-    ui_state_vanilla: Pointer<3>,
-    ui_state_modded: Pointer<3>,
-    camera_teleporting: Pointer<3>,
-    hazard_respawning: Pointer<4>,
-    accepting_input: Pointer<3>,
-    hero_transition_state: Pointer<3>,
-    tile_map_dirty: Pointer<2>,
+    scene_name: UnityPointer<2>,
+    next_scene_name: UnityPointer<2>,
+    game_state: UnityPointer<2>,
+    ui_state_vanilla: UnityPointer<3>,
+    ui_state_modded: UnityPointer<3>,
+    camera_teleporting: UnityPointer<3>,
+    hazard_respawning: UnityPointer<4>,
+    accepting_input: UnityPointer<3>,
+    hero_transition_state: UnityPointer<3>,
+    tile_map_dirty: UnityPointer<2>,
 }
 
 impl GameManagerPointers {
     fn new() -> GameManagerPointers {
         GameManagerPointers {
-            scene_name: Pointer::new("GameManager", 0, &["_instance", "sceneName"]),
-            next_scene_name: Pointer::new("GameManager", 0, &["_instance", "nextSceneName"]),
-            game_state: Pointer::new("GameManager", 0, &["_instance", "gameState"]),
-            ui_state_vanilla: Pointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
-            ui_state_modded: Pointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
-            camera_teleporting: Pointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
-            hazard_respawning: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
-            accepting_input: Pointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
-            hero_transition_state: Pointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
-            tile_map_dirty: Pointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
+            scene_name: UnityPointer::new("GameManager", 0, &["_instance", "sceneName"]),
+            next_scene_name: UnityPointer::new("GameManager", 0, &["_instance", "nextSceneName"]),
+            game_state: UnityPointer::new("GameManager", 0, &["_instance", "gameState"]),
+            ui_state_vanilla: UnityPointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
+            ui_state_modded: UnityPointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
+            camera_teleporting: UnityPointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
+            hazard_respawning: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
+            accepting_input: UnityPointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
+            hero_transition_state: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
+            tile_map_dirty: UnityPointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
         }
     }
 }
@@ -109,78 +109,78 @@ impl GameManagerPointers {
 // --------------------------------------------------------
 
 struct PlayerDataPointers {
-    fireball_level: Pointer<3>,
-    has_dash: Pointer<3>,
-    has_shadow_dash: Pointer<3>,
-    has_wall_jump: Pointer<3>,
-    has_double_jump: Pointer<3>,
-    has_super_dash: Pointer<3>,
-    has_acid_armor: Pointer<3>,
-    has_dream_nail: Pointer<3>,
-    has_dream_gate: Pointer<3>,
-    dream_nail_upgraded: Pointer<3>,
+    fireball_level: UnityPointer<3>,
+    has_dash: UnityPointer<3>,
+    has_shadow_dash: UnityPointer<3>,
+    has_wall_jump: UnityPointer<3>,
+    has_double_jump: UnityPointer<3>,
+    has_super_dash: UnityPointer<3>,
+    has_acid_armor: UnityPointer<3>,
+    has_dream_nail: UnityPointer<3>,
+    has_dream_gate: UnityPointer<3>,
+    dream_nail_upgraded: UnityPointer<3>,
     // Base number of masks, without any charms, bindings, lifeblood, or damage taken
-    max_health_base: Pointer<3>,
+    max_health_base: UnityPointer<3>,
     // Heart pieces represents one of:
     //  - number of heart pieces including the ones assembled into masks: 0-3 4-7 8-11 12-15 16
     //  - number of heart pieces excluding the ones assembled into masks: 0-3 0-3 0-3  0-3   0
     //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
     // and I'm not sure which one
-    heart_pieces: Pointer<3>,
-    has_lantern: Pointer<3>,
-    simple_keys: Pointer<3>,
-    has_sly_key: Pointer<3>,
-    has_white_key: Pointer<3>,
+    heart_pieces: UnityPointer<3>,
+    has_lantern: UnityPointer<3>,
+    simple_keys: UnityPointer<3>,
+    has_sly_key: UnityPointer<3>,
+    has_white_key: UnityPointer<3>,
     #[cfg(debug_assertions)]
-    geo: Pointer<3>,
+    geo: UnityPointer<3>,
     // Dashmaster
-    got_charm_31: Pointer<3>,
-    grubs_collected: Pointer<3>,
+    got_charm_31: UnityPointer<3>,
+    grubs_collected: UnityPointer<3>,
     // Gruz Mother
-    killed_big_fly: Pointer<3>,
-    sly_rescued: Pointer<3>,
-    killed_gorgeous_husk: Pointer<3>,
+    killed_big_fly: UnityPointer<3>,
+    sly_rescued: UnityPointer<3>,
+    killed_gorgeous_husk: UnityPointer<3>,
     // Lemm
-    met_relic_dealer_shop: Pointer<3>,
-    watcher_chandelier: Pointer<3>,
-    killed_black_knight: Pointer<3>,
-    killed_mega_jellyfish: Pointer<3>,
-    spider_capture: Pointer<3>,
-    unchained_hollow_knight: Pointer<3>,
+    met_relic_dealer_shop: UnityPointer<3>,
+    watcher_chandelier: UnityPointer<3>,
+    killed_black_knight: UnityPointer<3>,
+    killed_mega_jellyfish: UnityPointer<3>,
+    spider_capture: UnityPointer<3>,
+    unchained_hollow_knight: UnityPointer<3>,
 }
 
 impl PlayerDataPointers {
     fn new() -> PlayerDataPointers {
         PlayerDataPointers {
-            fireball_level: Pointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
-            has_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDash"]),
-            has_shadow_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasShadowDash"]),
-            has_wall_jump: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasWalljump"]),
-            has_double_jump: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDoubleJump"]),
-            has_super_dash: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasSuperDash"]),
-            has_acid_armor: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasAcidArmour"]),
-            has_dream_nail: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamNail"]),
-            has_dream_gate: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamGate"]),
-            dream_nail_upgraded: Pointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
-            max_health_base: Pointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
-            heart_pieces: Pointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
-            has_lantern: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
-            simple_keys: Pointer::new("GameManager", 0, &["_instance", "playerData", "simpleKeys"]),
-            has_sly_key: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasSlykey"]),
-            has_white_key: Pointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
+            fireball_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
+            has_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDash"]),
+            has_shadow_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasShadowDash"]),
+            has_wall_jump: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWalljump"]),
+            has_double_jump: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDoubleJump"]),
+            has_super_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasSuperDash"]),
+            has_acid_armor: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasAcidArmour"]),
+            has_dream_nail: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamNail"]),
+            has_dream_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamGate"]),
+            dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
+            max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
+            heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            has_lantern: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
+            simple_keys: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "simpleKeys"]),
+            has_sly_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasSlykey"]),
+            has_white_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
             #[cfg(debug_assertions)]
-            geo: Pointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
-            got_charm_31: Pointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_31"]),
-            grubs_collected: Pointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
-            killed_big_fly: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
-            sly_rescued: Pointer::new("GameManager", 0, &["_instance", "playerData", "slyRescued"]),
-            killed_gorgeous_husk: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
-            met_relic_dealer_shop: Pointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
-            watcher_chandelier: Pointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
-            killed_black_knight: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
-            killed_mega_jellyfish: Pointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
-            spider_capture: Pointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
-            unchained_hollow_knight: Pointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
+            geo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
+            got_charm_31: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_31"]),
+            grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
+            killed_big_fly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
+            sly_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyRescued"]),
+            killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
+            met_relic_dealer_shop: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
+            watcher_chandelier: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
+            killed_black_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
+            killed_mega_jellyfish: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
+            spider_capture: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
+            unchained_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
         }
     }
 }
@@ -207,17 +207,17 @@ impl GameManagerFinder {
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s = self.pointers.scene_name.read(process, &self.module, &self.image).ok()?;
+        let s = self.pointers.scene_name.deref(process, &self.module, &self.image).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s = self.pointers.next_scene_name.read(process, &self.module, &self.image).ok()?;
+        let s = self.pointers.next_scene_name.deref(process, &self.module, &self.image).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
     pub fn get_game_state(&self, process: &Process) -> Option<i32> {
-        self.pointers.game_state.read(process, &self.module, &self.image).ok()
+        self.pointers.game_state.deref(process, &self.module, &self.image).ok()
     }
 
     fn is_game_state_playing(&self, process: &Process) -> bool {
@@ -230,12 +230,12 @@ impl GameManagerFinder {
             ui_state_offset
         } else {
             let ui_manager_class = self.image.get_class(process, &self.module, "UIManager")?;
-            let ui_state_offset = ui_manager_class.get_field(process, &self.module, "uiState")?;
+            let ui_state_offset = ui_manager_class.get_field_offset(process, &self.module, "uiState")?;
             self.ui_state_offset.get_or_init(|| ui_state_offset)
         };
-        let ui = if let Ok(ui) = self.pointers.ui_state_vanilla.read(process, &self.module, &self.image) {
+        let ui = if let Ok(ui) = self.pointers.ui_state_vanilla.deref(process, &self.module, &self.image) {
             ui
-        } else if let Ok(ui) =  self.pointers.ui_state_modded.read(process, &self.module, &self.image) {
+        } else if let Ok(ui) =  self.pointers.ui_state_modded.deref(process, &self.module, &self.image) {
             ui
         } else {
             return None;
@@ -248,23 +248,23 @@ impl GameManagerFinder {
     }
 
     pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {
-        self.pointers.camera_teleporting.read(process, &self.module, &self.image).ok()
+        self.pointers.camera_teleporting.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn hazard_respawning(&self, process: &Process) -> Option<bool> {
-        self.pointers.hazard_respawning.read(process, &self.module, &self.image).ok()
+        self.pointers.hazard_respawning.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn accepting_input(&self, process: &Process) -> Option<bool> {
-        self.pointers.accepting_input.read(process, &self.module, &self.image).ok()
+        self.pointers.accepting_input.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn hero_transition_state(&self, process: &Process) -> Option<i32> {
-        self.pointers.hero_transition_state.read(process, &self.module, &self.image).ok()
+        self.pointers.hero_transition_state.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn tile_map_dirty(&self, process: &Process) -> Option<bool> {
-        self.pointers.tile_map_dirty.read(process, &self.module, &self.image).ok()
+        self.pointers.tile_map_dirty.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn uses_scene_transition_routine(&self) -> Option<bool> {
@@ -279,119 +279,119 @@ impl GameManagerFinder {
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.fireball_level.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.fireball_level.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dash(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_dash.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_dash.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_shadow_dash(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_shadow_dash.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_shadow_dash.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_wall_jump(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_wall_jump.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_wall_jump.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_double_jump(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_double_jump.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_double_jump.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_super_dash(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_super_dash.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_super_dash.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_acid_armor.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_acid_armor.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_dream_nail.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_dream_nail.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_dream_gate.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_dream_gate.deref(process, &self.module, &self.image).ok()
     }
     
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.dream_nail_upgraded.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.dream_nail_upgraded.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn max_health_base(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.max_health_base.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.max_health_base.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.heart_pieces.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.heart_pieces.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_lantern(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_lantern.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_lantern.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn get_simple_keys(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.simple_keys.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.simple_keys.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_sly_key(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_sly_key.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_sly_key.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_white_key(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_white_key.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_white_key.deref(process, &self.module, &self.image).ok()
     }
 
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.geo.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.geo.deref(process, &self.module, &self.image).ok()
     }
 
     // Dashmaster
     pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.got_charm_31.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.got_charm_31.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.grubs_collected.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()
     }
 
     // Gruz Mother
     pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.killed_big_fly.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.killed_big_fly.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.sly_rescued.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.sly_rescued.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.killed_gorgeous_husk.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.killed_gorgeous_husk.deref(process, &self.module, &self.image).ok()
     }
 
     // Lemm
     pub fn met_relic_dealer_shop(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.met_relic_dealer_shop.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.met_relic_dealer_shop.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.watcher_chandelier.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.watcher_chandelier.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_black_knight(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.killed_black_knight.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.killed_black_knight.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_mega_jellyfish(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.killed_mega_jellyfish.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.killed_mega_jellyfish.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn spider_capture(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.spider_capture.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.spider_capture.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.unchained_hollow_knight.read(process, &self.module, &self.image).ok()
+        self.player_data_pointers.unchained_hollow_knight.deref(process, &self.module, &self.image).ok()
     }
 }
 
