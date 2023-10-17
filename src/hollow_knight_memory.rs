@@ -4,6 +4,8 @@ use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
 use asr::future::retry;
+#[cfg(debug_assertions)]
+use asr::future::next_tick;
 use asr::watcher::Pair;
 use asr::{Process, Address64};
 use asr::game_engine::unity::mono::{self, UnityPointer};
@@ -198,8 +200,20 @@ pub struct GameManagerFinder {
 
 impl GameManagerFinder {
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
+        #[cfg(debug_assertions)]
+        asr::print_message("GameManagerFinder wait_attach mono Module wait_attach_auto_detect");
+        #[cfg(debug_assertions)]
+        next_tick().await;
         let module = mono::Module::wait_attach_auto_detect(process).await;
+        #[cfg(debug_assertions)]
+        asr::print_message("GameManagerFinder wait_attach module wait_get_default_image");
+        #[cfg(debug_assertions)]
+        next_tick().await;
         let image = module.wait_get_default_image(process).await;
+        #[cfg(debug_assertions)]
+        asr::print_message("GameManagerFinder wait_attach got module and image");
+        #[cfg(debug_assertions)]
+        next_tick().await;
         let pointers = GameManagerPointers::new();
         let player_data_pointers = PlayerDataPointers::new();
         let ui_state_offset = OnceCell::new();
