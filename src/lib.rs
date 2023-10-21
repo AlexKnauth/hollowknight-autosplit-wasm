@@ -58,6 +58,7 @@ async fn main() {
                             split_index(&mut i, n);
                         } else if auto_reset && splits::transition_splits(&splits[0], &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
                             i = 0;
+                            load_remover.load_removal(&process, &game_manager_finder, i);
                             split_index(&mut i, n);
                         }
 
@@ -73,7 +74,7 @@ async fn main() {
                         asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                     }
 
-                    load_remover.load_removal(&process, &game_manager_finder);
+                    load_remover.load_removal(&process, &game_manager_finder, i);
 
                     next_tick().await;
                 }
@@ -112,7 +113,7 @@ impl LoadRemover {
         }
     }
 
-    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, _i: usize) -> Option<()> {
 
         // only remove loads if timer is running
         if asr::timer::state() != asr::timer::TimerState::Running { return Some(()); }
@@ -186,7 +187,7 @@ struct HitCounter {
     last_recoiling: bool,
     last_hazard: bool,
     last_dead: bool,
-    timer_start: Option<Instant>,
+    last_index: usize,
 }
 
 impl HitCounter {
@@ -196,25 +197,23 @@ impl HitCounter {
             last_recoiling: false,
             last_hazard: false,
             last_dead: false,
-            timer_start: None,
+            last_index: 0,
         }
     }
 
-    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, i: usize) -> Option<()> {
 
         // only remove loads if timer is running
-        if asr::timer::state() != asr::timer::TimerState::Running {
-            asr::timer::pause_game_time();
-            return Some(());
-        }
+        if asr::timer::state() != asr::timer::TimerState::Running { return Some(()); }
 
-        if let Some(s) = self.timer_start {
-            if 0 < self.hits && self.hits <= s.elapsed().as_secs() {
-                asr::timer::pause_game_time();
-                self.hits = 0;
-                self.timer_start = None;
-            }
+        asr::timer::pause_game_time();
+
+        // detect resets
+        if i == 0 && 0 < self.last_index {
+            self.hits = 0;
+            asr::timer::set_game_time(Duration::seconds(0));
         }
+        self.last_index = i;
 
         // new state
         let maybe_recoiling = game_manager_finder.hero_recoiling(process);
@@ -224,10 +223,7 @@ impl HitCounter {
         if let Some(r) = maybe_recoiling {
             if !self.last_recoiling && r {
                 self.hits += 1;
-                if self.timer_start.is_none() {
-                    self.timer_start = Some(Instant::now());
-                    asr::timer::resume_game_time();
-                }
+                asr::timer::set_game_time(Duration::seconds(self.hits as i64));
                 asr::print_message(&format!("hit: {}, from recoiling", self.hits));
             }
             self.last_recoiling = r;
@@ -236,10 +232,7 @@ impl HitCounter {
         if let Some(h) = maybe_hazard {
             if !self.last_hazard && h {
                 self.hits += 1;
-                if self.timer_start.is_none() {
-                    self.timer_start = Some(Instant::now());
-                    asr::timer::resume_game_time();
-                }
+                asr::timer::set_game_time(Duration::seconds(self.hits as i64));
                 asr::print_message(&format!("hit: {}, from hazard", self.hits));
             }
             self.last_hazard = h;
@@ -248,10 +241,7 @@ impl HitCounter {
         if let Some(d) = maybe_dead {
             if !self.last_dead && d {
                 self.hits += 1;
-                if self.timer_start.is_none() {
-                    self.timer_start = Some(Instant::now());
-                    asr::timer::resume_game_time();
-                }
+                asr::timer::set_game_time(Duration::seconds(self.hits as i64));
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
             self.last_dead = d;
