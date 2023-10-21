@@ -85,10 +85,13 @@ struct GameManagerPointers {
     ui_state_vanilla: UnityPointer<3>,
     ui_state_modded: UnityPointer<3>,
     camera_teleporting: UnityPointer<3>,
-    hazard_respawning: UnityPointer<4>,
     accepting_input: UnityPointer<3>,
-    hero_transition_state: UnityPointer<3>,
     tile_map_dirty: UnityPointer<2>,
+    hero_dead: UnityPointer<4>,
+    hazard_death: UnityPointer<4>,
+    hazard_respawning: UnityPointer<4>,
+    hero_recoiling: UnityPointer<4>,
+    hero_transition_state: UnityPointer<3>,
 }
 
 impl GameManagerPointers {
@@ -100,10 +103,13 @@ impl GameManagerPointers {
             ui_state_vanilla: UnityPointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
             ui_state_modded: UnityPointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
             camera_teleporting: UnityPointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
-            hazard_respawning: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
             accepting_input: UnityPointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
-            hero_transition_state: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
             tile_map_dirty: UnityPointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
+            hero_dead: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "dead"]),
+            hazard_death: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardDeath"]),
+            hazard_respawning: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
+            hero_recoiling: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "recoiling"]),
+            hero_transition_state: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
         }
     }
 }
@@ -290,6 +296,18 @@ impl GameManagerFinder {
         // On current patch, return true
         // TODO: on other patches, something something lastVersion?.Minor >= 3
         Some(true)
+    }
+
+    pub fn hero_dead(&self, process: &Process) -> Option<bool> {
+        self.pointers.hero_dead.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hazard_death(&self, process: &Process) -> Option<bool> {
+        self.pointers.hazard_death.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hero_recoiling(&self, process: &Process) -> Option<bool> {
+        self.pointers.hero_recoiling.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {

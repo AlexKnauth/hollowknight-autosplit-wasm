@@ -29,7 +29,7 @@ async fn main() {
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = SceneStore::new();
-                let mut load_remover = LoadRemover::new();
+                let mut load_remover = HitCounter::new();
 
                 next_tick().await;
                 let game_manager_finder = GameManagerFinder::wait_attach(&process).await;
@@ -176,6 +176,61 @@ impl LoadRemover {
             }
             self.last_paused = is_game_time_paused;
         }
+        Some(())
+    }
+}
+
+struct HitCounter {
+    hits: u32,
+    last_recoiling: bool,
+    last_hazard: bool,
+    last_dead: bool,
+}
+
+impl HitCounter {
+    fn new() -> HitCounter {
+        HitCounter {
+            hits: 0,
+            last_recoiling: false,
+            last_hazard: false,
+            last_dead: false,
+        }
+    }
+
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+
+        // only remove loads if timer is running
+        if asr::timer::state() != asr::timer::TimerState::Running { return Some(()); }
+
+        // new state
+        let maybe_recoiling = game_manager_finder.hero_recoiling(process);
+        let maybe_hazard = game_manager_finder.hazard_death(process);
+        let maybe_dead = game_manager_finder.hero_dead(process);
+
+        if let Some(r) = maybe_recoiling {
+            if !self.last_recoiling && r {
+                self.hits += 1;
+                asr::print_message(&format!("hit: {}, from recoiling", self.hits));
+            }
+            self.last_recoiling = r;
+        }
+
+        if let Some(h) = maybe_hazard {
+            if !self.last_hazard && h {
+                self.hits += 1;
+                asr::print_message(&format!("hit: {}, from hazard", self.hits));
+            }
+            self.last_hazard = h;
+        }
+
+        if let Some(d) = maybe_dead {
+            if !self.last_dead && d {
+                self.hits += 1;
+                asr::print_message(&format!("hit: {}, from dead", self.hits));
+            }
+            self.last_dead = d;
+        }
+
         Some(())
     }
 }
