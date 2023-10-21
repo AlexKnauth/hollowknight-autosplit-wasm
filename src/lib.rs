@@ -3,8 +3,9 @@
 mod hollow_knight_memory;
 mod splits;
 
+use asr::time_util::Instant;
 use asr::{future::next_tick, Process};
-// use asr::time::Duration;
+use asr::time::Duration;
 // use asr::timer::TimerState;
 use hollow_knight_memory::*;
 
@@ -181,10 +182,11 @@ impl LoadRemover {
 }
 
 struct HitCounter {
-    hits: u32,
+    hits: u64,
     last_recoiling: bool,
     last_hazard: bool,
     last_dead: bool,
+    timer_start: Option<Instant>,
 }
 
 impl HitCounter {
@@ -194,6 +196,7 @@ impl HitCounter {
             last_recoiling: false,
             last_hazard: false,
             last_dead: false,
+            timer_start: None,
         }
     }
 
@@ -201,6 +204,14 @@ impl HitCounter {
 
         // only remove loads if timer is running
         if asr::timer::state() != asr::timer::TimerState::Running { return Some(()); }
+
+        if let Some(s) = self.timer_start {
+            if 0 < self.hits && self.hits <= s.elapsed().as_secs() {
+                asr::timer::pause_game_time();
+                self.hits = 0;
+                self.timer_start = None;
+            }
+        }
 
         // new state
         let maybe_recoiling = game_manager_finder.hero_recoiling(process);
@@ -210,6 +221,10 @@ impl HitCounter {
         if let Some(r) = maybe_recoiling {
             if !self.last_recoiling && r {
                 self.hits += 1;
+                if self.timer_start.is_none() {
+                    self.timer_start = Some(Instant::now());
+                    asr::timer::resume_game_time();
+                }
                 asr::print_message(&format!("hit: {}, from recoiling", self.hits));
             }
             self.last_recoiling = r;
@@ -218,6 +233,10 @@ impl HitCounter {
         if let Some(h) = maybe_hazard {
             if !self.last_hazard && h {
                 self.hits += 1;
+                if self.timer_start.is_none() {
+                    self.timer_start = Some(Instant::now());
+                    asr::timer::resume_game_time();
+                }
                 asr::print_message(&format!("hit: {}, from hazard", self.hits));
             }
             self.last_hazard = h;
@@ -226,6 +245,10 @@ impl HitCounter {
         if let Some(d) = maybe_dead {
             if !self.last_dead && d {
                 self.hits += 1;
+                if self.timer_start.is_none() {
+                    self.timer_start = Some(Instant::now());
+                    asr::timer::resume_game_time();
+                }
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
             self.last_dead = d;
