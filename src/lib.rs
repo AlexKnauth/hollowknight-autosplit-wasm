@@ -203,7 +203,10 @@ impl HitCounter {
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
 
         // only remove loads if timer is running
-        if asr::timer::state() != asr::timer::TimerState::Running { return Some(()); }
+        if asr::timer::state() != asr::timer::TimerState::Running {
+            asr::timer::pause_game_time();
+            return Some(());
+        }
 
         if let Some(s) = self.timer_start {
             if 0 < self.hits && self.hits <= s.elapsed().as_secs() {
