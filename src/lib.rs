@@ -192,6 +192,7 @@ struct HitCounter {
     last_recoiling: bool,
     last_hazard: bool,
     last_dead: bool,
+    last_exiting_level: Option<String>,
     last_index: usize,
 }
 
@@ -203,6 +204,7 @@ impl HitCounter {
             last_recoiling: false,
             last_hazard: false,
             last_dead: false,
+            last_exiting_level: None,
             last_index: 0,
         }
     }
@@ -225,6 +227,8 @@ impl HitCounter {
         let maybe_recoiling = game_manager_finder.hero_recoiling(process);
         let maybe_hazard = game_manager_finder.hazard_death(process);
         let maybe_dead = game_manager_finder.hero_dead(process);
+        let maybe_scene_name = game_manager_finder.get_scene_name(process);
+        let maybe_game_state = game_manager_finder.get_game_state(process);
 
         if let Some(r) = maybe_recoiling {
             if !self.last_recoiling && r {
@@ -251,6 +255,21 @@ impl HitCounter {
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
             self.last_dead = d;
+        }
+
+        if let Some(s) = maybe_scene_name {
+            if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && s.starts_with("Dream_") {
+                self.hits += 1;
+                asr::timer::set_game_time(Duration::seconds(self.hits as i64));
+                asr::print_message(&format!("hit: {}, from dream falling", self.hits));
+            }
+            if maybe_game_state == Some(GAME_STATE_EXITING_LEVEL) {
+                if self.last_exiting_level.is_none() {
+                    self.last_exiting_level = Some(s);
+                }
+            } else {
+                self.last_exiting_level = None;
+            }
         }
 
         Some(())
