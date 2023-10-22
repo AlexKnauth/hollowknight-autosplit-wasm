@@ -74,6 +74,11 @@ async fn main() {
                         asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
                     }
 
+                    // detect manual resets
+                    if 0 < i && asr::timer::state() == asr::timer::TimerState::NotRunning {
+                        i = 0;
+                    }
+
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
                     next_tick().await;
