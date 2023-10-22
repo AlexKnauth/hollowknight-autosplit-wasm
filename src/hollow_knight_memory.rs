@@ -142,8 +142,44 @@ struct PlayerDataPointers {
     has_white_key: UnityPointer<3>,
     #[cfg(debug_assertions)]
     geo: UnityPointer<3>,
+    // Charms
+    got_charm_1: UnityPointer<3>,
+    got_charm_2: UnityPointer<3>,
+    got_charm_3: UnityPointer<3>,
+    got_charm_4: UnityPointer<3>,
+    got_charm_5: UnityPointer<3>,
+    got_charm_6: UnityPointer<3>,
+    got_charm_7: UnityPointer<3>,
+    got_charm_8: UnityPointer<3>,
+    got_charm_9: UnityPointer<3>,
+    got_charm_10: UnityPointer<3>,
+    got_charm_11: UnityPointer<3>,
+    got_charm_12: UnityPointer<3>,
+    got_charm_13: UnityPointer<3>,
+    got_charm_14: UnityPointer<3>,
+    got_charm_15: UnityPointer<3>,
+    got_charm_16: UnityPointer<3>,
+    got_charm_17: UnityPointer<3>,
+    got_charm_18: UnityPointer<3>,
+    got_charm_19: UnityPointer<3>,
+    got_charm_20: UnityPointer<3>,
+    got_charm_21: UnityPointer<3>,
+    got_charm_22: UnityPointer<3>,
+    got_charm_26: UnityPointer<3>,
+    got_charm_27: UnityPointer<3>,
+    got_charm_28: UnityPointer<3>,
+    got_charm_29: UnityPointer<3>,
+    got_charm_30: UnityPointer<3>,
     // Dashmaster
     got_charm_31: UnityPointer<3>,
+    got_charm_32: UnityPointer<3>,
+    got_charm_33: UnityPointer<3>,
+    got_charm_34: UnityPointer<3>,
+    got_charm_35: UnityPointer<3>,
+    got_charm_37: UnityPointer<3>,
+    got_charm_38: UnityPointer<3>,
+    got_charm_39: UnityPointer<3>,
+    // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
     grubs_collected: UnityPointer<3>,
     // Gruz Mother
     killed_big_fly: UnityPointer<3>,
@@ -180,7 +216,42 @@ impl PlayerDataPointers {
             has_white_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
             #[cfg(debug_assertions)]
             geo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
+            got_charm_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_1"]),
+            got_charm_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_2"]),
+            got_charm_3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_3"]),
+            got_charm_4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_4"]),
+            got_charm_5: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_5"]),
+            got_charm_6: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_6"]),
+            got_charm_7: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_7"]),
+            got_charm_8: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_8"]),
+            got_charm_9: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_9"]),
+            got_charm_10: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_10"]),
+            got_charm_11: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_11"]),
+            got_charm_12: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_12"]),
+            got_charm_13: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_13"]),
+            got_charm_14: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_14"]),
+            got_charm_15: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_15"]),
+            got_charm_16: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_16"]),
+            got_charm_17: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_17"]),
+            got_charm_18: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_18"]),
+            got_charm_19: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_19"]),
+            got_charm_20: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_20"]),
+            got_charm_21: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_21"]),
+            got_charm_22: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_22"]),
+            got_charm_26: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_26"]),
+            got_charm_27: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_27"]),
+            got_charm_28: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_28"]),
+            got_charm_29: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_29"]),
+            got_charm_30: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_30"]),
             got_charm_31: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_31"]),
+            got_charm_32: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_32"]),
+            got_charm_33: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_33"]),
+            got_charm_34: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_34"]),
+            got_charm_35: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_35"]),
+            got_charm_37: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_37"]),
+            got_charm_38: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_38"]),
+            got_charm_39: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_39"]),
+            // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
             killed_big_fly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
             sly_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyRescued"]),
@@ -385,10 +456,150 @@ impl GameManagerFinder {
         self.player_data_pointers.geo.deref(process, &self.module, &self.image).ok()
     }
 
+    // Charms
+
+    pub fn got_charm_1(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_1.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_2(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_2.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_3(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_3.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_4(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_4.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_5(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_5.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_6(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_6.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_7(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_7.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_8(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_8.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_9(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_9.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_10(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_10.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_11(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_11.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_12(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_12.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_13(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_13.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_14(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_14.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_15(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_15.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_16(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_16.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_17(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_17.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_18(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_18.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_19(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_19.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_20(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_20.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_21(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_21.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_22(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_22.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_26(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_26.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_27(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_27.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_28(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_28.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_29(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_29.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_30(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_30.deref(process, &self.module, &self.image).ok()
+    }
+
     // Dashmaster
     pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_31.deref(process, &self.module, &self.image).ok()
     }
+
+    pub fn got_charm_32(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_32.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_33(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_33.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_34(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_34.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_35(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_35.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_37(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_37.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_38(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_38.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_charm_39(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_39.deref(process, &self.module, &self.image).ok()
+    }
+
+    // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()
