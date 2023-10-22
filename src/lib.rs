@@ -211,9 +211,6 @@ impl HitCounter {
 
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, i: usize) -> Option<()> {
 
-        // only remove loads if timer is running
-        if asr::timer::state() != TimerState::Running { return Some(()); }
-
         asr::timer::pause_game_time();
 
         // detect resets
@@ -222,6 +219,9 @@ impl HitCounter {
             asr::timer::set_game_time(Duration::seconds(0));
         }
         self.last_index = i;
+
+        // only count hits if timer is running
+        if asr::timer::state() != TimerState::Running { return Some(()); }
 
         // new state
         let maybe_recoiling = game_manager_finder.hero_recoiling(process);
