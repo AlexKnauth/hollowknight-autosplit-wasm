@@ -179,7 +179,17 @@ struct PlayerDataPointers {
     got_charm_37: UnityPointer<3>,
     got_charm_38: UnityPointer<3>,
     got_charm_39: UnityPointer<3>,
-    // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
+    // Fragile / Unbreakable Charms
+    got_charm_23: UnityPointer<3>,
+    got_charm_24: UnityPointer<3>,
+    got_charm_25: UnityPointer<3>,
+    broken_charm_23: UnityPointer<3>,
+    broken_charm_24: UnityPointer<3>,
+    broken_charm_25: UnityPointer<3>,
+    fragile_greed_unbreakable: UnityPointer<3>,
+    fragile_health_unbreakable: UnityPointer<3>,
+    fragile_strength_unbreakable: UnityPointer<3>,
+    // TODO: more multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
     grubs_collected: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
     killed_nightmare_grimm: UnityPointer<3>,
@@ -299,7 +309,17 @@ impl PlayerDataPointers {
             got_charm_37: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_37"]),
             got_charm_38: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_38"]),
             got_charm_39: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_39"]),
-            // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
+            // Fragile / Unbreakable Charms
+            got_charm_23: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_23"]),
+            got_charm_24: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_24"]),
+            got_charm_25: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_25"]),
+            broken_charm_23: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "brokenCharm_23"]),
+            broken_charm_24: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "brokenCharm_24"]),
+            broken_charm_25: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "brokenCharm_23"]),
+            fragile_greed_unbreakable: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fragileGreed_unbreakable"]),
+            fragile_health_unbreakable: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fragileHealth_unbreakable"]),
+            fragile_strength_unbreakable: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fragileStrength_unbreakable"]),
+            // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
@@ -686,7 +706,45 @@ impl GameManagerFinder {
         self.player_data_pointers.got_charm_39.deref(process, &self.module, &self.image).ok()
     }
 
-    // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
+    // Fragile / Unbreakable Charms
+    
+    pub fn got_charm_23(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_23.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn got_charm_24(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_24.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn got_charm_25(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_25.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn broken_charm_23(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.broken_charm_23.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn broken_charm_24(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.broken_charm_24.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn broken_charm_25(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.broken_charm_25.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn fragile_greed_unbreakable(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.fragile_greed_unbreakable.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn fragile_health_unbreakable(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.fragile_health_unbreakable.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn fragile_strength_unbreakable(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.fragile_strength_unbreakable.deref(process, &self.module, &self.image).ok()
+    }
+
+    // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()

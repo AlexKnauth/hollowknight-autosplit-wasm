@@ -81,7 +81,16 @@ pub enum Split {
     Sprintmaster,
     Dreamshield,
     Weaversong,
-    // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
+    // Fragile / Unbreakable Charms
+    FragileHeart,
+    UnbreakableHeart,
+    FragileGreed,
+    UnbreakableGreed,
+    FragileStrength,
+    UnbreakableStrength,
+    AllBreakables,
+    AllUnbreakables,
+    // TODO: more multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
 
     // Other Items
     LumaflyLantern,
@@ -302,7 +311,20 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Sprintmaster => g.got_charm_37(p).is_some_and(|c| c),
         Split::Dreamshield => g.got_charm_38(p).is_some_and(|c| c),
         Split::Weaversong => g.got_charm_39(p).is_some_and(|c| c),
-        // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
+        // Fragile / Unbreakable Charms
+        Split::FragileHeart => g.got_charm_23(p).is_some_and(|c| c),
+        Split::UnbreakableHeart => g.fragile_health_unbreakable(p).is_some_and(|c| c),
+        Split::FragileGreed => g.got_charm_24(p).is_some_and(|c| c),
+        Split::UnbreakableGreed => g.fragile_greed_unbreakable(p).is_some_and(|c| c),
+        Split::FragileStrength => g.got_charm_25(p).is_some_and(|c| c),
+        Split::UnbreakableStrength => g.fragile_strength_unbreakable(p).is_some_and(|c| c),
+        Split::AllBreakables => g.broken_charm_23(p).is_some_and(|b| b)
+                             && g.broken_charm_24(p).is_some_and(|b| b)
+                             && g.broken_charm_25(p).is_some_and(|b| b),
+        Split::AllUnbreakables => g.fragile_greed_unbreakable(p).is_some_and(|u| u)
+                               && g.fragile_health_unbreakable(p).is_some_and(|u| u)
+                               && g.fragile_strength_unbreakable(p).is_some_and(|u| u),
+        // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
         // Other Items
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
