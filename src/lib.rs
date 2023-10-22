@@ -191,7 +191,7 @@ struct HitCounter {
     hits: u64,
     last_recoiling: bool,
     last_hazard: bool,
-    last_dead: bool,
+    last_dead_or_0: bool,
     last_exiting_level: Option<String>,
     last_index: usize,
 }
@@ -203,7 +203,7 @@ impl HitCounter {
             hits: 0,
             last_recoiling: false,
             last_hazard: false,
-            last_dead: false,
+            last_dead_or_0: false,
             last_exiting_level: None,
             last_index: 0,
         }
@@ -227,6 +227,7 @@ impl HitCounter {
         let maybe_recoiling = game_manager_finder.hero_recoiling(process);
         let maybe_hazard = game_manager_finder.hazard_death(process);
         let maybe_dead = game_manager_finder.hero_dead(process);
+        let maybe_health = game_manager_finder.get_health(process);
         let maybe_scene_name = game_manager_finder.get_scene_name(process);
         let maybe_game_state = game_manager_finder.get_game_state(process);
 
@@ -248,13 +249,15 @@ impl HitCounter {
             self.last_hazard = h;
         }
 
-        if let Some(d) = maybe_dead {
-            if !self.last_dead && d {
+
+        {
+            let d = maybe_dead == Some(true) || (maybe_health == Some(0) && maybe_game_state == Some(GAME_STATE_PLAYING));
+            if !self.last_dead_or_0 && d {
                 self.hits += 1;
                 asr::timer::set_game_time(Duration::seconds(self.hits as i64));
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
-            self.last_dead = d;
+            self.last_dead_or_0 = d;
         }
 
         if let Some(s) = maybe_scene_name {

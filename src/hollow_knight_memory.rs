@@ -117,6 +117,7 @@ impl GameManagerPointers {
 // --------------------------------------------------------
 
 struct PlayerDataPointers {
+    health: UnityPointer<3>,
     fireball_level: UnityPointer<3>,
     has_dash: UnityPointer<3>,
     has_shadow_dash: UnityPointer<3>,
@@ -160,6 +161,7 @@ struct PlayerDataPointers {
 impl PlayerDataPointers {
     fn new() -> PlayerDataPointers {
         PlayerDataPointers {
+            health: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "health"]),
             fireball_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
             has_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDash"]),
             has_shadow_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasShadowDash"]),
@@ -308,6 +310,10 @@ impl GameManagerFinder {
 
     pub fn hero_recoiling(&self, process: &Process) -> Option<bool> {
         self.pointers.hero_recoiling.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn get_health(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.health.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
