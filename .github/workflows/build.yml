@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - 'main'
+      - 'master'
     tags:
       - '*'
 
@@ -30,7 +30,7 @@ jobs:
           cargo b --locked
 
       - name: Release
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v1
         with:
           files: target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm
