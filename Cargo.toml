@@ -13,7 +13,7 @@ asr = { git = "https://github.com/AlexKnauth/asr", branch = "mono-3", features =
     # "flags", # Working with bit flags.
     # "float-vars", # Setting floating point variables.
     # "float-vars-small", # Setting floating point variables (small binary size).
-    # "integer-vars", # Setting integer variables.
+    "integer-vars", # Setting integer variables.
     # "signature", # Scanning signatures.
     # "wasi-no-std", # Support for no_std on WASI.
     "unity", # Accessing games using the Unity engine.

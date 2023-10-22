@@ -199,6 +199,7 @@ struct HitCounter {
 #[allow(unused)]
 impl HitCounter {
     fn new() -> HitCounter {
+        asr::timer::set_variable_int("hits", 0);
         HitCounter {
             hits: 0,
             last_recoiling: false,
@@ -217,6 +218,7 @@ impl HitCounter {
         if i == 0 && 0 < self.last_index {
             self.hits = 0;
             asr::timer::set_game_time(Duration::seconds(0));
+            asr::timer::set_variable_int("hits", 0);
         }
         self.last_index = i;
 
@@ -235,6 +237,7 @@ impl HitCounter {
             if !self.last_recoiling && r {
                 self.hits += 1;
                 asr::timer::set_game_time(Duration::seconds(self.hits as i64));
+                asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from recoiling", self.hits));
             }
             self.last_recoiling = r;
@@ -244,6 +247,7 @@ impl HitCounter {
             if !self.last_hazard && h {
                 self.hits += 1;
                 asr::timer::set_game_time(Duration::seconds(self.hits as i64));
+                asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from hazard", self.hits));
             }
             self.last_hazard = h;
@@ -255,6 +259,7 @@ impl HitCounter {
             if !self.last_dead_or_0 && d {
                 self.hits += 1;
                 asr::timer::set_game_time(Duration::seconds(self.hits as i64));
+                asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
             self.last_dead_or_0 = d;
@@ -264,6 +269,7 @@ impl HitCounter {
             if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && s.starts_with("Dream_") {
                 self.hits += 1;
                 asr::timer::set_game_time(Duration::seconds(self.hits as i64));
+                asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from dream falling", self.hits));
             }
             if maybe_game_state == Some(GAME_STATE_EXITING_LEVEL) {
