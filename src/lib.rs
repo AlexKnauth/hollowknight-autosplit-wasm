@@ -195,6 +195,7 @@ struct HitCounter {
     last_index: usize,
 }
 
+#[allow(unused)]
 impl HitCounter {
     fn new() -> HitCounter {
         HitCounter {
