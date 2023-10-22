@@ -181,17 +181,65 @@ struct PlayerDataPointers {
     got_charm_39: UnityPointer<3>,
     // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
     grubs_collected: UnityPointer<3>,
+    killed_grimm: UnityPointer<3>,
+    killed_nightmare_grimm: UnityPointer<3>,
+    killed_grey_prince: UnityPointer<3>,
+    killed_mawlek: UnityPointer<3>,
     // Gruz Mother
     killed_big_fly: UnityPointer<3>,
     sly_rescued: UnityPointer<3>,
+    killed_false_knight: UnityPointer<3>,
+    false_knight_dream_defeated: UnityPointer<3>,
+    unchained_hollow_knight: UnityPointer<3>,
+    killed_hollow_knight: UnityPointer<3>,
+    killed_final_boss: UnityPointer<3>,
+    killed_hornet: UnityPointer<3>,
+    killed_ghost_no_eyes: UnityPointer<3>,
+    mega_moss_charger_defeated: UnityPointer<3>,
+    killed_ghost_hu: UnityPointer<3>,
+    defeated_mantis_lords: UnityPointer<3>,
+    // Gorb
+    killed_ghost_aladar: UnityPointer<3>,
+    killed_ghost_xero: UnityPointer<3>,
     killed_gorgeous_husk: UnityPointer<3>,
     // Lemm
     met_relic_dealer_shop: UnityPointer<3>,
+    // Soul Master
+    mage_lord_encountered: UnityPointer<3>,
+    mage_lord_encountered_2: UnityPointer<3>,
+    killed_mage_lord: UnityPointer<3>,
+    mage_lord_dream_defeated: UnityPointer<3>,
     watcher_chandelier: UnityPointer<3>,
     killed_black_knight: UnityPointer<3>,
+    collector_defeated: UnityPointer<3>,
+    // Crystal Guardian
+    defeated_mega_beam_miner: UnityPointer<3>,
+    killed_dung_defender: UnityPointer<3>,
+    killed_white_defender: UnityPointer<3>,
+    killed_fluke_mother: UnityPointer<3>,
+    // Broken Vessel
+    killed_infected_knight: UnityPointer<3>,
+    infected_knight_dream_defeated: UnityPointer<3>,
+    killed_hive_knight: UnityPointer<3>,
+    hornet_outskirts_defeated: UnityPointer<3>,
+    killed_ghost_markoth: UnityPointer<3>,
+    // God Tamer
+    killed_lobster_lancer: UnityPointer<3>,
+    // Uumuu
+    encountered_mega_jelly: UnityPointer<3>,
     killed_mega_jellyfish: UnityPointer<3>,
+    killed_ghost_marmu: UnityPointer<3>,
+    killed_traitor_lord: UnityPointer<3>,
+    // Nosk
+    killed_mimic_spider: UnityPointer<3>,
+    killed_ghost_galien: UnityPointer<3>,
     spider_capture: UnityPointer<3>,
-    unchained_hollow_knight: UnityPointer<3>,
+    // Oro & Mato
+    killed_nail_bros: UnityPointer<3>,
+    killed_paintmaster: UnityPointer<3>,
+    killed_nailsage: UnityPointer<3>,
+    // Pure Vessel
+    killed_hollow_knight_prime: UnityPointer<3>,
 }
 
 impl PlayerDataPointers {
@@ -253,15 +301,54 @@ impl PlayerDataPointers {
             got_charm_39: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_39"]),
             // TODO: multi-level charms like Fragile/Unbreakable, Grimmchild/Carefree, Kingsoul/VoidHeart
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
+            killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
+            killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
+            killed_grey_prince: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGreyPrince"]),
+            killed_mawlek: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMawlek"]),
             killed_big_fly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
             sly_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyRescued"]),
+            killed_false_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFalseKnight"]),
+            false_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "falseKnightDreamDefeated"]),
+            unchained_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
+            killed_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnight"]),
+            killed_final_boss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFinalBoss"]),
+            killed_hornet: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHornet"]),
+            killed_ghost_no_eyes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostNoEyes"]),
+            mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
+            killed_ghost_hu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostHu"]),
+            defeated_mantis_lords: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMantisLords"]),
+            killed_ghost_aladar: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostAladar"]),
+            killed_ghost_xero: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostXero"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
             met_relic_dealer_shop: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
+            mage_lord_encountered: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordEncountered"]),
+            mage_lord_encountered_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordEncountered_2"]),
+            killed_mage_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMageLord"]),
+            mage_lord_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordDreamDefeated"]),
             watcher_chandelier: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
             killed_black_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
+            collector_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "collectorDefeated"]),
+            defeated_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMegaBeamMiner"]),
+            killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
+            killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
+            killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
+            killed_infected_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedInfectedKnight"]),
+            infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
+            killed_hive_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHiveKnight"]),
+            hornet_outskirts_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hornetOutskirtsDefeated"]),
+            killed_ghost_markoth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarkoth"]),
+            killed_lobster_lancer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLobsterLancer"]),
+            encountered_mega_jelly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "encounteredMegaJelly"]),
             killed_mega_jellyfish: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
+            killed_ghost_marmu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarmu"]),
+            killed_traitor_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedTraitorLord"]),
+            killed_mimic_spider: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMimicSpider"]),
+            killed_ghost_galien: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostGalien"]),
             spider_capture: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
-            unchained_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
+            killed_nail_bros: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailBros"]),
+            killed_paintmaster: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedPaintmaster"]),
+            killed_nailsage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailsage"]),
+            killed_hollow_knight_prime: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnightPrime"]),
         }
     }
 }
@@ -605,6 +692,22 @@ impl GameManagerFinder {
         self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn killed_grimm(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_grimm.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_nightmare_grimm(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_nightmare_grimm.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_grey_prince(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_grey_prince.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_mawlek(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_mawlek.deref(process, &self.module, &self.image).ok()
+    }
+
     // Gruz Mother
     pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_big_fly.deref(process, &self.module, &self.image).ok()
@@ -612,6 +715,55 @@ impl GameManagerFinder {
 
     pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_rescued.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_false_knight(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_false_knight.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn false_knight_dream_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.false_knight_dream_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.unchained_hollow_knight.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_hollow_knight(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_hollow_knight.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_final_boss(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_final_boss.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_hornet(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_hornet.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_ghost_no_eyes(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_ghost_no_eyes.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn mega_moss_charger_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mega_moss_charger_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_ghost_hu(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_ghost_hu.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn defeated_mantis_lords(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.defeated_mantis_lords.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Gorb
+    pub fn killed_ghost_aladar(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_ghost_aladar.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_ghost_xero(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_ghost_xero.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
@@ -623,6 +775,22 @@ impl GameManagerFinder {
         self.player_data_pointers.met_relic_dealer_shop.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn mage_lord_encountered(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mage_lord_encountered.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn mage_lord_encountered_2(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mage_lord_encountered_2.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_mage_lord(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_mage_lord.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn mage_lord_dream_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mage_lord_dream_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.watcher_chandelier.deref(process, &self.module, &self.image).ok()
     }
@@ -631,17 +799,97 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_black_knight.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn collector_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.collector_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Crystal Guardian
+    pub fn defeated_mega_beam_miner(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.defeated_mega_beam_miner.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_dung_defender(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_dung_defender.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_white_defender(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_white_defender.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_fluke_mother(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_fluke_mother.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_infected_knight(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_infected_knight.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn infected_knight_dream_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.infected_knight_dream_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_hive_knight(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_hive_knight.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hornet_outskirts_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.hornet_outskirts_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_ghost_markoth(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_ghost_markoth.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_lobster_lancer(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_lobster_lancer.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Uumuu
+    pub fn encountered_mega_jelly(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.encountered_mega_jelly.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_mega_jellyfish(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_mega_jellyfish.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_ghost_marmu(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_ghost_marmu.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_traitor_lord(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_traitor_lord.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_mimic_spider(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_mimic_spider.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_ghost_galien(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_ghost_galien.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn spider_capture(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.spider_capture.deref(process, &self.module, &self.image).ok()
     }
 
-    pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.unchained_hollow_knight.deref(process, &self.module, &self.image).ok()
+    pub fn killed_nail_bros(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_nail_bros.deref(process, &self.module, &self.image).ok()
     }
+
+    pub fn killed_paintmaster(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_paintmaster.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_nailsage(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_nailsage.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_hollow_knight_prime(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_hollow_knight_prime.deref(process, &self.module, &self.image).ok()
+    }
+
+    
 }
 
 pub struct SceneStore {

@@ -99,43 +99,87 @@ pub enum Split {
     // Dirtmouth
     KingsPass,
     SlyShopExit,
+    TroupeMasterGrimm,
+    NightmareKingGrimm,
+    GreyPrince,
     // Crossroads
     EnterBroodingMawlek,
+    BroodingMawlek,
     AncestralMound,
     GruzMother,
     SlyRescued,
+    FalseKnight,
+    FailedKnight,
     SalubraExit,
     EnterHollowKnight,
     UnchainedHollowKnight,
+    HollowKnightBoss,
+    HollowKnightDreamnail,
+    RadianceBoss,
     // Greenpath
     EnterGreenpath,
+    Hornet1,
+    NoEyes,
+    MegaMossCharger,
     // Fungal
+    ElderHu,
     MenuMantisJournal,
+    MantisLords,
+    // Cliffs
+    Gorb,
     // Resting Grounds
     DreamNailExit,
+    Xero,
     // City
     GorgeousHusk,
     TransGorgeousHusk,
     MenuGorgeousHusk,
     Lemm2,
+    SoulMasterEncountered,
+    SoulMasterPhase1,
+    SoulMaster,
+    SoulTyrant,
     MenuStoreroomsSimpleKey,
     EnterBlackKnight,
     WatcherChandelier,
     BlackKnight,
     BlackKnightTrans,
+    Collector,
     // Peak
     MenuSlyKey,
+    CrystalGuardian1,
+    CrystalGuardian2,
     // Waterways
+    DungDefender,
     DungDefenderExit,
+    WhiteDefender,
+    Flukemarm,
     // Basin
     Abyss19from18,
+    BrokenVessel,
+    LostKin,
+    // Kindgom's Edge
+    HiveKnight,
+    Hornet2,
+    Markoth,
+    GodTamer,
     // Fog Canyon
     TeachersArchive,
+    UumuuEncountered,
     Uumuu,
     // Queen's Gardens
     QueensGardensEntry,
+    Marmu,
+    TraitorLord,
     // Deepnest
+    Nosk,
+    Galien,
     BeastsDenTrapBench,
+    // Godhome
+    MatoOroNailBros,
+    SheoPaintmaster,
+    SlyNailsage,
+    PureVessel,
 }
 
 pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
@@ -163,6 +207,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::AncestralMound => p.current == "Crossroads_ShamanTemple" && p.current != p.old,
         Split::SalubraExit => p.old == "Room_Charm_Shop" && p.current != p.old,
         Split::EnterHollowKnight => p.current == "Room_Final_Boss_Core" && p.current != p.old,
+        Split::HollowKnightDreamnail => p.current.starts_with("Dream_Final") && p.current != p.old,
         // Greenpath
         Split::EnterGreenpath => p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"),
         Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
@@ -269,21 +314,70 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub3 => g.grubs_collected(p).is_some_and(|g| g == 3),
         Split::Grub4 => g.grubs_collected(p).is_some_and(|g| g == 4),
         Split::Grub5 => g.grubs_collected(p).is_some_and(|g| g == 5),
+        // Dirtmouth
+        Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
+        Split::NightmareKingGrimm => g.killed_nightmare_grimm(p).is_some_and(|k| k),
+        Split::GreyPrince => g.killed_grey_prince(p).is_some_and(|k| k),
         // Crossroads
+        Split::BroodingMawlek => g.killed_mawlek(p).is_some_and(|k| k),
         Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
         Split::SlyRescued => g.sly_rescued(p).is_some_and(|s| s),
+        Split::FalseKnight => g.killed_false_knight(p).is_some_and(|k| k),
+        Split::FailedKnight => g.false_knight_dream_defeated(p).is_some_and(|k| k),
         Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
+        Split::HollowKnightBoss => g.killed_hollow_knight(p).is_some_and(|k| k),
+        Split::RadianceBoss => g.killed_final_boss(p).is_some_and(|k| k),
+        // Greenpath
+        Split::Hornet1 => g.killed_hornet(p).is_some_and(|k| k),
+        Split::NoEyes => g.killed_ghost_no_eyes(p).is_some_and(|k| k),
+        Split::MegaMossCharger => g.mega_moss_charger_defeated(p).is_some_and(|k| k),
+        // Fungal
+        Split::ElderHu => g.killed_ghost_hu(p).is_some_and(|k| k),
+        Split::MantisLords => g.defeated_mantis_lords(p).is_some_and(|k| k),
+        // Cliffs
+        Split::Gorb => g.killed_ghost_aladar(p).is_some_and(|k| k),
+        // Resting Grounds
+        Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         // City
         Split::GorgeousHusk => pds.killed_gorgeous_husk(p, g),
         Split::TransGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },
         Split::MenuGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },
         Split::Lemm2 => g.met_relic_dealer_shop(p).is_some_and(|m| m),
+        Split::SoulMasterEncountered => g.mage_lord_encountered(p).is_some_and(|b| b),
+        Split::SoulMasterPhase1 => g.mage_lord_encountered_2(p).is_some_and(|b| b),
+        Split::SoulMaster => g.killed_mage_lord(p).is_some_and(|k| k),
+        Split::SoulTyrant => g.mage_lord_dream_defeated(p).is_some_and(|k| k),
         Split::WatcherChandelier => g.watcher_chandelier(p).is_some_and(|c| c),
         Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),
+        Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
+        // Peak
+        Split::CrystalGuardian1 => g.defeated_mega_beam_miner(p).is_some_and(|k| k),
+        // Waterways
+        Split::DungDefender => g.killed_dung_defender(p).is_some_and(|k| k),
+        Split::WhiteDefender => g.killed_white_defender(p).is_some_and(|k| k),
+        Split::Flukemarm => g.killed_fluke_mother(p).is_some_and(|k| k),
+        Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
+        Split::LostKin => g.infected_knight_dream_defeated(p).is_some_and(|k| k),
+        // Kindgom's Edge
+        Split::HiveKnight => g.killed_hive_knight(p).is_some_and(|k| k),
+        Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
+        Split::Markoth => g.killed_ghost_markoth(p).is_some_and(|k| k),
+        Split::GodTamer => g.killed_lobster_lancer(p).is_some_and(|k| k),
         // Fog Canyon
+        Split::UumuuEncountered => g.encountered_mega_jelly(p).is_some_and(|b| b),
         Split::Uumuu => g.killed_mega_jellyfish(p).is_some_and(|k| k),
+        // Queen's Gardens
+        Split::Marmu => g.killed_ghost_marmu(p).is_some_and(|k| k),
+        Split::TraitorLord => g.killed_traitor_lord(p).is_some_and(|k| k),
         // Deepnest
+        Split::Nosk => g.killed_mimic_spider(p).is_some_and(|k| k),
+        Split::Galien => g.killed_ghost_galien(p).is_some_and(|k| k),
         Split::BeastsDenTrapBench => g.spider_capture(p).is_some_and(|c| c),
+        // Godhome
+        Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
+        Split::SheoPaintmaster => g.killed_paintmaster(p).is_some_and(|k| k),
+        Split::SlyNailsage => g.killed_nailsage(p).is_some_and(|k| k),
+        Split::PureVessel => g.killed_hollow_knight_prime(p).is_some_and(|k| k),
         // else
         _ => false
     }
