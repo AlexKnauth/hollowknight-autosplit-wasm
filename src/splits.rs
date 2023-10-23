@@ -178,7 +178,7 @@ pub enum Split {
     Abyss19from18,
     BrokenVessel,
     LostKin,
-    // Kindgom's Edge
+    // Kingdom's Edge
     HiveKnight,
     Hornet2,
     Markoth,
@@ -402,7 +402,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Flukemarm => g.killed_fluke_mother(p).is_some_and(|k| k),
         Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
         Split::LostKin => g.infected_knight_dream_defeated(p).is_some_and(|k| k),
-        // Kindgom's Edge
+        // Kingdom's Edge
         Split::HiveKnight => g.killed_hive_knight(p).is_some_and(|k| k),
         Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
         Split::Markoth => g.killed_ghost_markoth(p).is_some_and(|k| k),
