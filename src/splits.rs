@@ -129,6 +129,7 @@ pub enum Split {
     OnObtainRancidEgg,
 
     // Other Items
+    CityKey,
     LumaflyLantern,
     OnObtainSimpleKey,
     SlyKey,
@@ -176,6 +177,8 @@ pub enum Split {
     DreamNailExit,
     Xero,
     // City
+    CityGateOpen,
+    CityGateAndMantisLords,
     GorgeousHusk,
     TransGorgeousHusk,
     MenuGorgeousHusk,
@@ -398,6 +401,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainArcaneEgg => pds.incremented_trinket4(p, g),
         Split::OnObtainRancidEgg => pds.incremented_rancid_eggs(p, g),
         // Other Items
+        Split::CityKey => g.has_city_key(p).is_some_and(|k| k),
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
         Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
@@ -433,6 +437,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // Resting Grounds
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         // City
+        Split::CityGateOpen => g.opened_city_gate(p).is_some_and(|o| o),
+        Split::CityGateAndMantisLords => g.opened_city_gate(p).is_some_and(|o| o) && g.defeated_mantis_lords(p).is_some_and(|k| k),
         Split::GorgeousHusk => pds.killed_gorgeous_husk(p, g),
         Split::TransGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },
         Split::MenuGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },

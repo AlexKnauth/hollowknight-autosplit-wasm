@@ -136,6 +136,7 @@ struct PlayerDataPointers {
     //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
     // and I'm not sure which one
     heart_pieces: UnityPointer<3>,
+    has_city_key: UnityPointer<3>,
     has_lantern: UnityPointer<3>,
     simple_keys: UnityPointer<3>,
     has_sly_key: UnityPointer<3>,
@@ -240,6 +241,7 @@ struct PlayerDataPointers {
     // Gorb
     killed_ghost_aladar: UnityPointer<3>,
     killed_ghost_xero: UnityPointer<3>,
+    opened_city_gate: UnityPointer<3>,
     killed_gorgeous_husk: UnityPointer<3>,
     // Lemm
     met_relic_dealer_shop: UnityPointer<3>,
@@ -297,6 +299,7 @@ impl PlayerDataPointers {
             dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
             max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            has_city_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCityKey"]),
             has_lantern: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
             simple_keys: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "simpleKeys"]),
             has_sly_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasSlykey"]),
@@ -398,6 +401,7 @@ impl PlayerDataPointers {
             defeated_mantis_lords: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMantisLords"]),
             killed_ghost_aladar: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostAladar"]),
             killed_ghost_xero: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostXero"]),
+            opened_city_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCityGate"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
             met_relic_dealer_shop: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
             mage_lord_encountered: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordEncountered"]),
@@ -599,6 +603,10 @@ impl GameManagerFinder {
 
     pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.heart_pieces.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn has_city_key(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_city_key.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_lantern(&self, process: &Process) -> Option<bool> {
@@ -987,6 +995,10 @@ impl GameManagerFinder {
 
     pub fn killed_ghost_xero(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_ghost_xero.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn opened_city_gate(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_city_gate.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
