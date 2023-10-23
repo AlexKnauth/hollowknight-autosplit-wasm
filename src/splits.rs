@@ -96,7 +96,12 @@ pub enum Split {
     Grimmchild3,
     Grimmchild4,
     CarefreeMelody,
-    // TODO: more multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
+    // Kingsoul / VoidHeart
+    WhiteFragmentLeft,
+    WhiteFragmentRight,
+    OnObtainWhiteFragment,
+    Kingsoul,
+    VoidHeart,
 
     // Other Items
     LumaflyLantern,
@@ -336,7 +341,12 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grimmchild3 => g.grimm_child_level(p).is_some_and(|l| 3 <= l && l <= 4),
         Split::Grimmchild4 => g.grimm_child_level(p).is_some_and(|l| l == 4),
         Split::CarefreeMelody => g.got_charm_40(p).is_some_and(|c| c) && g.grimm_child_level(p).is_some_and(|l| l == 5),
-        // TODO: other multi-level charms Kingsoul/VoidHeart
+        // Kingsoul / VoidHeart
+        Split::WhiteFragmentLeft => g.got_queen_fragment(p).is_some_and(|c| c),
+        Split::WhiteFragmentRight => g.got_king_fragment(p).is_some_and(|c| c),
+        Split::OnObtainWhiteFragment => pds.increased_royal_charm_state(p, g),
+        Split::Kingsoul => g.charm_cost_36(p).is_some_and(|c| c == 5) && g.royal_charm_state(p).is_some_and(|s| s == 3),
+        Split::VoidHeart => g.got_shade_charm(p).is_some_and(|c| c),
         // Other Items
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),

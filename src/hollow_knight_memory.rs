@@ -192,7 +192,12 @@ struct PlayerDataPointers {
     // Grimmchild / Carefree Melody
     got_charm_40: UnityPointer<3>,
     grimm_child_level: UnityPointer<3>,
-    // TODO: more multi-level charms Kingsoul/VoidHeart
+    // Kingsoul / VoidHeart
+    charm_cost_36: UnityPointer<3>,
+    got_queen_fragment: UnityPointer<3>,
+    got_king_fragment: UnityPointer<3>,
+    royal_charm_state: UnityPointer<3>,
+    got_shade_charm: UnityPointer<3>,
     grubs_collected: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
     killed_nightmare_grimm: UnityPointer<3>,
@@ -325,7 +330,12 @@ impl PlayerDataPointers {
             // Grimmchild / Carefree Melody
             got_charm_40: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_40"]),
             grimm_child_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grimmChildLevel"]),
-            // TODO: other multi-level charms Kingsoul/VoidHeart
+            // Kingsoul / VoidHeart
+            charm_cost_36: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "charmCost_36"]),
+            got_queen_fragment: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotQueenFragment"]),
+            got_king_fragment: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotKingFragment"]),
+            royal_charm_state: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "royalCharmState"]),
+            got_shade_charm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotShadeCharm"]),
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
@@ -760,6 +770,27 @@ impl GameManagerFinder {
         self.player_data_pointers.grimm_child_level.deref(process, &self.module, &self.image).ok()
     }
 
+    // Kingsoul / VoidHeart
+    
+    pub fn charm_cost_36(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.charm_cost_36.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_queen_fragment(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_queen_fragment.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn got_king_fragment(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_king_fragment.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn royal_charm_state(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.royal_charm_state.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_shade_charm(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_shade_charm.deref(process, &self.module, &self.image).ok()
+    }
+
     // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
@@ -1148,6 +1179,22 @@ impl PlayerDataStore {
             _ => {
                 *self.map_bool.get("killed_gorgeous_husk").unwrap_or(&false)
             }
+        }
+    }
+
+    pub fn increased_royal_charm_state(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_royal_charm_state = self.map_i32.get("royal_charm_state").cloned();
+        let player_data_royal_charm_state = game_manager_finder.royal_charm_state(process);
+        if let Some(royal_charm_state) = player_data_royal_charm_state {
+            if royal_charm_state != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("royal_charm_state", royal_charm_state);
+            }
+        }
+        match (store_royal_charm_state, player_data_royal_charm_state) {
+            (Some(prev_royal_charm_state), Some(royal_charm_state)) => {
+                royal_charm_state == prev_royal_charm_state + 1
+            }
+            _ => false
         }
     }
 }
