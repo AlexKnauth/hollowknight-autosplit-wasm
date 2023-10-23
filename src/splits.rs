@@ -193,6 +193,7 @@ pub enum Split {
     TroupeMasterGrimm,
     NightmareKingGrimm,
     GreyPrince,
+    GreyPrinceEssence,
     // Crossroads
     EnterBroodingMawlek,
     BroodingMawlek,
@@ -201,6 +202,7 @@ pub enum Split {
     SlyRescued,
     FalseKnight,
     FailedKnight,
+    FailedChampionEssence,
     SalubraExit,
     EnterHollowKnight,
     UnchainedHollowKnight,
@@ -211,18 +213,22 @@ pub enum Split {
     EnterGreenpath,
     Hornet1,
     NoEyes,
+    NoEyesEssence,
     MegaMossCharger,
     // Fungal
     ElderHu,
+    ElderHuEssence,
     MenuMantisJournal,
     MantisLords,
     // Cliffs
     Gorb,
+    GorbEssence,
     NightmareLantern,
     NightmareLanternDestroyed,
     // Resting Grounds
     DreamNailExit,
     Xero,
+    XeroEssence,
     // City
     CityGateOpen,
     CityGateAndMantisLords,
@@ -234,6 +240,7 @@ pub enum Split {
     SoulMasterPhase1,
     SoulMaster,
     SoulTyrant,
+    SoulTyrantEssence,
     MenuStoreroomsSimpleKey,
     EnterBlackKnight,
     WatcherChandelier,
@@ -249,15 +256,18 @@ pub enum Split {
     DungDefender,
     DungDefenderExit,
     WhiteDefender,
+    WhiteDefenderEssence,
     Flukemarm,
     // Basin
     Abyss19from18,
     BrokenVessel,
     LostKin,
+    LostKinEssence,
     // Kingdom's Edge
     HiveKnight,
     Hornet2,
     Markoth,
+    MarkothEssence,
     GodTamer,
     // Fog Canyon
     TeachersArchive,
@@ -266,10 +276,12 @@ pub enum Split {
     // Queen's Gardens
     QueensGardensEntry,
     Marmu,
+    MarmuEssence,
     TraitorLord,
     // Deepnest
     Nosk,
     Galien,
+    GalienEssence,
     BeastsDenTrapBench,
     // Godhome
     MatoOroNailBros,
@@ -508,28 +520,34 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
         Split::NightmareKingGrimm => g.killed_nightmare_grimm(p).is_some_and(|k| k),
         Split::GreyPrince => g.killed_grey_prince(p).is_some_and(|k| k),
+        Split::GreyPrinceEssence => g.grey_prince_orbs_collected(p).is_some_and(|o| o),
         // Crossroads
         Split::BroodingMawlek => g.killed_mawlek(p).is_some_and(|k| k),
         Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
         Split::SlyRescued => g.sly_rescued(p).is_some_and(|s| s),
         Split::FalseKnight => g.killed_false_knight(p).is_some_and(|k| k),
         Split::FailedKnight => g.false_knight_dream_defeated(p).is_some_and(|k| k),
+        Split::FailedChampionEssence => g.false_knight_orbs_collected(p).is_some_and(|o| o),
         Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
         Split::HollowKnightBoss => g.killed_hollow_knight(p).is_some_and(|k| k),
         Split::RadianceBoss => g.killed_final_boss(p).is_some_and(|k| k),
         // Greenpath
         Split::Hornet1 => g.killed_hornet(p).is_some_and(|k| k),
         Split::NoEyes => g.killed_ghost_no_eyes(p).is_some_and(|k| k),
+        Split::NoEyesEssence => g.no_eyes_defeated(p).is_some_and(|d| d == 2),
         Split::MegaMossCharger => g.mega_moss_charger_defeated(p).is_some_and(|k| k),
         // Fungal
         Split::ElderHu => g.killed_ghost_hu(p).is_some_and(|k| k),
+        Split::ElderHuEssence => g.elder_hu_defeated(p).is_some_and(|d| d == 2),
         Split::MantisLords => g.defeated_mantis_lords(p).is_some_and(|k| k),
         // Cliffs
         Split::Gorb => g.killed_ghost_aladar(p).is_some_and(|k| k),
+        Split::GorbEssence => g.aladar_slug_defeated(p).is_some_and(|d| d == 2),
         Split::NightmareLantern => g.nightmare_lantern_lit(p).is_some_and(|l| l),
         Split::NightmareLanternDestroyed => g.destroyed_nightmare_lantern(p).is_some_and(|l| l),
         // Resting Grounds
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
+        Split::XeroEssence => g.xero_defeated(p).is_some_and(|d| d == 2),
         // City
         Split::CityGateOpen => g.opened_city_gate(p).is_some_and(|o| o),
         Split::CityGateAndMantisLords => g.opened_city_gate(p).is_some_and(|o| o) && g.defeated_mantis_lords(p).is_some_and(|k| k),
@@ -541,6 +559,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SoulMasterPhase1 => g.mage_lord_encountered_2(p).is_some_and(|b| b),
         Split::SoulMaster => g.killed_mage_lord(p).is_some_and(|k| k),
         Split::SoulTyrant => g.mage_lord_dream_defeated(p).is_some_and(|k| k),
+        Split::SoulTyrantEssence => g.mage_lord_orbs_collected(p).is_some_and(|o| o),
         Split::WatcherChandelier => g.watcher_chandelier(p).is_some_and(|c| c),
         Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),
         Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
@@ -550,23 +569,28 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // Waterways
         Split::DungDefender => g.killed_dung_defender(p).is_some_and(|k| k),
         Split::WhiteDefender => g.killed_white_defender(p).is_some_and(|k| k),
+        Split::WhiteDefenderEssence => g.white_defender_orbs_collected(p).is_some_and(|o| o),
         Split::Flukemarm => g.killed_fluke_mother(p).is_some_and(|k| k),
         Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
         Split::LostKin => g.infected_knight_dream_defeated(p).is_some_and(|k| k),
+        Split::LostKinEssence => g.infected_knight_orbs_collected(p).is_some_and(|o| o),
         // Kingdom's Edge
         Split::HiveKnight => g.killed_hive_knight(p).is_some_and(|k| k),
         Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
         Split::Markoth => g.killed_ghost_markoth(p).is_some_and(|k| k),
+        Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
         Split::GodTamer => g.killed_lobster_lancer(p).is_some_and(|k| k),
         // Fog Canyon
         Split::UumuuEncountered => g.encountered_mega_jelly(p).is_some_and(|b| b),
         Split::Uumuu => g.killed_mega_jellyfish(p).is_some_and(|k| k),
         // Queen's Gardens
         Split::Marmu => g.killed_ghost_marmu(p).is_some_and(|k| k),
+        Split::MarmuEssence => g.mum_caterpillar_defeated(p).is_some_and(|d| d == 2),
         Split::TraitorLord => g.killed_traitor_lord(p).is_some_and(|k| k),
         // Deepnest
         Split::Nosk => g.killed_mimic_spider(p).is_some_and(|k| k),
         Split::Galien => g.killed_ghost_galien(p).is_some_and(|k| k),
+        Split::GalienEssence => g.galien_defeated(p).is_some_and(|d| d == 2),
         Split::BeastsDenTrapBench => g.spider_capture(p).is_some_and(|c| c),
         // Godhome
         Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
