@@ -207,6 +207,7 @@ pub enum Split {
     MenuSlyKey,
     CrystalGuardian1,
     CrystalGuardian2,
+    MineLiftOpened,
     // Waterways
     DungDefender,
     DungDefenderExit,
@@ -471,6 +472,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
         // Peak
         Split::CrystalGuardian1 => g.defeated_mega_beam_miner(p).is_some_and(|k| k),
+        Split::MineLiftOpened => g.mine_lift_opened(p).is_some_and(|o| o),
         // Waterways
         Split::DungDefender => g.killed_dung_defender(p).is_some_and(|k| k),
         Split::WhiteDefender => g.killed_white_defender(p).is_some_and(|k| k),

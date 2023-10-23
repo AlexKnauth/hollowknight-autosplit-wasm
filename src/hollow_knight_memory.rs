@@ -264,6 +264,7 @@ struct PlayerDataPointers {
     collector_defeated: UnityPointer<3>,
     // Crystal Guardian
     defeated_mega_beam_miner: UnityPointer<3>,
+    mine_lift_opened: UnityPointer<3>,
     killed_dung_defender: UnityPointer<3>,
     killed_white_defender: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
@@ -430,6 +431,7 @@ impl PlayerDataPointers {
             killed_black_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
             collector_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "collectorDefeated"]),
             defeated_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMegaBeamMiner"]),
+            mine_lift_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mineLiftOpened"]),
             killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
@@ -1086,6 +1088,10 @@ impl GameManagerFinder {
     // Crystal Guardian
     pub fn defeated_mega_beam_miner(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.defeated_mega_beam_miner.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn mine_lift_opened(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mine_lift_opened.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_dung_defender(&self, process: &Process) -> Option<bool> {
