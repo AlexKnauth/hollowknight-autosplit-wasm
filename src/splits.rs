@@ -116,6 +116,18 @@ pub enum Split {
     QueensGardensStation,
     StagnestStation,
 
+    // Relics
+    OnObtainWanderersJournal,
+    AllSeals,
+    OnObtainHallownestSeal,
+    SoulSanctumSeal,
+    OnObtainKingsIdol,
+    GladeIdol,
+    DungDefenderIdol,
+    ArcaneEgg8,
+    OnObtainArcaneEgg,
+    OnObtainRancidEgg,
+
     // Other Items
     LumaflyLantern,
     OnObtainSimpleKey,
@@ -374,6 +386,17 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::StagnestStation => g.get_next_scene_name(p).is_some_and(|n| n == "Cliffs_03")
                                && g.travelling(p).is_some_and(|t| t)
                                && g.opened_stag_nest(p).is_some_and(|o| o),
+        // Relics
+        Split::OnObtainWanderersJournal => pds.incremented_trinket1(p, g),
+        Split::AllSeals => 17 <= g.trinket2(p).unwrap_or_default() + g.sold_trinket2(p).unwrap_or_default(),
+        Split::OnObtainHallownestSeal => pds.incremented_trinket2(p, g),
+        Split::SoulSanctumSeal => pds.incremented_trinket2(p, g) && g.get_scene_name(p).is_some_and(|s| s.starts_with("Ruins1_32")),
+        Split::OnObtainKingsIdol => pds.incremented_trinket3(p, g),
+        Split::GladeIdol => pds.incremented_trinket3(p, g) && g.get_scene_name(p).is_some_and(|s| s.starts_with("RestingGrounds_08")),
+        Split::DungDefenderIdol => pds.incremented_trinket3(p, g) && g.get_scene_name(p).is_some_and(|s| s.starts_with("Waterways_15")),
+        Split::ArcaneEgg8 => 8 <= g.trinket4(p).unwrap_or_default() + g.sold_trinket4(p).unwrap_or_default(),
+        Split::OnObtainArcaneEgg => pds.incremented_trinket4(p, g),
+        Split::OnObtainRancidEgg => pds.incremented_rancid_eggs(p, g),
         // Other Items
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),

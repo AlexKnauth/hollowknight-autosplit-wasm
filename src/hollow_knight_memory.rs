@@ -155,6 +155,14 @@ struct PlayerDataPointers {
     opened_royal_gardens: UnityPointer<3>,
     opened_stag_nest: UnityPointer<3>,
     travelling: UnityPointer<3>,
+    // Relics
+    trinket1: UnityPointer<3>,
+    trinket2: UnityPointer<3>,
+    trinket3: UnityPointer<3>,
+    trinket4: UnityPointer<3>,
+    sold_trinket2: UnityPointer<3>,
+    sold_trinket4: UnityPointer<3>,
+    rancid_eggs: UnityPointer<3>,
     // Charms
     got_charm_1: UnityPointer<3>,
     got_charm_2: UnityPointer<3>,
@@ -308,6 +316,14 @@ impl PlayerDataPointers {
             opened_royal_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedRoyalGardens"]),
             opened_stag_nest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedStagNest"]),
             travelling: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "travelling"]),
+            // Relics
+            trinket1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "trinket1"]),
+            trinket2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "trinket2"]),
+            trinket3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "trinket3"]),
+            trinket4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "trinket4"]),
+            sold_trinket2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket2"]),
+            sold_trinket4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket4"]),
+            rancid_eggs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "rancidEggs"]),
             // Charms
             got_charm_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_1"]),
             got_charm_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_2"]),
@@ -654,6 +670,31 @@ impl GameManagerFinder {
     
     pub fn travelling(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.travelling.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Relics
+    pub fn trinket1(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.trinket1.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn trinket2(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.trinket2.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn trinket3(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.trinket3.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn trinket4(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.trinket4.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn sold_trinket2(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.sold_trinket2.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn sold_trinket4(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.sold_trinket4.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn rancid_eggs(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.rancid_eggs.deref(process, &self.module, &self.image).ok()
     }
 
     // Charms
@@ -1258,6 +1299,86 @@ impl PlayerDataStore {
         match (store_simple_keys, player_data_simple_keys) {
             (Some(prev_simple_keys), Some(simple_keys)) => {
                 simple_keys == prev_simple_keys + 1
+            }
+            _ => false
+        }
+    }
+
+    pub fn incremented_trinket1(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_trinket1 = self.map_i32.get("trinket1").cloned();
+        let player_data_trinket1 = game_manager_finder.trinket1(process);
+        if let Some(trinket1) = player_data_trinket1 {
+            if trinket1 != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("trinket1", trinket1);
+            }
+        }
+        match (store_trinket1, player_data_trinket1) {
+            (Some(prev_trinket1), Some(trinket1)) => {
+                trinket1 == prev_trinket1 + 1
+            }
+            _ => false
+        }
+    }
+
+    pub fn incremented_trinket2(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_trinket2 = self.map_i32.get("trinket2").cloned();
+        let player_data_trinket2 = game_manager_finder.trinket2(process);
+        if let Some(trinket2) = player_data_trinket2 {
+            if trinket2 != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("trinket2", trinket2);
+            }
+        }
+        match (store_trinket2, player_data_trinket2) {
+            (Some(prev_trinket2), Some(trinket2)) => {
+                trinket2 == prev_trinket2 + 1
+            }
+            _ => false
+        }
+    }
+
+    pub fn incremented_trinket3(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_trinket3 = self.map_i32.get("trinket3").cloned();
+        let player_data_trinket3 = game_manager_finder.trinket3(process);
+        if let Some(trinket3) = player_data_trinket3 {
+            if trinket3 != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("trinket3", trinket3);
+            }
+        }
+        match (store_trinket3, player_data_trinket3) {
+            (Some(prev_trinket3), Some(trinket3)) => {
+                trinket3 == prev_trinket3 + 1
+            }
+            _ => false
+        }
+    }
+
+    pub fn incremented_trinket4(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_trinket4 = self.map_i32.get("trinket4").cloned();
+        let player_data_trinket4 = game_manager_finder.trinket4(process);
+        if let Some(trinket4) = player_data_trinket4 {
+            if trinket4 != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("trinket4", trinket4);
+            }
+        }
+        match (store_trinket4, player_data_trinket4) {
+            (Some(prev_trinket4), Some(trinket4)) => {
+                trinket4 == prev_trinket4 + 1
+            }
+            _ => false
+        }
+    }
+
+    pub fn incremented_rancid_eggs(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_rancid_eggs = self.map_i32.get("rancid_eggs").cloned();
+        let player_data_rancid_eggs = game_manager_finder.rancid_eggs(process);
+        if let Some(rancid_eggs) = player_data_rancid_eggs {
+            if rancid_eggs != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("rancid_eggs", rancid_eggs);
+            }
+        }
+        match (store_rancid_eggs, player_data_rancid_eggs) {
+            (Some(prev_rancid_eggs), Some(rancid_eggs)) => {
+                rancid_eggs == prev_rancid_eggs + 1
             }
             _ => false
         }
