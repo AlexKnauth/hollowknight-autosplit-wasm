@@ -164,6 +164,15 @@ struct PlayerDataPointers {
     sold_trinket2: UnityPointer<3>,
     sold_trinket4: UnityPointer<3>,
     rancid_eggs: UnityPointer<3>,
+    // Charm Notches
+    notch_shroom_ogres: UnityPointer<3>,
+    salubra_notch1: UnityPointer<3>,
+    salubra_notch2: UnityPointer<3>,
+    salubra_notch3: UnityPointer<3>,
+    salubra_notch4: UnityPointer<3>,
+    notch_fog_canyon: UnityPointer<3>,
+    got_grimm_notch: UnityPointer<3>,
+    charm_slots: UnityPointer<3>,
     // Charms
     got_charm_1: UnityPointer<3>,
     got_charm_2: UnityPointer<3>,
@@ -327,6 +336,15 @@ impl PlayerDataPointers {
             sold_trinket2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket2"]),
             sold_trinket4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket4"]),
             rancid_eggs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "rancidEggs"]),
+            // Charm Notches
+            notch_shroom_ogres: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "notchShroomOgres"]),
+            salubra_notch1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraNotch1"]),
+            salubra_notch2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraNotch2"]),
+            salubra_notch3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraNotch3"]),
+            salubra_notch4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraNotch4"]),
+            notch_fog_canyon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "notchFogCanyon"]),
+            got_grimm_notch: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotGrimmNotch"]),
+            charm_slots: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "charmSlots"]),
             // Charms
             got_charm_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_1"]),
             got_charm_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_2"]),
@@ -703,6 +721,33 @@ impl GameManagerFinder {
 
     pub fn rancid_eggs(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.rancid_eggs.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Charm Notches
+    pub fn notch_shroom_ogres(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.notch_shroom_ogres.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn salubra_notch1(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.salubra_notch1.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn salubra_notch2(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.salubra_notch2.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn salubra_notch3(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.salubra_notch3.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn salubra_notch4(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.salubra_notch4.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn notch_fog_canyon(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.notch_fog_canyon.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn got_grimm_notch(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_grimm_notch.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn charm_slots(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.charm_slots.deref(process, &self.module, &self.image).ok()
     }
 
     // Charms
@@ -1391,6 +1436,22 @@ impl PlayerDataStore {
         match (store_rancid_eggs, player_data_rancid_eggs) {
             (Some(prev_rancid_eggs), Some(rancid_eggs)) => {
                 rancid_eggs == prev_rancid_eggs + 1
+            }
+            _ => false
+        }
+    }
+
+    pub fn incremented_charm_slots(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_charm_slots = self.map_i32.get("charm_slots").cloned();
+        let player_data_charm_slots = game_manager_finder.charm_slots(process);
+        if let Some(charm_slots) = player_data_charm_slots {
+            if charm_slots != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("charm_slots", charm_slots);
+            }
+        }
+        match (store_charm_slots, player_data_charm_slots) {
+            (Some(prev_charm_slots), Some(charm_slots)) => {
+                charm_slots == prev_charm_slots + 1
             }
             _ => false
         }

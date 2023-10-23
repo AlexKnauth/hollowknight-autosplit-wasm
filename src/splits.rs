@@ -45,6 +45,16 @@ pub enum Split {
     MaskFragment3,
     Mask1,
 
+    // Charm Notches
+    NotchShrumalOgres,
+    NotchSalubra1,
+    NotchSalubra2,
+    NotchSalubra3,
+    NotchSalubra4,
+    NotchFogCanyon,
+    NotchGrimm,
+    OnObtainCharmNotch,
+
     // Charms
     GatheringSwarm,
     WaywardCompass,
@@ -314,6 +324,15 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MaskFragment2 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 2),
         Split::MaskFragment3 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 3),
         Split::Mask1 => g.max_health_base(p).is_some_and(|h| h == 6),
+        // Charm Notches
+        Split::NotchShrumalOgres => g.notch_shroom_ogres(p).is_some_and(|n| n),
+        Split::NotchSalubra1 => g.salubra_notch1(p).is_some_and(|n| n),
+        Split::NotchSalubra2 => g.salubra_notch2(p).is_some_and(|n| n),
+        Split::NotchSalubra3 => g.salubra_notch3(p).is_some_and(|n| n),
+        Split::NotchSalubra4 => g.salubra_notch4(p).is_some_and(|n| n),
+        Split::NotchFogCanyon => g.notch_fog_canyon(p).is_some_and(|n| n),
+        Split::NotchGrimm => g.got_grimm_notch(p).is_some_and(|n| n),
+        Split::OnObtainCharmNotch => pds.incremented_charm_slots(p, g),
         // Charms
         Split::GatheringSwarm => g.got_charm_1(p).is_some_and(|c| c),
         Split::WaywardCompass => g.got_charm_2(p).is_some_and(|c| c),
