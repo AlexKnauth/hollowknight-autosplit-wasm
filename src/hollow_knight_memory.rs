@@ -223,6 +223,7 @@ struct PlayerDataPointers {
     // Grimmchild / Carefree Melody
     got_charm_40: UnityPointer<3>,
     grimm_child_level: UnityPointer<3>,
+    flames_collected: UnityPointer<3>,
     // Kingsoul / VoidHeart
     charm_cost_36: UnityPointer<3>,
     got_queen_fragment: UnityPointer<3>,
@@ -249,6 +250,8 @@ struct PlayerDataPointers {
     defeated_mantis_lords: UnityPointer<3>,
     // Gorb
     killed_ghost_aladar: UnityPointer<3>,
+    nightmare_lantern_lit: UnityPointer<3>,
+    destroyed_nightmare_lantern: UnityPointer<3>,
     killed_ghost_xero: UnityPointer<3>,
     opened_city_gate: UnityPointer<3>,
     killed_gorgeous_husk: UnityPointer<3>,
@@ -395,6 +398,7 @@ impl PlayerDataPointers {
             // Grimmchild / Carefree Melody
             got_charm_40: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_40"]),
             grimm_child_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grimmChildLevel"]),
+            flames_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "flamesCollected"]),
             // Kingsoul / VoidHeart
             charm_cost_36: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "charmCost_36"]),
             got_queen_fragment: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotQueenFragment"]),
@@ -418,7 +422,10 @@ impl PlayerDataPointers {
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
             killed_ghost_hu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostHu"]),
             defeated_mantis_lords: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMantisLords"]),
+            // Gorb
             killed_ghost_aladar: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostAladar"]),
+            nightmare_lantern_lit: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nightmareLanternLit"]),
+            destroyed_nightmare_lantern: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "destroyedNightmareLantern"]),
             killed_ghost_xero: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostXero"]),
             opened_city_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCityGate"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
@@ -943,6 +950,10 @@ impl GameManagerFinder {
         self.player_data_pointers.grimm_child_level.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn flames_collected(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.flames_collected.deref(process, &self.module, &self.image).ok()
+    }
+
     // Kingsoul / VoidHeart
     
     pub fn charm_cost_36(&self, process: &Process) -> Option<i32> {
@@ -963,8 +974,6 @@ impl GameManagerFinder {
     pub fn got_shade_charm(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_shade_charm.deref(process, &self.module, &self.image).ok()
     }
-
-    // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()
@@ -1038,6 +1047,13 @@ impl GameManagerFinder {
     // Gorb
     pub fn killed_ghost_aladar(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_ghost_aladar.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn nightmare_lantern_lit(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.nightmare_lantern_lit.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn destroyed_nightmare_lantern(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.destroyed_nightmare_lantern.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_ghost_xero(&self, process: &Process) -> Option<bool> {

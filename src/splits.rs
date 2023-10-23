@@ -106,6 +106,9 @@ pub enum Split {
     Grimmchild3,
     Grimmchild4,
     CarefreeMelody,
+    Flame1,
+    Flame2,
+    Flame3,
     // Kingsoul / VoidHeart
     WhiteFragmentLeft,
     WhiteFragmentRight,
@@ -183,6 +186,8 @@ pub enum Split {
     MantisLords,
     // Cliffs
     Gorb,
+    NightmareLantern,
+    NightmareLanternDestroyed,
     // Resting Grounds
     DreamNailExit,
     Xero,
@@ -389,6 +394,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grimmchild3 => g.grimm_child_level(p).is_some_and(|l| 3 <= l && l <= 4),
         Split::Grimmchild4 => g.grimm_child_level(p).is_some_and(|l| l == 4),
         Split::CarefreeMelody => g.got_charm_40(p).is_some_and(|c| c) && g.grimm_child_level(p).is_some_and(|l| l == 5),
+        Split::Flame1 => g.flames_collected(p).is_some_and(|f| 1 <= f),
+        Split::Flame2 => g.flames_collected(p).is_some_and(|f| 2 <= f),
+        Split::Flame3 => g.flames_collected(p).is_some_and(|f| 3 <= f),
         // Kingsoul / VoidHeart
         Split::WhiteFragmentLeft => g.got_queen_fragment(p).is_some_and(|c| c),
         Split::WhiteFragmentRight => g.got_king_fragment(p).is_some_and(|c| c),
@@ -454,6 +462,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MantisLords => g.defeated_mantis_lords(p).is_some_and(|k| k),
         // Cliffs
         Split::Gorb => g.killed_ghost_aladar(p).is_some_and(|k| k),
+        Split::NightmareLantern => g.nightmare_lantern_lit(p).is_some_and(|l| l),
+        Split::NightmareLanternDestroyed => g.destroyed_nightmare_lantern(p).is_some_and(|l| l),
         // Resting Grounds
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         // City
