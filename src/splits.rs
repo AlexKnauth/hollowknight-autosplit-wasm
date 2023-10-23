@@ -39,6 +39,19 @@ pub enum Split {
     DreamGate,
     DreamNail2,
 
+    // Nail and Pale Ore
+    OnObtainPaleOre,
+    Ore1,
+    Ore2,
+    Ore3,
+    Ore4,
+    Ore5,
+    Ore6,
+    NailUpgrade1,
+    NailUpgrade2,
+    NailUpgrade3,
+    NailUpgrade4,
+
     // Masks and Mask Shards
     MaskFragment1,
     MaskFragment2,
@@ -325,6 +338,18 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
+        // Nail and Pale Ore
+        Split::NailUpgrade1 => g.nail_smith_upgrades(p).is_some_and(|n| 1 <= n),
+        Split::NailUpgrade2 => g.nail_smith_upgrades(p).is_some_and(|n| 2 <= n),
+        Split::NailUpgrade3 => g.nail_smith_upgrades(p).is_some_and(|n| 3 <= n),
+        Split::NailUpgrade4 => g.nail_smith_upgrades(p).is_some_and(|n| 4 <= n),
+        Split::OnObtainPaleOre => pds.incremented_ore(p, g),
+        Split::Ore1 => g.ore_gross(p).is_some_and(|o| 1 <= o),
+        Split::Ore2 => g.ore_gross(p).is_some_and(|o| 2 <= o),
+        Split::Ore3 => g.ore_gross(p).is_some_and(|o| 3 <= o),
+        Split::Ore4 => g.ore_gross(p).is_some_and(|o| 4 <= o),
+        Split::Ore5 => g.ore_gross(p).is_some_and(|o| 5 <= o),
+        Split::Ore6 => g.ore_gross(p).is_some_and(|o| 6 <= o),
         // Masks and Mask Shards
         Split::MaskFragment1 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 1),
         Split::MaskFragment2 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 2),

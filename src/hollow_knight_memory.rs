@@ -143,6 +143,9 @@ struct PlayerDataPointers {
     has_white_key: UnityPointer<3>,
     #[cfg(debug_assertions)]
     geo: UnityPointer<3>,
+    // Nail and Pale Ore
+    nail_smith_upgrades: UnityPointer<3>,
+    ore: UnityPointer<3>,
     // Stags
     stag_position: UnityPointer<3>,
     opened_crossroads: UnityPointer<3>,
@@ -319,6 +322,9 @@ impl PlayerDataPointers {
             has_white_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
             #[cfg(debug_assertions)]
             geo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
+            // Nail and Pale Ore
+            nail_smith_upgrades: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nailSmithUpgrades"]),
+            ore: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "ore"]),
             // Stags
             stag_position: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "stagPosition"]),
             opened_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCrossroads"]),
@@ -655,6 +661,20 @@ impl GameManagerFinder {
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.geo.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Nail and Pale Ore
+    
+    pub fn nail_smith_upgrades(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.nail_smith_upgrades.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn ore(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.ore.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn ore_gross(&self, process: &Process) -> Option<i32> {
+        let upgrades = self.nail_smith_upgrades(process)?;
+        let ore_from_upgrades = (upgrades * (upgrades - 1)) / 2;
+        Some(ore_from_upgrades + self.ore(process)?)
     }
 
     // Stags
@@ -1348,6 +1368,22 @@ impl PlayerDataStore {
             _ => {
                 *self.map_bool.get("has_acid_armor").unwrap_or(&false)
             }
+        }
+    }
+
+    pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_ore = self.map_i32.get("ore").cloned();
+        let player_data_ore = game_manager_finder.ore(process);
+        if let Some(ore) = player_data_ore {
+            if ore != 0 || game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("ore", ore);
+            }
+        }
+        match (store_ore, player_data_ore) {
+            (Some(prev_ore), Some(ore)) => {
+                ore == prev_ore + 1
+            }
+            _ => false
         }
     }
 
