@@ -119,6 +119,8 @@ impl GameManagerPointers {
 struct PlayerDataPointers {
     health: UnityPointer<3>,
     fireball_level: UnityPointer<3>,
+    quake_level: UnityPointer<3>,
+    scream_level: UnityPointer<3>,
     has_dash: UnityPointer<3>,
     has_shadow_dash: UnityPointer<3>,
     has_wall_jump: UnityPointer<3>,
@@ -310,6 +312,8 @@ impl PlayerDataPointers {
         PlayerDataPointers {
             health: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "health"]),
             fireball_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
+            quake_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "quakeLevel"]),
+            scream_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "screamLevel"]),
             has_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDash"]),
             has_shadow_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasShadowDash"]),
             has_wall_jump: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWalljump"]),
@@ -604,6 +608,14 @@ impl GameManagerFinder {
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.fireball_level.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn get_quake_level(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.quake_level.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn get_scream_level(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.scream_level.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dash(&self, process: &Process) -> Option<bool> {
@@ -1363,6 +1375,18 @@ impl PlayerDataStore {
             }
             _ => {
                 *self.map_i32.get("fireball_level").unwrap_or(&0)
+            }
+        }
+    }
+
+    pub fn get_quake_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
+        match game_manager_finder.get_quake_level(process) {
+            Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
+                self.map_i32.insert("quake_level", l);
+                l
+            }
+            _ => {
+                *self.map_i32.get("quake_level").unwrap_or(&0)
             }
         }
     }

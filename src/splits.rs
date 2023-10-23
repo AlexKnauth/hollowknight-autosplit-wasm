@@ -21,6 +21,11 @@ pub enum Split {
     VengefulSpirit,
     ShadeSoul,
     MenuShadeSoul,
+    DesolateDive,
+    DescendingDark,
+    TransDescendingDark,
+    HowlingWraiths,
+    AbyssShriek,
 
     // Movement Abilities
     MothwingCloak,
@@ -307,6 +312,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::BlackKnightTrans => p.current == "Ruins2_Watcher_Room" && p.old == "Ruins2_03",
         // Peak
         Split::MenuSlyKey => is_menu(p.current) && p.old == "Mines_11",
+        Split::TransDescendingDark => 2 <= pds.get_quake_level(prc, g) && p.current != p.old,
         // Waterways
         Split::DungDefenderExit => p.old == "Waterways_05" && p.current == "Abyss_01",
         Split::MenuIsmasTear => pds.has_acid_armour(prc, g) && is_menu(p.current),
@@ -328,6 +334,11 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
         Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),
         Split::MenuShadeSoul => { pds.get_fireball_level(p, g); false },
+        Split::DesolateDive => g.get_quake_level(p).is_some_and(|l| 1 <= l),
+        Split::DescendingDark => g.get_quake_level(p).is_some_and(|l| 2 <= l),
+        Split::TransDescendingDark => { pds.get_quake_level(p, g); false },
+        Split::HowlingWraiths => g.get_scream_level(p).is_some_and(|l| 1 <= l),
+        Split::AbyssShriek => g.get_scream_level(p).is_some_and(|l| 2 <= l),
         // Movement Abilities
         Split::MothwingCloak => g.has_dash(p).is_some_and(|d| d),
         Split::MenuCloak => { pds.has_dash(p, g); false },
