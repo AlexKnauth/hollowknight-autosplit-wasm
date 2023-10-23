@@ -154,12 +154,17 @@ pub enum Split {
     OnObtainArcaneEgg,
     OnObtainRancidEgg,
 
-    // Other Items
+    // Keys
     CityKey,
     LumaflyLantern,
     OnObtainSimpleKey,
     SlyKey,
     ElegantKey,
+    LoveKey,
+    PaleLurkerKey,
+    SlySimpleKey,
+    KingsBrand,
+    TramPass,
 
     // Grubs
     Grub1,
@@ -453,12 +458,17 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::ArcaneEgg8 => 8 <= g.trinket4(p).unwrap_or_default() + g.sold_trinket4(p).unwrap_or_default(),
         Split::OnObtainArcaneEgg => pds.incremented_trinket4(p, g),
         Split::OnObtainRancidEgg => pds.incremented_rancid_eggs(p, g),
-        // Other Items
+        // Keys
         Split::CityKey => g.has_city_key(p).is_some_and(|k| k),
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
         Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
         Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
+        Split::LoveKey => g.has_love_key(p).is_some_and(|k| k),
+        Split::PaleLurkerKey => g.got_lurker_key(p).is_some_and(|k| k),
+        Split::SlySimpleKey => g.sly_simple_key(p).is_some_and(|k| k),
+        Split::KingsBrand => g.has_kings_brand(p).is_some_and(|k| k),
+        Split::TramPass => g.has_tram_pass(p).is_some_and(|k| k),
         // Grubs
         Split::Grub1 => g.grubs_collected(p).is_some_and(|g| g == 1),
         Split::Grub2 => g.grubs_collected(p).is_some_and(|g| g == 2),

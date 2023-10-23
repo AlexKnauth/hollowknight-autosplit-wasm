@@ -136,11 +136,17 @@ struct PlayerDataPointers {
     //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
     // and I'm not sure which one
     heart_pieces: UnityPointer<3>,
+    // Keys
     has_city_key: UnityPointer<3>,
     has_lantern: UnityPointer<3>,
     simple_keys: UnityPointer<3>,
     has_sly_key: UnityPointer<3>,
     has_white_key: UnityPointer<3>,
+    has_love_key: UnityPointer<3>,
+    got_lurker_key: UnityPointer<3>,
+    sly_simple_key: UnityPointer<3>,
+    has_kings_brand: UnityPointer<3>,
+    has_tram_pass: UnityPointer<3>,
     #[cfg(debug_assertions)]
     geo: UnityPointer<3>,
     // Nail and Pale Ore
@@ -315,11 +321,17 @@ impl PlayerDataPointers {
             dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
             max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            // Keys
             has_city_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCityKey"]),
             has_lantern: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
             simple_keys: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "simpleKeys"]),
             has_sly_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasSlykey"]),
             has_white_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
+            has_love_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasLoveKey"]),
+            got_lurker_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotLurkerKey"]),
+            sly_simple_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slySimpleKey"]),
+            has_kings_brand: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasKingsBrand"]),
+            has_tram_pass: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasTramPass"]),
             #[cfg(debug_assertions)]
             geo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
             // Nail and Pale Ore
@@ -638,6 +650,8 @@ impl GameManagerFinder {
         self.player_data_pointers.heart_pieces.deref(process, &self.module, &self.image).ok()
     }
 
+    // Keys
+
     pub fn has_city_key(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_city_key.deref(process, &self.module, &self.image).ok()
     }
@@ -652,6 +666,26 @@ impl GameManagerFinder {
 
     pub fn has_white_key(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_white_key.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn has_love_key(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_love_key.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_lurker_key(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_lurker_key.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn sly_simple_key(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.sly_simple_key.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn has_kings_brand(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_kings_brand.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn has_tram_pass(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_tram_pass.deref(process, &self.module, &self.image).ok()
     }
 
     #[cfg(debug_assertions)]
