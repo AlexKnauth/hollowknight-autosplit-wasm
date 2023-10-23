@@ -127,6 +127,7 @@ struct PlayerDataPointers {
     has_double_jump: UnityPointer<3>,
     has_super_dash: UnityPointer<3>,
     has_acid_armor: UnityPointer<3>,
+    has_cyclone: UnityPointer<3>,
     has_dream_nail: UnityPointer<3>,
     has_dream_gate: UnityPointer<3>,
     dream_nail_upgraded: UnityPointer<3>,
@@ -320,6 +321,7 @@ impl PlayerDataPointers {
             has_double_jump: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDoubleJump"]),
             has_super_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasSuperDash"]),
             has_acid_armor: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasAcidArmour"]),
+            has_cyclone: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCyclone"]),
             has_dream_nail: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamNail"]),
             has_dream_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDreamGate"]),
             dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
@@ -640,6 +642,10 @@ impl GameManagerFinder {
 
     pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_acid_armor.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn has_cyclone(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_cyclone.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {

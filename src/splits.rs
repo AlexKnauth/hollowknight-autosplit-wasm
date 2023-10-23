@@ -45,6 +45,9 @@ pub enum Split {
     IsmasTear,
     MenuIsmasTear,
 
+    // Nail Arts
+    CycloneSlash,
+
     // Dream Nail Levels
     DreamNail,
     DreamGate,
@@ -362,6 +365,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::CrystalHeart => g.has_super_dash(p).is_some_and(|s| s),
         Split::IsmasTear => g.has_acid_armour(p).is_some_and(|a| a),
         Split::MenuIsmasTear => { pds.has_acid_armour(p, g); false },
+        // Nail Arts
+        Split::CycloneSlash => g.has_cyclone(p).is_some_and(|s| s),
+        // TODO: figure out which of the other nail arts is which
         // Dream Nail Levels
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
