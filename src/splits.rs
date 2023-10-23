@@ -10,6 +10,12 @@ pub enum Split {
     StartNewGame,
     StartAnyGame,
     EndingSplit,
+    EndingA,
+    EndingB,
+    EndingC,
+    EndingD,
+    EndingE,
+    RadianceP,
     Menu,
 
     // Dreamers
@@ -279,6 +285,12 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
             (is_menu(p.old) || p.old == OPENING_SEQUENCE) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
         }
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
+        Split::EndingA => p.current == "Cinematic_Ending_A",
+        Split::EndingB => p.current == "Cinematic_Ending_B",
+        Split::EndingC => p.current == "Cinematic_Ending_C",
+        Split::EndingD => p.current == "Cinematic_Ending_D",
+        Split::EndingE => p.current == "Cinematic_Ending_E",
+        Split::RadianceP => p.old.starts_with("GG_Radiance") && p.current.starts_with("Cinematic_Ending"),
         Split::Menu => is_menu(p.current),
         
         // Dreamers
