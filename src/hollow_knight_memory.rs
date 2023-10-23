@@ -142,6 +142,19 @@ struct PlayerDataPointers {
     has_white_key: UnityPointer<3>,
     #[cfg(debug_assertions)]
     geo: UnityPointer<3>,
+    // Stags
+    stag_position: UnityPointer<3>,
+    opened_crossroads: UnityPointer<3>,
+    opened_greenpath: UnityPointer<3>,
+    opened_fungal_wastes: UnityPointer<3>,
+    opened_ruins1: UnityPointer<3>,
+    opened_ruins2: UnityPointer<3>,
+    opened_resting_grounds: UnityPointer<3>,
+    opened_hidden_station: UnityPointer<3>,
+    opened_deepnest: UnityPointer<3>,
+    opened_royal_gardens: UnityPointer<3>,
+    opened_stag_nest: UnityPointer<3>,
+    travelling: UnityPointer<3>,
     // Charms
     got_charm_1: UnityPointer<3>,
     got_charm_2: UnityPointer<3>,
@@ -282,6 +295,20 @@ impl PlayerDataPointers {
             has_white_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWhiteKey"]),
             #[cfg(debug_assertions)]
             geo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
+            // Stags
+            stag_position: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "stagPosition"]),
+            opened_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCrossroads"]),
+            opened_greenpath: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedGreenpath"]),
+            opened_fungal_wastes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedFungalWastes"]),
+            opened_ruins1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedRuins1"]),
+            opened_ruins2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedRuins2"]),
+            opened_resting_grounds: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedRestingGrounds"]),
+            opened_hidden_station: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedHiddenStation"]),
+            opened_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedDeepnest"]),
+            opened_royal_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedRoyalGardens"]),
+            opened_stag_nest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedStagNest"]),
+            travelling: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "travelling"]),
+            // Charms
             got_charm_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_1"]),
             got_charm_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_2"]),
             got_charm_3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_3"]),
@@ -577,6 +604,56 @@ impl GameManagerFinder {
     #[cfg(debug_assertions)]
     pub fn get_geo(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.geo.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Stags
+
+    pub fn stag_position(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.stag_position.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn opened_crossroads(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_crossroads.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_greenpath(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_greenpath.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_fungal_wastes(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_fungal_wastes.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_ruins1(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_ruins1.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_ruins2(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_ruins2.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_resting_grounds(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_resting_grounds.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_hidden_station(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_hidden_station.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_deepnest(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_deepnest.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_royal_gardens(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_royal_gardens.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn opened_stag_nest(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_stag_nest.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn travelling(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.travelling.deref(process, &self.module, &self.image).ok()
     }
 
     // Charms
@@ -1151,6 +1228,22 @@ impl PlayerDataStore {
             _ => {
                 *self.map_bool.get("has_acid_armor").unwrap_or(&false)
             }
+        }
+    }
+
+    pub fn changed_stag_position(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        let store_stag_position = self.map_i32.get("stag_position").cloned();
+        let player_data_stag_position = game_manager_finder.stag_position(process);
+        if let Some(stag_position) = player_data_stag_position {
+            if game_manager_finder.is_game_state_playing(process) {
+                self.map_i32.insert("stag_position", stag_position);
+            }
+        }
+        match (store_stag_position, player_data_stag_position) {
+            (Some(prev_stag_position), Some(stag_position)) => {
+                stag_position != prev_stag_position
+            }
+            _ => false
         }
     }
 

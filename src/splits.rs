@@ -103,6 +103,19 @@ pub enum Split {
     Kingsoul,
     VoidHeart,
 
+    // Stags
+    StagMoved,
+    CrossroadsStation,
+    GreenpathStation,
+    QueensStationStation,
+    StoreroomsStation,
+    KingsStationStation,
+    RestingGroundsStation,
+    HiddenStationStation,
+    DeepnestStation,
+    QueensGardensStation,
+    StagnestStation,
+
     // Other Items
     LumaflyLantern,
     OnObtainSimpleKey,
@@ -347,6 +360,20 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainWhiteFragment => pds.increased_royal_charm_state(p, g),
         Split::Kingsoul => g.charm_cost_36(p).is_some_and(|c| c == 5) && g.royal_charm_state(p).is_some_and(|s| s == 3),
         Split::VoidHeart => g.got_shade_charm(p).is_some_and(|c| c),
+        // Stags
+        Split::StagMoved => pds.changed_stag_position(p, g),
+        Split::CrossroadsStation => g.opened_crossroads(p).is_some_and(|o| o),
+        Split::GreenpathStation => g.opened_greenpath(p).is_some_and(|o| o),
+        Split::QueensStationStation => g.opened_fungal_wastes(p).is_some_and(|o| o),
+        Split::StoreroomsStation => g.opened_ruins1(p).is_some_and(|o| o),
+        Split::KingsStationStation => g.opened_ruins2(p).is_some_and(|o| o),
+        Split::RestingGroundsStation => g.opened_resting_grounds(p).is_some_and(|o| o),
+        Split::HiddenStationStation => g.opened_hidden_station(p).is_some_and(|o| o),
+        Split::DeepnestStation => g.opened_deepnest(p).is_some_and(|o| o),
+        Split::QueensGardensStation => g.opened_royal_gardens(p).is_some_and(|o| o),
+        Split::StagnestStation => g.get_next_scene_name(p).is_some_and(|n| n == "Cliffs_03")
+                               && g.travelling(p).is_some_and(|t| t)
+                               && g.opened_stag_nest(p).is_some_and(|o| o),
         // Other Items
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
