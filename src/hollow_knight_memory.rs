@@ -189,7 +189,10 @@ struct PlayerDataPointers {
     fragile_greed_unbreakable: UnityPointer<3>,
     fragile_health_unbreakable: UnityPointer<3>,
     fragile_strength_unbreakable: UnityPointer<3>,
-    // TODO: more multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
+    // Grimmchild / Carefree Melody
+    got_charm_40: UnityPointer<3>,
+    grimm_child_level: UnityPointer<3>,
+    // TODO: more multi-level charms Kingsoul/VoidHeart
     grubs_collected: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
     killed_nightmare_grimm: UnityPointer<3>,
@@ -319,7 +322,10 @@ impl PlayerDataPointers {
             fragile_greed_unbreakable: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fragileGreed_unbreakable"]),
             fragile_health_unbreakable: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fragileHealth_unbreakable"]),
             fragile_strength_unbreakable: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fragileStrength_unbreakable"]),
-            // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
+            // Grimmchild / Carefree Melody
+            got_charm_40: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_40"]),
+            grimm_child_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grimmChildLevel"]),
+            // TODO: other multi-level charms Kingsoul/VoidHeart
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
@@ -742,6 +748,16 @@ impl GameManagerFinder {
 
     pub fn fragile_strength_unbreakable(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.fragile_strength_unbreakable.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Grimmchild / Carefree Melody
+
+    pub fn got_charm_40(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_charm_40.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn grimm_child_level(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.grimm_child_level.deref(process, &self.module, &self.image).ok()
     }
 
     // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart

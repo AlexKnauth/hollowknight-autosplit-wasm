@@ -90,6 +90,12 @@ pub enum Split {
     UnbreakableStrength,
     AllBreakables,
     AllUnbreakables,
+    // Grimmchild / Carefree Melody
+    Grimmchild,
+    Grimmchild2,
+    Grimmchild3,
+    Grimmchild4,
+    CarefreeMelody,
     // TODO: more multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
 
     // Other Items
@@ -324,7 +330,13 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::AllUnbreakables => g.fragile_greed_unbreakable(p).is_some_and(|u| u)
                                && g.fragile_health_unbreakable(p).is_some_and(|u| u)
                                && g.fragile_strength_unbreakable(p).is_some_and(|u| u),
-        // TODO: other multi-level charms Grimmchild/Carefree, Kingsoul/VoidHeart
+        // Grimmchild / Carefree Melody
+        Split::Grimmchild => g.got_charm_40(p).is_some_and(|c| c) && g.grimm_child_level(p).is_some_and(|l| l <= 4),
+        Split::Grimmchild2 => g.grimm_child_level(p).is_some_and(|l| 2 <= l && l <= 4),
+        Split::Grimmchild3 => g.grimm_child_level(p).is_some_and(|l| 3 <= l && l <= 4),
+        Split::Grimmchild4 => g.grimm_child_level(p).is_some_and(|l| l == 4),
+        Split::CarefreeMelody => g.got_charm_40(p).is_some_and(|c| c) && g.grimm_child_level(p).is_some_and(|l| l == 5),
+        // TODO: other multi-level charms Kingsoul/VoidHeart
         // Other Items
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
