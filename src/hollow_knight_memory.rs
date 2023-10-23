@@ -646,10 +646,6 @@ impl GameManagerFinder {
         self.player_data_pointers.has_lantern.deref(process, &self.module, &self.image).ok()
     }
 
-    pub fn get_simple_keys(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.simple_keys.deref(process, &self.module, &self.image).ok()
-    }
-
     pub fn has_sly_key(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_sly_key.deref(process, &self.module, &self.image).ok()
     }
@@ -678,10 +674,6 @@ impl GameManagerFinder {
     }
 
     // Stags
-
-    pub fn stag_position(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.stag_position.deref(process, &self.module, &self.image).ok()
-    }
 
     pub fn opened_crossroads(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_crossroads.deref(process, &self.module, &self.image).ok()
@@ -728,12 +720,14 @@ impl GameManagerFinder {
     }
 
     // Relics
+    #[allow(unused)]
     pub fn trinket1(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.trinket1.deref(process, &self.module, &self.image).ok()
     }
     pub fn trinket2(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.trinket2.deref(process, &self.module, &self.image).ok()
     }
+    #[allow(unused)]
     pub fn trinket3(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.trinket3.deref(process, &self.module, &self.image).ok()
     }
@@ -748,6 +742,7 @@ impl GameManagerFinder {
         self.player_data_pointers.sold_trinket4.deref(process, &self.module, &self.image).ok()
     }
 
+    #[allow(unused)]
     pub fn rancid_eggs(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.rancid_eggs.deref(process, &self.module, &self.image).ok()
     }
@@ -773,10 +768,6 @@ impl GameManagerFinder {
     }
     pub fn got_grimm_notch(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_grimm_notch.deref(process, &self.module, &self.image).ok()
-    }
-    
-    pub fn charm_slots(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.charm_slots.deref(process, &self.module, &self.image).ok()
     }
 
     // Charms
@@ -1311,6 +1302,25 @@ impl PlayerDataStore {
         self.map_bool.clear();
     }
 
+    fn changed_i32_delta<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
+        let store_val = self.map_i32.get(key).cloned();
+        let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
+        if let Some(val) = player_data_val {
+            if val != 0 || g.is_game_state_playing(p) {
+                self.map_i32.insert(key, val);
+            }
+        }
+        Some(player_data_val? - store_val?)
+    }
+
+    fn incremented_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> bool {
+        self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| d == 1)
+    }
+
+    fn increased_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> bool {
+        self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| 0 < d)
+    }
+
     pub fn get_fireball_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
         match game_manager_finder.get_fireball_level(process) {
             Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
@@ -1372,147 +1382,39 @@ impl PlayerDataStore {
     }
 
     pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_ore = self.map_i32.get("ore").cloned();
-        let player_data_ore = game_manager_finder.ore(process);
-        if let Some(ore) = player_data_ore {
-            if ore != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("ore", ore);
-            }
-        }
-        match (store_ore, player_data_ore) {
-            (Some(prev_ore), Some(ore)) => {
-                ore == prev_ore + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "ore", &game_manager_finder.player_data_pointers.ore)
     }
 
     pub fn changed_stag_position(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_stag_position = self.map_i32.get("stag_position").cloned();
-        let player_data_stag_position = game_manager_finder.stag_position(process);
-        if let Some(stag_position) = player_data_stag_position {
-            if game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("stag_position", stag_position);
-            }
-        }
-        match (store_stag_position, player_data_stag_position) {
-            (Some(prev_stag_position), Some(stag_position)) => {
-                stag_position != prev_stag_position
-            }
-            _ => false
-        }
+        self.changed_i32_delta(process, game_manager_finder, "stag_position", &game_manager_finder.player_data_pointers.stag_position).is_some_and(|d| d != 0)
     }
 
     pub fn incremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_simple_keys = self.map_i32.get("simple_keys").cloned();
-        let player_data_simple_keys = game_manager_finder.get_simple_keys(process);
-        if let Some(simple_keys) = player_data_simple_keys {
-            if simple_keys != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("simple_keys", simple_keys);
-            }
-        }
-        match (store_simple_keys, player_data_simple_keys) {
-            (Some(prev_simple_keys), Some(simple_keys)) => {
-                simple_keys == prev_simple_keys + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "simple_keys", &game_manager_finder.player_data_pointers.simple_keys)
     }
 
     pub fn incremented_trinket1(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_trinket1 = self.map_i32.get("trinket1").cloned();
-        let player_data_trinket1 = game_manager_finder.trinket1(process);
-        if let Some(trinket1) = player_data_trinket1 {
-            if trinket1 != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("trinket1", trinket1);
-            }
-        }
-        match (store_trinket1, player_data_trinket1) {
-            (Some(prev_trinket1), Some(trinket1)) => {
-                trinket1 == prev_trinket1 + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "trinket1", &game_manager_finder.player_data_pointers.trinket1)
     }
 
     pub fn incremented_trinket2(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_trinket2 = self.map_i32.get("trinket2").cloned();
-        let player_data_trinket2 = game_manager_finder.trinket2(process);
-        if let Some(trinket2) = player_data_trinket2 {
-            if trinket2 != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("trinket2", trinket2);
-            }
-        }
-        match (store_trinket2, player_data_trinket2) {
-            (Some(prev_trinket2), Some(trinket2)) => {
-                trinket2 == prev_trinket2 + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "trinket2", &game_manager_finder.player_data_pointers.trinket2)
     }
 
     pub fn incremented_trinket3(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_trinket3 = self.map_i32.get("trinket3").cloned();
-        let player_data_trinket3 = game_manager_finder.trinket3(process);
-        if let Some(trinket3) = player_data_trinket3 {
-            if trinket3 != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("trinket3", trinket3);
-            }
-        }
-        match (store_trinket3, player_data_trinket3) {
-            (Some(prev_trinket3), Some(trinket3)) => {
-                trinket3 == prev_trinket3 + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "trinket3", &game_manager_finder.player_data_pointers.trinket3)
     }
 
     pub fn incremented_trinket4(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_trinket4 = self.map_i32.get("trinket4").cloned();
-        let player_data_trinket4 = game_manager_finder.trinket4(process);
-        if let Some(trinket4) = player_data_trinket4 {
-            if trinket4 != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("trinket4", trinket4);
-            }
-        }
-        match (store_trinket4, player_data_trinket4) {
-            (Some(prev_trinket4), Some(trinket4)) => {
-                trinket4 == prev_trinket4 + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "trinket4", &game_manager_finder.player_data_pointers.trinket4)
     }
 
     pub fn incremented_rancid_eggs(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_rancid_eggs = self.map_i32.get("rancid_eggs").cloned();
-        let player_data_rancid_eggs = game_manager_finder.rancid_eggs(process);
-        if let Some(rancid_eggs) = player_data_rancid_eggs {
-            if rancid_eggs != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("rancid_eggs", rancid_eggs);
-            }
-        }
-        match (store_rancid_eggs, player_data_rancid_eggs) {
-            (Some(prev_rancid_eggs), Some(rancid_eggs)) => {
-                rancid_eggs == prev_rancid_eggs + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "rancid_eggs", &game_manager_finder.player_data_pointers.rancid_eggs)
     }
 
     pub fn incremented_charm_slots(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_charm_slots = self.map_i32.get("charm_slots").cloned();
-        let player_data_charm_slots = game_manager_finder.charm_slots(process);
-        if let Some(charm_slots) = player_data_charm_slots {
-            if charm_slots != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("charm_slots", charm_slots);
-            }
-        }
-        match (store_charm_slots, player_data_charm_slots) {
-            (Some(prev_charm_slots), Some(charm_slots)) => {
-                charm_slots == prev_charm_slots + 1
-            }
-            _ => false
-        }
+        self.incremented_i32(process, game_manager_finder, "charm_slots", &game_manager_finder.player_data_pointers.charm_slots)
     }
 
     pub fn killed_gorgeous_husk(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
@@ -1528,19 +1430,7 @@ impl PlayerDataStore {
     }
 
     pub fn increased_royal_charm_state(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        let store_royal_charm_state = self.map_i32.get("royal_charm_state").cloned();
-        let player_data_royal_charm_state = game_manager_finder.royal_charm_state(process);
-        if let Some(royal_charm_state) = player_data_royal_charm_state {
-            if royal_charm_state != 0 || game_manager_finder.is_game_state_playing(process) {
-                self.map_i32.insert("royal_charm_state", royal_charm_state);
-            }
-        }
-        match (store_royal_charm_state, player_data_royal_charm_state) {
-            (Some(prev_royal_charm_state), Some(royal_charm_state)) => {
-                royal_charm_state == prev_royal_charm_state + 1
-            }
-            _ => false
-        }
+        self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
     }
 }
 
