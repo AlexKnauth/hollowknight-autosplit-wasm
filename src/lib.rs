@@ -265,6 +265,7 @@ impl HitCounter {
             self.last_dead_or_0 = d;
         }
 
+        // TODO: make a togglable setting for whether dream falling counts as a hit or not
         if let Some(s) = maybe_scene_name {
             if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && s.starts_with("Dream_") {
                 self.hits += 1;
