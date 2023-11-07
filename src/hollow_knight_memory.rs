@@ -16,9 +16,10 @@ use std::string::String;
 
 // --------------------------------------------------------
 
-const HOLLOW_KNIGHT_NAMES: [&str; 2] = [
+const HOLLOW_KNIGHT_NAMES: [&str; 3] = [
     "hollow_knight.exe", // Windows
     "Hollow Knight", // Mac
+    "hollow_knight", // Mac
 ];
 
 pub const SCENE_PATH_SIZE: usize = 64;
