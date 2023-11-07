@@ -30,13 +30,19 @@ const STRING_CONTENTS_OFFSET: u64 = 0x14;
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
 pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
+pub const INTRO_CUTSCENE: &str = "Intro_Cutscene";
 pub const OPENING_SEQUENCE: &str = "Opening_Sequence";
 pub const GG_ENTRANCE_CUTSCENE: &str = "GG_Entrance_Cutscene";
+pub const OPENING_SCENES: [&str; 2] = [
+    INTRO_CUTSCENE,
+    OPENING_SEQUENCE,
+];
 
-const NON_PLAY_SCENES: [&str; 15] = [
+const NON_PLAY_SCENES: [&str; 16] = [
     PRE_MENU_INTRO,
     MENU_TITLE,
     QUIT_TO_MENU,
+    INTRO_CUTSCENE,
     OPENING_SEQUENCE,
     GG_ENTRANCE_CUTSCENE,
     "Cinematic_Ending_A",

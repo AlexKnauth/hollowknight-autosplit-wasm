@@ -294,10 +294,10 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
     match s {
         // Start, End, and Menu
         Split::StartNewGame => {
-            (p.old == OPENING_SEQUENCE && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
+            (OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
         },
         Split::StartAnyGame => {
-            (is_menu(p.old) || p.old == OPENING_SEQUENCE) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
+            (is_menu(p.old) || OPENING_SCENES.contains(&p.old)) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
         }
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
         Split::EndingA => p.current == "Cinematic_Ending_A",
