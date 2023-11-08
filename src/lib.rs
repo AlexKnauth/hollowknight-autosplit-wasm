@@ -1,11 +1,15 @@
 // #![no_std]
 
+extern crate alloc;
+
+mod auto_splitter_settings;
 mod hollow_knight_memory;
 mod splits;
 
 use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
+use auto_splitter_settings::XMLSettings;
 use hollow_knight_memory::*;
 
 asr::async_main!(stable);
@@ -20,7 +24,11 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
-    let splits: Vec<splits::Split> = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
+    let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
+    let settings = XMLSettings::from_xml_string(auto_splitter_settings).unwrap_or_default();
+    let splits: Vec<splits::Split> = splits::splits_from_settings(settings);
+    asr::print_message(&format!("splits: {:?}", splits));
+
     let auto_reset = splits::auto_reset_safe(&splits);
 
     loop {
