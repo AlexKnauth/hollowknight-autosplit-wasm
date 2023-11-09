@@ -12,6 +12,50 @@ pub trait Settings: Clone {
     }
 }
 
+#[derive(Clone)]
+pub enum SettingsObject {
+    Map(asr::settings::Map),
+    Value(asr::settings::Value),
+}
+
+impl SettingsObject {
+    fn as_value(&self) -> Option<&asr::settings::Value> {
+        let SettingsObject::Value(v) = self else { return None; };
+        Some(v)
+    }
+    fn as_map(&self) -> Option<&asr::settings::Map> {
+        Some(match self {
+            SettingsObject::Map(m) => m,
+            SettingsObject::Value(v) => &v.get_map()?,
+        })
+    }
+}
+
+impl Settings for SettingsObject {
+    fn as_str(&self) -> Option<&str> {
+        self.as_value()?.get_string().as_deref()
+    }
+
+    fn as_bool(&self) -> Option<bool> {
+        self.as_value()?.get_bool()
+    }
+
+    fn as_list(&self) -> Option<Vec<Self>> {
+        let m = self.as_map()?;
+        let l = Vec::new();
+        for i in 0.. {
+            let k = i.to_string();
+            let Some(v) = m.get(&k) else { break; };
+            l.push(SettingsObject::Value(v));
+        }
+        Some(l)
+    }
+
+    fn dict_get(&self, key: &str) -> Option<Self> {
+        Some(SettingsObject::Value(self.as_map()?.get(key)?))
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct XMLSettings {
     children: Vec<XMLNode>,
