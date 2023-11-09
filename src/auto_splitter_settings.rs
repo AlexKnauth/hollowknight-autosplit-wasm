@@ -14,6 +14,9 @@ pub enum SettingsObject {
 }
 
 impl SettingsObject {
+    pub fn load() -> Self {
+        SettingsObject::Map(asr::settings::Map::load())
+    }
     fn as_value(&self) -> Option<&asr::settings::Value> {
         let SettingsObject::Value(v) = self else { return None; };
         Some(v)
