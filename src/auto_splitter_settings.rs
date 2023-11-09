@@ -1,4 +1,3 @@
-use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 use xmltree::{XMLNode, Element};
 
@@ -6,13 +5,10 @@ pub trait Settings: Clone {
     fn as_str(&self) -> Option<&str>;
     fn as_bool(&self) -> Option<bool>;
     fn as_list(&self) -> Option<Vec<Self>>;
-    fn as_dict(&self) -> Option<BTreeMap<String, Self>>;
+    fn dict_get(&self, key: &str) -> Option<Self>;
 
     fn list_get(&self, index: usize) -> Option<Self> {
         self.as_list()?.get(index).cloned()
-    }
-    fn dict_get(&self, key: &str) -> Option<Self> {
-        self.as_dict()?.get(key).cloned()
     }
 }
 
@@ -60,11 +56,14 @@ impl Settings for XMLSettings {
         }).collect())
     }
 
-    fn as_dict(&self) -> Option<BTreeMap<String, Self>> {
+    fn dict_get(&self, key: &str) -> Option<Self> {
         let l = self.as_list()?;
-        Some(BTreeMap::from_iter(l.into_iter().filter_map(|c| -> Option<(String, XMLSettings)> {
+        for c in l.into_iter() {
             let e = c.children.first()?.as_element()?;
-            Some((e.name.clone(), XMLSettings { children: e.children.clone() }))
-        })))
+            if e.name == key {
+                return Some(XMLSettings { children: e.children.clone() });
+            }
+        }
+        None
     }
 }
