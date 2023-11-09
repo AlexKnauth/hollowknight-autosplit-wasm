@@ -1,4 +1,5 @@
 use alloc::vec::Vec;
+use asr::future::retry;
 use xmltree::{XMLNode, Element};
 
 pub trait Settings: Sized {
@@ -26,6 +27,18 @@ impl SettingsObject {
             SettingsObject::Map(m) => m.clone(),
             SettingsObject::Value(v) => v.get_map()?,
         })
+    }
+    pub fn load_merge_store<S: Settings>(new: &S, keys: &[&str]) -> Option<SettingsObject> {
+        let old = asr::settings::Map::load();
+        let merged = maybe_asr_settings_map_merge(Some(old.clone()), new, keys);
+        if merged.store_if_unchanged(&old) {
+            Some(SettingsObject::Map(merged))
+        } else {
+            None
+        }
+    }
+    async fn wait_load_merge_store<S: Settings>(new: &S, keys: &[&str]) -> SettingsObject {
+        retry(|| SettingsObject::load_merge_store(new, keys)).await
     }
 }
 
@@ -107,5 +120,54 @@ impl Settings for XMLSettings {
             }
         }
         None
+    }
+}
+
+// --------------------------------------------------------
+
+fn maybe_asr_settings_map_merge<S: Settings>(old: Option<asr::settings::Map>, new: &S, keys: &[&str]) -> asr::settings::Map {
+    let om = if let Some(om) = old { om } else { asr::settings::Map::new() };
+    for key in keys {
+        if let Some(new_v) = new.dict_get(key) {
+            om.insert(key, &maybe_asr_settings_value_merge(om.get(key), &new_v, keys));
+        }
+    }
+    om
+}
+
+fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>, new: &S, keys: &[&str]) -> asr::settings::Value {
+    if let Some(b) = new.as_bool() {
+        asr::settings::Value::from(b)
+    } else if let Some(s) = new.as_string() {
+        asr::settings::Value::from(s.as_str())
+    } else if let Some(l) = new.as_list() {
+        asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_map()), l, keys))
+    } else {
+        asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), new, keys))
+    }
+}
+
+fn is_asr_settings_list_length(m: &asr::settings::Map, n: usize) -> bool {
+    m.get(&n.to_string()).is_none() && (n < 1 || m.get(&(n - 1).to_string()).is_some())
+}
+
+fn maybe_asr_settings_list_merge<S: Settings>(old: Option<asr::settings::Map>, new: Vec<S>, keys: &[&str]) -> asr::settings::Map {
+    let om = if let Some(old_m) = old { old_m } else { asr::settings::Map::new() };
+    let nn = new.len();
+    if is_asr_settings_list_length(&om, nn) {
+        // same length, merge elements
+        for (i, ne) in new.into_iter().enumerate() {
+            let key = i.to_string();
+            om.insert(&key, &maybe_asr_settings_value_merge(om.get(&key), &ne, keys));
+        }
+        om
+    } else {
+        // different length, replace the whole thing
+        let mm = asr::settings::Map::new();
+        for (i, ne) in new.into_iter().enumerate() {
+            let key = i.to_string();
+            mm.insert(&key, &maybe_asr_settings_value_merge(None, &ne, keys));
+        }
+        mm
     }
 }

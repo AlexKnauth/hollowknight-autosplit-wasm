@@ -632,7 +632,7 @@ pub fn auto_reset_safe(s: &[Split]) -> bool {
     && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
 }
 
-pub fn splits_from_settings<S: Settings>(s: S) -> Vec<Split> {
+pub fn splits_from_settings<S: Settings>(s: &S) -> Vec<Split> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
     let maybe_end = s.dict_get("AutosplitEndRuns");
@@ -643,7 +643,7 @@ pub fn splits_from_settings<S: Settings>(s: S) -> Vec<Split> {
         let end = maybe_end.and_then(|s| s.as_bool()).unwrap_or_default();
         let mut result = vec![start];
         if let Some(splits) = maybe_splits {
-            result.append(&mut splits_from_settings_split_list(splits));
+            result.append(&mut splits_from_settings_split_list(&splits));
         }
         if !end {
             result.push(Split::EndingSplit);
@@ -651,12 +651,12 @@ pub fn splits_from_settings<S: Settings>(s: S) -> Vec<Split> {
         result
     } else if let Some(splits) = maybe_splits {
         // Splits files from after version 4 of mayonnaisical/LiveSplit.HollowKnight
-        splits_from_settings_split_list(splits)
+        splits_from_settings_split_list(&splits)
     } else {
         default_splits()
     }
 }
 
-fn splits_from_settings_split_list<S: Settings>(s: S) -> Vec<Split> {
+fn splits_from_settings_split_list<S: Settings>(s: &S) -> Vec<Split> {
     s.as_list().unwrap_or_default().into_iter().filter_map(Split::from_settings_split).collect()
 }
