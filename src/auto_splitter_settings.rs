@@ -1,18 +1,13 @@
 use alloc::vec::Vec;
 use xmltree::{XMLNode, Element};
 
-pub trait Settings: Clone {
-    fn as_str(&self) -> Option<&str>;
+pub trait Settings: Sized {
+    fn as_string(&self) -> Option<String>;
     fn as_bool(&self) -> Option<bool>;
     fn as_list(&self) -> Option<Vec<Self>>;
     fn dict_get(&self, key: &str) -> Option<Self>;
-
-    fn list_get(&self, index: usize) -> Option<Self> {
-        self.as_list()?.get(index).cloned()
-    }
 }
 
-#[derive(Clone)]
 pub enum SettingsObject {
     Map(asr::settings::Map),
     Value(asr::settings::Value),
@@ -23,17 +18,17 @@ impl SettingsObject {
         let SettingsObject::Value(v) = self else { return None; };
         Some(v)
     }
-    fn as_map(&self) -> Option<&asr::settings::Map> {
+    fn as_map(&self) -> Option<asr::settings::Map> {
         Some(match self {
-            SettingsObject::Map(m) => m,
-            SettingsObject::Value(v) => &v.get_map()?,
+            SettingsObject::Map(m) => m.clone(),
+            SettingsObject::Value(v) => v.get_map()?,
         })
     }
 }
 
 impl Settings for SettingsObject {
-    fn as_str(&self) -> Option<&str> {
-        self.as_value()?.get_string().as_deref()
+    fn as_string(&self) -> Option<String> {
+        self.as_value()?.get_string()
     }
 
     fn as_bool(&self) -> Option<bool> {
@@ -42,7 +37,7 @@ impl Settings for SettingsObject {
 
     fn as_list(&self) -> Option<Vec<Self>> {
         let m = self.as_map()?;
-        let l = Vec::new();
+        let mut l = Vec::new();
         for i in 0.. {
             let k = i.to_string();
             let Some(v) = m.get(&k) else { break; };
@@ -72,16 +67,16 @@ impl XMLSettings {
 }
 
 impl Settings for XMLSettings {
-    fn as_str(&self) -> Option<&str> {
+    fn as_string(&self) -> Option<String> {
         match &self.children[..] {
-            [] => Some(""),
-            [XMLNode::Text(s)] => Some(s),
+            [] => Some("".to_string()),
+            [XMLNode::Text(s)] => Some(s.to_string()),
             _ => None,
         }
     }
 
     fn as_bool(&self) -> Option<bool> {
-        match self.as_str()?.trim() {
+        match self.as_string()?.trim() {
             "True" => Some(true),
             "False" => Some(false),
             _ => None

@@ -302,7 +302,7 @@ impl FromStr for Split {
 
 impl Split {
     fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
-        Split::from_str(s.as_str()?).ok()
+        Split::from_str(&s.as_string()?).ok()
     }
     fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
         Split::from_settings_str(s.dict_get("Split")?)
