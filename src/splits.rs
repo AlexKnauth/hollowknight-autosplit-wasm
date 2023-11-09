@@ -305,7 +305,7 @@ impl Split {
         Split::from_str(&s.as_string()?).ok()
     }
     fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
-        Split::from_settings_str(s.dict_get("Split")?)
+        Split::from_settings_str(s.dict_get("Split").unwrap_or(s))
     }
 }
 

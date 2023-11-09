@@ -25,7 +25,7 @@ async fn main() {
     asr::print_message("Hello, World!");
 
     let settings1 = SettingsObject::load();
-    let splits: Vec<splits::Split> = if settings1.dict_get("Splits").is_some() {
+    let splits: Vec<splits::Split> = if settings1.dict_get("Splits").is_some() && false {
         asr::print_message("settings1: from asr::settings::Map::load");
         splits::splits_from_settings(&settings1)
     } else {
@@ -33,7 +33,7 @@ async fn main() {
         let settings2 = XMLSettings::from_xml_string(auto_splitter_settings).unwrap_or_default();
         asr::print_message("settings2: from AutoSplitterSettings.txt");
         let splits2 = splits::splits_from_settings(&settings2);
-        let settings3 = SettingsObject::load_merge_store(&settings2, &["Ordered", "AutosplitStartRuns", "AutosplitEndRuns", "Splits", "Split"]);
+        let settings3 = SettingsObject::load_merge_store(&settings2, &["Ordered", "AutosplitStartRuns", "AutosplitEndRuns", "Splits"], &["Split"]);
         let splits3 = settings3.as_ref().map(splits::splits_from_settings);
         if splits3.as_ref() != Some(&splits2) {
             asr::print_message("BAD: splits3 != splits2");
