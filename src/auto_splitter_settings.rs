@@ -70,15 +70,16 @@ impl Settings for SettingsObject {
 #[derive(Clone, Debug)]
 pub struct XMLSettings {
     children: Vec<XMLNode>,
+    is_list: bool,
 }
 
 impl Default for XMLSettings {
-    fn default() -> Self { XMLSettings { children: vec![] } }
+    fn default() -> Self { XMLSettings { children: vec![], is_list: true } }
 }
 
 impl XMLSettings {
     pub fn from_xml_string(s: &str) -> Result<Self, xmltree::ParseError> {
-        Ok(XMLSettings { children: Element::parse_all(s.as_bytes())? })
+        Ok(XMLSettings { children: Element::parse_all(s.as_bytes())?, is_list: true })
     }
 }
 
@@ -100,10 +101,12 @@ impl Settings for XMLSettings {
     }
 
     fn as_list(&self) -> Option<Vec<Self>> {
+        if !self.is_list { return None; }
         Some(self.children.iter().filter_map(|c| {
             if c.as_element().is_some() {
                 Some(XMLSettings { 
-                    children: vec![c.clone()]
+                    children: vec![c.clone()],
+                    is_list: false,
                 })
             } else {
                 None
@@ -116,7 +119,7 @@ impl Settings for XMLSettings {
         for c in l.into_iter() {
             let e = c.children.first()?.as_element()?;
             if e.name == key {
-                return Some(XMLSettings { children: e.children.clone() });
+                return Some(XMLSettings { children: e.children.clone(), is_list: true });
             }
         }
         None
