@@ -37,7 +37,7 @@ impl SettingsObject {
             None
         }
     }
-    async fn wait_load_merge_store<S: Settings>(new: &S, keys: &[&str], elems: &[&str]) -> SettingsObject {
+    pub async fn wait_load_merge_store<S: Settings>(new: &S, keys: &[&str], elems: &[&str]) -> SettingsObject {
         retry(|| SettingsObject::load_merge_store(new, keys, elems)).await
     }
 }

@@ -39,9 +39,9 @@ async fn main() {
     } else {
         asr::print_message("settings2: from AutoSplitterSettings.txt");
         let splits2 = splits::splits_from_settings(&settings2);
-        let settings3 = SettingsObject::load_merge_store(&settings2, &["Ordered", "AutosplitStartRuns", "AutosplitEndRuns", "Splits"], &["Split"]);
-        let splits3 = settings3.as_ref().map(splits::splits_from_settings);
-        if splits3.as_ref() != Some(&splits2) {
+        let settings3 = SettingsObject::wait_load_merge_store(&settings2, &["Ordered", "AutosplitStartRuns", "AutosplitEndRuns", "Splits"], &["Split"]).await;
+        let splits3 = splits::splits_from_settings(&settings3);
+        if splits3 != splits2 {
             asr::print_message("BAD: splits3 != splits2");
         }
         splits2
