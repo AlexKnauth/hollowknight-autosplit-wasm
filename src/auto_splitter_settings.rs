@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 use asr::future::retry;
-use xmltree::{XMLNode, Element};
+use xmltree::{Element, XMLNode};
 
 pub trait Settings: Sized {
     fn as_string(&self) -> Option<String>;
@@ -19,8 +19,10 @@ impl SettingsObject {
         SettingsObject::Map(asr::settings::Map::load())
     }
     fn as_value(&self) -> Option<&asr::settings::Value> {
-        let SettingsObject::Value(v) = self else { return None; };
-        Some(v)
+        match self {
+            SettingsObject::Value(v) => Some(v),
+            _ => None,
+        }
     }
     fn as_map(&self) -> Option<asr::settings::Map> {
         Some(match self {
@@ -96,7 +98,7 @@ impl Settings for XMLSettings {
         match self.as_string()?.trim() {
             "True" => Some(true),
             "False" => Some(false),
-            _ => None
+            _ => None,
         }
     }
 
@@ -120,7 +122,7 @@ impl Settings for XMLSettings {
                 Some(e) if e.name == key => {
                     return Some(XMLSettings { children: e.children.clone(), is_list: true });
                 },
-                _ => ()
+                _ => (),
             }
         }
         None
