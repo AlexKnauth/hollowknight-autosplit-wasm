@@ -115,11 +115,12 @@ impl Settings for XMLSettings {
     }
 
     fn dict_get(&self, key: &str) -> Option<Self> {
-        let l = self.as_list()?;
-        for c in l.into_iter() {
-            let e = c.children.first()?.as_element()?;
-            if e.name == key {
-                return Some(XMLSettings { children: e.children.clone(), is_list: true });
+        for c in self.children.iter() {
+            match c.as_element() {
+                Some(e) if e.name == key => {
+                    return Some(XMLSettings { children: e.children.clone(), is_list: true });
+                },
+                _ => ()
             }
         }
         None
