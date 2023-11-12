@@ -26,7 +26,7 @@ async fn main() {
 
     let settings1 = SettingsObject::load();
     let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
-    let settings2 = XMLSettings::from_xml_string(auto_splitter_settings).unwrap_or_default();
+    let settings2 = XMLSettings::from_xml_string(auto_splitter_settings, &[("Splits", "Split")]).unwrap_or_default();
     let splits: Vec<splits::Split> = if settings1.dict_get("Splits").is_some() {
         asr::print_message("settings1: from asr::settings::Map::load");
         let splits1 = splits::splits_from_settings(&settings1);

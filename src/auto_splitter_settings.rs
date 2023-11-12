@@ -67,17 +67,28 @@ impl Settings for SettingsObject {
 
 #[derive(Clone, Debug)]
 pub struct XMLSettings {
+    name: Option<String>,
     children: Vec<XMLNode>,
-    is_list: bool,
+    list_items: Vec<(String, String)>,
 }
 
 impl Default for XMLSettings {
-    fn default() -> Self { XMLSettings { children: vec![], is_list: true } }
+    fn default() -> Self { XMLSettings { name: None, children: vec![], list_items: Vec::new() } }
 }
 
 impl XMLSettings {
-    pub fn from_xml_string(s: &str) -> Result<Self, xmltree::ParseError> {
-        Ok(XMLSettings { children: Element::parse_all(s.as_bytes())?, is_list: true })
+    pub fn from_xml_string(s: &str, list_items: &[(&str, &str)]) -> Result<Self, xmltree::ParseError> {
+        let list_items = list_items.into_iter().map(|(l, i)| (l.to_string(), i.to_string())).collect();
+        Ok(XMLSettings { name: None, children: Element::parse_all(s.as_bytes())?, list_items })
+    }
+    fn is_list_get_item_name(&self) -> Option<&str> {
+        let n = self.name.as_deref()?;
+        for (l, i) in self.list_items.iter() {
+            if n == l {
+                return Some(i);
+            }
+        }
+        None
     }
 }
 
@@ -99,15 +110,17 @@ impl Settings for XMLSettings {
     }
 
     fn as_list(&self) -> Option<Vec<Self>> {
-        if !self.is_list { return None; }
+        let i = self.is_list_get_item_name()?;
         Some(self.children.iter().filter_map(|c| {
-            if c.as_element().is_some() {
-                Some(XMLSettings { 
-                    children: vec![c.clone()],
-                    is_list: false,
-                })
-            } else {
-                None
+            match c.as_element() {
+                Some(e) if e.name == i => {
+                    Some(XMLSettings {
+                        name: Some(e.name.clone()),
+                        children: e.children.clone(),
+                        list_items: self.list_items.clone(),
+                    })
+                },
+                _ => None,
             }
         }).collect())
     }
@@ -116,7 +129,11 @@ impl Settings for XMLSettings {
         for c in self.children.iter() {
             match c.as_element() {
                 Some(e) if e.name == key => {
-                    return Some(XMLSettings { children: e.children.clone(), is_list: true });
+                    return Some(XMLSettings {
+                        name: Some(e.name.clone()),
+                        children: e.children.clone(),
+                        list_items: self.list_items.clone(),
+                    });
                 },
                 _ => (),
             }
