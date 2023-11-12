@@ -159,26 +159,10 @@ fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>
         asr::settings::Value::from(b)
     } else if let Some(s) = new.as_string() {
         asr::settings::Value::from(s.as_str())
+    } else if let Some(l) = new.as_list() {
+        asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_list()), l, keys, elems))
     } else {
-        match new.as_list() {
-            Some(l) if new.dict_get("0").is_some()
-                    || elems.iter().any(|e| new.dict_get(e).is_some())
-                    || keys.iter().all(|k| new.dict_get(k).is_none()) => {
-                let l2 = l.into_iter().enumerate().map(|(i, v)| {
-                    if let Some(v2) = v.dict_get(&i.to_string()) {
-                        v2
-                    } else if let Some (v2) = elems.iter().find_map(|e| v.dict_get(e)) {
-                        v2
-                    } else {
-                        v
-                    }
-                }).collect();
-                asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_list()), l2, keys, elems))
-            },
-            _ => {
-                asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), new, keys, elems))
-            },
-        }
+        asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), new, keys, elems))
     }
 }
 
