@@ -24,6 +24,9 @@ impl SettingsObject {
             _ => None,
         }
     }
+    fn as_asr_list(&self) -> Option<asr::settings::List> {
+        self.as_value()?.get_list()
+    }
     fn as_map(&self) -> Option<asr::settings::Map> {
         Some(match self {
             SettingsObject::Map(m) => m.clone(),
@@ -54,14 +57,7 @@ impl Settings for SettingsObject {
     }
 
     fn as_list(&self) -> Option<Vec<Self>> {
-        let m = self.as_map()?;
-        let mut l = Vec::new();
-        for i in 0.. {
-            let k = i.to_string();
-            let Some(v) = m.get(&k) else { break; };
-            l.push(SettingsObject::Value(v));
-        }
-        Some(l)
+        Some(self.as_asr_list()?.iter().map(SettingsObject::Value).collect())
     }
 
     fn dict_get(&self, key: &str) -> Option<Self> {
@@ -148,7 +144,9 @@ fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>
         asr::settings::Value::from(s.as_str())
     } else {
         match new.as_list() {
-            Some(l) if new.dict_get("0").is_some() || elems.iter().any(|e| new.dict_get(e).is_some()) => {
+            Some(l) if new.dict_get("0").is_some()
+                    || elems.iter().any(|e| new.dict_get(e).is_some())
+                    || keys.iter().all(|k| new.dict_get(k).is_none()) => {
                 let l2 = l.into_iter().enumerate().map(|(i, v)| {
                     if let Some(v2) = v.dict_get(&i.to_string()) {
                         v2
@@ -158,7 +156,7 @@ fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>
                         v
                     }
                 }).collect();
-                asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_map()), l2, keys, elems))
+                asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_list()), l2, keys, elems))
             },
             _ => {
                 asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), new, keys, elems))
@@ -167,27 +165,26 @@ fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>
     }
 }
 
-fn is_asr_settings_list_length(m: &asr::settings::Map, n: usize) -> bool {
-    m.get(&n.to_string()).is_none() && (n < 1 || m.get(&(n - 1).to_string()).is_some())
+fn is_asr_settings_list_length(l: &asr::settings::List, n: usize) -> bool {
+    l.len() == n as u64
 }
 
-fn maybe_asr_settings_list_merge<S: Settings>(old: Option<asr::settings::Map>, new: Vec<S>, keys: &[&str], elems: &[&str]) -> asr::settings::Map {
-    let om = if let Some(old_m) = old { old_m } else { asr::settings::Map::new() };
+fn maybe_asr_settings_list_merge<S: Settings>(old: Option<asr::settings::List>, new: Vec<S>, keys: &[&str], elems: &[&str]) -> asr::settings::List {
+    let ol = if let Some(ol) = old { ol } else { asr::settings::List::new() };
     let nn = new.len();
-    if is_asr_settings_list_length(&om, nn) {
+    if is_asr_settings_list_length(&ol, nn) {
         // same length, merge elements
+        let ml = asr::settings::List::new();
         for (i, ne) in new.into_iter().enumerate() {
-            let key = i.to_string();
-            om.insert(&key, &maybe_asr_settings_value_merge(om.get(&key), &ne, keys, elems));
+            ml.push(&maybe_asr_settings_value_merge(ol.get(i as u64), &ne, keys, elems));
         }
-        om
+        ml
     } else {
         // different length, replace the whole thing
-        let mm = asr::settings::Map::new();
-        for (i, ne) in new.into_iter().enumerate() {
-            let key = i.to_string();
-            mm.insert(&key, &maybe_asr_settings_value_merge(None, &ne, keys, elems));
+        let ml = asr::settings::List::new();
+        for ne in new.into_iter() {
+            ml.push(&maybe_asr_settings_value_merge(None, &ne, keys, elems));
         }
-        mm
+        ml
     }
 }
