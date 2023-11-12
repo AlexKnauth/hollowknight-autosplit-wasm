@@ -1,3 +1,4 @@
+use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 use asr::future::retry;
 use xmltree::{Element, XMLNode};
@@ -6,6 +7,7 @@ pub trait Settings: Sized {
     fn as_string(&self) -> Option<String>;
     fn as_bool(&self) -> Option<bool>;
     fn as_list(&self) -> Option<Vec<Self>>;
+    fn as_dict(&self) -> Option<BTreeMap<String, Self>>;
     fn dict_get(&self, key: &str) -> Option<Self>;
 }
 
@@ -58,6 +60,10 @@ impl Settings for SettingsObject {
 
     fn as_list(&self) -> Option<Vec<Self>> {
         Some(self.as_asr_list()?.iter().map(SettingsObject::Value).collect())
+    }
+
+    fn as_dict(&self) -> Option<BTreeMap<String, Self>> {
+        Some(self.as_map()?.iter().map(|(k, v)| (k, SettingsObject::Value(v))).collect())
     }
 
     fn dict_get(&self, key: &str) -> Option<Self> {
@@ -122,6 +128,17 @@ impl Settings for XMLSettings {
                 },
                 _ => None,
             }
+        }).collect())
+    }
+
+    fn as_dict(&self) -> Option<BTreeMap<String, Self>> {
+        Some(self.children.iter().filter_map(|c| -> Option<(String, Self)> {
+            let e = c.as_element()?;
+            Some((e.name.clone(), XMLSettings {
+                name: Some(e.name.clone()),
+                children: e.children.clone(),
+                list_items: self.list_items.clone(),
+            }))
         }).collect())
     }
 
