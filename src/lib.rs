@@ -1,11 +1,15 @@
 // #![no_std]
 
+extern crate alloc;
+
+mod auto_splitter_settings;
 mod hollow_knight_memory;
 mod splits;
 
 use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
+use auto_splitter_settings::{XMLSettings, SettingsObject, Settings};
 use hollow_knight_memory::*;
 
 asr::async_main!(stable);
@@ -20,7 +24,31 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
-    let splits: Vec<splits::Split> = serde_json::from_str(include_str!("splits.json")).ok().unwrap_or_else(splits::default_splits);
+    let settings1 = SettingsObject::load();
+    let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
+    let settings2 = XMLSettings::from_xml_string(auto_splitter_settings, &[("Splits", "Split")]).unwrap_or_default();
+    let splits: Vec<splits::Split> = if settings1.dict_get("Splits").is_some() {
+        asr::print_message("settings1: from asr::settings::Map::load");
+        let splits1 = splits::splits_from_settings(&settings1);
+        let splits2 = splits::splits_from_settings(&settings2);
+        if splits2 != splits1 {
+            asr::print_message("WARNING: splits from asr::settings::Map::load differ from AutoSplitterSettings.txt");
+            asr::print_message("assuming AutoSplitterSettings.txt is out of date, using asr::settings::Map::load");
+        }
+        splits1
+    } else {
+        asr::print_message("settings2: from AutoSplitterSettings.txt");
+        let splits2 = splits::splits_from_settings(&settings2);
+        let settings3 = SettingsObject::wait_load_merge_store(&settings2).await;
+        let splits3 = splits::splits_from_settings(&settings3);
+        if splits3 != splits2 {
+            asr::print_message("BAD: splits3 != splits2");
+        }
+        splits2
+    };
+     
+    asr::print_message(&format!("splits: {:?}", splits));
+
     let auto_reset = splits::auto_reset_safe(&splits);
 
     loop {

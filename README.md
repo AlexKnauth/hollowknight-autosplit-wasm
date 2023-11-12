@@ -73,7 +73,7 @@ general:
 ```
 where you replace `<path-to-splits.lss>` with the path to your splits file, and you replace `<path-to-wasm_hollowknight_autosplit.wasm>` with a path to the compiled `wasm` file found at `target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm` of this repository.
 
-If you're running anything other than the specific placeholder splits in the `src/splits.json` file of this repository, you should modify that file to have the splits you want, in the order you want, and then re-compile this repository with
+If you're running anything other than the specific placeholder splits in the `src/AutoSplitterSettings.txt` file of this repository, you should modify that file to have the splits you want, in the order you want, and then re-compile this repository with
 ```sh
 cargo b
 ```

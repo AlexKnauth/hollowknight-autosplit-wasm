@@ -1,7 +1,10 @@
+use std::str::FromStr;
+
 use asr::Process;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
 
+use super::auto_splitter_settings::Settings;
 use super::hollow_knight_memory::*;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -288,6 +291,22 @@ pub enum Split {
     SheoPaintmaster,
     SlyNailsage,
     PureVessel,
+}
+
+impl FromStr for Split {
+    type Err = serde_json::Error;
+    fn from_str(s: &str) -> Result<Split, serde_json::Error> {
+        serde_json::value::from_value(serde_json::Value::String(s.to_string()))
+    }
+}
+
+impl Split {
+    fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
+        Split::from_str(&s.as_string()?).ok()
+    }
+    fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
+        Split::from_settings_str(s.dict_get("Split").unwrap_or(s))
+    }
 }
 
 pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
@@ -611,4 +630,33 @@ pub fn auto_reset_safe(s: &[Split]) -> bool {
     s.first() == Some(&Split::StartNewGame)
     && !s[1..].contains(&Split::StartNewGame)
     && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
+}
+
+pub fn splits_from_settings<S: Settings>(s: &S) -> Vec<Split> {
+    let maybe_ordered = s.dict_get("Ordered");
+    let maybe_start = s.dict_get("AutosplitStartRuns");
+    let maybe_end = s.dict_get("AutosplitEndRuns");
+    let maybe_splits = s.dict_get("Splits");
+    if maybe_ordered.is_some() || maybe_start.is_some() || maybe_end.is_some() {
+        // Splits files from up through version 3 of ShootMe/LiveSplit.HollowKnight
+        let start = maybe_start.and_then(Split::from_settings_str).unwrap_or(Split::StartNewGame);
+        let end = maybe_end.and_then(|s| s.as_bool()).unwrap_or_default();
+        let mut result = vec![start];
+        if let Some(splits) = maybe_splits {
+            result.append(&mut splits_from_settings_split_list(&splits));
+        }
+        if !end {
+            result.push(Split::EndingSplit);
+        }
+        result
+    } else if let Some(splits) = maybe_splits {
+        // Splits files from after version 4 of mayonnaisical/LiveSplit.HollowKnight
+        splits_from_settings_split_list(&splits)
+    } else {
+        default_splits()
+    }
+}
+
+fn splits_from_settings_split_list<S: Settings>(s: &S) -> Vec<Split> {
+    s.as_list().unwrap_or_default().into_iter().filter_map(Split::from_settings_split).collect()
 }
