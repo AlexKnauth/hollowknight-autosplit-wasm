@@ -1,4 +1,4 @@
-use alloc::collections::BTreeMap;
+use alloc::collections::{BTreeMap, BTreeSet};
 use alloc::vec::Vec;
 use asr::future::retry;
 use xmltree::{Element, XMLNode};
@@ -35,17 +35,17 @@ impl SettingsObject {
             SettingsObject::Value(v) => v.get_map()?,
         })
     }
-    pub fn load_merge_store<S: Settings>(new: &S, keys: &[&str]) -> Option<SettingsObject> {
+    pub fn load_merge_store<S: Settings>(new: &S) -> Option<SettingsObject> {
         let old = asr::settings::Map::load();
-        let merged = maybe_asr_settings_map_merge(Some(old.clone()), new, keys);
+        let merged = maybe_asr_settings_map_merge(Some(old.clone()), new);
         if merged.store_if_unchanged(&old) {
             Some(SettingsObject::Map(merged))
         } else {
             None
         }
     }
-    pub async fn wait_load_merge_store<S: Settings>(new: &S, keys: &[&str]) -> SettingsObject {
-        retry(|| SettingsObject::load_merge_store(new, keys)).await
+    pub async fn wait_load_merge_store<S: Settings>(new: &S) -> SettingsObject {
+        retry(|| SettingsObject::load_merge_store(new)).await
     }
 }
 
@@ -161,25 +161,29 @@ impl Settings for XMLSettings {
 
 // --------------------------------------------------------
 
-fn maybe_asr_settings_map_merge<S: Settings>(old: Option<asr::settings::Map>, new: &S, keys: &[&str]) -> asr::settings::Map {
+fn maybe_asr_settings_map_merge<S: Settings>(old: Option<asr::settings::Map>, new: &S) -> asr::settings::Map {
     let om = if let Some(om) = old { om } else { asr::settings::Map::new() };
+    let mut keys: BTreeSet<String> = om.keys().collect();
+    if let Some(nm) = new.as_dict() {
+        keys.extend(nm.into_keys());
+    }
     for key in keys {
-        if let Some(new_v) = new.dict_get(key) {
-            om.insert(key, &maybe_asr_settings_value_merge(om.get(key), &new_v, keys));
+        if let Some(new_v) = new.dict_get(&key) {
+            om.insert(&key, &maybe_asr_settings_value_merge(om.get(&key), &new_v));
         }
     }
     om
 }
 
-fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>, new: &S, keys: &[&str]) -> asr::settings::Value {
+fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>, new: &S) -> asr::settings::Value {
     if let Some(b) = new.as_bool() {
         asr::settings::Value::from(b)
     } else if let Some(s) = new.as_string() {
         asr::settings::Value::from(s.as_str())
     } else if let Some(l) = new.as_list() {
-        asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_list()), l, keys))
+        asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_list()), l))
     } else {
-        asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), new, keys))
+        asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), new))
     }
 }
 
@@ -187,21 +191,21 @@ fn is_asr_settings_list_length(l: &asr::settings::List, n: usize) -> bool {
     l.len() == n as u64
 }
 
-fn maybe_asr_settings_list_merge<S: Settings>(old: Option<asr::settings::List>, new: Vec<S>, keys: &[&str]) -> asr::settings::List {
+fn maybe_asr_settings_list_merge<S: Settings>(old: Option<asr::settings::List>, new: Vec<S>) -> asr::settings::List {
     let ol = if let Some(ol) = old { ol } else { asr::settings::List::new() };
     let nn = new.len();
     if is_asr_settings_list_length(&ol, nn) {
         // same length, merge elements
         let ml = asr::settings::List::new();
         for (i, ne) in new.into_iter().enumerate() {
-            ml.push(&maybe_asr_settings_value_merge(ol.get(i as u64), &ne, keys));
+            ml.push(&maybe_asr_settings_value_merge(ol.get(i as u64), &ne));
         }
         ml
     } else {
         // different length, replace the whole thing
         let ml = asr::settings::List::new();
         for ne in new.into_iter() {
-            ml.push(&maybe_asr_settings_value_merge(None, &ne, keys));
+            ml.push(&maybe_asr_settings_value_merge(None, &ne));
         }
         ml
     }
