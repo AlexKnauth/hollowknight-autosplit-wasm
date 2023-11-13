@@ -1,4 +1,87 @@
-use asr::settings::gui::{add_bool, add_title, Gui, Title, Widget};
+use alloc::collections::BTreeMap;
+
+use asr::settings::gui::{add_bool, add_title, Gui, Title, Widget, set_tooltip};
+
+#[derive(Clone)]
+struct RadioButtonOption {
+    key: String,
+    description: String,
+    tooltip: Option<String>,
+}
+
+impl RadioButtonOption {
+    fn bool_key(&self, key: &str) -> String {
+        format!("{}_{}", key, self.key)
+    }
+}
+
+#[derive(Clone, Default)]
+pub struct RadioButtonArgs {
+    heading_level: u32,
+    options: Vec<RadioButtonOption>,
+    default: String,
+}
+
+pub struct RadioButton(String);
+
+impl RadioButton {
+    fn from_bool_map(bool_map: &BTreeMap<String, bool>) -> Option<Self> {
+        let trues: Vec<&String> = bool_map.into_iter().filter_map(|(k, &v)| {
+            if v { Some(k) } else { None }
+        }).collect();
+        match &trues[..] {
+            [t] => Some(RadioButton(t.to_string())),
+            _ => None,
+        }
+    }
+}
+
+impl Widget for RadioButton {
+    type Args = RadioButtonArgs;
+
+    fn register(key: &str, description: &str, args: Self::Args) -> Self {
+        add_title(key, description, args.heading_level);
+        let bool_map: BTreeMap<String, bool> = args.options.into_iter().map(|o| {
+            let bool_key = o.bool_key(key);
+            let b = add_bool(&bool_key, &o.description, o.key == args.default);
+            if let Some(t) = o.tooltip {
+                set_tooltip(&bool_key, &t);
+            }
+            (o.key, b)
+        }).collect();
+        RadioButton::from_bool_map(&bool_map).unwrap_or(RadioButton(args.default))
+    }
+
+    fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
+        let old = settings_map.get(key).and_then(|v| v.get_string()).unwrap_or(args.default.to_string());
+        let new_bools: Vec<(&String, bool)> = args.options.iter().filter_map(|o| {
+            let bool_key = o.bool_key(key);
+            let old_b = old == o.key;
+            let map_b = settings_map.get(&bool_key).and_then(|v| v.get_bool()).unwrap_or_default();
+            if map_b != old_b {
+                Some((&o.key, map_b))
+            } else {
+                None
+            }
+        }).collect();
+        let new = match &new_bools[..] {
+            [(v, true)] => v.to_string(),
+            [(_, false)] => args.default,
+            _ => old.to_string(),
+        };
+        if new != old {
+            asr::print_message(&new);
+        }
+        settings_map.insert(key, &new.as_str().into());
+        for o in args.options {
+            let bool_key = o.bool_key(key);
+            let new_b = new == o.key;
+            settings_map.insert(&bool_key, &new_b.into());
+        }
+        self.0 = new;
+        settings_map.store();
+    }
+}
 
 // #[derive(Gui)]
 #[derive(Clone, Default, PartialEq)]
@@ -19,38 +102,6 @@ pub enum ListItemAction {
 }
 
 impl ListItemAction {
-    fn from_bools(bools: (bool, bool, bool, bool, bool, bool)) -> Self {
-        match bools {
-            (false, true, false, false, false, false) => ListItemAction::Remove,
-            (false, false, true, false, false, false) => ListItemAction::MoveBefore,
-            (false, false, false, true, false, false) => ListItemAction::MoveAfter,
-            (false, false, false, false, true, false) => ListItemAction::InsertBefore,
-            (false, false, false, false, false, true) => ListItemAction::InsertAfter,
-            _ => ListItemAction::None,
-        }
-    }
-    fn to_bools(&self) -> (bool, bool, bool, bool, bool, bool) {
-        match self {
-            ListItemAction::Remove => (false, true, false, false, false, false),
-            ListItemAction::MoveBefore => (false, false, true, false, false, false),
-            ListItemAction::MoveAfter => (false, false, false, true, false, false),
-            ListItemAction::InsertBefore => (false, false, false, false, true, false),
-            ListItemAction::InsertAfter => (false, false, false, false, false, true),
-            ListItemAction::None => (true, false, false, false, false, false),
-        }
-    }
-
-    fn bool_keys(key: &str) -> (String, String, String, String, String, String) {
-        (
-            format!("{}_none", key),
-            format!("{}_remove", key),
-            format!("{}_move_before", key),
-            format!("{}_move_after", key),
-            format!("{}_insert_before", key),
-            format!("{}_insert_after", key),
-        )
-    }
-
     fn to_string(&self) -> String {
         match self {
             ListItemAction::None => "None",
@@ -73,69 +124,45 @@ impl ListItemAction {
             _ => None,
         }
     }
-
-    fn from_settings_value(v: asr::settings::Value) -> Option<Self> {
-        ListItemAction::from_string(v.get_string()?.as_str())
-    }
 }
 
 #[derive(Default)]
 #[non_exhaustive]
 pub struct ListItemActionArgs {
+    heading_level: u32,
     /// The default value of the setting, in case the user didn't set it yet.
     pub default: ListItemAction,
+}
+
+impl ListItemActionArgs {
+    fn radio_button_args(&self) -> RadioButtonArgs {
+        RadioButtonArgs {
+            heading_level: self.heading_level,
+            options: vec![
+                RadioButtonOption { key: "None".to_string(), description: "None".to_string(), tooltip: None },
+                RadioButtonOption { key: "Remove".to_string(), description: "Remove".to_string(), tooltip: None },
+                RadioButtonOption { key: "MoveBefore".to_string(), description: "Move before".to_string(), tooltip: None },
+                RadioButtonOption { key: "MoveAfter".to_string(), description: "Move after".to_string(), tooltip: None },
+                RadioButtonOption { key: "InsertBefore".to_string(), description: "Insert before".to_string(), tooltip: None },
+                RadioButtonOption { key: "InsertAfter".to_string(), description: "Insert after".to_string(), tooltip: None },
+            ],
+            default: self.default.to_string(),
+        }
+    }
 }
 
 impl Widget for ListItemAction {
     type Args = ListItemActionArgs;
 
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
-        add_title(key, description, 1);
-        let (key_none, key_remove, key_move_before, key_move_after, key_insert_before, key_insert_after) = ListItemAction::bool_keys(key);
-        let is_none = add_bool(&key_none, "None", args.default == ListItemAction::None);
-        let is_remove = add_bool(&key_remove, "Remove", args.default == ListItemAction::Remove);
-        let is_move_before = add_bool(&key_move_before, "Move before", args.default == ListItemAction::MoveBefore);
-        let is_move_after = add_bool(&key_move_after, "Move after", args.default == ListItemAction::MoveAfter);
-        let is_insert_before = add_bool(&key_insert_before, "Insert before", args.default == ListItemAction::InsertBefore);
-        let is_insert_after = add_bool(&key_insert_after, "Insert after", args.default == ListItemAction::InsertAfter);
-        ListItemAction::from_bools((is_none, is_remove, is_move_before, is_move_after, is_insert_before, is_insert_after))
+        let rb = RadioButton::register(key, description, args.radio_button_args());
+        ListItemAction::from_string(&rb.0).unwrap_or(args.default)
     }
 
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
-        let (key_none, key_remove, key_move_before, key_move_after, key_insert_before, key_insert_after) = ListItemAction::bool_keys(key);
-        let old = settings_map.get(key).and_then(ListItemAction::from_settings_value).unwrap_or(args.default);
-        let (old_none, old_remove, old_move_before, old_move_after, old_insert_before, old_insert_after) = old.to_bools();
-        let map_none = settings_map.get(&key_none).and_then(|v| v.get_bool()).unwrap_or_default();
-        let map_remove = settings_map.get(&key_remove).and_then(|v| v.get_bool()).unwrap_or_default();
-        let map_move_before = settings_map.get(&key_move_before).and_then(|v| v.get_bool()).unwrap_or_default();
-        let map_move_after = settings_map.get(&key_move_after).and_then(|v| v.get_bool()).unwrap_or_default();
-        let map_insert_before = settings_map.get(&key_insert_before).and_then(|v| v.get_bool()).unwrap_or_default();
-        let map_insert_after = settings_map.get(&key_insert_after).and_then(|v| v.get_bool()).unwrap_or_default();
-        let new1_none = map_none && !old_none;
-        let new1_remove = map_remove && !old_remove;
-        let new1_move_before = map_move_before && !old_move_before;
-        let new1_move_after = map_move_after && !old_move_after;
-        let new1_insert_before = map_insert_before && !old_insert_before;
-        let new1_insert_after = map_insert_after && !old_insert_after;
-        let new = if new1_none || new1_remove || new1_move_before || new1_move_after || new1_insert_before || new1_insert_after {
-            ListItemAction::from_bools((new1_none, new1_remove, new1_move_before, new1_move_after, new1_insert_before, new1_insert_after))
-        } else {
-            old.clone()
-        };
-        if new != old {
-            asr::print_message(&new.to_string());
-        }
-        let new_string = new.to_string();
-        let (new2_none, new2_remove, new2_move_before, new2_move_after, new2_insert_before, new2_insert_after) = new.to_bools();
-        *self = new;
-        settings_map.insert(key, &new_string.as_str().into());
-        settings_map.insert(&key_none, &new2_none.into());
-        settings_map.insert(&key_remove, &new2_remove.into());
-        settings_map.insert(&key_move_before, &new2_move_before.into());
-        settings_map.insert(&key_move_after, &new2_move_after.into());
-        settings_map.insert(&key_insert_before, &new2_insert_before.into());
-        settings_map.insert(&key_insert_after, &new2_insert_after.into());
-        settings_map.store();
+        let mut rb = RadioButton(self.to_string());
+        rb.update_from(settings_map, key, args.radio_button_args());
+        *self =  ListItemAction::from_string(&rb.0).unwrap_or(args.default);
     }
 }
 
@@ -146,5 +173,6 @@ pub struct ListItemActionGui {
     /// Choose an Action
     /// 
     /// This is a tooltip.
+    #[heading_level = 1]
     lia: ListItemAction,
 }
