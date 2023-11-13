@@ -7,6 +7,7 @@ mod combo_box;
 mod hollow_knight_memory;
 mod radio_button;
 mod splits;
+mod ugly_list;
 
 use asr::settings::Gui;
 use asr::{future::next_tick, Process};

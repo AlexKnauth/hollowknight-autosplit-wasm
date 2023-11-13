@@ -1,5 +1,7 @@
 use asr::settings::gui::{Gui, Title};
 
+use crate::ugly_list::UglyList;
+
 use super::radio_button::{RadioButton, RadioButtonOption, RadioButtonOptions};
 
 // #[derive(Gui)]
@@ -37,6 +39,8 @@ impl RadioButtonOptions for ListItemAction {
 pub struct ListItemActionGui {
     /// General Settings
     _general_settings: Title,
+    /// An Ugly List
+    aul: UglyList<Title>,
     /// Choose an Action
     /// 
     /// This is a tooltip.

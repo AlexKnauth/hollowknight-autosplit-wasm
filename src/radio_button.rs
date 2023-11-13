@@ -1,7 +1,19 @@
 
 use alloc::collections::BTreeMap;
 
-use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
+use asr::settings::gui::{add_bool, add_title, set_tooltip, TitleArgs, Widget};
+
+// --------------------------------------------------------
+
+pub trait SetHeadingLevel {
+    fn set_heading_level(&mut self, heading_level: u32);
+}
+
+impl SetHeadingLevel for TitleArgs {
+    fn set_heading_level(&mut self, heading_level: u32) {
+        self.heading_level = heading_level;
+    }
+}
 
 // --------------------------------------------------------
 
@@ -18,6 +30,12 @@ pub struct RadioButtonOption<'a, T> {
 pub struct RadioButtonArgs<'a> {
     pub heading_level: u32,
     pub default: &'a str,
+}
+
+impl SetHeadingLevel for RadioButtonArgs<'_> {
+    fn set_heading_level(&mut self, heading_level: u32) {
+        self.heading_level = heading_level;
+    }
 }
 
 pub trait RadioButtonOptions: Default + PartialEq {
