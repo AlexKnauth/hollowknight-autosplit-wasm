@@ -5,6 +5,7 @@ extern crate alloc;
 mod auto_splitter_settings;
 mod combo_box;
 mod hollow_knight_memory;
+mod radio_button;
 mod splits;
 
 use asr::settings::Gui;
