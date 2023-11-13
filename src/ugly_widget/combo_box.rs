@@ -1,6 +1,6 @@
 use asr::settings::gui::{Gui, Title};
 
-use crate::ugly_list::UglyList;
+use crate::ugly_widget::ugly_list::UglyList;
 
 use super::radio_button::{RadioButton, RadioButtonOption, RadioButtonOptions};
 

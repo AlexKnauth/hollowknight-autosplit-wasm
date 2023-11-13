@@ -5,7 +5,7 @@ use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
-use crate::radio_button::SetHeadingLevel;
+use crate::ugly_widget::radio_button::SetHeadingLevel;
 
 // --------------------------------------------------------
 
