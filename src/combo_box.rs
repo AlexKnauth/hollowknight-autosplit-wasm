@@ -128,13 +128,17 @@ impl ListItemAction {
 
 #[derive(Default)]
 #[non_exhaustive]
-pub struct ListItemActionArgs {
+pub struct ListItemActionArgs<'a> {
     heading_level: u32,
     /// The default value of the setting, in case the user didn't set it yet.
-    pub default: ListItemAction,
+    pub default: &'a str,
 }
 
-impl ListItemActionArgs {
+impl ListItemActionArgs<'_> {
+    fn default_value(&self) -> ListItemAction {
+        ListItemAction::from_string(self.default).unwrap_or_default()
+    }
+    
     fn radio_button_args(&self) -> RadioButtonArgs {
         RadioButtonArgs {
             heading_level: self.heading_level,
@@ -146,23 +150,23 @@ impl ListItemActionArgs {
                 RadioButtonOption { key: "InsertBefore".to_string(), description: "Insert before".to_string(), tooltip: None },
                 RadioButtonOption { key: "InsertAfter".to_string(), description: "Insert after".to_string(), tooltip: None },
             ],
-            default: self.default.to_string(),
+            default: self.default_value().to_string(),
         }
     }
 }
 
 impl Widget for ListItemAction {
-    type Args = ListItemActionArgs;
+    type Args = ListItemActionArgs<'static>;
 
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
         let rb = RadioButton::register(key, description, args.radio_button_args());
-        ListItemAction::from_string(&rb.0).unwrap_or(args.default)
+        ListItemAction::from_string(&rb.0).unwrap_or_else(|| args.default_value())
     }
 
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
         let mut rb = RadioButton(self.to_string());
         rb.update_from(settings_map, key, args.radio_button_args());
-        *self =  ListItemAction::from_string(&rb.0).unwrap_or(args.default);
+        *self =  ListItemAction::from_string(&rb.0).unwrap_or_else(|| args.default_value())
     }
 }
 
