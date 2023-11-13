@@ -7,10 +7,12 @@ mod combo_box;
 mod hollow_knight_memory;
 mod splits;
 
+use asr::settings::Gui;
 use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
 use auto_splitter_settings::{XMLSettings, SettingsObject, Settings};
+use combo_box::ListItemActionGui;
 use hollow_knight_memory::*;
 
 asr::async_main!(stable);
@@ -52,8 +54,10 @@ async fn main() {
 
     let auto_reset = splits::auto_reset_safe(&splits);
 
+    let mut gui = ListItemActionGui::register();
+
     loop {
-        let process = wait_attach_hollow_knight().await;
+        let process = wait_attach_hollow_knight(&mut gui).await;
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
@@ -91,6 +95,8 @@ async fn main() {
                     }
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
+
+                    gui.update();
 
                     next_tick().await;
                 }
