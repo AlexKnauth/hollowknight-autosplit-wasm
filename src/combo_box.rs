@@ -34,8 +34,10 @@ pub struct RadioButtonOptionsArgs<'a> {
     default: &'a str,
 }
 
-fn default_value<'a, T: RadioButtonOptions>(o: RadioButtonOptionsArgs<'a>) -> T {
-    T::from_str(o.default).unwrap_or_default()
+impl RadioButtonOptionsArgs<'_> {
+    fn default_value<T: RadioButtonOptions>(&self) -> T {
+        T::from_str(self.default).unwrap_or_default()
+    }
 }
 
 trait RadioButtonOptions: ToString + FromStr + Default {
@@ -70,7 +72,7 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
 
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
         add_title(key, description, args.heading_level);
-        let default = default_value::<T>(args);
+        let default = args.default_value::<T>();
         let default_s = default.to_string();
         let bool_map: BTreeMap<&str, bool> = T::radio_button_options().into_iter().map(|o| {
             let bool_key = o.bool_key(key);
@@ -84,7 +86,7 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
     }
 
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
-        let default = default_value::<T>(args);
+        let default = args.default_value::<T>();
         let default_s = default.to_string();
         let old = settings_map.get(key).and_then(|v| v.get_string()).unwrap_or(default_s.clone());
         let new_bools: Vec<(&str, bool)> = T::radio_button_options().iter().filter_map(|o| {
