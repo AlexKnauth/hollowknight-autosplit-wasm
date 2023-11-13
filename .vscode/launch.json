@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Auto Splitter",
+			// Install the asr-debugger with:
+			// cargo install --locked --git https://github.com/LiveSplit/asr-debugger
+            "program": "asr-debugger",
+            "args": [
+                "target${pathSeparator}wasm32-wasi${pathSeparator}debug${pathSeparator}wasm_hollowknight_autosplit.wasm"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

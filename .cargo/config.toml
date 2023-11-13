@@ -7,7 +7,7 @@ rustflags = [
 
 [alias]
 # Alias for building an optimized version of the auto splitter.
-# Command: cargo b
-b = [
+# Command: cargo release
+release = [
     "build", "--release",
 ]

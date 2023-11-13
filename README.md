@@ -14,7 +14,7 @@ rustup target add wasm32-wasi --toolchain stable
 
 The auto splitter can now be compiled:
 ```sh
-cargo b
+cargo release
 ```
 
 The auto splitter is then available at:
@@ -24,9 +24,26 @@ target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm
 
 Make sure too look into the [API documentation](https://livesplit.org/asr/asr/) for the `asr` crate.
 
-You can use the [debugger](https://github.com/CryZe/asr-debugger) while
+You can use the [debugger](https://github.com/LiveSplit/asr-debugger) while
 developing the auto splitter to more easily see the log messages, statistics,
-dump memory and more.
+dump memory, step through the code and more.
+
+The repository comes with preconfigured Visual Studio Code tasks. During
+development it is recommended to use the `Debug` launch action to run the
+`asr-debugger`. You need to install the `CodeLLDB` extension to run it.
+
+You can then use the `Build Auto Splitter (Debug)` task to manually build the
+auto splitter. This will automatically hot reload the auto splitter in the
+`asr-debugger`.
+
+Alternatively you can install the [`cargo
+watch`](https://github.com/watchexec/cargo-watch?tab=readme-ov-file#install)
+subcommand and run the `Watch Auto Splitter` task for it to automatically build
+when you save your changes.
+
+The debugger is able to step through the code. You can set breakpoints in VSCode
+and it should stop there when the breakpoint is hit. Inspecting variables
+currently does not work all the time.
 
 ## Instructions for LiveSplit Windows
 

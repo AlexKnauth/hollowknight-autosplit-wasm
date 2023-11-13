@@ -27,7 +27,7 @@ jobs:
 
       - name: Build
         run: |
-          cargo b --locked
+          cargo release --locked
 
       - name: Release
         if: github.ref == 'refs/heads/master'

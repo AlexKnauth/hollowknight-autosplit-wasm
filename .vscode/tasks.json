@@ -9,19 +9,32 @@
 				"$rust-panic"
 			],
 			"group": "build",
-			"label": "Build Auto Splitter"
+			"label": "Build Auto Splitter (Debug)"
 		},
 		{
-			"label": "Debug Auto Splitter",
-			"type": "process",
-			"problemMatcher": [],
-			// Install the asr-debugger with:
-			// cargo install --locked --git https://github.com/CryZe/asr-debugger
-			"command": "asr-debugger",
-			"args": [
-				"target${pathSeparator}wasm32-wasi${pathSeparator}release${pathSeparator}wasm_hollowknight_autosplit.wasm",
+			"type": "cargo",
+			"command": "release",
+			"problemMatcher": [
+				"$rustc",
+				"$rust-panic"
 			],
-			"dependsOn": "Build Auto Splitter"
-		}
+			"group": "build",
+			"label": "Build Auto Splitter (Release)"
+		},
+		{
+			"type": "cargo",
+			// Install the `cargo watch` subcommand from here:
+			// https://github.com/watchexec/cargo-watch?tab=readme-ov-file#install
+			"command": "watch",
+			"args": [
+				"-x",
+				"b"
+			],
+			"problemMatcher": [
+				"$rustc",
+				"$rust-panic"
+			],
+			"label": "Watch Auto Splitter"
+		},
 	]
 }
