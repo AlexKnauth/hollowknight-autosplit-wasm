@@ -46,27 +46,6 @@ trait RadioButtonOptions: ToString + FromStr + Default {
 
 struct RadioButton<T>(T);
 
-impl<T: Default> Default for RadioButton<T> {
-    fn default() -> Self {
-        RadioButton(T::default())
-    }
-}
-
-impl<T: ToString> ToString for RadioButton<T> {
-    fn to_string(&self) -> String {
-        self.0.to_string()
-    }
-}
-
-impl<T: FromStr> FromStr for RadioButton<T> {
-    type Err = T::Err;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(RadioButton(T::from_str(s)?))
-    }
-}
-
-
-
 impl<T: RadioButtonOptions> Widget for RadioButton<T> {
     type Args = RadioButtonOptionsArgs<'static>;
 
@@ -82,7 +61,7 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
             }
             (o.key, b)
         }).collect();
-        Self::from_str(single_from_bool_map(&bool_map).unwrap_or(&default_s)).unwrap_or(RadioButton(default))
+        RadioButton(T::from_str(single_from_bool_map(&bool_map).unwrap_or(&default_s)).unwrap_or(default))
     }
 
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
