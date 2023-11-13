@@ -29,12 +29,12 @@ impl RadioButtonOption<'_> {
 
 #[derive(Default)]
 #[non_exhaustive]
-pub struct RadioButtonOptionsArgs<'a> {
+pub struct RadioButtonArgs<'a> {
     heading_level: u32,
     default: &'a str,
 }
 
-impl RadioButtonOptionsArgs<'_> {
+impl RadioButtonArgs<'_> {
     fn default_value<T: RadioButtonOptions>(&self) -> T {
         T::from_str(self.default).unwrap_or_default()
     }
@@ -47,7 +47,7 @@ trait RadioButtonOptions: ToString + FromStr + Default {
 struct RadioButton<T>(T);
 
 impl<T: RadioButtonOptions> Widget for RadioButton<T> {
-    type Args = RadioButtonOptionsArgs<'static>;
+    type Args = RadioButtonArgs<'static>;
 
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
         add_title(key, description, args.heading_level);
