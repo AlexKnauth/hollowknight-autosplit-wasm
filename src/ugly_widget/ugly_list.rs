@@ -1,15 +1,18 @@
 
 use core::cmp::max;
 
+use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
 use crate::ugly_widget::radio_button::SetHeadingLevel;
 
+use super::{radio_button::{RadioButton, RadioButtonArgs}, combo_box::ListItemAction};
+
 // --------------------------------------------------------
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 #[non_exhaustive]
 pub struct UglyListArgs {
     pub heading_level: u32,
@@ -21,37 +24,147 @@ impl SetHeadingLevel for UglyListArgs {
     }
 }
 
-pub struct UglyList<T>(Vec<T>);
+struct UglyListItem<T> {
+    item: T,
+    action: RadioButton<ListItemAction>,
+}
+
+impl<T: Widget> Widget for UglyListItem<T> where T::Args: SetHeadingLevel {
+    type Args = UglyListArgs;
+
+    fn register(key: &str, description: &str, args: Self::Args) -> Self {
+        add_title(key, description, args.heading_level + 1);
+        let key_item = format!("{}_item", key);
+        let mut t_args = T::Args::default();
+        t_args.set_heading_level(args.heading_level + 2);
+        let item = T::register(&key_item, "", t_args);
+        let key_action = format!("{}_action", key);
+        let mut rb_args = RadioButtonArgs::default();
+        rb_args.set_heading_level(args.heading_level + 2);
+        let action = RadioButton::register(&key_action, "Action", rb_args);
+        UglyListItem { item, action }
+    }
+
+    fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
+        let key_item = format!("{}_item", key);
+        let mut t_args = T::Args::default();
+        t_args.set_heading_level(args.heading_level + 1);
+        self.item.update_from(settings_map, &key_item, t_args);
+        let key_action = format!("{}_action", key);
+        let mut rb_args = RadioButtonArgs::default();
+        rb_args.set_heading_level(args.heading_level + 1);
+        self.action.update_from(settings_map, &key_action, rb_args);
+    }
+}
+
+pub struct UglyList<T> {
+    len: usize,
+    ulis: Vec<UglyListItem<T>>,
+}
+
+impl<T> UglyList<T> {
+    fn get_list(&self) -> Vec<&T> {
+        self.ulis[0..self.len].iter().map(|uli| &uli.item).collect()
+    }
+}
 
 impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
     type Args = UglyListArgs;
 
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
         add_title(key, description, args.heading_level);
-        add_bool(&format!("{}_insert_0", key), "Insert 0", false);
-        UglyList(vec![])
+        add_bool(&format!("{}_insert_0", key), "Insert at 0", false);
+        UglyList { len: 0, ulis: vec![] }
     }
 
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
-        let len_old = settings_map.get(&format!("{}_len", key)).and_then(|v| v.get_i64()).unwrap_or(0);
-        let cap_old = settings_map.get(&format!("{}_cap", key)).and_then(|v| v.get_i64()).unwrap_or(0);
-        let insert_0 = settings_map.get(&format!("{}_insert_0", key)).and_then(|v| v.get_bool()).unwrap_or(false);
-        let len_new = if insert_0 {
-            asr::print_message("insert_0");
-            len_old + 1
-        } else {
-            len_old
-        };
-        let cap_new = max(cap_old, len_new);
-        for i in cap_old..cap_new {
-            add_title(&format!("{}_{}", key, i), &format!("Item {}", i), args.heading_level + 1);
-            let mut t_args = T::Args::default();
-            t_args.set_heading_level(args.heading_level + 2);
-            T::register(&format!("{}_{}_item", key, i), "", t_args);
+        let map_len = settings_map.get(&format!("{}_len", key)).and_then(|v| v.get_i64()).unwrap_or(0) as usize;
+        for i in self.ulis.len()..map_len {
+            let key_i = format!("{}_{}", key, i);
+            self.ulis.push(UglyListItem::register(&key_i, &format!("Item {}", i), args.clone()))
         }
-        settings_map.insert(&format!("{}_len", key), &len_new.into());
-        settings_map.insert(&format!("{}_cap", key), &cap_new.into());
+        // --------------------------
+        // map_len <= self.ulis.len()
+        // --------------------------
+        let insert_0 = settings_map.get(&format!("{}_insert_0", key)).and_then(|v| v.get_bool()).unwrap_or(false);
+        for i in 0..map_len {
+            let key_i = format!("{}_{}", key, i);
+            self.ulis[i].update_from(settings_map, &key_i, args.clone());
+        }
+        // --------------------
+        // Actions in the Queue
+        // --------------------
+        let mut index_new_to_old: Vec<i64> = (0 .. (map_len as i64)).collect();
+        if insert_0 {
+            index_new_to_old.insert(0, -1);
+        }
+        for old_i in 0 .. map_len {
+            let new_i = index_of(&index_new_to_old, &(old_i as i64)).unwrap_or_default();
+            match self.ulis[old_i].action.0 {
+                ListItemAction::None => (),
+                ListItemAction::Remove => { index_new_to_old.remove(new_i); () },
+                ListItemAction::InsertBefore => index_new_to_old.insert(new_i, -1),
+                ListItemAction::InsertAfter => index_new_to_old.insert(new_i + 1, -1),
+                ListItemAction::MoveBefore => index_new_to_old.swap(new_i, new_i.saturating_sub(1)),
+                ListItemAction::MoveAfter => index_new_to_old.swap(new_i, new_i + 1),
+            }
+        }
+        let new_len = index_new_to_old.len();
+        for i in self.ulis.len()..new_len {
+            let key_i = format!("{}_{}", key, i);
+            self.ulis.push(UglyListItem::register(&key_i, &format!("Item {}", i), args.clone()))
+        }
+        // ---------------
+        // Space Allocated
+        // ---------------
+        let old_map = settings_map.clone();
+        settings_map.insert(&format!("{}_len", key), &(new_len as i64).into());
         settings_map.insert(&format!("{}_insert_0", key), &false.into());
+        for (new_i, old_i) in index_new_to_old.into_iter().enumerate() {
+            if 0 <= old_i {
+                let key_new_i_item = format!("{}_{}_item", key, new_i);
+                let key_old_i_item = format!("{}_{}_item", key, old_i);
+                let key_new_i_action = format!("{}_{}_action", key, new_i);
+                let key_old_i_action = format!("{}_{}_action", key, old_i);
+                for (k_old, v) in old_map.iter() {
+                    if k_old.starts_with(&key_old_i_item) {
+                        let k_new = format!("{}{}", key_new_i_item, &k_old[key_old_i_item.len()..]);
+                        settings_map.insert(&k_new, &v);
+                    } else if k_old == key_old_i_action {
+                        settings_map.insert(&key_new_i_action, &"None".into());
+                    } else if k_old.starts_with(&key_old_i_action) {
+                        let k_new = format!("{}{}", key_new_i_action, &k_old[key_old_i_action.len()..]);
+                        settings_map.insert(&k_new, &false.into());
+                    }
+                }
+            } else {
+                let key_new_i_action = format!("{}_{}_action", key, new_i);
+                settings_map.insert(&key_new_i_action, &"None".into());
+                for k in settings_map.keys() {
+                    if k != key_new_i_action && k.starts_with(&key_new_i_action) {
+                        settings_map.insert(&k, &false.into());
+                    }
+                }
+            }
+        }
+        // -------------------
+        // new_map initialized
+        // -------------------
+        for i in 0..new_len {
+            let key_i = format!("{}_{}", key, i);
+            self.ulis[i].update_from(&settings_map, &key_i, args.clone());
+        }
         settings_map.store();
     }
+}
+
+// --------------------------------------------------------
+
+fn index_of<T>(slice: &[T], v: &T) -> Option<usize> where T: PartialEq<T> {
+    for (i, e) in slice.into_iter().enumerate() {
+        if e == v {
+            return Some(i);
+        }
+    }
+    None
 }

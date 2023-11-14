@@ -1,7 +1,7 @@
 
 use alloc::collections::BTreeMap;
 
-use asr::settings::gui::{add_bool, add_title, set_tooltip, TitleArgs, Widget};
+use asr::settings::gui::{add_bool, add_title, BoolArgs, set_tooltip, TitleArgs, Widget};
 
 // --------------------------------------------------------
 
@@ -15,6 +15,12 @@ impl SetHeadingLevel for TitleArgs {
     }
 }
 
+impl SetHeadingLevel for BoolArgs {
+    fn set_heading_level(&mut self, _: u32) {
+        ()
+    }
+}
+
 // --------------------------------------------------------
 
 #[derive(Clone)]
@@ -25,7 +31,7 @@ pub struct RadioButtonOption<'a, T> {
     pub tooltip: Option<&'a str>,
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 #[non_exhaustive]
 pub struct RadioButtonArgs<'a> {
     pub heading_level: u32,
@@ -42,7 +48,7 @@ pub trait RadioButtonOptions: Default + PartialEq {
     fn radio_button_options() -> Vec<RadioButtonOption<'static, Self>>;
 }
 
-pub struct RadioButton<T>(T);
+pub struct RadioButton<T>(pub T);
 
 impl<T: RadioButtonOptions> Widget for RadioButton<T> {
     type Args = RadioButtonArgs<'static>;

@@ -40,10 +40,8 @@ pub struct ListItemActionGui {
     /// General Settings
     _general_settings: Title,
     /// An Ugly List
-    aul: UglyList<Title>,
-    /// Choose an Action
     /// 
     /// This is a tooltip.
     #[heading_level = 1]
-    lia: RadioButton<ListItemAction>,
+    aul: UglyList<bool>,
 }
