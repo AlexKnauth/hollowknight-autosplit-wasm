@@ -1,7 +1,4 @@
 
-use core::cmp::max;
-
-use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
@@ -159,6 +156,7 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
             let key_i = format!("{}_{}", key, i);
             set_tooltip(&key_i, &format!("DOES NOT EXIST"));
         }
+        self.len = new_len;
         settings_map.store();
     }
 }
