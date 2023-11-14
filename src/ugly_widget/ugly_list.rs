@@ -102,8 +102,8 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
                 ListItemAction::Remove => { index_new_to_old.remove(new_i); () },
                 ListItemAction::InsertBefore => index_new_to_old.insert(new_i, -1),
                 ListItemAction::InsertAfter => index_new_to_old.insert(new_i + 1, -1),
-                ListItemAction::MoveBefore => index_new_to_old.swap(new_i, new_i.saturating_sub(1)),
-                ListItemAction::MoveAfter => index_new_to_old.swap(new_i, new_i + 1),
+                ListItemAction::MoveBefore => if 1 <= new_i { index_new_to_old.swap(new_i, new_i - 1) },
+                ListItemAction::MoveAfter => if new_i + 1 < index_new_to_old.len() { index_new_to_old.swap(new_i, new_i + 1) },
             }
         }
         let new_len = index_new_to_old.len();
