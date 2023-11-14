@@ -87,9 +87,6 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
             _ => &old,
         };
         let new_s = options_str(new);
-        if new != &old {
-            asr::print_message(new_s);
-        }
         settings_map.insert(key, &new_s.into());
         for o in T::radio_button_options() {
             let bool_key = o.bool_key(key);
