@@ -75,7 +75,8 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
     }
 
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
-        let map_len = settings_map.get(&format!("{}_len", key)).and_then(|v| v.get_i64()).unwrap_or(0) as usize;
+        let map_list: Vec<asr::settings::Value> = settings_map.get(key).and_then(|v| v.get_list()).map(|l| l.iter().collect()).unwrap_or_default();
+        let map_len = map_list.len();
         for i in self.ulis.len()..map_len {
             let key_i = format!("{}_{}", key, i);
             self.ulis.push(UglyListItem::register(&key_i, &format!("Item {}", i), args.clone()))
@@ -86,6 +87,10 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         let insert_0 = settings_map.get(&format!("{}_insert_0", key)).and_then(|v| v.get_bool()).unwrap_or(false);
         for i in 0..map_len {
             let key_i = format!("{}_{}", key, i);
+            let key_i_item = format!("{}_item", key_i);
+            if settings_map.get(&key_i_item).is_none() {
+                settings_map.insert(&key_i_item, &map_list[i]);
+            }
             self.ulis[i].update_from(settings_map, &key_i, args.clone());
         }
         // --------------------
@@ -115,7 +120,6 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         // Space Allocated
         // ---------------
         let old_map = settings_map.clone();
-        settings_map.insert(&format!("{}_len", key), &(new_len as i64).into());
         settings_map.insert(&format!("{}_insert_0", key), &false.into());
         for (new_i, old_i) in index_new_to_old.into_iter().enumerate() {
             if 0 <= old_i {
@@ -147,11 +151,15 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         // -------------------
         // new_map initialized
         // -------------------
+        let new_list = asr::settings::List::new();
         for i in 0..new_len {
             let key_i = format!("{}_{}", key, i);
+            let key_i_item = format!("{}_item", key_i);
             self.ulis[i].update_from(&settings_map, &key_i, args.clone());
+            new_list.push(&settings_map.get(&key_i_item).unwrap_or(false.into()));
             set_tooltip(&key_i, &format!("Item exists: {} < {}", i, new_len));
         }
+        settings_map.insert(key, &asr::settings::Value::from(&new_list));
         for i in new_len..self.ulis.len() {
             let key_i = format!("{}_{}", key, i);
             set_tooltip(&key_i, &format!("DOES NOT EXIST"));
