@@ -44,7 +44,7 @@ impl SetHeadingLevel for RadioButtonArgs<'_> {
     }
 }
 
-pub trait RadioButtonOptions: Default + PartialEq {
+pub trait RadioButtonOptions: Clone + Default + Ord {
     fn radio_button_options() -> Vec<RadioButtonOption<'static, Self>>;
 }
 
@@ -56,47 +56,47 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
         add_title(key, description, args.heading_level);
         let default = args.default_value::<T>();
-        let default_s = options_str(default);
-        let bool_map: BTreeMap<&str, bool> = T::radio_button_options().into_iter().map(|o| {
+        let bool_map: BTreeMap<T, bool> = T::radio_button_options().into_iter().map(|o| {
             let bool_key = o.bool_key(key);
-            let b = add_bool(&bool_key, &o.description, o.key == default_s);
+            let b = add_bool(&bool_key, &o.description, o.value == default);
             if let Some(t) = o.tooltip {
                 set_tooltip(&bool_key, &t);
             }
-            (o.key, b)
+            (o.value, b)
         }).collect();
-        RadioButton(options_value::<T>(single_from_bool_map(&bool_map).unwrap_or(&default_s)))
+        RadioButton(single_from_bool_map(&bool_map).cloned().unwrap_or(default))
     }
 
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
         let default = args.default_value::<T>();
-        let default_s = options_str(default);
-        let old = settings_map.get(key).and_then(|v| v.get_string()).unwrap_or(default_s.to_string());
-        let new_bools: Vec<(&str, bool)> = T::radio_button_options().iter().filter_map(|o| {
+        let old = settings_map.get(key).and_then(|v| v.get_string()).and_then(|s| options_value::<T>(&s)).unwrap_or(default.clone());
+        let options = T::radio_button_options();
+        let new_bools: Vec<(&T, bool)> = options.iter().filter_map(|o| {
             let bool_key = o.bool_key(key);
-            let old_b = old == o.key;
-            let map_b = settings_map.get(&bool_key).and_then(|v| v.get_bool()).unwrap_or_default();
+            let old_b = old == o.value;
+            let map_b = settings_map.get(&bool_key).and_then(|v| v.get_bool()).unwrap_or(old_b);
             if map_b != old_b {
-                Some((o.key, map_b))
+                Some((&o.value, map_b))
             } else {
                 None
             }
         }).collect();
         let new = match &new_bools[..] {
-            [(v, true)] => *v,
-            [(_, false)] => default_s,
-            _ => old.as_str(),
+            [(v, true)] => v,
+            [(_, false)] => &default,
+            _ => &old,
         };
-        if new != old.as_str() {
-            asr::print_message(&new);
+        let new_s = options_str(new);
+        if new != &old {
+            asr::print_message(new_s);
         }
-        settings_map.insert(key, &new.into());
+        settings_map.insert(key, &new_s.into());
         for o in T::radio_button_options() {
             let bool_key = o.bool_key(key);
-            let new_b = new == o.key;
+            let new_b = new == &o.value;
             settings_map.insert(&bool_key, &new_b.into());
         }
-        self.0 = options_value::<T>(new);
+        self.0 = new.clone();
         settings_map.store();
     }
 }
@@ -111,13 +111,13 @@ impl<T> RadioButtonOption<'_, T> {
 
 impl RadioButtonArgs<'_> {
     fn default_value<T: RadioButtonOptions>(&self) -> T {
-        options_value::<T>(self.default)
+        options_value::<T>(self.default).unwrap_or_default()
     }
 }
 
-fn options_str<T: RadioButtonOptions>(v: T) -> &'static str {
+fn options_str<T: RadioButtonOptions>(v: &T) -> &'static str {
     T::radio_button_options().into_iter().find_map(|o| {
-        if o.value == v {
+        if &o.value == v {
             Some(o.key)
         } else {
             None
@@ -125,18 +125,18 @@ fn options_str<T: RadioButtonOptions>(v: T) -> &'static str {
     }).unwrap_or_default()
 }
 
-fn options_value<T: RadioButtonOptions>(s: &str) -> T {
+fn options_value<T: RadioButtonOptions>(s: &str) -> Option<T> {
     T::radio_button_options().into_iter().find_map(|o| {
         if o.key == s {
             Some(o.value)
         } else {
             None
         }
-    }).unwrap_or_default()
+    })
 }
 
-fn single_from_bool_map<'a>(bool_map: &BTreeMap<&'a str, bool>) -> Option<&'a str> {
-    let trues: Vec<&str> = bool_map.into_iter().filter_map(|(&k, &v)| {
+fn single_from_bool_map<K>(bool_map: &BTreeMap<K, bool>) -> Option<&K> {
+    let trues: Vec<&K> = bool_map.into_iter().filter_map(|(k, &v)| {
         if v { Some(k) } else { None }
     }).collect();
     match &trues[..] {

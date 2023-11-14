@@ -5,7 +5,7 @@ use crate::ugly_widget::ugly_list::UglyList;
 use super::radio_button::{RadioButton, RadioButtonOption, RadioButtonOptions};
 
 // #[derive(Gui)]
-#[derive(Clone, Default, PartialEq)]
+#[derive(Clone, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub enum ListItemAction {
     // None
     #[default]
