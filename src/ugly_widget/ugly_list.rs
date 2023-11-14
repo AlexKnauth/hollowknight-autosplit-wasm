@@ -112,7 +112,7 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         let new_len = index_new_to_old.len();
         for i in self.ulis.len()..new_len {
             let key_i = format!("{}_{}", key, i);
-            self.ulis.push(UglyListItem::register(&key_i, &format!("Item {}", i), args.clone()))
+            self.ulis.push(UglyListItem::register(&key_i, &format!("Item {}", i), args.clone()));
         }
         // ---------------
         // Space Allocated
@@ -153,6 +153,11 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         for i in 0..new_len {
             let key_i = format!("{}_{}", key, i);
             self.ulis[i].update_from(&settings_map, &key_i, args.clone());
+            set_tooltip(&key_i, &format!("Item exists: {} < {}", i, new_len));
+        }
+        for i in new_len..self.ulis.len() {
+            let key_i = format!("{}_{}", key, i);
+            set_tooltip(&key_i, &format!("DOES NOT EXIST"));
         }
         settings_map.store();
     }
