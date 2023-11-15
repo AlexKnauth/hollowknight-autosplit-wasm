@@ -9,7 +9,7 @@ use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, Radio
 // --------------------------------------------------------
 
 // #[derive(Gui)]
-#[derive(Clone, Default, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Default, Eq, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum ListItemAction {
     // None
     #[default]
@@ -26,6 +26,7 @@ pub enum ListItemAction {
     InsertAfter,
 }
 
+/*
 impl RadioButtonOptions for ListItemAction {
     fn radio_button_options() -> Vec<RadioButtonOption<'static, Self>> {
         vec![
@@ -38,6 +39,7 @@ impl RadioButtonOptions for ListItemAction {
         ]
     }
 }
+*/
 
 // --------------------------------------------------------
 

@@ -3,6 +3,8 @@ use alloc::collections::BTreeMap;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
+pub use ugly_widget_derive::RadioButtonOptions;
+
 use super::args::SetHeadingLevel;
 
 // --------------------------------------------------------
