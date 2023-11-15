@@ -11,18 +11,18 @@ use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, Radio
 // #[derive(Gui)]
 #[derive(Clone, Default, Eq, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum ListItemAction {
-    // None
+    /// None
     #[default]
     None,
-    // Remove
+    /// Remove
     Remove,
-    // Move before
+    /// Move before
     MoveBefore,
-    // Move after
+    /// Move after
     MoveAfter,
-    // Insert before
+    /// Insert before
     InsertBefore,
-    // Insert after
+    /// Insert after
     InsertAfter,
 }
 
