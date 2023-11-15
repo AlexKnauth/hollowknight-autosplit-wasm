@@ -3,7 +3,8 @@ use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
-use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, RadioButtonOptions, SetHeadingLevel};
+use super::args::SetHeadingLevel;
+use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, RadioButtonOptions};
 
 // --------------------------------------------------------
 

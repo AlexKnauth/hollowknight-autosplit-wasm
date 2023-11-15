@@ -1,25 +1,9 @@
 
 use alloc::collections::BTreeMap;
 
-use asr::settings::gui::{add_bool, add_title, BoolArgs, set_tooltip, TitleArgs, Widget};
+use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
-// --------------------------------------------------------
-
-pub trait SetHeadingLevel {
-    fn set_heading_level(&mut self, heading_level: u32);
-}
-
-impl SetHeadingLevel for TitleArgs {
-    fn set_heading_level(&mut self, heading_level: u32) {
-        self.heading_level = heading_level;
-    }
-}
-
-impl SetHeadingLevel for BoolArgs {
-    fn set_heading_level(&mut self, _: u32) {
-        ()
-    }
-}
+use super::args::SetHeadingLevel;
 
 // --------------------------------------------------------
 
