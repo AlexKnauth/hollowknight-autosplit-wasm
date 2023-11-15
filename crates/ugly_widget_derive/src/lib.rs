@@ -107,3 +107,67 @@ fn attrs_description_tooltip(attrs: &[Attribute]) -> (String, String) {
     }
     (doc_string, tooltip_string)
 }
+
+#[cfg(test)]
+mod tests {
+    use syn::parse_quote;
+
+    use super::*;
+
+    #[test]
+    fn attrs_none() {
+        let v: Variant = parse_quote! {
+            Thing
+        };
+        assert_eq!(attrs_description_tooltip(&v.attrs), (
+            "".to_string(),
+            "".to_string(),
+        ));
+    }
+
+    #[test]
+    fn attrs_description_single() {
+        let v: Variant = parse_quote! {
+            /// A one-line thing
+            Thing
+        };
+        assert_eq!(attrs_description_tooltip(&v.attrs), (
+            "A one-line thing".to_string(),
+            "".to_string(),
+        ));
+    }
+
+    #[test]
+    fn attrs_description_multi_single() {
+        let v: Variant = parse_quote! {
+            /// This is a description spanning
+            /// multiple single-line comments
+            /// without any blank lines in between.
+            Thing
+        };
+        assert_eq!(attrs_description_tooltip(&v.attrs), (
+            "This is a description spanning multiple single-line comments without any blank lines in between.".to_string(),
+            "".to_string(),
+        ));
+    }
+
+    #[test]
+    fn attrs_description_tooltip_multi_single() {
+        let v: Variant = parse_quote! {
+            /// This is a description spanning
+            /// multiple single-line comments
+            /// without any blank lines in between.
+            /// 
+            /// This is a tooltip, with multiple
+            /// lines per paragraph.
+            /// 
+            /// But a tooltip can also have multiple paragraphs,
+            /// which are interpreted as multiple lines.
+            Thing
+        };
+        assert_eq!(attrs_description_tooltip(&v.attrs), (
+            "This is a description spanning multiple single-line comments without any blank lines in between.".to_string(),
+            "This is a tooltip, with multiple lines per paragraph.\nBut a tooltip can also have multiple paragraphs, which are interpreted as multiple lines.".to_string(),
+        ));
+    }
+}
