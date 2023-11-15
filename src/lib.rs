@@ -4,6 +4,7 @@ extern crate alloc;
 
 mod auto_splitter_settings;
 mod hollow_knight_memory;
+mod settings_gui;
 mod splits;
 mod ugly_widget;
 
@@ -12,7 +13,7 @@ use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
 use auto_splitter_settings::{XMLSettings, SettingsObject, Settings};
-use ugly_widget::combo_box::ListItemActionGui;
+use settings_gui::ListItemActionGui;
 use hollow_knight_memory::*;
 
 asr::async_main!(stable);
