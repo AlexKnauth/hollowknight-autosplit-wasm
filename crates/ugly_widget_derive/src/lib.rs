@@ -77,35 +77,22 @@ fn impl_radio_button_options(ast: &DeriveInput) -> TokenStream {
 }
 
 fn attrs_description_tooltip(attrs: &[Attribute]) -> (String, String) {
-    let mut doc_string = String::new();
-    let mut tooltip_string = String::new();
-    let mut is_in_tooltip = false;
-    for attr in attrs {
-        let Meta::NameValue(nv) = &attr.meta else { continue; };
-        let Some(ident) = nv.path.get_ident() else { continue; };
-        if ident != "doc" { continue; }
-        let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value else { continue; };
-        let value = s.value();
-        let value = value.trim();
-        let target_string = if is_in_tooltip {
-            &mut tooltip_string
-        } else {
-            &mut doc_string
-        };
-        if !target_string.is_empty() {
-            if value.is_empty() {
-                if !is_in_tooltip {
-                    is_in_tooltip = true;
-                    continue;
-                }
-                target_string.push('\n');
-            } else if !target_string.ends_with(|c: char| c.is_whitespace()) {
-                target_string.push(' ');
-            }
+    let lines: Vec<String> = attrs.into_iter().filter_map(|attr| {
+        let Meta::NameValue(nv) = &attr.meta else { return None; };
+        let ident = nv.path.get_ident()?;
+        if ident != "doc" { return None; }
+        let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value else { return None; };
+        Some(s.value().trim().to_string())
+    }).collect();
+    let paragraphs: Vec<String> = lines.split(|value| value.is_empty()).map(|ls| {
+        ls.join(" ")
+    }).collect();
+    match paragraphs.split_first() {
+        None => ("".to_string(), "".to_string()),
+        Some((description, tooltip_paragraphs)) => {
+            (description.to_string(), tooltip_paragraphs.join("\n").trim().to_string())
         }
-        target_string.push_str(&value);
     }
-    (doc_string, tooltip_string)
 }
 
 #[cfg(test)]
