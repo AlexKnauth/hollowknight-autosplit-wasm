@@ -88,6 +88,7 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
         };
         let new_s = options_str(new);
         settings_map.insert(key, &new_s.into());
+        set_tooltip(key, new_s);
         for o in T::radio_button_options() {
             let bool_key = o.bool_key(key);
             let new_b = new == &o.value;

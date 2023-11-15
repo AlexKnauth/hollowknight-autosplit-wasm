@@ -7,8 +7,6 @@ pub struct SettingsGui {
     /// General Settings
     _general_settings: Title,
     /// An Ugly List
-    /// 
-    /// This is a tooltip.
     #[heading_level = 1]
     aul: UglyList<bool>,
 }

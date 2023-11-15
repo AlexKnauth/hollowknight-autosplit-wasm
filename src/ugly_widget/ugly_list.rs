@@ -187,10 +187,12 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
             let key_i = format!("{}_{}", key, i);
             let key_i_item = format!("{}_item", key_i);
             self.ulis[i].update_from(&settings_map, &key_i, args.clone());
-            new_list.push(&settings_map.get(&key_i_item).unwrap_or(false.into()));
-            set_tooltip(&key_i, &format!("Item exists: {} < {}", i, new_len));
+            let new_v = settings_map.get(&key_i_item).unwrap_or(false.into());
+            new_list.push(&new_v);
+            set_tooltip(&key_i, &format!("Item exists: {} < {}\n{:?}", i, new_len, new_v));
         }
         settings_map.insert(key, &asr::settings::Value::from(&new_list));
+        set_tooltip(key, &format!("{:?}", new_list));
         for i in new_len..self.ulis.len() {
             let key_i = format!("{}_{}", key, i);
             set_tooltip(&key_i, &format!("DOES NOT EXIST"));
