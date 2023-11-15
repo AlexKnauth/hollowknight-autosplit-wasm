@@ -17,9 +17,9 @@ pub struct RadioButtonOption<'a, T> {
 
 #[derive(Clone, Default, SetHeadingLevel)]
 #[non_exhaustive]
-pub struct RadioButtonArgs {
+pub struct RadioButtonArgs<'a> {
     pub heading_level: u32,
-    pub default: &'static str,
+    pub default: &'a str,
 }
 
 pub trait RadioButtonOptions: Clone + Default + Ord {
@@ -29,7 +29,7 @@ pub trait RadioButtonOptions: Clone + Default + Ord {
 pub struct RadioButton<T>(pub T);
 
 impl<T: RadioButtonOptions> Widget for RadioButton<T> {
-    type Args = RadioButtonArgs;
+    type Args = RadioButtonArgs<'static>;
 
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
         add_title(key, description, args.heading_level);
@@ -85,7 +85,7 @@ impl<T> RadioButtonOption<'_, T> {
     }
 }
 
-impl RadioButtonArgs {
+impl RadioButtonArgs<'_> {
     fn default_value<T: RadioButtonOptions>(&self) -> T {
         options_value::<T>(self.default).unwrap_or_default()
     }
