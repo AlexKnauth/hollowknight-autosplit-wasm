@@ -3,6 +3,8 @@ use alloc::collections::BTreeMap;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
+use crate::impl_SetHeadingLevel_for;
+
 use super::args::SetHeadingLevel;
 
 // --------------------------------------------------------
@@ -22,11 +24,7 @@ pub struct RadioButtonArgs<'a> {
     pub default: &'a str,
 }
 
-impl SetHeadingLevel for RadioButtonArgs<'_> {
-    fn set_heading_level(&mut self, heading_level: u32) {
-        self.heading_level = heading_level;
-    }
-}
+impl_SetHeadingLevel_for!(RadioButtonArgs<'_>);
 
 pub trait RadioButtonOptions: Clone + Default + Ord {
     fn radio_button_options() -> Vec<RadioButtonOption<'static, Self>>;
