@@ -32,8 +32,8 @@ async fn main() {
     let settings2 = XMLSettings::from_xml_string(auto_splitter_settings, &[("Splits", "Split")]).unwrap_or_default();
     let splits: Vec<splits::Split> = if settings1.dict_get("Splits").is_some() {
         asr::print_message("settings1: from asr::settings::Map::load");
-        let splits1 = splits::splits_from_settings(&settings1);
-        let splits2 = splits::splits_from_settings(&settings2);
+        let splits1 = settings_gui::splits_from_settings(&settings1);
+        let splits2 = settings_gui::splits_from_settings(&settings2);
         if splits2 != splits1 {
             asr::print_message("WARNING: splits from asr::settings::Map::load differ from AutoSplitterSettings.txt");
             asr::print_message("assuming AutoSplitterSettings.txt is out of date, using asr::settings::Map::load");
@@ -41,9 +41,9 @@ async fn main() {
         splits1
     } else {
         asr::print_message("settings2: from AutoSplitterSettings.txt");
-        let splits2 = splits::splits_from_settings(&settings2);
+        let splits2 = settings_gui::splits_from_settings(&settings2);
         let settings3 = SettingsObject::wait_load_merge_store(&settings2).await;
-        let splits3 = splits::splits_from_settings(&settings3);
+        let splits3 = settings_gui::splits_from_settings(&settings3);
         if splits3 != splits2 {
             asr::print_message("BAD: splits3 != splits2");
         }
