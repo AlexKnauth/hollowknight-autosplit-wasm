@@ -150,7 +150,7 @@ impl<T: Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         let old_map = settings_map.clone();
         settings_map.insert(&format!("{}_insert_0", key), &false.into());
         for (new_i, old_i) in index_new_to_old.into_iter().enumerate() {
-            if 0 <= old_i {
+            if 0 <= old_i && new_i as i64 != old_i {
                 let key_new_i_item = format!("{}_{}_item", key, new_i);
                 let key_old_i_item = format!("{}_{}_item", key, old_i);
                 let key_new_i_action = format!("{}_{}_action", key, new_i);
