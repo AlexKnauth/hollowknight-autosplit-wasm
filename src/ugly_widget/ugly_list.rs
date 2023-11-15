@@ -3,9 +3,40 @@ use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
-use crate::ugly_widget::radio_button::SetHeadingLevel;
+use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, RadioButtonOptions, SetHeadingLevel};
 
-use super::{radio_button::{RadioButton, RadioButtonArgs}, combo_box::ListItemAction};
+// --------------------------------------------------------
+
+// #[derive(Gui)]
+#[derive(Clone, Default, Eq, Ord, PartialEq, PartialOrd)]
+pub enum ListItemAction {
+    // None
+    #[default]
+    None,
+    // Remove
+    Remove,
+    // Move before
+    MoveBefore,
+    // Move after
+    MoveAfter,
+    // Insert before
+    InsertBefore,
+    // Insert after
+    InsertAfter,
+}
+
+impl RadioButtonOptions for ListItemAction {
+    fn radio_button_options() -> Vec<RadioButtonOption<'static, Self>> {
+        vec![
+            RadioButtonOption { value: ListItemAction::None, key: "None", description: "None", tooltip: None },
+            RadioButtonOption { value: ListItemAction::Remove, key: "Remove", description: "Remove", tooltip: None },
+            RadioButtonOption { value: ListItemAction::MoveBefore, key: "MoveBefore", description: "Move before", tooltip: None },
+            RadioButtonOption { value: ListItemAction::MoveAfter, key: "MoveAfter", description: "Move after", tooltip: None },
+            RadioButtonOption { value: ListItemAction::InsertBefore, key: "InsertBefore", description: "Insert before", tooltip: None },
+            RadioButtonOption { value: ListItemAction::InsertAfter, key: "InsertAfter", description: "Insert after", tooltip: None },
+        ]
+    }
+}
 
 // --------------------------------------------------------
 
