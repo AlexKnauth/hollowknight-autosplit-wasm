@@ -6,7 +6,6 @@ mod auto_splitter_settings;
 mod hollow_knight_memory;
 mod settings_gui;
 mod splits;
-mod ugly_widget;
 
 use asr::settings::Gui;
 use asr::{future::next_tick, Process};

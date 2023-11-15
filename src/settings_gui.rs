@@ -1,6 +1,6 @@
 use asr::settings::gui::{Gui, Title};
 
-use crate::ugly_widget::ugly_list::UglyList;
+use ugly_widget::ugly_list::UglyList;
 
 #[derive(Gui)]
 pub struct SettingsGui {
