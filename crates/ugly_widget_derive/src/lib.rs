@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Data, DataEnum, Variant, Meta, Expr, ExprLit, Lit};
+use syn::{parse_macro_input, DeriveInput, Data, DataEnum, Variant, Meta, Expr, ExprLit, Lit, Attribute};
 
 #[proc_macro_derive(SetHeadingLevel)]
 pub fn set_heading_level_derive(input: TokenStream) -> TokenStream {
@@ -50,44 +50,19 @@ fn impl_radio_button_options(ast: &DeriveInput) -> TokenStream {
     let options = variants.into_iter().map(|v| {
         let v_name = &v.ident;
         let v_str = v_name.to_string();
-        let mut doc_string = String::new();
-        let mut tooltip_string = String::new();
-        let mut is_in_tooltip = false;
-        for attr in &v.attrs {
-            let Meta::NameValue(nv) = &attr.meta else { continue; };
-            let Some(ident) = nv.path.get_ident() else { continue; };
-            if ident != "doc" { continue; }
-            let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value else { continue; };
-            let value = s.value();
-            let value = value.trim();
-            let target_string = if is_in_tooltip {
-                &mut tooltip_string
-            } else {
-                &mut doc_string
-            };
-            if !target_string.is_empty() {
-                if value.is_empty() {
-                    if !is_in_tooltip {
-                        is_in_tooltip = true;
-                        continue;
-                    }
-                    target_string.push('\n');
-                } else if !target_string.ends_with(|c: char| c.is_whitespace()) {
-                    target_string.push(' ');
-                }
-            }
-            target_string.push_str(&value);
-        }
-        if doc_string.is_empty() {
-            doc_string = v_str.clone();
-        }
+        let (doc_string, tooltip_string) = attrs_description_tooltip(&v.attrs);
+        let desc_str =  if doc_string.is_empty() {
+            v_str.clone()
+        } else {
+            doc_string
+        };
         let maybe_tooltip = if tooltip_string.is_empty() {
             quote! { None }
         } else {
             quote! { Some( #tooltip_string ) }
         };
         quote! {
-            RadioButtonOption { value: #name::#v_name, key: #v_str, description: #doc_string, tooltip: #maybe_tooltip }
+            RadioButtonOption { value: #name::#v_name, key: #v_str, description: #desc_str, tooltip: #maybe_tooltip }
         }
     });
 
@@ -99,4 +74,36 @@ fn impl_radio_button_options(ast: &DeriveInput) -> TokenStream {
         }
     };
     gen.into()
+}
+
+fn attrs_description_tooltip(attrs: &[Attribute]) -> (String, String) {
+    let mut doc_string = String::new();
+    let mut tooltip_string = String::new();
+    let mut is_in_tooltip = false;
+    for attr in attrs {
+        let Meta::NameValue(nv) = &attr.meta else { continue; };
+        let Some(ident) = nv.path.get_ident() else { continue; };
+        if ident != "doc" { continue; }
+        let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value else { continue; };
+        let value = s.value();
+        let value = value.trim();
+        let target_string = if is_in_tooltip {
+            &mut tooltip_string
+        } else {
+            &mut doc_string
+        };
+        if !target_string.is_empty() {
+            if value.is_empty() {
+                if !is_in_tooltip {
+                    is_in_tooltip = true;
+                    continue;
+                }
+                target_string.push('\n');
+            } else if !target_string.ends_with(|c: char| c.is_whitespace()) {
+                target_string.push(' ');
+            }
+        }
+        target_string.push_str(&value);
+    }
+    (doc_string, tooltip_string)
 }
