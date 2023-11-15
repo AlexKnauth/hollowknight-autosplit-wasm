@@ -13,7 +13,7 @@ use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
 use auto_splitter_settings::{XMLSettings, SettingsObject, Settings};
-use settings_gui::ListItemActionGui;
+use settings_gui::SettingsGui;
 use hollow_knight_memory::*;
 
 asr::async_main!(stable);
@@ -55,7 +55,7 @@ async fn main() {
 
     let auto_reset = splits::auto_reset_safe(&splits);
 
-    let mut gui = ListItemActionGui::register();
+    let mut gui = SettingsGui::register();
 
     loop {
         let process = wait_attach_hollow_knight(&mut gui).await;
