@@ -88,7 +88,7 @@ pub struct UglyList<T> {
 }
 
 impl<T> UglyList<T> {
-    fn get_list(&self) -> Vec<&T> {
+    pub fn get_list(&self) -> Vec<&T> {
         self.ulis[0..self.len].iter().map(|uli| &uli.item).collect()
     }
 }

@@ -1,8 +1,8 @@
-use asr::settings::gui::{Gui, Title};
+use asr::{settings::gui::{Gui, Title}, future::next_tick};
 
 use ugly_widget::{ugly_list::UglyList, radio_button::RadioButton};
 
-use crate::{splits::{Split, self}, auto_splitter_settings::Settings};
+use crate::{splits::{Split, self}, auto_splitter_settings::{Settings, SettingsObject, XMLSettings}};
 
 #[derive(Gui)]
 pub struct SettingsGui {
@@ -11,6 +11,40 @@ pub struct SettingsGui {
     /// Splits
     #[heading_level = 1]
     splits: UglyList<RadioButton<Split>>,
+}
+
+
+impl SettingsGui {
+    pub fn get_splits(&self) -> Vec<Split> {
+        self.splits.get_list().into_iter().map(|rb| rb.0.clone()).collect()
+    }
+
+    pub async fn wait_load_merge_register() -> SettingsGui {
+        let settings1 = asr::settings::Map::load();
+        let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
+        let settings2 = XMLSettings::from_xml_string(auto_splitter_settings, &[("Splits", "Split")]).unwrap_or_default();
+        let splits2 = splits_from_settings(&settings2);
+        if settings1.get("splits").is_some_and(|v| v.get_list().is_some_and(|l| !l.is_empty())) {
+            asr::print_message("settings1: from asr::settings::Map::load");
+        } else {
+            asr::print_message("settings2: from AutoSplitterSettings.txt");
+            let settings3 = asr::settings::Map::new();
+            let l = asr::settings::List::new();
+            for split in splits2.iter() {
+                l.push(&split.to_string().as_str().into());
+            }
+            settings3.insert("splits", &(&l).into());
+            SettingsObject::wait_load_merge_store(&SettingsObject::Map(settings3)).await;
+        }
+        let mut gui = SettingsGui::register();
+        gui.update();
+        let splits1 = gui.get_splits();
+        if splits2 != splits1 {
+            asr::print_message("WARNING: splits from asr::settings::Map::load differ from AutoSplitterSettings.txt");
+                asr::print_message("assuming AutoSplitterSettings.txt is out of date, using asr::settings::Map::load");
+        }
+        gui
+    }
 }
 
 
