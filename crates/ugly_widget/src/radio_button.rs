@@ -3,8 +3,6 @@ use alloc::collections::BTreeMap;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
-use crate::impl_SetHeadingLevel_for;
-
 use super::args::SetHeadingLevel;
 
 // --------------------------------------------------------
@@ -17,14 +15,12 @@ pub struct RadioButtonOption<'a, T> {
     pub tooltip: Option<&'a str>,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, SetHeadingLevel)]
 #[non_exhaustive]
-pub struct RadioButtonArgs<'a> {
+pub struct RadioButtonArgs {
     pub heading_level: u32,
-    pub default: &'a str,
+    pub default: &'static str,
 }
-
-impl_SetHeadingLevel_for!(RadioButtonArgs<'_>);
 
 pub trait RadioButtonOptions: Clone + Default + Ord {
     fn radio_button_options() -> Vec<RadioButtonOption<'static, Self>>;
@@ -33,7 +29,7 @@ pub trait RadioButtonOptions: Clone + Default + Ord {
 pub struct RadioButton<T>(pub T);
 
 impl<T: RadioButtonOptions> Widget for RadioButton<T> {
-    type Args = RadioButtonArgs<'static>;
+    type Args = RadioButtonArgs;
 
     fn register(key: &str, description: &str, args: Self::Args) -> Self {
         add_title(key, description, args.heading_level);
@@ -89,7 +85,7 @@ impl<T> RadioButtonOption<'_, T> {
     }
 }
 
-impl RadioButtonArgs<'_> {
+impl RadioButtonArgs {
     fn default_value<T: RadioButtonOptions>(&self) -> T {
         options_value::<T>(self.default).unwrap_or_default()
     }

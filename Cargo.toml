@@ -23,6 +23,7 @@ asr = { git = "https://github.com/AlexKnauth/asr", branch = "mono-3", features =
 ] }
 
 ugly_widget = { path = "crates/ugly_widget", version = "0.1.0" }
+ugly_widget_derive = { path = "crates/ugly_widget_derive", version = "0.1.0" }
 
 # Bytemuck can be used to define structs that are being read from the game's process.
 bytemuck = { version = "1", features = ["derive", "min_const_generics"] }

@@ -173,6 +173,15 @@ name = "ugly_widget"
 version = "0.1.0"
 dependencies = [
  "asr",
+ "ugly_widget_derive",
+]
+
+[[package]]
+name = "ugly_widget_derive"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -196,6 +205,7 @@ dependencies = [
  "serde",
  "serde_json",
  "ugly_widget",
+ "ugly_widget_derive",
  "xmltree",
 ]
 

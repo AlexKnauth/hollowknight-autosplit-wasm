@@ -3,8 +3,6 @@ use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 
-use crate::impl_SetHeadingLevel_for;
-
 use super::args::SetHeadingLevel;
 use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, RadioButtonOptions};
 
@@ -43,13 +41,11 @@ impl RadioButtonOptions for ListItemAction {
 
 // --------------------------------------------------------
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, SetHeadingLevel)]
 #[non_exhaustive]
 pub struct UglyListArgs {
     pub heading_level: u32,
 }
-
-impl_SetHeadingLevel_for!(UglyListArgs);
 
 struct UglyListItem<T> {
     item: T,

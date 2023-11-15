@@ -21,3 +21,4 @@ asr = { git = "https://github.com/AlexKnauth/asr", branch = "mono-3", features =
     # "genesis", # Accessing Genesis emulators.
     # "ps1", # Accessing PlayStation emulators.
 ] }
+ugly_widget_derive = { path = "../ugly_widget_derive" }
