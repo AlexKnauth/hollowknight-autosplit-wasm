@@ -170,4 +170,25 @@ mod tests {
             "This is a tooltip, with multiple lines per paragraph.\nBut a tooltip can also have multiple paragraphs, which are interpreted as multiple lines.".to_string(),
         ));
     }
+
+    #[test]
+    fn attrs_description_tooltip_multi_blank() {
+        let v: Variant = parse_quote! {
+            /// This is a description spanning
+            /// multiple single-line comments
+            /// without any blank lines in between.
+            /// 
+            /// 
+            /// This is a tooltip, after multiple
+            /// blank lines.
+            /// 
+            /// 
+            /// And a continuation after even more blank lines.
+            Thing
+        };
+        assert_eq!(attrs_description_tooltip(&v.attrs), (
+            "This is a description spanning multiple single-line comments without any blank lines in between.".to_string(),
+            "This is a tooltip, after multiple blank lines.\n\nAnd a continuation after even more blank lines.".to_string(),
+        ));
+    }
 }
