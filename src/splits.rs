@@ -3,11 +3,12 @@ use std::str::FromStr;
 use asr::Process;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
+use ugly_widget::radio_button::{RadioButtonOption, RadioButtonOptions};
 
 use super::auto_splitter_settings::Settings;
 use super::hollow_knight_memory::*;
 
-#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
 pub enum Split {
     // region: Start, End, and Menu
     /// Start New Game (Start)
