@@ -1,6 +1,6 @@
 use asr::{settings::gui::{Gui, Title}, future::next_tick};
 
-use ugly_widget::{ugly_list::UglyList, radio_button::RadioButton};
+use ugly_widget::{ugly_list::UglyList, radio_button::RadioButton, store::{StoreWidget, StoreGui}};
 
 use crate::{splits::{Split, self}, auto_splitter_settings::{Settings, SettingsObject, XMLSettings}};
 
@@ -11,6 +11,12 @@ pub struct SettingsGui {
     /// Splits
     #[heading_level = 1]
     splits: UglyList<RadioButton<Split>>,
+}
+
+impl StoreGui for SettingsGui {
+    fn loop_load_store(&self) {
+        self.splits.loop_load_store("splits");
+    }
 }
 
 
@@ -38,6 +44,7 @@ impl SettingsGui {
         }
         let mut gui = SettingsGui::register();
         gui.update();
+        gui.loop_load_store();
         let splits1 = gui.get_splits();
         if splits2 != splits1 {
             asr::print_message("WARNING: splits from asr::settings::Map::load differ from AutoSplitterSettings.txt");

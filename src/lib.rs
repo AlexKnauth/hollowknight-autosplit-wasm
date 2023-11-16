@@ -13,6 +13,7 @@ use asr::time::Duration;
 use asr::timer::TimerState;
 use settings_gui::SettingsGui;
 use hollow_knight_memory::*;
+use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
 // asr::panic_handler!();
@@ -27,8 +28,10 @@ async fn main() {
     asr::print_message("Hello, World!");
 
     let mut gui = SettingsGui::wait_load_merge_register().await;
+    gui.loop_load_store();
     next_tick().await;
     gui.update();
+    gui.loop_load_store();
     next_tick().await;
 
     let splits = gui.get_splits();
@@ -77,6 +80,7 @@ async fn main() {
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
                     gui.update();
+                    gui.loop_load_store();
 
                     next_tick().await;
                 }

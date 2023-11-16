@@ -6,6 +6,7 @@ use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
 pub use ugly_widget_derive::RadioButtonOptions;
 
 use super::args::SetHeadingLevel;
+use super::store::StoreWidget;
 
 // --------------------------------------------------------
 
@@ -28,6 +29,7 @@ pub trait RadioButtonOptions: Clone + Default + Ord {
     fn radio_button_options() -> Vec<RadioButtonOption<'static, Self>>;
 }
 
+#[derive(Clone)]
 pub struct RadioButton<T>(pub T);
 
 impl<T: RadioButtonOptions> Widget for RadioButton<T> {
@@ -66,16 +68,20 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
             [(_, false)] => &default,
             _ => &old,
         };
-        let new_s = options_str(new);
+        self.0 = new.clone();
+    }
+}
+
+impl<T: RadioButtonOptions> StoreWidget for RadioButton<T> {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
+        let new_s = options_str(&self.0);
         settings_map.insert(key, &new_s.into());
         set_tooltip(key, new_s);
         for o in T::radio_button_options() {
             let bool_key = o.bool_key(key);
-            let new_b = new == &o.value;
-            settings_map.insert(&bool_key, &new_b.into());
+            let new_b = &self.0 == &o.value;
+            new_b.insert_into(settings_map, &bool_key);
         }
-        self.0 = new.clone();
-        settings_map.store();
     }
 }
 

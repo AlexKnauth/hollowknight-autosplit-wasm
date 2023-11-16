@@ -9,6 +9,7 @@ use asr::watcher::Pair;
 use asr::{Process, Address64};
 use asr::game_engine::unity::mono::{self, UnityPointer};
 use asr::string::ArrayWString;
+use ugly_widget::store::StoreGui;
 
 #[cfg(debug_assertions)]
 use std::string::String;
@@ -1807,9 +1808,10 @@ impl PlayerDataStore {
 
 // --------------------------------------------------------
 
-pub async fn wait_attach_hollow_knight<G: Gui>(gui: &mut G) -> Process {
+pub async fn wait_attach_hollow_knight<G: StoreGui>(gui: &mut G) -> Process {
     retry(|| {
         gui.update();
+        gui.loop_load_store();
         HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
     }).await
 }
