@@ -26,6 +26,7 @@ pub enum Split {
     /// Splits on any credits rolling
     #[default]
     EndingSplit,
+    /*
     /// The Hollow Knight (Ending)
     /// 
     /// Splits on The Hollow Knight ending
@@ -58,8 +59,10 @@ pub enum Split {
     /// 
     /// Splits when the knight enters a transition (only one will split per transition)
     AnyTransition,
+    */
     // endregion: Start, End, and Menu
 
+    /*
     // region: Dreamers
     /// Lurien the Watcher (Dreamer)
     /// 
@@ -294,6 +297,7 @@ pub enum Split {
     /// Splits upon upgrading to the Pure Nail
     NailUpgrade4,
     // endregion: Nail and Pale Ore
+    */
 
     // region: Masks and Mask Shards
     /// Mask Shard 1 (Fragment)
@@ -314,6 +318,7 @@ pub enum Split {
     Mask1,
     // endregion: Masks and Mask Shards
 
+    /*
     // region: Charm Notches
     /// Shrumal Ogres (Charm Notch)
     /// 
@@ -684,6 +689,7 @@ pub enum Split {
     /// Splits when obtaining a Rancid Egg
     OnObtainRancidEgg,
     // endregion: Relics
+    */
 
     // region: Grubs
     /// Rescued Grub 1 (Grub)
@@ -713,6 +719,7 @@ pub enum Split {
     /// 
     /// Splits when entering Dirtmouth from King's Pass
     KingsPass,
+    /*
     /// Dirtmouth (Transition)
     /// 
     /// Splits on any transition into Dirtmouth Town
@@ -742,12 +749,15 @@ pub enum Split {
     /// 
     /// Splits when getting Grey Prince Zote essence
     GreyPrinceEssence,
+    */
     // endregion: Dirtmouth
     // region: Crossroads
+    /*
     /// Menderbug (Killed)
     /// 
     /// Splits when killing Menderbug
     MenderBug,
+    */
     /// Enter Brooding Mawlek (Transition)
     /// 
     /// Splits when entering the Brooding Mawlek arena transition in Forgotten Crossroads
@@ -756,10 +766,12 @@ pub enum Split {
     /// 
     /// Splits when killing Brooding Mawlek
     BroodingMawlek,
+    /*
     /// Ancestral Mound (Transition)
     /// 
     /// Splits on transition into Ancestral Mound
     AncestralMound,
+    */
     /// Gruz Mother (Boss)
     /// 
     /// Splits when killing Gruz Mother
@@ -768,6 +780,7 @@ pub enum Split {
     /// 
     /// Splits when saving Sly
     SlyRescued,
+    /*
     /// False Knight (Boss)
     /// 
     /// Splits when killing False Knight
@@ -802,7 +815,9 @@ pub enum Split {
     /// 
     /// Splits when killing The Radiance
     RadianceBoss,
+    */
     // endregion: Crossroads
+    /*
     // region: Greenpath
     /// Greenpath (Transition)
     /// 
@@ -1202,6 +1217,7 @@ pub enum Split {
     /// Splits when killing Pure Vessel
     PureVessel,
     // endregion: Godhome
+    */
 }
 
 impl StoreWidget for Split {
@@ -1241,6 +1257,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
     match s {
         // region: Start, End, and Menu
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
+        /*
         Split::EndingA => p.current == "Cinematic_Ending_A",
         Split::EndingB => p.current == "Cinematic_Ending_B",
         Split::EndingC => p.current == "Cinematic_Ending_C",
@@ -1249,8 +1266,10 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::RadianceP => p.old.starts_with("GG_Radiance") && p.current.starts_with("Cinematic_Ending"),
         Split::Menu => is_menu(p.current),
         Split::AnyTransition => p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old)),
+        */
         // endregion: Start, End, and Menu
 
+        /*
         // region: Dreamers
         /*
         // Old scene-transition based dreamer splits from when I only knew how to read the scene name
@@ -1260,9 +1279,11 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         */
         Split::MenuDreamer3 => 3 <= pds.guardians_defeated(prc, g) && is_menu(p.current),
         // endregion: Dreamers
+        */
 
         // region: Dirtmouth
         Split::KingsPass => p.old == "Tutorial_01" && p.current == "Town",
+        /*
         Split::EnterDirtmouth => p.current == "Town" && p.current != p.old,
         Split::SlyShopExit => p.old == "Room_shop" && p.current != p.old,
         Split::LumaflyLanternTransition => pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop"),
@@ -1272,14 +1293,18 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
                         && g.grimm_child_level(prc).is_some_and(|l| l == 2)
                         && g.flames_collected(prc).is_some_and(|f| 3 <= f),
         Split::EnterNKG => p.old.starts_with("Grimm_Main_Tent") && p.current.starts_with("Grimm_Nightmare"),
+        */
         // endregion: Dirtmouth
         // region: Crossroads
         Split::EnterBroodingMawlek => p.current == "Crossroads_09" && p.current != p.old,
+        /*
         Split::AncestralMound => p.current == "Crossroads_ShamanTemple" && p.current != p.old,
         Split::SalubraExit => p.old == "Room_Charm_Shop" && p.current != p.old,
         Split::EnterHollowKnight => p.current == "Room_Final_Boss_Core" && p.current != p.old,
         Split::HollowKnightDreamnail => p.current.starts_with("Dream_Final") && p.current != p.old,
+        */
         // endregion: Crossroads
+        /*
         // region: Greenpath
         Split::EnterGreenpath => p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"),
         Split::VengeflyKingTrans => pds.zote_rescued_buzzer(prc, g) && p.current != p.old,
@@ -1352,6 +1377,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Godhome
         Split::EnterGodhome => p.current.starts_with("GG_Atrium") && p.current != p.old,
         // endregion: Godhome
+        */
         // else
         _ => false
     }
@@ -1376,6 +1402,7 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
 
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
+        /*
         // region: Dreamers
         Split::Lurien => g.mask_broken_lurien(p).is_some_and(|b| b),
         Split::Monomon => g.mask_broken_monomon(p).is_some_and(|b| b),
@@ -1447,12 +1474,14 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Ore5 => g.ore_gross(p).is_some_and(|o| 5 <= o),
         Split::Ore6 => g.ore_gross(p).is_some_and(|o| 6 <= o),
         // endregion: Nail and Pale Ore
+        */
         // region: Masks and Mask Shards
         Split::MaskFragment1 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 1),
         Split::MaskFragment2 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 2),
         Split::MaskFragment3 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 3),
         Split::Mask1 => g.max_health_base(p).is_some_and(|h| h == 6),
         // endregion: Masks and Mask Shards
+        /*
         // region: Charm Notches
         Split::NotchShrumalOgres => g.notch_shroom_ogres(p).is_some_and(|n| n),
         Split::NotchSalubra1 => g.salubra_notch1(p).is_some_and(|n| n),
@@ -1559,6 +1588,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainArcaneEgg => pds.incremented_trinket4(p, g),
         Split::OnObtainRancidEgg => pds.incremented_rancid_eggs(p, g),
         // endregion: Relics
+        */
         // region: Grubs
         Split::Grub1 => g.grubs_collected(p).is_some_and(|g| g == 1),
         Split::Grub2 => g.grubs_collected(p).is_some_and(|g| g == 2),
@@ -1567,23 +1597,30 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub5 => g.grubs_collected(p).is_some_and(|g| g == 5),
         // endregion: Grubs
         // region: Dirtmouth
+        /*
         Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
         Split::NightmareKingGrimm => g.killed_nightmare_grimm(p).is_some_and(|k| k),
         Split::GreyPrince => g.killed_grey_prince(p).is_some_and(|k| k),
         Split::GreyPrinceEssence => g.grey_prince_orbs_collected(p).is_some_and(|o| o),
+        */
         // endregion: Dirtmouth
         // region: Crossroads
+        /*
         Split::MenderBug => g.killed_mender_bug(p).is_some_and(|k| k),
+        */
         Split::BroodingMawlek => g.killed_mawlek(p).is_some_and(|k| k),
         Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
         Split::SlyRescued => g.sly_rescued(p).is_some_and(|s| s),
+        /*
         Split::FalseKnight => g.killed_false_knight(p).is_some_and(|k| k),
         Split::FailedKnight => g.false_knight_dream_defeated(p).is_some_and(|k| k),
         Split::FailedChampionEssence => g.false_knight_orbs_collected(p).is_some_and(|o| o),
         Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
         Split::HollowKnightBoss => g.killed_hollow_knight(p).is_some_and(|k| k),
         Split::RadianceBoss => g.killed_final_boss(p).is_some_and(|k| k),
+        */
         // endregion: Crossroads
+        /*
         // region: Greenpath
         Split::MossKnight => g.killed_moss_knight(p).is_some_and(|k| k),
         Split::Zote1 => g.zote_rescued_buzzer(p).is_some_and(|z| z),
@@ -1675,6 +1712,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SlyNailsage => g.killed_nailsage(p).is_some_and(|k| k),
         Split::PureVessel => g.killed_hollow_knight_prime(p).is_some_and(|k| k),
         // endregion: Godhome
+        */
         // else
         _ => false
     }
