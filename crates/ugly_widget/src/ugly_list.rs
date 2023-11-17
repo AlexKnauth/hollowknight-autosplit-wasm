@@ -127,6 +127,10 @@ impl<T: Clone + Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         let insert_0 = settings_map.get(&format!("{}_insert_0", key)).and_then(|v| v.get_bool()).unwrap_or(false);
         for i in 0..map_len {
             let key_i = format!("{}_{}", key, i);
+            let key_i_item = format!("{}_item", key_i);
+            if settings_map.get(&key_i_item).is_none() {
+                settings_map.insert(&key_i_item, &map_list[i]);
+            }
             self.ulis[i].update_from(settings_map, &key_i, args.clone());
         }
         // --------------------

@@ -28,11 +28,6 @@ async fn main() {
     asr::print_message("Hello, World!");
 
     let mut gui = SettingsGui::wait_load_merge_register().await;
-    gui.loop_load_store();
-    next_tick().await;
-    gui.update();
-    gui.loop_load_store();
-    next_tick().await;
 
     let splits = gui.get_splits();
     asr::print_message(&format!("splits: {:?}", splits));
