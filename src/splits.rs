@@ -9,24 +9,56 @@ use super::hollow_knight_memory::*;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum Split {
-    // Start, End, and Menu
+    // region: Start, End, and Menu
+    /// Start New Game (Start)
+    /// 
+    /// Splits when starting a new save file, including Normal, Steel Soul, and Godseeker mode
     StartNewGame,
+    /// Start Any Game (Start)
+    /// 
+    /// Splits when entering a new or existing save file
     StartAnyGame,
+    /// Credits Roll (Event)
+    /// 
+    /// Splits on any credits rolling
     EndingSplit,
+    /// The Hollow Knight (Ending)
+    /// 
+    /// Splits on The Hollow Knight ending
     EndingA,
+    /// Sealed Siblings (Ending)
+    /// 
+    /// Splits on Sealed Siblings ending
     EndingB,
+    /// Dream No More (Ending)
+    /// 
+    /// Splits on Dream No More ending
     EndingC,
+    /// Embrace the Void (Ending)
+    /// 
+    /// Splits on Embrace the Void ending
     EndingD,
+    /// Delicate Flower (Ending)
+    /// 
+    /// Splits on Delicate Flower ending
     EndingE,
+    /// Absolute Radiance (Pantheon)
+    /// 
+    /// Splits after killing Absolute Radiance in Pantheon 5
     RadianceP,
+    /// Main Menu (Menu)
+    /// 
+    /// Splits on the main menu
     Menu,
+    // endregion: Start, End, and Menu
 
-    // Dreamers
+    // region: Dreamers
     Lurien,
     Monomon,
     Hegemol,
+    // endregion: Dreamers
 
-    // Spell Levels
+    // region: Spell Levels
     VengefulSpirit,
     ShadeSoul,
     MenuShadeSoul,
@@ -35,8 +67,9 @@ pub enum Split {
     TransDescendingDark,
     HowlingWraiths,
     AbyssShriek,
+    // endregion: Spell Levels
 
-    // Movement Abilities
+    // region: Movement Abilities
     MothwingCloak,
     MenuCloak,
     ShadeCloak,
@@ -47,16 +80,19 @@ pub enum Split {
     CrystalHeart,
     IsmasTear,
     MenuIsmasTear,
+    // endregion: Movement Abilities
 
-    // Nail Arts
+    // region: Nail Arts
     CycloneSlash,
+    // endregion: Nail Arts
 
-    // Dream Nail Levels
+    // region: Dream Nail Levels
     DreamNail,
     DreamGate,
     DreamNail2,
+    // endregion: Dream Nail Levels
 
-    // Nail and Pale Ore
+    // region: Nail and Pale Ore
     OnObtainPaleOre,
     Ore1,
     Ore2,
@@ -68,14 +104,16 @@ pub enum Split {
     NailUpgrade2,
     NailUpgrade3,
     NailUpgrade4,
+    // endregion: Nail and Pale Ore
 
-    // Masks and Mask Shards
+    // region: Masks and Mask Shards
     MaskFragment1,
     MaskFragment2,
     MaskFragment3,
     Mask1,
+    // endMasks and Mask Shards
 
-    // Charm Notches
+    // region: Charm Notches
     NotchShrumalOgres,
     NotchSalubra1,
     NotchSalubra2,
@@ -84,8 +122,9 @@ pub enum Split {
     NotchFogCanyon,
     NotchGrimm,
     OnObtainCharmNotch,
+    // endregion: Charm Notches
 
-    // Charms
+    // region: Charms
     GatheringSwarm,
     WaywardCompass,
     Grubsong,
@@ -145,8 +184,9 @@ pub enum Split {
     OnObtainWhiteFragment,
     Kingsoul,
     VoidHeart,
+    // endregion: Charms
 
-    // Stags
+    // region: Stags
     StagMoved,
     CrossroadsStation,
     GreenpathStation,
@@ -158,8 +198,9 @@ pub enum Split {
     DeepnestStation,
     QueensGardensStation,
     StagnestStation,
+    // endregion: Stags
 
-    // Relics
+    // region: Relics
     OnObtainWanderersJournal,
     AllSeals,
     OnObtainHallownestSeal,
@@ -170,8 +211,9 @@ pub enum Split {
     ArcaneEgg8,
     OnObtainArcaneEgg,
     OnObtainRancidEgg,
+    // endregion: Relics
 
-    // Keys
+    // region: Keys
     CityKey,
     LumaflyLantern,
     OnObtainSimpleKey,
@@ -182,22 +224,25 @@ pub enum Split {
     SlySimpleKey,
     KingsBrand,
     TramPass,
+    // endregion: Keys
 
-    // Grubs
+    // region: Grubs
     Grub1,
     Grub2,
     Grub3,
     Grub4,
     Grub5,
+    // endregion: Grubs
 
-    // Dirtmouth
+    // region: Dirtmouth
     KingsPass,
     SlyShopExit,
     TroupeMasterGrimm,
     NightmareKingGrimm,
     GreyPrince,
     GreyPrinceEssence,
-    // Crossroads
+    // endregion: Dirtmouth
+    // region: Crossroads
     EnterBroodingMawlek,
     BroodingMawlek,
     AncestralMound,
@@ -212,27 +257,32 @@ pub enum Split {
     HollowKnightBoss,
     HollowKnightDreamnail,
     RadianceBoss,
-    // Greenpath
+    // endregion: Crossroads
+    // region: Greenpath
     EnterGreenpath,
     Hornet1,
     NoEyes,
     NoEyesEssence,
     MegaMossCharger,
-    // Fungal
+    // endregion: Greenpath
+    // region: Fungal
     ElderHu,
     ElderHuEssence,
     MenuMantisJournal,
     MantisLords,
-    // Cliffs
+    // endregion: Fungal
+    // region: Cliffs
     Gorb,
     GorbEssence,
     NightmareLantern,
     NightmareLanternDestroyed,
-    // Resting Grounds
+    // endregion: Cliffs
+    // region: Resting Grounds
     DreamNailExit,
     Xero,
     XeroEssence,
-    // City
+    // endregion: Resting Grounds
+    // region: City
     CityGateOpen,
     CityGateAndMantisLords,
     GorgeousHusk,
@@ -250,47 +300,56 @@ pub enum Split {
     BlackKnight,
     BlackKnightTrans,
     Collector,
-    // Peak
+    // endregion: City
+    // region: Peak
     MenuSlyKey,
     CrystalGuardian1,
     CrystalGuardian2,
     MineLiftOpened,
-    // Waterways
+    // endregion: Peak
+    // region: Waterways
     DungDefender,
     DungDefenderExit,
     WhiteDefender,
     WhiteDefenderEssence,
     Flukemarm,
-    // Basin
+    // endregion: Waterways
+    // region: Basin
     Abyss19from18,
     BrokenVessel,
     LostKin,
     LostKinEssence,
-    // Kingdom's Edge
+    // endregion: Basin
+    // region: Kingdom's Edge
     HiveKnight,
     Hornet2,
     Markoth,
     MarkothEssence,
     GodTamer,
-    // Fog Canyon
+    // endregion: Kingdom's Edge
+    // region: Fog Canyon
     TeachersArchive,
     UumuuEncountered,
     Uumuu,
-    // Queen's Gardens
+    // endregion: Fog Canyon
+    // region: Queen's Gardens
     QueensGardensEntry,
     Marmu,
     MarmuEssence,
     TraitorLord,
-    // Deepnest
+    // endregion: Queen's Gardens
+    // region: Deepnest
     Nosk,
     Galien,
     GalienEssence,
     BeastsDenTrapBench,
-    // Godhome
+    // endregion: Deepnest
+    // region: Godhome
     MatoOroNailBros,
     SheoPaintmaster,
     SlyNailsage,
     PureVessel,
+    // endregion: Godhome
 }
 
 impl FromStr for Split {
@@ -311,7 +370,7 @@ impl Split {
 
 pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
-        // Start, End, and Menu
+        // region: Start, End, and Menu
         Split::StartNewGame => {
             (OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
         },
@@ -326,49 +385,62 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EndingE => p.current == "Cinematic_Ending_E",
         Split::RadianceP => p.old.starts_with("GG_Radiance") && p.current.starts_with("Cinematic_Ending"),
         Split::Menu => is_menu(p.current),
+        // endregion: Start, End, and Menu
         
-        // Dreamers
+        // region: Dreamers
         Split::Lurien => p.old == "Dream_Guardian_Lurien" && p.current == "Cutscene_Boss_Door",
         Split::Monomon => p.old == "Dream_Guardian_Monomon" && p.current == "Cutscene_Boss_Door",
         Split::Hegemol => p.old == "Dream_Guardian_Hegemol" && p.current == "Cutscene_Boss_Door",
+        // endregion: Dreamers
 
-        // Dirtmouth
+        // region: Dirtmouth
         Split::KingsPass => p.old == "Tutorial_01" && p.current == "Town",
         Split::SlyShopExit => p.old == "Room_shop" && p.current != p.old,
-        // Crossroads
+        // endregion: Dirtmouth
+        // region: Crossroads
         Split::EnterBroodingMawlek => p.current == "Crossroads_09" && p.current != p.old,
         Split::AncestralMound => p.current == "Crossroads_ShamanTemple" && p.current != p.old,
         Split::SalubraExit => p.old == "Room_Charm_Shop" && p.current != p.old,
         Split::EnterHollowKnight => p.current == "Room_Final_Boss_Core" && p.current != p.old,
         Split::HollowKnightDreamnail => p.current.starts_with("Dream_Final") && p.current != p.old,
-        // Greenpath
+        // endregion: Crossroads
+        // region: Greenpath
         Split::EnterGreenpath => p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"),
         Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
-        // Fungal
+        // endregion: Greenpath
+        // region: Fungal
         Split::MenuClaw => pds.has_wall_jump(prc, g) && is_menu(p.current),
         Split::MenuMantisJournal => is_menu(p.current) && p.old == "Fungus2_17",
-        // Resting Grounds
+        // endregion: Fungal
+        // region: Resting Grounds
         Split::DreamNailExit => p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07",
-        // City
+        // endregion: Resting Grounds
+        // region: City
         Split::TransGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && p.current != p.old,
         Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && is_menu(p.current),
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
         Split::MenuShadeSoul => 2 <= pds.get_fireball_level(prc, g) && is_menu(p.current),
         Split::EnterBlackKnight => p.current == "Ruins2_03" && p.current != p.old,
         Split::BlackKnightTrans => p.current == "Ruins2_Watcher_Room" && p.old == "Ruins2_03",
-        // Peak
+        // endregion: City
+        // region: Peak
         Split::MenuSlyKey => is_menu(p.current) && p.old == "Mines_11",
         Split::TransDescendingDark => 2 <= pds.get_quake_level(prc, g) && p.current != p.old,
-        // Waterways
+        // endregion: Peak
+        // region: Waterways
         Split::DungDefenderExit => p.old == "Waterways_05" && p.current == "Abyss_01",
         Split::MenuIsmasTear => pds.has_acid_armour(prc, g) && is_menu(p.current),
-        // Basin
+        // endregion: Waterways
+        // region: Basin
         Split::Abyss19from18 => p.old == "Abyss_18" && p.current == "Abyss_19",
         Split::MenuWings => pds.has_double_jump(prc, g) && is_menu(p.current),
-        // Fog Canyon
+        // endregion: Basin
+        // region: Fog Canyon
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
-        // Queen's Gardens
+        // endregion: Fog Canyon
+        // region: Queen's Gardens
         Split::QueensGardensEntry => (p.current.starts_with("Fungus3_34") || p.current.starts_with("Deepnest_43")) && p.current != p.old,
+        // endregion: Queen's Gardens
         // else
         _ => false
     }
@@ -376,7 +448,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
 
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
-        // Spell Levels
+        // region: Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
         Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),
         Split::MenuShadeSoul => { pds.get_fireball_level(p, g); false },
@@ -385,7 +457,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::TransDescendingDark => { pds.get_quake_level(p, g); false },
         Split::HowlingWraiths => g.get_scream_level(p).is_some_and(|l| 1 <= l),
         Split::AbyssShriek => g.get_scream_level(p).is_some_and(|l| 2 <= l),
-        // Movement Abilities
+        // endregion: Spell Levels
+        // region: Movement Abilities
         Split::MothwingCloak => g.has_dash(p).is_some_and(|d| d),
         Split::MenuCloak => { pds.has_dash(p, g); false },
         Split::ShadeCloak => g.has_shadow_dash(p).is_some_and(|s| s),
@@ -396,14 +469,17 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::CrystalHeart => g.has_super_dash(p).is_some_and(|s| s),
         Split::IsmasTear => g.has_acid_armour(p).is_some_and(|a| a),
         Split::MenuIsmasTear => { pds.has_acid_armour(p, g); false },
-        // Nail Arts
+        // endregion: Movement Abilities
+        // region: Nail Arts
         Split::CycloneSlash => g.has_cyclone(p).is_some_and(|s| s),
         // TODO: figure out which of the other nail arts is which
-        // Dream Nail Levels
+        // endregion: Nail Arts
+        // region: Dream Nail Levels
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
-        // Nail and Pale Ore
+        // endregion: Dream Nail Levels
+        // region: Nail and Pale Ore
         Split::NailUpgrade1 => g.nail_smith_upgrades(p).is_some_and(|n| 1 <= n),
         Split::NailUpgrade2 => g.nail_smith_upgrades(p).is_some_and(|n| 2 <= n),
         Split::NailUpgrade3 => g.nail_smith_upgrades(p).is_some_and(|n| 3 <= n),
@@ -415,12 +491,14 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Ore4 => g.ore_gross(p).is_some_and(|o| 4 <= o),
         Split::Ore5 => g.ore_gross(p).is_some_and(|o| 5 <= o),
         Split::Ore6 => g.ore_gross(p).is_some_and(|o| 6 <= o),
-        // Masks and Mask Shards
+        // endregion: Nail and Pale Ore
+        // region: Masks and Mask Shards
         Split::MaskFragment1 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 1),
         Split::MaskFragment2 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 2),
         Split::MaskFragment3 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 3),
         Split::Mask1 => g.max_health_base(p).is_some_and(|h| h == 6),
-        // Charm Notches
+        // endregion: Masks and Mask Shards
+        // region: Charm Notches
         Split::NotchShrumalOgres => g.notch_shroom_ogres(p).is_some_and(|n| n),
         Split::NotchSalubra1 => g.salubra_notch1(p).is_some_and(|n| n),
         Split::NotchSalubra2 => g.salubra_notch2(p).is_some_and(|n| n),
@@ -429,7 +507,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::NotchFogCanyon => g.notch_fog_canyon(p).is_some_and(|n| n),
         Split::NotchGrimm => g.got_grimm_notch(p).is_some_and(|n| n),
         Split::OnObtainCharmNotch => pds.incremented_charm_slots(p, g),
-        // Charms
+        // endregion: Charm Notches
+        // region: Charms
         Split::GatheringSwarm => g.got_charm_1(p).is_some_and(|c| c),
         Split::WaywardCompass => g.got_charm_2(p).is_some_and(|c| c),
         Split::Grubsong => g.got_charm_3(p).is_some_and(|c| c),
@@ -493,7 +572,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainWhiteFragment => pds.increased_royal_charm_state(p, g),
         Split::Kingsoul => g.charm_cost_36(p).is_some_and(|c| c == 5) && g.royal_charm_state(p).is_some_and(|s| s == 3),
         Split::VoidHeart => g.got_shade_charm(p).is_some_and(|c| c),
-        // Stags
+        // endregion: Charms
+        // region: Stags
         Split::StagMoved => pds.changed_stag_position(p, g),
         Split::CrossroadsStation => g.opened_crossroads(p).is_some_and(|o| o),
         Split::GreenpathStation => g.opened_greenpath(p).is_some_and(|o| o),
@@ -507,7 +587,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::StagnestStation => g.get_next_scene_name(p).is_some_and(|n| n == "Cliffs_03")
                                && g.travelling(p).is_some_and(|t| t)
                                && g.opened_stag_nest(p).is_some_and(|o| o),
-        // Relics
+        // endregion: Stags
+        // region: Relics
         Split::OnObtainWanderersJournal => pds.incremented_trinket1(p, g),
         Split::AllSeals => 17 <= g.trinket2(p).unwrap_or_default() + g.sold_trinket2(p).unwrap_or_default(),
         Split::OnObtainHallownestSeal => pds.incremented_trinket2(p, g),
@@ -518,7 +599,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::ArcaneEgg8 => 8 <= g.trinket4(p).unwrap_or_default() + g.sold_trinket4(p).unwrap_or_default(),
         Split::OnObtainArcaneEgg => pds.incremented_trinket4(p, g),
         Split::OnObtainRancidEgg => pds.incremented_rancid_eggs(p, g),
-        // Keys
+        // endregion: Relics
+        // region: Keys
         Split::CityKey => g.has_city_key(p).is_some_and(|k| k),
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
@@ -529,18 +611,21 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SlySimpleKey => g.sly_simple_key(p).is_some_and(|k| k),
         Split::KingsBrand => g.has_kings_brand(p).is_some_and(|k| k),
         Split::TramPass => g.has_tram_pass(p).is_some_and(|k| k),
-        // Grubs
+        // endregion: Keys
+        // region: Grubs
         Split::Grub1 => g.grubs_collected(p).is_some_and(|g| g == 1),
         Split::Grub2 => g.grubs_collected(p).is_some_and(|g| g == 2),
         Split::Grub3 => g.grubs_collected(p).is_some_and(|g| g == 3),
         Split::Grub4 => g.grubs_collected(p).is_some_and(|g| g == 4),
         Split::Grub5 => g.grubs_collected(p).is_some_and(|g| g == 5),
-        // Dirtmouth
+        // endregion: Grubs
+        // region: Dirtmouth
         Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
         Split::NightmareKingGrimm => g.killed_nightmare_grimm(p).is_some_and(|k| k),
         Split::GreyPrince => g.killed_grey_prince(p).is_some_and(|k| k),
         Split::GreyPrinceEssence => g.grey_prince_orbs_collected(p).is_some_and(|o| o),
-        // Crossroads
+        // endregion: Dirtmouth
+        // region: Crossroads
         Split::BroodingMawlek => g.killed_mawlek(p).is_some_and(|k| k),
         Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
         Split::SlyRescued => g.sly_rescued(p).is_some_and(|s| s),
@@ -550,24 +635,29 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
         Split::HollowKnightBoss => g.killed_hollow_knight(p).is_some_and(|k| k),
         Split::RadianceBoss => g.killed_final_boss(p).is_some_and(|k| k),
-        // Greenpath
+        // endregion: Crossroads
+        // region: Greenpath
         Split::Hornet1 => g.killed_hornet(p).is_some_and(|k| k),
         Split::NoEyes => g.killed_ghost_no_eyes(p).is_some_and(|k| k),
         Split::NoEyesEssence => g.no_eyes_defeated(p).is_some_and(|d| d == 2),
         Split::MegaMossCharger => g.mega_moss_charger_defeated(p).is_some_and(|k| k),
-        // Fungal
+        // endregion: Greenpath
+        // region: Fungal
         Split::ElderHu => g.killed_ghost_hu(p).is_some_and(|k| k),
         Split::ElderHuEssence => g.elder_hu_defeated(p).is_some_and(|d| d == 2),
         Split::MantisLords => g.defeated_mantis_lords(p).is_some_and(|k| k),
-        // Cliffs
+        // endregion: Fungal
+        // region: Cliffs
         Split::Gorb => g.killed_ghost_aladar(p).is_some_and(|k| k),
         Split::GorbEssence => g.aladar_slug_defeated(p).is_some_and(|d| d == 2),
         Split::NightmareLantern => g.nightmare_lantern_lit(p).is_some_and(|l| l),
         Split::NightmareLanternDestroyed => g.destroyed_nightmare_lantern(p).is_some_and(|l| l),
-        // Resting Grounds
+        // endregion: Cliffs
+        // region: Resting Grounds
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         Split::XeroEssence => g.xero_defeated(p).is_some_and(|d| d == 2),
-        // City
+        // endregion: Resting Grounds
+        // region: City
         Split::CityGateOpen => g.opened_city_gate(p).is_some_and(|o| o),
         Split::CityGateAndMantisLords => g.opened_city_gate(p).is_some_and(|o| o) && g.defeated_mantis_lords(p).is_some_and(|k| k),
         Split::GorgeousHusk => pds.killed_gorgeous_husk(p, g),
@@ -582,10 +672,12 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::WatcherChandelier => g.watcher_chandelier(p).is_some_and(|c| c),
         Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),
         Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
-        // Peak
+        // endregion: City
+        // region: Peak
         Split::CrystalGuardian1 => g.defeated_mega_beam_miner(p).is_some_and(|k| k),
         Split::MineLiftOpened => g.mine_lift_opened(p).is_some_and(|o| o),
-        // Waterways
+        // endregion: Peak
+        // region: Waterways
         Split::DungDefender => g.killed_dung_defender(p).is_some_and(|k| k),
         Split::WhiteDefender => g.killed_white_defender(p).is_some_and(|k| k),
         Split::WhiteDefenderEssence => g.white_defender_orbs_collected(p).is_some_and(|o| o),
@@ -593,29 +685,35 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
         Split::LostKin => g.infected_knight_dream_defeated(p).is_some_and(|k| k),
         Split::LostKinEssence => g.infected_knight_orbs_collected(p).is_some_and(|o| o),
-        // Kingdom's Edge
+        // endregion: Waterways
+        // region: Kingdom's Edge
         Split::HiveKnight => g.killed_hive_knight(p).is_some_and(|k| k),
         Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
         Split::Markoth => g.killed_ghost_markoth(p).is_some_and(|k| k),
         Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
         Split::GodTamer => g.killed_lobster_lancer(p).is_some_and(|k| k),
-        // Fog Canyon
+        // endregion: Kingdom's Edge
+        // region: Fog Canyon
         Split::UumuuEncountered => g.encountered_mega_jelly(p).is_some_and(|b| b),
         Split::Uumuu => g.killed_mega_jellyfish(p).is_some_and(|k| k),
-        // Queen's Gardens
+        // endregion: Fog Canyon
+        // region: Queen's Gardens
         Split::Marmu => g.killed_ghost_marmu(p).is_some_and(|k| k),
         Split::MarmuEssence => g.mum_caterpillar_defeated(p).is_some_and(|d| d == 2),
         Split::TraitorLord => g.killed_traitor_lord(p).is_some_and(|k| k),
-        // Deepnest
+        // endregion: Queen's Gardens
+        // region: Deepnest
         Split::Nosk => g.killed_mimic_spider(p).is_some_and(|k| k),
         Split::Galien => g.killed_ghost_galien(p).is_some_and(|k| k),
         Split::GalienEssence => g.galien_defeated(p).is_some_and(|d| d == 2),
         Split::BeastsDenTrapBench => g.spider_capture(p).is_some_and(|c| c),
-        // Godhome
+        // endregion: Deepnest
+        // region: Godhome
         Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
         Split::SheoPaintmaster => g.killed_paintmaster(p).is_some_and(|k| k),
         Split::SlyNailsage => g.killed_nailsage(p).is_some_and(|k| k),
         Split::PureVessel => g.killed_hollow_knight_prime(p).is_some_and(|k| k),
+        // endregion: Godhome
         // else
         _ => false
     }
