@@ -2,22 +2,23 @@
 use asr::settings::gui::{Gui, Widget};
 
 pub trait StoreGui: Gui {
-    fn loop_load_store(&self);
-}
+    fn insert_into(&self, settings_map: &asr::settings::Map);
 
-pub trait StoreWidget: Widget {
-    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str);
-
-    fn loop_load_store(&self, key: &str) {
+    fn loop_load_update_store(&mut self) {
         loop {
             let settings_map = asr::settings::Map::load();
             let old = settings_map.clone();
-            self.insert_into(&settings_map, key);
+            self.update_from(&settings_map);
+            self.insert_into(&settings_map);
             if settings_map.store_if_unchanged(&old) {
                 break;
             }
         }
     }
+}
+
+pub trait StoreWidget: Widget {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str);
 }
 
 impl StoreWidget for bool {

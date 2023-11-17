@@ -7,7 +7,6 @@ mod hollow_knight_memory;
 mod settings_gui;
 mod splits;
 
-use asr::settings::Gui;
 use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
@@ -74,8 +73,7 @@ async fn main() {
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
-                    gui.update();
-                    gui.loop_load_store();
+                    gui.loop_load_update_store();
 
                     next_tick().await;
                 }

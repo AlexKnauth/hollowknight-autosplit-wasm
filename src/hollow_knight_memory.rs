@@ -4,7 +4,6 @@ use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
 use asr::future::{next_tick, retry};
-use asr::settings::Gui;
 use asr::watcher::Pair;
 use asr::{Process, Address64};
 use asr::game_engine::unity::mono::{self, UnityPointer};
@@ -1810,8 +1809,7 @@ impl PlayerDataStore {
 
 pub async fn wait_attach_hollow_knight<G: StoreGui>(gui: &mut G) -> Process {
     retry(|| {
-        gui.update();
-        gui.loop_load_store();
+        gui.loop_load_update_store();
         HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
     }).await
 }
