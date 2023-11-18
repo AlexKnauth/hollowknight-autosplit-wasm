@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use super::auto_splitter_settings::Settings;
 use super::hollow_knight_memory::*;
 
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
 pub enum Split {
     // region: Start, End, and Menu
     /// Start New Game (Start)
@@ -21,6 +21,7 @@ pub enum Split {
     /// Credits Roll (Event)
     /// 
     /// Splits on any credits rolling
+    #[default]
     EndingSplit,
     /// The Hollow Knight (Ending)
     /// 
@@ -350,6 +351,12 @@ pub enum Split {
     SlyNailsage,
     PureVessel,
     // endregion: Godhome
+}
+
+impl ToString for Split {
+    fn to_string(&self) -> String {
+        serde_json::to_value(self).unwrap_or_default().as_str().unwrap_or_default().to_string()
+    }
 }
 
 impl FromStr for Split {
