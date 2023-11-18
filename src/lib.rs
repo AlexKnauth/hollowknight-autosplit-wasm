@@ -17,6 +17,8 @@ use ugly_widget::store::StoreGui;
 asr::async_main!(stable);
 // asr::panic_handler!();
 
+const TICKS_PER_GUI: usize = 0x100;
+
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
@@ -28,10 +30,11 @@ async fn main() {
 
     let mut gui = SettingsGui::wait_load_merge_register().await;
 
-    let splits = gui.get_splits();
+    let mut ticks_since_gui = 0;
+    let mut splits = gui.get_splits();
     asr::print_message(&format!("splits: {:?}", splits));
 
-    let auto_reset = splits::auto_reset_safe(&splits);
+    let mut auto_reset = splits::auto_reset_safe(&splits);
 
     loop {
         let process = wait_attach_hollow_knight(&mut gui).await;
@@ -48,8 +51,15 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
 
+                let gui_splits = gui.get_splits();
+                if gui_splits != splits {
+                    splits = gui_splits;
+                    asr::print_message(&format!("splits: {:?}", splits));
+                    auto_reset = splits::auto_reset_safe(&splits);
+                }
+
                 let mut i = 0;
-                let n = splits.len();
+                let mut n = splits.len();
                 loop {
                     let current_split = &splits[i];
                     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
@@ -73,7 +83,17 @@ async fn main() {
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
-                    gui.loop_load_update_store();
+                    ticks_since_gui += 1;
+                    if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
+                        let gui_splits = gui.get_splits();
+                        if gui_splits != splits {
+                            splits = gui_splits;
+                            asr::print_message(&format!("splits: {:?}", splits));
+                            auto_reset = splits::auto_reset_safe(&splits);
+                            n = splits.len();
+                        }
+                        ticks_since_gui = 0;
+                    }
 
                     next_tick().await;
                 }
