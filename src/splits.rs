@@ -171,14 +171,42 @@ pub enum Split {
     AllBreakables,
     AllUnbreakables,
     // Grimmchild / Carefree Melody
+    /// Grimmchild (Charm)
+    /// 
+    /// Splits when obtaining the Grimmchild charm
     Grimmchild,
+    /// Grimmchild Lvl 2 (Charm)
+    /// 
+    /// Splits when upgrading Grimmchild to level 2
     Grimmchild2,
+    /// Grimmchild Lvl 3 (Charm)
+    /// 
+    /// Splits when upgrading Grimmchild to level 3
     Grimmchild3,
+    /// Grimmchild Lvl 4 (Charm)
+    /// 
+    /// Splits when upgrading Grimmchild to level 4
     Grimmchild4,
+    /// Carefree Melody (Charm)
+    /// 
+    /// Splits when obtaining the Carefree Melody charm
     CarefreeMelody,
+    /// Grimm Flame 1 (Flame)
+    /// 
+    /// Splits after obtaining the first flame.
     Flame1,
+    /// Grimm Flame 2 (Flame)
+    /// 
+    /// Splits after obtaining the second flame.
     Flame2,
+    /// Grimm Flame 3 (Flame)
+    /// 
+    /// Splits after obtaining the third flame.
     Flame3,
+    /// Brumm Flame (NPC)
+    /// 
+    /// Splits when collecting Brumm's flame in Deepnest
+    BrummFlame,
     // Kingsoul / VoidHeart
     WhiteFragmentLeft,
     WhiteFragmentRight,
@@ -236,11 +264,34 @@ pub enum Split {
     // endregion: Grubs
 
     // region: Dirtmouth
+    /// King's Pass (Transition)
+    /// 
+    /// Splits when entering Dirtmouth from King's Pass
     KingsPass,
     SlyShopExit,
+    /// Enter Troupe Master Grimm (Transition)
+    /// 
+    /// Splits when entering Grimm tent with requirements to trigger Troupe Master Grimm boss
+    EnterTMG,
+    /// Troupe Master Grimm (Boss)
+    /// 
+    /// Splits when killing Troupe Master Grimm
     TroupeMasterGrimm,
+    /// NKG Dream (Transition)
+    /// 
+    /// Splits on transition into Nightmare King Grimm dream
+    EnterNKG,
+    /// Nightmare King Grimm (Boss)
+    /// 
+    /// Splits when killing Nightmare King Grimm
     NightmareKingGrimm,
+    /// Grey Prince Zote (Boss)
+    /// 
+    /// Splits when killing Grey Prince
     GreyPrince,
+    /// Grey Prince Zote (Essence)
+    /// 
+    /// Splits when getting Grey Prince Zote essence
     GreyPrinceEssence,
     // endregion: Dirtmouth
     // region: Crossroads
@@ -279,9 +330,23 @@ pub enum Split {
     NightmareLanternDestroyed,
     // endregion: Cliffs
     // region: Resting Grounds
+    /// Blue Lake (Transition)
+    /// 
+    /// Splits on transition to Blue Lake from either side
+    BlueLake,
     DreamNailExit,
+    /// Xero (Boss)
+    /// 
+    /// Splits when killing Xero
     Xero,
+    /// Xero (Essence)
+    /// 
+    /// Splits when absorbing essence from Xero
     XeroEssence,
+    /// Catacombs Entry (Transition)
+    /// 
+    /// Splits on entry to the catacombs below Resting Grounds
+    CatacombsEntry,
     // endregion: Resting Grounds
     // region: City
     CityGateOpen,
@@ -403,6 +468,12 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Dirtmouth
         Split::KingsPass => p.old == "Tutorial_01" && p.current == "Town",
         Split::SlyShopExit => p.old == "Room_shop" && p.current != p.old,
+        // TODO: should EnterTMG check that Grimmchild is actually equipped?
+        Split::EnterTMG => p.current.starts_with("Grimm_Main_Tent")
+                        && p.current != p.old
+                        && g.grimm_child_level(prc).is_some_and(|l| l == 2)
+                        && g.flames_collected(prc).is_some_and(|f| 3 <= f),
+        Split::EnterNKG => p.old.starts_with("Grimm_Main_Tent") && p.current.starts_with("Grimm_Nightmare"),
         // endregion: Dirtmouth
         // region: Crossroads
         Split::EnterBroodingMawlek => p.current == "Crossroads_09" && p.current != p.old,
@@ -420,7 +491,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuMantisJournal => is_menu(p.current) && p.old == "Fungus2_17",
         // endregion: Fungal
         // region: Resting Grounds
+        Split::BlueLake => p.current.starts_with("Crossroads_50") && !p.old.starts_with("Crossroads_50"), // blue lake is Crossroads_50
         Split::DreamNailExit => p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07",
+        Split::CatacombsEntry => p.current.starts_with("RestingGrounds_10") && !p.old.starts_with("RestingGrounds_10"),
         // endregion: Resting Grounds
         // region: City
         Split::TransGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && p.current != p.old,
@@ -573,6 +646,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Flame1 => g.flames_collected(p).is_some_and(|f| 1 <= f),
         Split::Flame2 => g.flames_collected(p).is_some_and(|f| 2 <= f),
         Split::Flame3 => g.flames_collected(p).is_some_and(|f| 3 <= f),
+        Split::BrummFlame => g.got_brumms_flame(p).is_some_and(|f| f),
         // Kingsoul / VoidHeart
         Split::WhiteFragmentLeft => g.got_queen_fragment(p).is_some_and(|c| c),
         Split::WhiteFragmentRight => g.got_king_fragment(p).is_some_and(|c| c),

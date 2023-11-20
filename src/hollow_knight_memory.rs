@@ -243,6 +243,7 @@ struct PlayerDataPointers {
     got_charm_40: UnityPointer<3>,
     grimm_child_level: UnityPointer<3>,
     flames_collected: UnityPointer<3>,
+    got_brumms_flame: UnityPointer<3>,
     // Kingsoul / VoidHeart
     charm_cost_36: UnityPointer<3>,
     got_queen_fragment: UnityPointer<3>,
@@ -442,6 +443,7 @@ impl PlayerDataPointers {
             got_charm_40: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_40"]),
             grimm_child_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grimmChildLevel"]),
             flames_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "flamesCollected"]),
+            got_brumms_flame: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotBrummsFlame"]),
             // Kingsoul / VoidHeart
             charm_cost_36: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "charmCost_36"]),
             got_queen_fragment: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotQueenFragment"]),
@@ -1046,6 +1048,10 @@ impl GameManagerFinder {
 
     pub fn flames_collected(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.flames_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn got_brumms_flame(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.got_brumms_flame.deref(process, &self.module, &self.image).ok()
     }
 
     // Kingsoul / VoidHeart
