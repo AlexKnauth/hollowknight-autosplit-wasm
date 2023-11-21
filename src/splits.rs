@@ -54,8 +54,17 @@ pub enum Split {
     // endregion: Start, End, and Menu
 
     // region: Dreamers
+    /// Lurien the Watcher (Dreamer)
+    /// 
+    /// Splits when you see the mask for Lurien
     Lurien,
+    /// Monomon the Teacher (Dreamer)
+    /// 
+    /// Splits when you see the mask for Monomon
     Monomon,
+    /// Herrah the Beast (Dreamer)
+    /// 
+    /// Splits when you see the mask for Herrah
     Hegemol,
     // endregion: Dreamers
 
