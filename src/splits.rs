@@ -775,9 +775,18 @@ pub enum Split {
     MegaMossCharger,
     // endregion: Greenpath
     // region: Fungal
+    /// Elder Hu (Boss)
+    /// 
+    /// Splits when killing Elder Hu
     ElderHu,
+    /// Elder Hu (Essence)
+    /// 
+    /// Splits when absorbing essence from Elder Hu
     ElderHuEssence,
     MenuMantisJournal,
+    /// Mantis Lords (Boss)
+    /// 
+    /// Splits when killing Mantis Lords
     MantisLords,
     // endregion: Fungal
     // region: Cliffs
