@@ -697,19 +697,59 @@ pub enum Split {
     GreyPrinceEssence,
     // endregion: Dirtmouth
     // region: Crossroads
+    /// Enter Brooding Mawlek (Transition)
+    /// 
+    /// Splits when entering the Brooding Mawlek arena transition in Forgotten Crossroads
     EnterBroodingMawlek,
+    /// Brooding Mawlek (Boss)
+    /// 
+    /// Splits when killing Brooding Mawlek
     BroodingMawlek,
+    /// Ancestral Mound (Transition)
+    /// 
+    /// Splits on transition into Ancestral Mound
     AncestralMound,
+    /// Gruz Mother (Boss)
+    /// 
+    /// Splits when killing Gruz Mother
     GruzMother,
+    /// Sly Rescued (NPC)
+    /// 
+    /// Splits when saving Sly
     SlyRescued,
+    /// False Knight (Boss)
+    /// 
+    /// Splits when killing False Knight
     FalseKnight,
+    /// Failed Champion (Boss)
+    /// 
+    /// Splits when killing Failed Champion
     FailedKnight,
+    /// Failed Champion (Essence)
+    /// 
+    /// Splits when getting Failed Champion essence
     FailedChampionEssence,
+    /// Salubra Exit (Transition)
+    /// 
+    /// Splits on the transition out of Salubra's Hut
     SalubraExit,
     EnterHollowKnight,
+    /// Chains Broken - Hollow Knight (Event)
+    /// 
+    /// Splits at the end of the first Hollow Knight scream after the chains are broken
     UnchainedHollowKnight,
+    /// Segment Practice - THK (Boss)
+    /// 
+    /// Splits when killing The Hollow Knight
     HollowKnightBoss,
+    /// Radiance Dream Entry (Event)
+    /// 
+    /// Splits upon entering the Radiance dream
+    // TODO: Skips upon killing the Hollow Knight (requires ordered splits)
     HollowKnightDreamnail,
+    /// Segment Practice - Radiance (Boss)
+    /// 
+    /// Splits when killing The Radiance
     RadianceBoss,
     // endregion: Crossroads
     // region: Greenpath
