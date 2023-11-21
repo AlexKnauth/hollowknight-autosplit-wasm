@@ -994,9 +994,21 @@ pub enum Split {
     TraitorLord,
     // endregion: Queen's Gardens
     // region: Deepnest
+    /// Nosk (Boss)
+    /// 
+    /// Splits when killing Nosk
     Nosk,
+    /// Galien (Boss)
+    /// 
+    /// Splits when killing Galien
     Galien,
+    /// Galien (Essence)
+    /// 
+    /// Splits when absorbing essence from Galien
     GalienEssence,
+    /// Trap Bench (Event)
+    /// 
+    /// Splits when getting the trap bench in Beasts Den
     BeastsDenTrapBench,
     // endregion: Deepnest
     // region: Godhome
