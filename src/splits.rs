@@ -510,16 +510,49 @@ pub enum Split {
     // endregion: Charms
 
     // region: Stags
+    /// Stag Position Updated (Event)
+    /// 
+    /// Splits when the stag is called
     StagMoved,
+    /// Forgotten Crossroads (Stag Station)
+    /// 
+    /// Splits when opening the Forgotten Crossroads Stag Station
     CrossroadsStation,
+    /// Greenpath (Stag Station)
+    /// 
+    /// Splits when obtaining Greenpath Stag Station
     GreenpathStation,
+    /// Queen's Station (Stag Station)
+    /// 
+    /// Splits when obtaining Queen's Station Stag Station
     QueensStationStation,
+    /// City Storerooms (Stag Station)
+    /// 
+    /// Splits when obtaining City Storerooms Stag Station
     StoreroomsStation,
+    /// King's Station (Stag Station)
+    /// 
+    /// Splits when obtaining King's Station Stag Station
     KingsStationStation,
+    /// Resting Grounds (Stag Station)
+    /// 
+    /// Splits when obtaining Resting Grounds Stag Station
     RestingGroundsStation,
+    /// Hidden Station (Stag Station)
+    /// 
+    /// Splits when obtaining to Hidden Station Stag Station
     HiddenStationStation,
+    /// Distant Village (Stag Station)
+    /// 
+    /// Splits when obtaining Distant Village Stag Station
     DeepnestStation,
+    /// Queen's Gardens (Stag Station)
+    /// 
+    /// Splits when obtaining Queen's Gardens Stag Station
     QueensGardensStation,
+    /// Stagnest (Stag Station)
+    /// 
+    /// Splits when traveling to Stagnest (Requires Ordered Splits)
     StagnestStation,
     // endregion: Stags
 
