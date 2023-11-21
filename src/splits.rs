@@ -976,9 +976,21 @@ pub enum Split {
     Uumuu,
     // endregion: Fog Canyon
     // region: Queen's Gardens
+    /// Queen's Garden Entry (Transition)
+    /// 
+    /// Splits on transition to QG scene following QGA or above Deepnest
     QueensGardensEntry,
+    /// Marmu (Boss)
+    /// 
+    /// Splits when killing Marmu
     Marmu,
+    /// Marmu (Essence)
+    /// 
+    /// Splits when absorbing essence from Marmu
     MarmuEssence,
+    /// Traitor Lord (Boss)
+    /// 
+    /// Splits when killing Traitor Lord
     TraitorLord,
     // endregion: Queen's Gardens
     // region: Deepnest
