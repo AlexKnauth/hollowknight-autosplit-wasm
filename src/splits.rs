@@ -241,13 +241,37 @@ pub enum Split {
     // endregion: Masks and Mask Shards
 
     // region: Charm Notches
+    /// Shrumal Ogres (Charm Notch)
+    /// 
+    /// Splits when obtaining the charm notch after defeating the Shrumal Ogres
     NotchShrumalOgres,
+    /// Salubra 1 (Charm Notch)
+    /// 
+    /// Splits when obtaining the first charm notch from Salubra
     NotchSalubra1,
+    /// Salubra 2 (Charm Notch)
+    /// 
+    /// Splits when obtaining the second charm notch from Salubra
     NotchSalubra2,
+    /// Salubra 3 (Charm Notch)
+    /// 
+    /// Splits when obtaining the third charm notch from Salubra
     NotchSalubra3,
+    /// Salubra 4 (Charm Notch)
+    /// 
+    /// Splits when obtaining the fourth charm notch from Salubra
     NotchSalubra4,
+    /// Fog Canyon (Charm Notch)
+    /// 
+    /// Splits when obtaining the charm notch in Fog Canyon
     NotchFogCanyon,
+    /// Grimm (Charm Notch)
+    /// 
+    /// Splits when obtaining the charm notch after Grimm
     NotchGrimm,
+    /// Charm Notch (Obtain)
+    /// 
+    /// Splits when obtaining a new Charm Slot
     OnObtainCharmNotch,
     // endregion: Charm Notches
 
