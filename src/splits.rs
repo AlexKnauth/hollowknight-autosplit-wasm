@@ -753,10 +753,25 @@ pub enum Split {
     RadianceBoss,
     // endregion: Crossroads
     // region: Greenpath
+    /// Greenpath (Transition)
+    /// 
+    /// Splits when entering Greenpath
     EnterGreenpath,
+    /// Hornet 1 (Boss)
+    /// 
+    /// Splits when killing Hornet Protector in Greenpath
     Hornet1,
+    /// No Eyes (Boss)
+    /// 
+    /// Splits when killing No Eyes
     NoEyes,
+    /// No Eyes (Essence)
+    /// 
+    /// Splits when absorbing essence from No Eyes
     NoEyesEssence,
+    /// Massive Moss Charger (Boss)
+    /// 
+    /// Splits when killing Massive Moss Charger
     MegaMossCharger,
     // endregion: Greenpath
     // region: Fungal
