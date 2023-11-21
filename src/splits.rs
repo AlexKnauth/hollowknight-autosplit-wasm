@@ -276,49 +276,178 @@ pub enum Split {
     // endregion: Charm Notches
 
     // region: Charms
+    /// Gathering Swarm (Charm)
+    /// 
+    /// Splits when obtaining the Gathering Swarm charm
     GatheringSwarm,
+    /// Wayward Compass (Charm)
+    /// 
+    /// Splits when obtaining Wayward Compass charm
     WaywardCompass,
+    /// Grubsong (Charm)
+    /// 
+    /// Splits when obtaining the Grubsong charm
     Grubsong,
+    /// Stalwart Shell (Charm)
+    /// 
+    /// Splits when obtaining Stalwart Shell charm
     StalwartShell,
+    /// Baldur Shell (Charm)
+    /// 
+    /// Splits when obtaining the Baldur Shell charm
     BaldurShell,
+    /// Fury of the Fallen (Charm)
+    /// 
+    /// Splits when obtaining the Fury of the Fallen charm
     FuryOfTheFallen,
+    /// Quick Focus (Charm)
+    /// 
+    /// Splits when obtaining the Quick Focus charm
     QuickFocus,
+    /// Lifeblood Heart (Charm)
+    /// 
+    /// Splits when obtaining the Lifeblood Heart charm
     LifebloodHeart,
+    /// Lifeblood Core (Charm)
+    /// 
+    /// Splits when obtaining the Lifeblood Core charm
     LifebloodCore,
+    /// Defenders Crest (Charm)
+    /// 
+    /// Splits when obtaining the Defenders Crest charm
     DefendersCrest,
+    /// Flukenest (Charm)
+    /// 
+    /// Splits when obtaining the Flukenest charm
     Flukenest,
+    /// Thorns of Agony (Charm)
+    /// 
+    /// Splits when obtaining Thorns of Agony charm
     ThornsOfAgony,
+    /// Mark of Pride (Charm)
+    /// 
+    /// Splits when obtaining the Mark of Pride charm
     MarkOfPride,
+    /// Steady Body (Charm)
+    /// 
+    /// Splits when obtaining the Steady Body charm
     SteadyBody,
+    /// Heavy Blow (Charm)
+    /// 
+    /// Splits when obtaining the Heavy Blow charm
     HeavyBlow,
+    /// Sharp Shadow (Charm)
+    /// 
+    /// Splits when obtaining Sharp Shadow charm
     SharpShadow,
+    /// Spore Shroom (Charm)
+    /// 
+    /// Splits when obtaining the Spore Shroom charm
     SporeShroom,
+    /// Longnail (Charm)
+    /// 
+    /// Splits when obtaining the Longnail charm
     Longnail,
+    /// Shaman Stone (Charm)
+    /// 
+    /// Splits when obtaining Shaman Stone charm
     ShamanStone,
+    /// Soul Catcher (Charm)
+    /// 
+    /// Splits when obtaining the Soul Catcher charm
     SoulCatcher,
+    /// Soul Eater (Charm)
+    /// 
+    /// Splits when obtaining the Soul Eater charm
     SoulEater,
+    /// Glowing Womb (Charm)
+    /// 
+    /// Splits when obtaining the Glowing Womb charm
     GlowingWomb,
+    /// Nailmaster's Glory (Charm)
+    /// 
+    /// Splits when obtaining the Nailmaster's Glory charm
     NailmastersGlory,
+    /// Joni's Blessing (Charm)
+    /// 
+    /// Splits when obtaining the Joni's Blessing charm
     JonisBlessing,
+    /// Shape of Unn (Charm)
+    /// 
+    /// Splits when obtaining Shape of Unn charm
     ShapeOfUnn,
+    /// Hiveblood (Charm)
+    /// 
+    /// Splits when obtaining the Hiveblood charm
     Hiveblood,
+    /// Dream Wielder (Charm)
+    /// 
+    /// Splits when obtaining the Dream Wielder charm
     DreamWielder,
+    /// Dashmaster (Charm)
+    /// 
+    /// Splits when obtaining the Dashmaster charm
     Dashmaster,
+    /// Quick Slash (Charm)
+    /// 
+    /// Splits when obtaining the Quick Slash charm
     QuickSlash,
+    /// Spell Twister (Charm)
+    /// 
+    /// Splits when obtaining the Spell Twister charm
     SpellTwister,
+    /// Deep Focus (Charm)
+    /// 
+    /// Splits when obtaining the Deep Focus charm
     DeepFocus,
+    /// Grubberfly's Elegy (Charm)
+    /// 
+    /// Splits when obtaining the Grubberfly's Elegy charm
     GrubberflysElegy,
+    /// Sprintmaster (Charm)
+    /// 
+    /// Splits when obtaining the Sprintmaster charm
     Sprintmaster,
+    /// Dreamshield (Charm)
+    /// 
+    /// Splits when obtaining the Dreamshield charm
     Dreamshield,
+    /// Weaversong (Charm)
+    /// 
+    /// Splits when obtaining the Weaversong charm
     Weaversong,
     // Fragile / Unbreakable Charms
+    /// Fragile Heart (Charm)
+    /// 
+    /// Splits when obtaining the Fragile Heart charm
     FragileHeart,
+    /// Unbreakable Heart (Charm)
+    /// 
+    /// Splits when obtaining the Unbreakable Heart charm
     UnbreakableHeart,
+    /// Fragile Greed (Charm)
+    /// 
+    /// Splits when obtaining the Fragile Greed charm
     FragileGreed,
+    /// Unbreakable Greed (Charm)
+    /// 
+    /// Splits when obtaining the Unbreakable Greed charm
     UnbreakableGreed,
+    /// Fragile Strength (Charm)
+    /// 
+    /// Splits when obtaining the Fragile Strength charm
     FragileStrength,
+    /// Unbreakable Strength (Charm)
+    /// 
+    /// Splits when obtaining the Unbreakable Strength charm
     UnbreakableStrength,
+    /// All Breakables (Event)
+    /// 
+    /// Splits when all 3 fragile charms are broken
     AllBreakables,
+    /// All Unbreakables (Charm)
+    /// 
+    /// Splits when all 3 unbreakable charms are obtained
     AllUnbreakables,
     // Grimmchild / Carefree Melody
     /// Grimmchild (Charm)
@@ -358,10 +487,25 @@ pub enum Split {
     /// Splits when collecting Brumm's flame in Deepnest
     BrummFlame,
     // Kingsoul / VoidHeart
+    /// White Fragment - Queen's (Charm)
+    /// 
+    /// Splits on picking up the left White Fragment from the White Lady
     WhiteFragmentLeft,
+    /// White Fragment - King's (Charm)
+    /// 
+    /// Splits on picking up the right White Fragment from the Pale King
     WhiteFragmentRight,
+    /// White Fragment (Obtain)
+    /// 
+    /// Splits when obtaining any White Fragment, or Void Heart
     OnObtainWhiteFragment,
+    /// Kingsoul (Charm)
+    /// 
+    /// Splits when obtaining the completed Kingsoul charm
     Kingsoul,
+    /// Void Heart (Charm)
+    /// 
+    /// Splits when changing the Kingsoul to the Void Heart charm
     VoidHeart,
     // endregion: Charms
 
