@@ -153,6 +153,9 @@ pub enum Split {
     // endregion: Movement Abilities
 
     // region: Nail Arts
+    /// Cyclone Slash (Skill)
+    /// 
+    /// Splits when obtaining Cyclone Slash
     CycloneSlash,
     // endregion: Nail Arts
 
