@@ -222,11 +222,23 @@ pub enum Split {
     // endregion: Nail and Pale Ore
 
     // region: Masks and Mask Shards
+    /// Mask Shard 1 (Fragment)
+    /// 
+    /// Splits when getting 1st Mask Shard
     MaskFragment1,
+    /// Mask Shard 2 (Fragment)
+    /// 
+    /// Splits when getting 2nd Mask Shard
     MaskFragment2,
+    /// Mask Shard 3 (Fragment)
+    /// 
+    /// Splits when getting 3rd Mask Shard
     MaskFragment3,
+    /// Mask Upgrade 4 (Upgrade)
+    /// 
+    /// Splits when getting 1 extra Mask (6 base HP)
     Mask1,
-    // endMasks and Mask Shards
+    // endregion: Masks and Mask Shards
 
     // region: Charm Notches
     NotchShrumalOgres,
