@@ -892,8 +892,17 @@ pub enum Split {
     // endregion: City
     // region: Peak
     MenuSlyKey,
+    /// Crystal Guardian (Boss)
+    /// 
+    /// Splits when killing the Crystal Guardian
     CrystalGuardian1,
+    /// Enraged Guardian (Boss)
+    /// 
+    /// Splits when killing the Enraged Guardian
     CrystalGuardian2,
+    /// Crystal Peak Lift Opened (Event)
+    /// 
+    /// Splits when opening the lever for the lift between Dirtmouth and Crystal Peak
     MineLiftOpened,
     // endregion: Peak
     // region: Waterways
