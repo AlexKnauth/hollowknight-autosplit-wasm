@@ -827,22 +827,67 @@ pub enum Split {
     CatacombsEntry,
     // endregion: Resting Grounds
     // region: City
+    /// City Gate (Event)
+    /// 
+    /// Splits when using the City Crest to open the gate
     CityGateOpen,
+    /// City Gate w/ Mantis Lords defeated (Event)
+    /// 
+    /// To make sure you don't forget Mantis Lords
     CityGateAndMantisLords,
+    /// Gorgeous Husk (Killed)
+    /// 
+    /// Splits when killing Gorgeous Husk
     GorgeousHusk,
+    /// Gorgeous Husk Killed (Transition)
+    /// 
+    /// Splits on transition after Gorgeous Husk defeated
     TransGorgeousHusk,
+    /// Main Menu w/ Ghusk (Menu)
+    /// 
+    /// Splits on transition to the main menu after Gorgeous Husk defeated
     MenuGorgeousHusk,
+    /// Lemm Shop (NPC)
+    /// 
+    /// Splits when talking to Lemm in the shop for the first time
     Lemm2,
+    /// Soul Master Encountered (Boss)
+    /// 
+    /// Splits when Soul Master is activated the first time as the gate closes
     SoulMasterEncountered,
+    /// Soul Master - Fake Spell Pickup (Boss)
+    /// 
+    /// Splits when triggering Soul Master phase 2 the first time
     SoulMasterPhase1,
+    /// Soul Master (Boss)
+    /// 
+    /// Splits when killing Soul Master
     SoulMaster,
+    /// Soul Tyrant (Boss)
+    /// 
+    /// Splits when killing Soul Tyrant
     SoulTyrant,
+    /// Soul Tyrant (Essence)
+    /// 
+    /// Splits when getting Soul Tyrant essence
     SoulTyrantEssence,
     MenuStoreroomsSimpleKey,
     EnterBlackKnight,
+    /// Chandelier - Watcher Knights (Event)
+    /// 
+    /// Splits when dropping the chandelier on one of the Watcher Knights
     WatcherChandelier,
+    /// Watcher Knight (Boss)
+    /// 
+    /// Splits when killing Watcher Knights
     BlackKnight,
+    /// Watcher Knight Killed (Transition)
+    /// 
+    /// Splits on the transition after killing Watcher Knights
     BlackKnightTrans,
+    /// Collector (Boss)
+    /// 
+    /// Splits when killing Collector
     Collector,
     // endregion: City
     // region: Peak
