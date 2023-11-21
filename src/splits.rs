@@ -600,15 +600,45 @@ pub enum Split {
     // endregion: Stags
 
     // region: Relics
+    /// Wanderer's Journal (Obtain)
+    /// 
+    /// Splits when obtaining a Wanderer's Journal
     OnObtainWanderersJournal,
+    /// All Seals (Item)
+    /// 
+    /// Splits when 17 Hallownest Seals have been collected
     AllSeals,
+    /// Hallownest Seal (Obtain)
+    /// 
+    /// Splits when obtaining a Hallownest Seal
     OnObtainHallownestSeal,
+    /// Soul Sanctum Hallownest Seal (Relic)
+    /// 
+    /// Splits when the Hallownest Seal in Soul Sanctum is collected
     SoulSanctumSeal,
+    /// King's Idol (Obtain)
+    /// 
+    /// Splits when obtaining a King's Idol
     OnObtainKingsIdol,
+    /// Glade Idol (Item)
+    /// 
+    /// Splits when picking up the King's Idol in the Spirits' Glade
     GladeIdol,
+    /// Dung Defender Idol (Item)
+    /// 
+    /// Splits when picking up Dung Defender idol as the first idol
     DungDefenderIdol,
+    /// Arcane Egg 8 (Obtain)
+    /// 
+    /// Splits when obtaining 8 Arcane Eggs
     ArcaneEgg8,
+    /// Arcane Egg (Obtain)
+    /// 
+    /// Splits when obtaining an Arcane Egg
     OnObtainArcaneEgg,
+    /// Rancid Egg (Obtain)
+    /// 
+    /// Splits when obtaining a Rancid Egg
     OnObtainRancidEgg,
     // endregion: Relics
 
