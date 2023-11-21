@@ -3,9 +3,7 @@ use core::cell::OnceCell;
 use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
-use asr::future::retry;
-#[cfg(debug_assertions)]
-use asr::future::next_tick;
+use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
 use asr::{Process, Address64};
 use asr::game_engine::unity::mono::{self, UnityPointer};
@@ -533,24 +531,37 @@ pub struct GameManagerFinder {
 
 impl GameManagerFinder {
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
-        #[cfg(debug_assertions)]
-        asr::print_message("GameManagerFinder wait_attach mono Module wait_attach_auto_detect");
-        #[cfg(debug_assertions)]
+        asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
-        let module = mono::Module::wait_attach_auto_detect(process).await;
-        #[cfg(debug_assertions)]
-        asr::print_message("GameManagerFinder wait_attach module wait_get_default_image");
-        #[cfg(debug_assertions)]
-        next_tick().await;
-        let image = module.wait_get_default_image(process).await;
-        #[cfg(debug_assertions)]
-        asr::print_message("GameManagerFinder wait_attach got module and image");
-        #[cfg(debug_assertions)]
-        next_tick().await;
-        let pointers = GameManagerPointers::new();
-        let player_data_pointers = PlayerDataPointers::new();
-        let ui_state_offset = OnceCell::new();
-        GameManagerFinder { module, image, pointers, player_data_pointers, ui_state_offset }
+        let mut found_module = false;
+        let mut needed_retry = false;
+        loop {
+            let module = mono::Module::wait_attach_auto_detect(process).await;
+            if !found_module {
+                found_module = true;
+                asr::print_message("GameManagerFinder wait_attach: module get_default_image...");
+                next_tick().await;
+            }
+            for _ in 0..0x10 {
+                if let Some(image) = module.get_default_image(process) {
+                    asr::print_message("GameManagerFinder wait_attach: got module and image");
+                    next_tick().await;
+                    return GameManagerFinder {
+                        module,
+                        image,
+                        pointers: GameManagerPointers::new(),
+                        player_data_pointers: PlayerDataPointers::new(),
+                        ui_state_offset: OnceCell::new(),
+                    };
+                }
+                next_tick().await;
+            }
+            if !needed_retry {
+                needed_retry = true;
+                asr::print_message("GameManagerFinder wait_attach: retry...");
+                next_tick().await;
+            }
+        }
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
