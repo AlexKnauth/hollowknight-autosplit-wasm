@@ -643,10 +643,25 @@ pub enum Split {
     // endregion: Relics
 
     // region: Grubs
+    /// Rescued Grub 1 (Grub)
+    /// 
+    /// Splits when rescuing grub #1
     Grub1,
+    /// Rescued Grub 2 (Grub)
+    /// 
+    /// Splits when rescuing grub #2
     Grub2,
+    /// Rescued Grub 3 (Grub)
+    /// 
+    /// Splits when rescuing grub #3
     Grub3,
+    /// Rescued Grub 4 (Grub)
+    /// 
+    /// Splits when rescuing grub #4
     Grub4,
+    /// Rescued Grub 5 (Grub)
+    /// 
+    /// Splits when rescuing grub #5
     Grub5,
     // endregion: Grubs
 
