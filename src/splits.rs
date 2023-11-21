@@ -1012,9 +1012,21 @@ pub enum Split {
     BeastsDenTrapBench,
     // endregion: Deepnest
     // region: Godhome
+    /// Oro & Mato Nail Bros (Boss)
+    /// 
+    /// Splits when defeating Brothers Oro & Mato
     MatoOroNailBros,
+    /// Paintmaster Sheo (Boss)
+    /// 
+    /// Splits when killing Paintmaster Sheo
     SheoPaintmaster,
+    /// Great Nailsage Sly (Boss)
+    /// 
+    /// Splits when killing Great Nailsage Sly
     SlyNailsage,
+    /// Pure Vessel (Boss)
+    /// 
+    /// Splits when killing Pure Vessel
     PureVessel,
     // endregion: Godhome
 }
