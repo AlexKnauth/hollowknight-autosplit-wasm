@@ -926,8 +926,17 @@ pub enum Split {
     // endregion: Waterways
     // region: Basin
     Abyss19from18,
+    /// Broken Vessel (Boss)
+    /// 
+    /// Splits when killing Broken Vessel
     BrokenVessel,
+    /// Lost Kin (Boss)
+    /// 
+    /// Splits when killing Lost Kin
     LostKin,
+    /// Lost Kin (Essence)
+    /// 
+    /// Splits when getting Lost Kin essence
     LostKinEssence,
     // endregion: Basin
     // region: Kingdom's Edge
