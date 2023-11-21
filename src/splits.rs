@@ -113,15 +113,42 @@ pub enum Split {
     // endregion: Spell Levels
 
     // region: Movement Abilities
+    /// Mothwing Cloak (Skill)
+    /// 
+    /// Splits when obtaining Mothwing Cloak
     MothwingCloak,
+    /// Main Menu w/ Mothwing Cloak (Menu)
+    /// 
+    /// Splits on transition to the main menu after Mothwing Cloak acquired
     MenuCloak,
+    /// Shade Cloak (Skill)
+    /// 
+    /// Splits when obtaining Shade Cloak
     ShadeCloak,
+    /// Mantis Claw (Skill)
+    /// 
+    /// Splits when obtaining Mantis Claw
     MantisClaw,
+    /// Main Menu w/ Claw (Menu)
+    /// 
+    /// Splits on transition to the main menu after Mantis Claw acquired
     MenuClaw,
+    /// Monarch Wings (Skill)
+    /// 
+    /// Splits when obtaining Monarch Wings
     MonarchWings,
     MenuWings,
+    /// Crystal Heart (Skill)
+    /// 
+    /// Splits when obtaining Crystal Heart
     CrystalHeart,
+    /// Isma's Tear (Skill)
+    /// 
+    /// Splits when obtaining Isma's Tear
     IsmasTear,
+    /// Main Menu w/ Isma's Tear (Menu)
+    /// 
+    /// Splits on transition to the main menu after Isma's Tear acquired
     MenuIsmasTear,
     // endregion: Movement Abilities
 
