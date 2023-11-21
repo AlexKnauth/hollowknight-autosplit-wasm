@@ -175,15 +175,45 @@ pub enum Split {
     // endregion: Dream Nail Levels
 
     // region: Keys
+    /// City Crest (Item)
+    /// 
+    /// Splits when obtaining the City Crest
     CityKey,
+    /// Lumafly Lantern (Item)
+    /// 
+    /// Splits when obtaining the Lumafly Lantern
     LumaflyLantern,
+    /// Simple Key (Obtain)
+    /// 
+    /// Splits when obtaining a Simple Key
     OnObtainSimpleKey,
+    /// Shopkeeper's Key (Item)
+    /// 
+    /// Splits when obtaining the Shopkeeper's Key
     SlyKey,
+    /// Elegant Key (Item)
+    /// 
+    /// Splits when obtaining the Elegant Key
     ElegantKey,
+    /// Love Key (Item)
+    /// 
+    /// Splits when obtaining the Love Key
     LoveKey,
+    /// Pale Lurker Key (Item)
+    /// 
+    /// Splits when obtaining the Simple Key from the Pale Lurker
     PaleLurkerKey,
+    /// Sly Simple Key (Item)
+    /// 
+    /// Splits when buying the simple key from Sly
     SlySimpleKey,
+    /// King's Brand (Item)
+    /// 
+    /// Splits when obtaining the King's Brand
     KingsBrand,
+    /// Tram Pass (Item)
+    /// 
+    /// Splits when obtaining the Tram Pass
     TramPass,
     // endregion: Keys
 
