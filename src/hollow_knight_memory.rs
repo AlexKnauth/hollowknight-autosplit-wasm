@@ -145,6 +145,9 @@ struct PlayerDataPointers {
     // and I'm not sure which one
     heart_pieces: UnityPointer<3>,
     // Dreamers
+    mask_broken_lurien: UnityPointer<3>,
+    mask_broken_monomon: UnityPointer<3>,
+    mask_broken_hegemol: UnityPointer<3>,
     guardians_defeated: UnityPointer<3>,
     // Keys
     has_city_key: UnityPointer<3>,
@@ -348,6 +351,9 @@ impl PlayerDataPointers {
             max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
             // Dreamers
+            mask_broken_lurien: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenLurien"]),
+            mask_broken_monomon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenMonomon"]),
+            mask_broken_hegemol: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenHegemol"]),
             guardians_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "guardiansDefeated"]),
             // Keys
             has_city_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCityKey"]),
@@ -717,6 +723,18 @@ impl GameManagerFinder {
     }
 
     // Dreamers
+
+    pub fn mask_broken_lurien(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mask_broken_lurien.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn mask_broken_monomon(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mask_broken_monomon.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn mask_broken_hegemol(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.mask_broken_hegemol.deref(process, &self.module, &self.image).ok()
+    }
 
     pub fn guardians_defeated(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.guardians_defeated.deref(process, &self.module, &self.image).ok()

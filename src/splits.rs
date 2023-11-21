@@ -481,9 +481,12 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Start, End, and Menu
         
         // region: Dreamers
+        /*
+        // Old scene-transition based dreamer splits from when I only knew how to read the scene name
         Split::Lurien => p.old == "Dream_Guardian_Lurien" && p.current == "Cutscene_Boss_Door",
         Split::Monomon => p.old == "Dream_Guardian_Monomon" && p.current == "Cutscene_Boss_Door",
         Split::Hegemol => p.old == "Dream_Guardian_Hegemol" && p.current == "Cutscene_Boss_Door",
+        */
         // endregion: Dreamers
 
         // region: Dirtmouth
@@ -550,6 +553,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
         // region: Dreamers
+        Split::Lurien => g.mask_broken_lurien(p).is_some_and(|b| b),
+        Split::Monomon => g.mask_broken_monomon(p).is_some_and(|b| b),
+        Split::Hegemol => g.mask_broken_hegemol(p).is_some_and(|b| b),
         Split::Dreamer1 => g.guardians_defeated(p).is_some_and(|d| 1 <= d),
         Split::Dreamer2 => g.guardians_defeated(p).is_some_and(|d| 2 <= d),
         Split::Dreamer3 => g.guardians_defeated(p).is_some_and(|d| 3 <= d),
