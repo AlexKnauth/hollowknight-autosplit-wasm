@@ -174,6 +174,19 @@ pub enum Split {
     DreamNail2,
     // endregion: Dream Nail Levels
 
+    // region: Keys
+    CityKey,
+    LumaflyLantern,
+    OnObtainSimpleKey,
+    SlyKey,
+    ElegantKey,
+    LoveKey,
+    PaleLurkerKey,
+    SlySimpleKey,
+    KingsBrand,
+    TramPass,
+    // endregion: Keys
+
     // region: Nail and Pale Ore
     /// Pale Ore (Obtain)
     /// 
@@ -569,19 +582,6 @@ pub enum Split {
     OnObtainRancidEgg,
     // endregion: Relics
 
-    // region: Keys
-    CityKey,
-    LumaflyLantern,
-    OnObtainSimpleKey,
-    SlyKey,
-    ElegantKey,
-    LoveKey,
-    PaleLurkerKey,
-    SlySimpleKey,
-    KingsBrand,
-    TramPass,
-    // endregion: Keys
-
     // region: Grubs
     Grub1,
     Grub2,
@@ -897,6 +897,18 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
         // endregion: Dream Nail Levels
+        // region: Keys
+        Split::CityKey => g.has_city_key(p).is_some_and(|k| k),
+        Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
+        Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
+        Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
+        Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
+        Split::LoveKey => g.has_love_key(p).is_some_and(|k| k),
+        Split::PaleLurkerKey => g.got_lurker_key(p).is_some_and(|k| k),
+        Split::SlySimpleKey => g.sly_simple_key(p).is_some_and(|k| k),
+        Split::KingsBrand => g.has_kings_brand(p).is_some_and(|k| k),
+        Split::TramPass => g.has_tram_pass(p).is_some_and(|k| k),
+        // endregion: Keys
         // region: Nail and Pale Ore
         Split::NailUpgrade1 => g.nail_smith_upgrades(p).is_some_and(|n| 1 <= n),
         Split::NailUpgrade2 => g.nail_smith_upgrades(p).is_some_and(|n| 2 <= n),
@@ -1019,18 +1031,6 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainArcaneEgg => pds.incremented_trinket4(p, g),
         Split::OnObtainRancidEgg => pds.incremented_rancid_eggs(p, g),
         // endregion: Relics
-        // region: Keys
-        Split::CityKey => g.has_city_key(p).is_some_and(|k| k),
-        Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
-        Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
-        Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
-        Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
-        Split::LoveKey => g.has_love_key(p).is_some_and(|k| k),
-        Split::PaleLurkerKey => g.got_lurker_key(p).is_some_and(|k| k),
-        Split::SlySimpleKey => g.sly_simple_key(p).is_some_and(|k| k),
-        Split::KingsBrand => g.has_kings_brand(p).is_some_and(|k| k),
-        Split::TramPass => g.has_tram_pass(p).is_some_and(|k| k),
-        // endregion: Keys
         // region: Grubs
         Split::Grub1 => g.grubs_collected(p).is_some_and(|g| g == 1),
         Split::Grub2 => g.grubs_collected(p).is_some_and(|g| g == 2),
