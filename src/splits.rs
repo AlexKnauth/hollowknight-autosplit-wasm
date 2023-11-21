@@ -175,16 +175,49 @@ pub enum Split {
     // endregion: Dream Nail Levels
 
     // region: Nail and Pale Ore
+    /// Pale Ore (Obtain)
+    /// 
+    /// Splits when obtaining a Pale Ore
     OnObtainPaleOre,
+    /// Pale Ore 1 (Ore)
+    /// 
+    /// Splits after obtaining the first pale ore.
     Ore1,
+    /// Pale Ore 2 (Ore)
+    /// 
+    /// Splits after obtaining the second pale ore.
     Ore2,
+    /// Pale Ore 3 (Ore)
+    /// 
+    /// Splits after obtaining the third pale ore.
     Ore3,
+    /// Pale Ore 4 (Ore)
+    /// 
+    /// Splits after obtaining the fourth pale ore.
     Ore4,
+    /// Pale Ore 5 (Ore)
+    /// 
+    /// Splits after obtaining the fifth pale ore.
     Ore5,
+    /// Pale Ore 6 (Ore)
+    /// 
+    /// Splits after obtaining the sixth pale ore.
     Ore6,
+    /// Nail 1 (Upgrade)
+    /// 
+    /// Splits upon upgrading to the Sharpened Nail
     NailUpgrade1,
+    /// Nail 2 (Upgrade)
+    /// 
+    /// Splits upon upgrading to the Channeled Nail
     NailUpgrade2,
+    /// Nail 3 (Upgrade)
+    /// 
+    /// Splits upon upgrading to the Coiled Nail
     NailUpgrade3,
+    /// Nail 4 (Upgrade)
+    /// 
+    /// Splits upon upgrading to the Pure Nail
     NailUpgrade4,
     // endregion: Nail and Pale Ore
 
