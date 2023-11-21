@@ -790,9 +790,21 @@ pub enum Split {
     MantisLords,
     // endregion: Fungal
     // region: Cliffs
+    /// Gorb (Boss)
+    /// 
+    /// Splits when killing Gorb
     Gorb,
+    /// Gorb (Essence)
+    /// 
+    /// Splits when absorbing essence from Gorb
     GorbEssence,
+    /// Nightmare Lantern Lit (Event)
+    /// 
+    /// Splits when initially lighting the Nightmare Lantern
     NightmareLantern,
+    /// Nightmare Lantern Destroyed (Event)
+    /// 
+    /// Splits when destroying the Nightmare Lantern
     NightmareLanternDestroyed,
     // endregion: Cliffs
     // region: Resting Grounds
