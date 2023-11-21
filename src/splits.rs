@@ -940,10 +940,25 @@ pub enum Split {
     LostKinEssence,
     // endregion: Basin
     // region: Kingdom's Edge
+    /// Hive Knight (Boss)
+    /// 
+    /// Splits when killing Hive Knight
     HiveKnight,
+    /// Hornet 2 (Boss)
+    /// 
+    /// Splits when killing Hornet Sentinel in Kingdom's Edge
     Hornet2,
+    /// Markoth (Boss)
+    /// 
+    /// Splits when killing Markoth
     Markoth,
+    /// Markoth (Essence)
+    /// 
+    /// Splits when absorbing essence from Markoth
     MarkothEssence,
+    /// God Tamer (Boss)
+    /// 
+    /// Splits when killing the God Tamer
     GodTamer,
     // endregion: Kingdom's Edge
     // region: Fog Canyon
