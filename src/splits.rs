@@ -160,8 +160,17 @@ pub enum Split {
     // endregion: Nail Arts
 
     // region: Dream Nail Levels
+    /// Dream Nail (Skill)
+    /// 
+    /// Splits when obtaining Dream Nail
     DreamNail,
+    /// Dream Gate (Skill)
+    /// 
+    /// Splits when obtaining Dream Gate
     DreamGate,
+    /// Dream Nail - Awoken (Skill)
+    /// 
+    /// Splits when Awkening the Dream Nail
     DreamNail2,
     // endregion: Dream Nail Levels
 
