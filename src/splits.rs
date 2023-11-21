@@ -81,13 +81,34 @@ pub enum Split {
     // endregion: Dreamers
 
     // region: Spell Levels
+    /// Vengeful Spirit (Skill)
+    /// 
+    /// Splits when obtaining Vengeful Spirit
     VengefulSpirit,
+    /// Shade Soul (Skill)
+    /// 
+    /// Splits when obtaining Shade Soul
     ShadeSoul,
     MenuShadeSoul,
+    /// Desolate Dive (Skill)
+    /// 
+    /// Splits when obtaining Desolate Dive
     DesolateDive,
+    /// Descending Dark (Skill)
+    /// 
+    /// Splits when obtaining Descending Dark
     DescendingDark,
+    /// Has Descending Dark (Transition)
+    /// 
+    /// Splits on transition after Descending Dark acquired
     TransDescendingDark,
+    /// Howling Wraiths (Skill)
+    /// 
+    /// Splits when obtaining Howling Wraiths
     HowlingWraiths,
+    /// Abyss Shriek (Skill)
+    /// 
+    /// Splits when obtaining Abyss Shriek
     AbyssShriek,
     // endregion: Spell Levels
 
