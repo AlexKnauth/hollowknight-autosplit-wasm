@@ -906,10 +906,22 @@ pub enum Split {
     MineLiftOpened,
     // endregion: Peak
     // region: Waterways
+    /// Dung Defender (Boss)
+    /// 
+    /// Splits when killing Dung Defender
     DungDefender,
     DungDefenderExit,
+    /// White Defender (Boss)
+    /// 
+    /// Splits when killing White Defender
     WhiteDefender,
+    /// White Defender (Essence)
+    /// 
+    /// Splits when getting White Defender essence
     WhiteDefenderEssence,
+    /// Flukemarm (Boss)
+    /// 
+    /// Splits when killing Flukemarm
     Flukemarm,
     // endregion: Waterways
     // region: Basin
