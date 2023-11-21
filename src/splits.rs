@@ -962,8 +962,17 @@ pub enum Split {
     GodTamer,
     // endregion: Kingdom's Edge
     // region: Fog Canyon
+    /// Teachers Archive (Area)
+    /// 
+    /// Splits when entering Teachers Archive for the first time
     TeachersArchive,
+    /// Uumuu Encountered (Boss)
+    /// 
+    /// Splits Uumuu is activated the first time as the gate closes
     UumuuEncountered,
+    /// Uumuu (Boss)
+    /// 
+    /// Splits when killing Uumuu
     Uumuu,
     // endregion: Fog Canyon
     // region: Queen's Gardens
