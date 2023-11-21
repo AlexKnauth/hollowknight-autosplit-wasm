@@ -66,6 +66,18 @@ pub enum Split {
     /// 
     /// Splits when you see the mask for Herrah
     Hegemol,
+    /// First Dreamer (Dreamer)
+    /// 
+    /// Splits when you see the mask for the first dreamer killed
+    Dreamer1,
+    /// Second Dreamer (Dreamer)
+    /// 
+    /// Splits when you see the mask for the second dreamer killed
+    Dreamer2,
+    /// Third Dreamer (Dreamer)
+    /// 
+    /// Splits when you see the mask for the third dreamer killed
+    Dreamer3,
     // endregion: Dreamers
 
     // region: Spell Levels
@@ -537,6 +549,11 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
 
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
+        // region: Dreamers
+        Split::Dreamer1 => g.guardians_defeated(p).is_some_and(|d| 1 <= d),
+        Split::Dreamer2 => g.guardians_defeated(p).is_some_and(|d| 2 <= d),
+        Split::Dreamer3 => g.guardians_defeated(p).is_some_and(|d| 3 <= d),
+        // endregion: Dreamers
         // region: Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
         Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),

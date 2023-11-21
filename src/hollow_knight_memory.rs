@@ -144,6 +144,8 @@ struct PlayerDataPointers {
     //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
     // and I'm not sure which one
     heart_pieces: UnityPointer<3>,
+    // Dreamers
+    guardians_defeated: UnityPointer<3>,
     // Keys
     has_city_key: UnityPointer<3>,
     has_lantern: UnityPointer<3>,
@@ -345,6 +347,8 @@ impl PlayerDataPointers {
             dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
             max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            // Dreamers
+            guardians_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "guardiansDefeated"]),
             // Keys
             has_city_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCityKey"]),
             has_lantern: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
@@ -710,6 +714,12 @@ impl GameManagerFinder {
 
     pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.heart_pieces.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Dreamers
+
+    pub fn guardians_defeated(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.guardians_defeated.deref(process, &self.module, &self.image).ok()
     }
 
     // Keys
