@@ -777,6 +777,10 @@ pub enum Split {
     /// 
     /// Splits when entering Greenpath
     EnterGreenpath,
+    /// Enter Hornet 1 (Transition)
+    /// 
+    /// Splits when entering Hornet boss arena transition in Greenpath
+    EnterHornet1,
     /// Hornet 1 (Boss)
     /// 
     /// Splits when killing Hornet Protector in Greenpath
@@ -871,6 +875,10 @@ pub enum Split {
     /// 
     /// Splits when talking to Lemm in the shop for the first time
     Lemm2,
+    /// Enter Soul Master (Transition)
+    /// 
+    /// Splits when entering Soul Master boss arena transition
+    EnterSoulMaster,
     /// Soul Master Encountered (Boss)
     /// 
     /// Splits when Soul Master is activated the first time as the gate closes
@@ -905,6 +913,10 @@ pub enum Split {
     /// 
     /// Splits on the transition after killing Watcher Knights
     BlackKnightTrans,
+    /// Tower of Love (Transition)
+    /// 
+    /// Splits when entering the Tower of Love
+    EnterLoveTower,
     /// Collector (Boss)
     /// 
     /// Splits when killing Collector
@@ -960,10 +972,18 @@ pub enum Split {
     LostKinEssence,
     // endregion: Basin
     // region: Kingdom's Edge
+    /// Enter Hive Knight (Transition)
+    /// 
+    /// Splits when entering Hive Knight boss arena transition
+    EnterHiveKnight,
     /// Hive Knight (Boss)
     /// 
     /// Splits when killing Hive Knight
     HiveKnight,
+    /// Enter Hornet 2 (Transition)
+    /// 
+    /// Splits when entering Hornet boss arena transition in Kingdom's Edge
+    EnterHornet2,
     /// Hornet 2 (Boss)
     /// 
     /// Splits when killing Hornet Sentinel in Kingdom's Edge
@@ -1014,6 +1034,10 @@ pub enum Split {
     TraitorLord,
     // endregion: Queen's Gardens
     // region: Deepnest
+    /// Nosk (Transition)
+    /// 
+    /// Splits when entering Nosk boss arena transition
+    EnterNosk,
     /// Nosk (Boss)
     /// 
     /// Splits when killing Nosk
@@ -1121,6 +1145,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Crossroads
         // region: Greenpath
         Split::EnterGreenpath => p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"),
+        Split::EnterHornet1 => p.current.starts_with("Fungus1_04") && p.current != p.old,
         Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
         // endregion: Greenpath
         // region: Fungal
@@ -1138,10 +1163,12 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: City
         Split::TransGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && p.current != p.old,
         Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && is_menu(p.current),
+        Split::EnterSoulMaster => p.current.starts_with("Ruins1_24") && p.current != p.old,
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
         Split::MenuShadeSoul => 2 <= pds.get_fireball_level(prc, g) && is_menu(p.current),
         Split::EnterBlackKnight => p.current == "Ruins2_03" && p.current != p.old,
         Split::BlackKnightTrans => p.current == "Ruins2_Watcher_Room" && p.old == "Ruins2_03",
+        Split::EnterLoveTower => p.current.starts_with("Ruins2_11") && p.current != p.old,
         // endregion: City
         // region: Peak
         Split::MenuSlyKey => is_menu(p.current) && p.old == "Mines_11",
@@ -1156,12 +1183,19 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuWings => pds.has_double_jump(prc, g) && is_menu(p.current),
         Split::MenuVoidHeart => pds.got_shade_charm(prc, g) && is_menu(p.current),
         // endregion: Basin
+        // region: Kingdom's Edge
+        Split::EnterHiveKnight => p.current.starts_with("Hive_05") && p.current != p.old,
+        Split::EnterHornet2 => p.current.starts_with("Deepnest_East_Hornet") && p.current != p.old,
+        // endregion: Kingdom's Edge
         // region: Fog Canyon
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
         // endregion: Fog Canyon
         // region: Queen's Gardens
         Split::QueensGardensEntry => (p.current.starts_with("Fungus3_34") || p.current.starts_with("Deepnest_43")) && p.current != p.old,
         // endregion: Queen's Gardens
+        // region: Deepnest
+        Split::EnterNosk => p.current.starts_with("Deepnest_32") && p.current != p.old,
+        // endregion: Deepnest
         // else
         _ => false
     }
