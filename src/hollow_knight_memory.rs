@@ -71,6 +71,11 @@ const BAD_SCENE_NAMES: [&str; 11] = [
 
 // --------------------------------------------------------
 
+// const VERSION_VEC_MAJOR: usize = 0;
+const VERSION_VEC_MINOR: usize = 1;
+// const VERSION_VEC_BUILD: usize = 2;
+// const VERSION_VEC_REVISION: usize = 3;
+
 pub const GAME_STATE_INACTIVE: i32 = 0;
 pub const GAME_STATE_MAIN_MENU: i32 = 1;
 pub const GAME_STATE_LOADING: i32 = 2;
@@ -122,6 +127,7 @@ impl GameManagerPointers {
 // --------------------------------------------------------
 
 struct PlayerDataPointers {
+    version: UnityPointer<3>,
     health: UnityPointer<3>,
     fireball_level: UnityPointer<3>,
     quake_level: UnityPointer<3>,
@@ -339,6 +345,7 @@ struct PlayerDataPointers {
 impl PlayerDataPointers {
     fn new() -> PlayerDataPointers {
         PlayerDataPointers {
+            version: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "version"]),
             health: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "health"]),
             fireball_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
             quake_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "quakeLevel"]),
@@ -642,15 +649,14 @@ impl GameManagerFinder {
         self.pointers.tile_map_dirty.deref(process, &self.module, &self.image).ok()
     }
 
-    pub fn uses_scene_transition_routine(&self) -> Option<bool> {
+    pub fn uses_scene_transition_routine(&self, process: &Process) -> Option<bool> {
         /*
          * 1.3.1.5 and above swap from using LoadSceneAdditive to a SceneTransitionRoutine triggered
          * by BeginSceneTransitionRoutine, which doesn't set tilemapDirty back to false when you enter dnail
          * However, the early control glitch can only be performed on early patches so we can avoid this check entirely
          */
         // On current patch, return true
-        // TODO: on other patches, something something lastVersion?.Minor >= 3
-        Some(true)
+        Some(*self.get_version_vec(process)?.get(VERSION_VEC_MINOR)? >= 3)
     }
 
     pub fn hero_dead(&self, process: &Process) -> Option<bool> {
@@ -663,6 +669,17 @@ impl GameManagerFinder {
 
     pub fn hero_recoiling(&self, process: &Process) -> Option<bool> {
         self.pointers.hero_recoiling.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn get_version_string(&self, process: &Process) -> Option<String> {
+        let s = self.player_data_pointers.version.deref(process, &self.module, &self.image).ok()?;
+        read_string_object::<SCENE_PATH_SIZE>(process, s)
+    }
+
+    pub fn get_version_vec(&self, process: &Process) -> Option<Vec<i32>> {
+        Some(self.get_version_string(process)?.split(".").map(|s| {
+            s.parse().unwrap_or(0)
+        }).collect())
     }
 
     pub fn get_health(&self, process: &Process) -> Option<i32> {

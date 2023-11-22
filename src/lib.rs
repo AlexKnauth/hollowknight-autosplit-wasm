@@ -185,7 +185,7 @@ impl LoadRemover {
         let hero_transition_state = maybe_hero_transition_state.unwrap_or_default();
         let maybe_tile_map_dirty = game_manager_finder.tile_map_dirty(process);
         let tile_map_dirty = maybe_tile_map_dirty.unwrap_or_default();
-        let uses_scene_transition_routine = game_manager_finder.uses_scene_transition_routine()?;
+        let uses_scene_transition_routine = game_manager_finder.uses_scene_transition_routine(process).unwrap_or_default();
         let is_game_time_paused =
             (game_state == GAME_STATE_PLAYING && teleporting && !hazard_respawning)
             || (self.look_for_teleporting)
