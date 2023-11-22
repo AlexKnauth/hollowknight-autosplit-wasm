@@ -89,6 +89,7 @@ pub const UI_STATE_PAUSED: i32 = 7;
 pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
 
 struct GameManagerPointers {
+    version_number: UnityPointer<4>,
     scene_name: UnityPointer<2>,
     next_scene_name: UnityPointer<2>,
     game_state: UnityPointer<2>,
@@ -107,6 +108,7 @@ struct GameManagerPointers {
 impl GameManagerPointers {
     fn new() -> GameManagerPointers {
         GameManagerPointers {
+            version_number: UnityPointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "debugInfo", "versionNumber"]),
             scene_name: UnityPointer::new("GameManager", 0, &["_instance", "sceneName"]),
             next_scene_name: UnityPointer::new("GameManager", 0, &["_instance", "nextSceneName"]),
             game_state: UnityPointer::new("GameManager", 0, &["_instance", "gameState"]),
@@ -127,7 +129,7 @@ impl GameManagerPointers {
 // --------------------------------------------------------
 
 struct PlayerDataPointers {
-    version: UnityPointer<3>,
+    version: UnityPointer<4>,
     health: UnityPointer<3>,
     fireball_level: UnityPointer<3>,
     quake_level: UnityPointer<3>,
@@ -672,7 +674,9 @@ impl GameManagerFinder {
     }
 
     pub fn get_version_string(&self, process: &Process) -> Option<String> {
-        let s = self.player_data_pointers.version.deref(process, &self.module, &self.image).ok()?;
+        let s = [&self.pointers.version_number, &self.player_data_pointers.version].into_iter().find_map(|ptr| {
+            ptr.deref(process, &self.module, &self.image).ok()
+        })?;
         read_string_object::<SCENE_PATH_SIZE>(process, s)
     }
 
