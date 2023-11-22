@@ -681,7 +681,7 @@ impl GameManagerFinder {
     }
 
     pub fn get_version_vec(&self, process: &Process) -> Option<Vec<i32>> {
-        Some(self.get_version_string(process)?.split(".").map(|s| {
+        Some(self.get_version_string(process)?.split('.').map(|s| {
             s.parse().unwrap_or(0)
         }).collect())
     }
