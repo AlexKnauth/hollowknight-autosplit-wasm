@@ -161,6 +161,14 @@ pub enum Split {
     /// 
     /// Splits when obtaining Cyclone Slash
     CycloneSlash,
+    /// Dash Slash (Skill)
+    /// 
+    /// Splits when obtaining Dash Slash
+    DashSlash,
+    /// Great Slash (Skill)
+    /// 
+    /// Splits when obtaining Great Slash
+    GreatSlash,
     // endregion: Nail Arts
 
     // region: Dream Nail Levels
@@ -1236,7 +1244,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Movement Abilities
         // region: Nail Arts
         Split::CycloneSlash => g.has_cyclone(p).is_some_and(|s| s),
-        // TODO: figure out which of the other nail arts is which
+        // hasUpwardSlash: secretly means Dash Slash, from Oro
+        Split::DashSlash => g.has_upward_slash(p).is_some_and(|s| s),
+        // hasDashSlash: secretly means Great Slash, from Sheo
+        Split::GreatSlash => g.has_dash_slash(p).is_some_and(|s| s),
         // endregion: Nail Arts
         // region: Dream Nail Levels
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
