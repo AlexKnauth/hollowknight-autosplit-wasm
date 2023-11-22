@@ -1490,6 +1490,18 @@ impl PlayerDataStore {
         self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| 0 < d)
     }
 
+    pub fn guardians_defeated(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
+        match game_manager_finder.guardians_defeated(process) {
+            Some(d) if d != 0 || game_manager_finder.is_game_state_playing(process) => {
+                self.map_i32.insert("guardians_defeated", d);
+                d
+            }
+            _ => {
+                *self.map_i32.get("guardians_defeated").unwrap_or(&0)
+            }
+        }
+    }
+
     pub fn get_fireball_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
         match game_manager_finder.get_fireball_level(process) {
             Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
@@ -1558,6 +1570,55 @@ impl PlayerDataStore {
             }
             _ => {
                 *self.map_bool.get("has_acid_armor").unwrap_or(&false)
+            }
+        }
+    }
+
+    pub fn has_dream_nail(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.has_dream_nail(process) {
+            Some(d) if d || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert("has_dream_nail", d);
+                d
+            }
+            _ => {
+                *self.map_bool.get("has_dream_nail").unwrap_or(&false)
+            }
+        }
+    }
+
+    pub fn has_dream_gate(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.has_dream_gate(process) {
+            // if `d` is true but `is_game_state_playing` is not, do NOT trust `d`
+            Some(d) if game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert("has_dream_gate", d);
+                d
+            }
+            _ => {
+                *self.map_bool.get("has_dream_gate").unwrap_or(&false)
+            }
+        }
+    }
+
+    pub fn got_charm_31(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.got_charm_31(process) {
+            Some(c) if c || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert("got_charm_31", c);
+                c
+            }
+            _ => {
+                *self.map_bool.get("got_charm_31").unwrap_or(&false)
+            }
+        }
+    }
+
+    pub fn got_shade_charm(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.got_shade_charm(process) {
+            Some(c) if c || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert("got_shade_charm", c);
+                c
+            }
+            _ => {
+                *self.map_bool.get("got_shade_charm").unwrap_or(&false)
             }
         }
     }

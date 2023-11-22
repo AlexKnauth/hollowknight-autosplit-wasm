@@ -78,6 +78,10 @@ pub enum Split {
     /// 
     /// Splits when you see the mask for the third dreamer killed
     Dreamer3,
+    /// Main Menu w/ 3 Dreamers (Menu)
+    /// 
+    /// Splits on transition to the main menu after 3 Dreamers acquired
+    MenuDreamer3,
     // endregion: Dreamers
 
     // region: Spell Levels
@@ -164,10 +168,18 @@ pub enum Split {
     /// 
     /// Splits when obtaining Dream Nail
     DreamNail,
+    /// Main Menu w/ Dream Nail (Menu)
+    /// 
+    /// Splits on transition to the main menu after Dream Nail acquired
+    MenuDreamNail,
     /// Dream Gate (Skill)
     /// 
     /// Splits when obtaining Dream Gate
     DreamGate,
+    /// Main Menu w/ Dream Gate (Menu)
+    /// 
+    /// Splits on transition to the main menu after Dream Gate acquired
+    MenuDreamGate,
     /// Dream Nail - Awoken (Skill)
     /// 
     /// Splits when Awkening the Dream Nail
@@ -431,6 +443,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining the Dashmaster charm
     Dashmaster,
+    /// Main Menu w/ Dashmaster (Menu)
+    /// 
+    /// Splits on transition to the main menu after Dashmaster acquired
+    MenuDashmaster,
     /// Quick Slash (Charm)
     /// 
     /// Splits when obtaining the Quick Slash charm
@@ -550,6 +566,10 @@ pub enum Split {
     /// 
     /// Splits when changing the Kingsoul to the Void Heart charm
     VoidHeart,
+    /// Main Menu w/ Void Heart (Menu)
+    /// 
+    /// Splits on transition to the main menu after Void Heart acquired
+    MenuVoidHeart,
     // endregion: Charms
 
     // region: Stags
@@ -1079,6 +1099,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::Monomon => p.old == "Dream_Guardian_Monomon" && p.current == "Cutscene_Boss_Door",
         Split::Hegemol => p.old == "Dream_Guardian_Hegemol" && p.current == "Cutscene_Boss_Door",
         */
+        Split::MenuDreamer3 => 3 <= pds.guardians_defeated(prc, g) && is_menu(p.current),
         // endregion: Dreamers
 
         // region: Dirtmouth
@@ -1103,12 +1124,15 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
         // endregion: Greenpath
         // region: Fungal
+        Split::MenuDashmaster => pds.got_charm_31(prc, g) && is_menu(p.current),
         Split::MenuClaw => pds.has_wall_jump(prc, g) && is_menu(p.current),
         Split::MenuMantisJournal => is_menu(p.current) && p.old == "Fungus2_17",
         // endregion: Fungal
         // region: Resting Grounds
         Split::BlueLake => p.current.starts_with("Crossroads_50") && !p.old.starts_with("Crossroads_50"), // blue lake is Crossroads_50
         Split::DreamNailExit => p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07",
+        Split::MenuDreamNail => pds.has_dream_nail(prc, g) && is_menu(p.current),
+        Split::MenuDreamGate => pds.has_dream_gate(prc, g) && is_menu(p.current),
         Split::CatacombsEntry => p.current.starts_with("RestingGrounds_10") && !p.old.starts_with("RestingGrounds_10"),
         // endregion: Resting Grounds
         // region: City
@@ -1130,6 +1154,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Basin
         Split::Abyss19from18 => p.old == "Abyss_18" && p.current == "Abyss_19",
         Split::MenuWings => pds.has_double_jump(prc, g) && is_menu(p.current),
+        Split::MenuVoidHeart => pds.got_shade_charm(prc, g) && is_menu(p.current),
         // endregion: Basin
         // region: Fog Canyon
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
@@ -1151,6 +1176,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Dreamer1 => g.guardians_defeated(p).is_some_and(|d| 1 <= d),
         Split::Dreamer2 => g.guardians_defeated(p).is_some_and(|d| 2 <= d),
         Split::Dreamer3 => g.guardians_defeated(p).is_some_and(|d| 3 <= d),
+        Split::MenuDreamer3 => { pds.guardians_defeated(p, g); false },
         // endregion: Dreamers
         // region: Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
@@ -1180,7 +1206,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Nail Arts
         // region: Dream Nail Levels
         Split::DreamNail => g.has_dream_nail(p).is_some_and(|d| d),
+        Split::MenuDreamNail => { pds.has_dream_nail(p, g); false },
         Split::DreamGate => g.has_dream_gate(p).is_some_and(|d| d),
+        Split::MenuDreamGate => { pds.has_dream_gate(p, g); false },
         Split::DreamNail2 => g.dream_nail_upgraded(p).is_some_and(|d| d),
         // endregion: Dream Nail Levels
         // region: Keys
@@ -1253,6 +1281,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Hiveblood => g.got_charm_29(p).is_some_and(|c| c),
         Split::DreamWielder => g.got_charm_30(p).is_some_and(|c| c),
         Split::Dashmaster => g.got_charm_31(p).is_some_and(|c| c),
+        Split::MenuDashmaster => { pds.got_charm_31(p, g); false },
         Split::QuickSlash => g.got_charm_32(p).is_some_and(|c| c),
         Split::SpellTwister => g.got_charm_33(p).is_some_and(|c| c),
         Split::DeepFocus => g.got_charm_34(p).is_some_and(|c| c),
@@ -1289,6 +1318,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainWhiteFragment => pds.increased_royal_charm_state(p, g),
         Split::Kingsoul => g.charm_cost_36(p).is_some_and(|c| c == 5) && g.royal_charm_state(p).is_some_and(|s| s == 3),
         Split::VoidHeart => g.got_shade_charm(p).is_some_and(|c| c),
+        Split::MenuVoidHeart => { pds.got_shade_charm(p, g); false },
         // endregion: Charms
         // region: Stags
         Split::StagMoved => pds.changed_stag_position(p, g),
