@@ -271,6 +271,7 @@ struct PlayerDataPointers {
     killed_nightmare_grimm: UnityPointer<3>,
     killed_grey_prince: UnityPointer<3>,
     grey_prince_orbs_collected: UnityPointer<3>,
+    killed_mender_bug: UnityPointer<3>,
     killed_mawlek: UnityPointer<3>,
     // Gruz Mother
     killed_big_fly: UnityPointer<3>,
@@ -281,7 +282,10 @@ struct PlayerDataPointers {
     unchained_hollow_knight: UnityPointer<3>,
     killed_hollow_knight: UnityPointer<3>,
     killed_final_boss: UnityPointer<3>,
+    killed_moss_knight: UnityPointer<3>,
     killed_hornet: UnityPointer<3>,
+    /// killedLazyFlyer: Aluba
+    killed_lazy_flyer: UnityPointer<3>,
     killed_ghost_no_eyes: UnityPointer<3>,
     no_eyes_defeated: UnityPointer<3>,
     mega_moss_charger_defeated: UnityPointer<3>,
@@ -308,6 +312,7 @@ struct PlayerDataPointers {
     watcher_chandelier: UnityPointer<3>,
     killed_black_knight: UnityPointer<3>,
     collector_defeated: UnityPointer<3>,
+    kills_zombie_miner: UnityPointer<3>,
     // Crystal Guardian
     defeated_mega_beam_miner: UnityPointer<3>,
     mine_lift_opened: UnityPointer<3>,
@@ -320,6 +325,7 @@ struct PlayerDataPointers {
     infected_knight_dream_defeated: UnityPointer<3>,
     infected_knight_orbs_collected: UnityPointer<3>,
     killed_hive_knight: UnityPointer<3>,
+    killed_giant_hopper: UnityPointer<3>,
     hornet_outskirts_defeated: UnityPointer<3>,
     killed_ghost_markoth: UnityPointer<3>,
     markoth_defeated: UnityPointer<3>,
@@ -479,6 +485,7 @@ impl PlayerDataPointers {
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
             killed_grey_prince: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGreyPrince"]),
             grey_prince_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "greyPrinceOrbsCollected"]),
+            killed_mender_bug: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMenderBug"]),
             killed_mawlek: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMawlek"]),
             killed_big_fly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
             sly_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyRescued"]),
@@ -488,7 +495,9 @@ impl PlayerDataPointers {
             unchained_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
             killed_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnight"]),
             killed_final_boss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFinalBoss"]),
+            killed_moss_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMossKnight"]),
             killed_hornet: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHornet"]),
+            killed_lazy_flyer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLazyFlyer"]),
             killed_ghost_no_eyes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostNoEyes"]),
             no_eyes_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "noEyesDefeated"]),
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
@@ -513,6 +522,7 @@ impl PlayerDataPointers {
             watcher_chandelier: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
             killed_black_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
             collector_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "collectorDefeated"]),
+            kills_zombie_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsZombieMiner"]),
             defeated_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMegaBeamMiner"]),
             mine_lift_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mineLiftOpened"]),
             killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
@@ -523,6 +533,7 @@ impl PlayerDataPointers {
             infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
             infected_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightOrbsCollected"]),
             killed_hive_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHiveKnight"]),
+            killed_giant_hopper: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGiantHopper"]),
             hornet_outskirts_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hornetOutskirtsDefeated"]),
             killed_ghost_markoth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarkoth"]),
             markoth_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "markothDefeated"]),
@@ -1173,6 +1184,10 @@ impl GameManagerFinder {
         self.player_data_pointers.grey_prince_orbs_collected.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn killed_mender_bug(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_mender_bug.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_mawlek(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_mawlek.deref(process, &self.module, &self.image).ok()
     }
@@ -1210,8 +1225,17 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_final_boss.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn killed_moss_knight(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_moss_knight.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_hornet(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_hornet.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// killedLazyFlyer: Aluba
+    pub fn killed_lazy_flyer(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_lazy_flyer.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_ghost_no_eyes(&self, process: &Process) -> Option<bool> {
@@ -1342,6 +1366,10 @@ impl GameManagerFinder {
 
     pub fn killed_hive_knight(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_hive_knight.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_giant_hopper(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_giant_hopper.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn hornet_outskirts_defeated(&self, process: &Process) -> Option<bool> {
@@ -1529,6 +1557,10 @@ impl PlayerDataStore {
         self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| 0 < d)
     }
 
+    fn decremented_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> bool {
+        self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| d == -1)
+    }
+
     pub fn guardians_defeated(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
         match game_manager_finder.guardians_defeated(process) {
             Some(d) if d != 0 || game_manager_finder.is_game_state_playing(process) => {
@@ -1708,6 +1740,10 @@ impl PlayerDataStore {
                 *self.map_bool.get("killed_gorgeous_husk").unwrap_or(&false)
             }
         }
+    }
+
+    pub fn decremented_kills_zombie_miner(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.decremented_i32(process, game_manager_finder, "kills_zombie_miner", &game_manager_finder.player_data_pointers.kills_zombie_miner)
     }
 
     pub fn increased_royal_charm_state(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {

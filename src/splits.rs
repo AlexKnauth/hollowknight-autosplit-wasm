@@ -725,6 +725,10 @@ pub enum Split {
     GreyPrinceEssence,
     // endregion: Dirtmouth
     // region: Crossroads
+    /// Menderbug (Killed)
+    /// 
+    /// Splits when killing Menderbug
+    MenderBug,
     /// Enter Brooding Mawlek (Transition)
     /// 
     /// Splits when entering the Brooding Mawlek arena transition in Forgotten Crossroads
@@ -785,6 +789,10 @@ pub enum Split {
     /// 
     /// Splits when entering Greenpath
     EnterGreenpath,
+    /// Moss Knight (Mini Boss)
+    /// 
+    /// Splits when killing Moss Knight
+    MossKnight,
     /// Enter Hornet 1 (Transition)
     /// 
     /// Splits when entering Hornet boss arena transition in Greenpath
@@ -793,6 +801,10 @@ pub enum Split {
     /// 
     /// Splits when killing Hornet Protector in Greenpath
     Hornet1,
+    /// Aluba (Killed)
+    /// 
+    /// Splits when killing an Aluba
+    Aluba,
     /// No Eyes (Boss)
     /// 
     /// Splits when killing No Eyes
@@ -931,6 +943,10 @@ pub enum Split {
     Collector,
     // endregion: City
     // region: Peak
+    /// Husk Miner (Killed)
+    /// 
+    /// Splits when killing a Husk Miner
+    HuskMiner,
     MenuSlyKey,
     /// Crystal Guardian (Boss)
     /// 
@@ -988,6 +1004,10 @@ pub enum Split {
     /// 
     /// Splits when killing Hive Knight
     HiveKnight,
+    /// Great Hopper (Killed)
+    /// 
+    /// Splits when killing a Great Hopper
+    GreatHopper,
     /// Enter Hornet 2 (Transition)
     /// 
     /// Splits when entering Hornet boss arena transition in Kingdom's Edge
@@ -1406,6 +1426,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::GreyPrinceEssence => g.grey_prince_orbs_collected(p).is_some_and(|o| o),
         // endregion: Dirtmouth
         // region: Crossroads
+        Split::MenderBug => g.killed_mender_bug(p).is_some_and(|k| k),
         Split::BroodingMawlek => g.killed_mawlek(p).is_some_and(|k| k),
         Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
         Split::SlyRescued => g.sly_rescued(p).is_some_and(|s| s),
@@ -1417,7 +1438,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::RadianceBoss => g.killed_final_boss(p).is_some_and(|k| k),
         // endregion: Crossroads
         // region: Greenpath
+        Split::MossKnight => g.killed_moss_knight(p).is_some_and(|k| k),
         Split::Hornet1 => g.killed_hornet(p).is_some_and(|k| k),
+        Split::Aluba => g.killed_lazy_flyer(p).is_some_and(|k| k),
         Split::NoEyes => g.killed_ghost_no_eyes(p).is_some_and(|k| k),
         Split::NoEyesEssence => g.no_eyes_defeated(p).is_some_and(|d| d == 2),
         Split::MegaMossCharger => g.mega_moss_charger_defeated(p).is_some_and(|k| k),
@@ -1454,6 +1477,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
         // endregion: City
         // region: Peak
+        Split::HuskMiner => pds.decremented_kills_zombie_miner(p, g),
         Split::CrystalGuardian1 => g.defeated_mega_beam_miner(p).is_some_and(|k| k),
         Split::MineLiftOpened => g.mine_lift_opened(p).is_some_and(|o| o),
         // endregion: Peak
@@ -1468,6 +1492,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Waterways
         // region: Kingdom's Edge
         Split::HiveKnight => g.killed_hive_knight(p).is_some_and(|k| k),
+        Split::GreatHopper => g.killed_giant_hopper(p).is_some_and(|k| k),
         Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
         Split::Markoth => g.killed_ghost_markoth(p).is_some_and(|k| k),
         Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
