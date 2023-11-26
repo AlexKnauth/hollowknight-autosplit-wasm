@@ -1195,7 +1195,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
         Split::MenuShadeSoul => 2 <= pds.get_fireball_level(prc, g) && is_menu(p.current),
         Split::EnterBlackKnight => p.current == "Ruins2_03" && p.current != p.old,
-        Split::BlackKnightTrans => p.current == "Ruins2_Watcher_Room" && p.old == "Ruins2_03",
+        Split::BlackKnightTrans => pds.killed_black_knight(prc, g) && p.current != p.old,
         Split::EnterLoveTower => p.current.starts_with("Ruins2_11") && p.current != p.old,
         // endregion: City
         // region: Peak
@@ -1474,6 +1474,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SoulTyrantEssence => g.mage_lord_orbs_collected(p).is_some_and(|o| o),
         Split::WatcherChandelier => g.watcher_chandelier(p).is_some_and(|c| c),
         Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),
+        Split::BlackKnightTrans => { pds.killed_black_knight(p, g); false },
         Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
         // endregion: City
         // region: Peak
