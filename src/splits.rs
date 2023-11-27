@@ -702,6 +702,10 @@ pub enum Split {
     /// 
     /// Splits when entering Dirtmouth from King's Pass
     KingsPass,
+    /// Dirtmouth (Transition)
+    /// 
+    /// Splits on any transition into Dirtmouth Town
+    EnterDirtmouth,
     SlyShopExit,
     /// Enter Troupe Master Grimm (Transition)
     /// 
@@ -835,6 +839,12 @@ pub enum Split {
     MegaMossChargerTrans,
     // endregion: Greenpath
     // region: Fungal
+    /// Fungal Wastes Entry (Transition)
+    /// 
+    /// Splits on transition to Fungal Wastes
+    /// 
+    /// (Room below Crossroads, right of Queen's Station, left of Waterways or Spore Shroom room)
+    FungalWastesEntry,
     /// Elder Hu (Boss)
     /// 
     /// Splits when killing Elder Hu
@@ -876,6 +886,10 @@ pub enum Split {
     /// 
     /// Splits on transition to Blue Lake from either side
     BlueLake,
+    /// Enter Any Dream (Transition)
+    /// 
+    /// Splits when entering any dream world
+    EnterAnyDream,
     DreamNailExit,
     /// Xero (Boss)
     /// 
@@ -919,6 +933,10 @@ pub enum Split {
     /// 
     /// Splits when talking to Lemm in the shop for the first time
     Lemm2,
+    /// Soul Sanctum (Transition)
+    /// 
+    /// Splits when entering Soul Sanctum
+    EnterSanctum,
     /// Enter Soul Master (Transition)
     /// 
     /// Splits when entering Soul Master boss arena transition
@@ -971,6 +989,10 @@ pub enum Split {
     TransCollector,
     // endregion: City
     // region: Peak
+    /// Crystal Peak Entry (Transition)
+    /// 
+    /// Splits on transition to the room where the dive and toll entrances meet, or the room right of Dirtmouth
+    CrystalPeakEntry,
     /// Husk Miner (Killed)
     /// 
     /// Splits when killing a Husk Miner
@@ -984,6 +1006,14 @@ pub enum Split {
     /// 
     /// Splits when killing the Enraged Guardian
     CrystalGuardian2,
+    /// Hallownest's Crown (Transition)
+    /// 
+    /// Splits on transition into the room with the Whispering Root at the base of Hallownest's Crown
+    EnterCrown,
+    /// Crystal Mound Exit (Transition)
+    /// 
+    /// Splits on transition from Crystal Mound
+    CrystalMoundExit,
     /// Crystal Peak Lift Opened (Event)
     /// 
     /// Splits when opening the lever for the lift between Dirtmouth and Crystal Peak
@@ -1007,8 +1037,16 @@ pub enum Split {
     /// 
     /// Splits when killing Flukemarm
     Flukemarm,
+    /// Junk Pit (Transition)
+    /// 
+    /// Splits on transition into Junk Pit
+    EnterJunkPit,
     // endregion: Waterways
     // region: Basin
+    /// Ancient Basin (Transition)
+    /// 
+    /// Splits on transition to Ancient Basin
+    BasinEntry,
     Abyss19from18,
     /// Broken Vessel (Boss)
     /// 
@@ -1028,6 +1066,10 @@ pub enum Split {
     LostKinEssence,
     // endregion: Basin
     // region: Kingdom's Edge
+    /// Hive (Transition)
+    /// 
+    /// Splits on transition to Hive
+    HiveEntry,
     /// Enter Hive Knight (Transition)
     /// 
     /// Splits when entering Hive Knight boss arena transition
@@ -1098,6 +1140,10 @@ pub enum Split {
     TraitorLord,
     // endregion: Queen's Gardens
     // region: Deepnest
+    /// Deepnest (Transition)
+    /// 
+    /// Splits on transition into Deepnest
+    EnterDeepnest,
     /// Zote Rescued - Deepnest (Mini Boss)
     /// 
     /// Splits when rescuing Zote in Deepnest
@@ -1124,6 +1170,10 @@ pub enum Split {
     BeastsDenTrapBench,
     // endregion: Deepnest
     // region: Godhome
+    /// Godhome (Transition)
+    /// 
+    /// Splits on transition to Godhome
+    EnterGodhome,
     /// Oro & Mato Nail Bros (Boss)
     /// 
     /// Splits when defeating Brothers Oro & Mato
@@ -1196,6 +1246,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
 
         // region: Dirtmouth
         Split::KingsPass => p.old == "Tutorial_01" && p.current == "Town",
+        Split::EnterDirtmouth => p.current == "Town" && p.current != p.old,
         Split::SlyShopExit => p.old == "Room_shop" && p.current != p.old,
         Split::LumaflyLanternTransition => pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop"),
         // TODO: should EnterTMG check that Grimmchild is actually equipped?
@@ -1220,6 +1271,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MegaMossChargerTrans => pds.mega_moss_charger_defeated(prc, g) && p.current != p.old,
         // endregion: Greenpath
         // region: Fungal
+        Split::FungalWastesEntry => starts_with_any(p.current, FUNGAL_WASTES_ENTRY_SCENES) && p.current != p.old,
         Split::ElderHuTrans => pds.killed_ghost_hu(prc, g) && p.current != p.old,
         Split::MenuDashmaster => pds.got_charm_31(prc, g) && is_menu(p.current),
         Split::MenuClaw => pds.has_wall_jump(prc, g) && is_menu(p.current),
@@ -1227,6 +1279,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Fungal
         // region: Resting Grounds
         Split::BlueLake => p.current.starts_with("Crossroads_50") && !p.old.starts_with("Crossroads_50"), // blue lake is Crossroads_50
+        Split::EnterAnyDream => p.current.starts_with("Dream_") && p.current != p.old,
         Split::DreamNailExit => p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07",
         Split::MenuDreamNail => pds.has_dream_nail(prc, g) && is_menu(p.current),
         Split::MenuDreamGate => pds.has_dream_gate(prc, g) && is_menu(p.current),
@@ -1236,6 +1289,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::TransGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && p.current != p.old,
         Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && is_menu(p.current),
         Split::EnterRafters => p.current == "Ruins1_03" && p.current != p.old,
+        Split::EnterSanctum => p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23"),
         Split::EnterSoulMaster => p.current.starts_with("Ruins1_24") && p.current != p.old,
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
         Split::MenuShadeSoul => 2 <= pds.get_fireball_level(prc, g) && is_menu(p.current),
@@ -1245,20 +1299,26 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::TransCollector => pds.collector_defeated(prc, g) && p.current != p.old,
         // endregion: City
         // region: Peak
+        Split::CrystalPeakEntry => starts_with_any(p.current, CRYSTAL_PEAK_ENTRY_SCENES) && p.current != p.old,
         Split::MenuSlyKey => is_menu(p.current) && p.old == "Mines_11",
+        Split::EnterCrown => p.current == "Mines_23" && p.current != p.old,
         Split::TransDescendingDark => 2 <= pds.get_quake_level(prc, g) && p.current != p.old,
+        Split::CrystalMoundExit => p.old.starts_with("Mines_35") && p.current != p.old,
         // endregion: Peak
         // region: Waterways
         Split::DungDefenderExit => p.old == "Waterways_05" && p.current == "Abyss_01",
         Split::MenuIsmasTear => pds.has_acid_armour(prc, g) && is_menu(p.current),
+        Split::EnterJunkPit => p.current == "GG_Waterways" && p.current != p.old,
         // endregion: Waterways
         // region: Basin
+        Split::BasinEntry => p.current.starts_with("Abyss_04") && p.current != p.old,
         Split::Abyss19from18 => p.old == "Abyss_18" && p.current == "Abyss_19",
         Split::BrokenVesselTrans => pds.killed_infected_knight(prc, g) && g.get_health(prc).is_some_and(|h| 0 < h),
         Split::MenuWings => pds.has_double_jump(prc, g) && is_menu(p.current),
         Split::MenuVoidHeart => pds.got_shade_charm(prc, g) && is_menu(p.current),
         // endregion: Basin
         // region: Kingdom's Edge
+        Split::HiveEntry => p.current.starts_with("Hive_01") && p.current != p.old,
         Split::EnterHiveKnight => p.current.starts_with("Hive_05") && p.current != p.old,
         Split::EnterHornet2 => p.current.starts_with("Deepnest_East_Hornet") && p.current != p.old,
         // endregion: Kingdom's Edge
@@ -1266,11 +1326,15 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
         // endregion: Fog Canyon
         // region: Queen's Gardens
-        Split::QueensGardensEntry => (p.current.starts_with("Fungus3_34") || p.current.starts_with("Deepnest_43")) && p.current != p.old,
+        Split::QueensGardensEntry => starts_with_any(p.current, QUEENS_GARDENS_ENTRY_SCENES) && p.current != p.old,
         // endregion: Queen's Gardens
         // region: Deepnest
+        Split::EnterDeepnest => starts_with_any(p.current, DEEPNEST_ENTRY_SCENES) && p.current != p.old,
         Split::EnterNosk => p.current.starts_with("Deepnest_32") && p.current != p.old,
         // endregion: Deepnest
+        // region: Godhome
+        Split::EnterGodhome => p.current.starts_with("GG_Atrium") && p.current != p.old,
+        // endregion: Godhome
         // else
         _ => false
     }

@@ -69,6 +69,30 @@ const BAD_SCENE_NAMES: [&str; 11] = [
     "material",
 ];
 
+pub const FUNGAL_WASTES_ENTRY_SCENES: &[&str] = &[
+    "Fungus2_06", // Room outside Leg Eater
+    "Fungus2_03", // From Queens' Station
+    "Fungus2_23", // Bretta from Waterways
+    "Fungus2_20", // Spore Shroom room, from QG (this one's unlikely to come up)
+];
+
+pub const CRYSTAL_PEAK_ENTRY_SCENES: &[&str] = &[
+    "Mines_02",
+    "Mines_10",
+];
+
+pub const QUEENS_GARDENS_ENTRY_SCENES: &[&str] = &[
+    "Fungus3_34",
+    "Deepnest_43",
+];
+
+pub const DEEPNEST_ENTRY_SCENES: &[&str] = &[
+    "Fungus2_25", // Room after Mantis Lords
+    "Deepnest_42", // Room outside Mask Maker
+    "Abyss_03b", // Deepnest Tram
+    "Deepnest_01b", // Near Spore Shroom
+];
+
 // --------------------------------------------------------
 
 // const VERSION_VEC_MAJOR: usize = 0;
@@ -1747,6 +1771,10 @@ pub fn is_menu(s: &str) -> bool {
 
 pub fn is_play_scene(s: &str) -> bool {
     !NON_PLAY_SCENES.contains(&s) && !BAD_SCENE_NAMES.contains(&s)
+}
+
+pub fn starts_with_any(full: &str, prefixes: &[&str]) -> bool {
+    prefixes.into_iter().any(|prefix| full.starts_with(prefix))
 }
 
 // --------------------------------------------------------
