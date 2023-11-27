@@ -203,6 +203,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining the Lumafly Lantern
     LumaflyLantern,
+    /// Shop Lumafly Lantern (Transition)
+    /// 
+    /// Splits on transition after Lantern has been acquired
+    LumaflyLanternTransition,
     /// Simple Key (Obtain)
     /// 
     /// Splits when obtaining a Simple Key
@@ -1193,6 +1197,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Dirtmouth
         Split::KingsPass => p.old == "Tutorial_01" && p.current == "Town",
         Split::SlyShopExit => p.old == "Room_shop" && p.current != p.old,
+        Split::LumaflyLanternTransition => pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop"),
         // TODO: should EnterTMG check that Grimmchild is actually equipped?
         Split::EnterTMG => p.current.starts_with("Grimm_Main_Tent")
                         && p.current != p.old
@@ -1321,6 +1326,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Keys
         Split::CityKey => g.has_city_key(p).is_some_and(|k| k),
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
+        Split::LumaflyLanternTransition => { pds.has_lantern(p, g); false },
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
         Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
         Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),

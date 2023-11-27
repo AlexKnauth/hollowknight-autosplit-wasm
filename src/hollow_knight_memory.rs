@@ -1637,6 +1637,10 @@ impl PlayerDataStore {
         self.get_bool(p, g, "has_dream_gate", &g.player_data_pointers.has_dream_gate).unwrap_or(false)
     }
 
+    pub fn has_lantern(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "has_lantern", &g.player_data_pointers.has_lantern).unwrap_or(false)
+    }
+
     pub fn got_charm_31(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "got_charm_31", &g.player_data_pointers.got_charm_31).unwrap_or(false)
     }
