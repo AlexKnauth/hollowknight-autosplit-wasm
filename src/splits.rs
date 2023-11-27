@@ -793,6 +793,14 @@ pub enum Split {
     /// 
     /// Splits when killing Moss Knight
     MossKnight,
+    /// Zote Rescued - Vengefly King (Mini Boss)
+    /// 
+    /// Splits when rescuing Zote from the Vengefly King
+    Zote1,
+    /// Vengefly King Killed (Transition)
+    /// 
+    /// Splits on transition after Vengefly King in Greenpath killed
+    VengeflyKingTrans,
     /// Enter Hornet 1 (Transition)
     /// 
     /// Splits when entering Hornet boss arena transition in Greenpath
@@ -1040,6 +1048,10 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Markoth
     MarkothEssence,
+    /// Zote Defeated - Colosseum (Mini Boss)
+    /// 
+    /// Splits when defeating Zote in the Colosseum
+    ZoteKilled,
     /// God Tamer (Boss)
     /// 
     /// Splits when killing the God Tamer
@@ -1078,6 +1090,10 @@ pub enum Split {
     TraitorLord,
     // endregion: Queen's Gardens
     // region: Deepnest
+    /// Zote Rescued - Deepnest (Mini Boss)
+    /// 
+    /// Splits when rescuing Zote in Deepnest
+    Zote2,
     /// Nosk (Transition)
     /// 
     /// Splits when entering Nosk boss arena transition
@@ -1189,6 +1205,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Crossroads
         // region: Greenpath
         Split::EnterGreenpath => p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"),
+        Split::VengeflyKingTrans => pds.zote_rescued_buzzer(prc, g) && p.current != p.old,
         Split::EnterHornet1 => p.current.starts_with("Fungus1_04") && p.current != p.old,
         Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
         Split::MegaMossChargerTrans => pds.mega_moss_charger_defeated(prc, g) && p.current != p.old,
@@ -1459,6 +1476,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Crossroads
         // region: Greenpath
         Split::MossKnight => g.killed_moss_knight(p).is_some_and(|k| k),
+        Split::Zote1 => g.zote_rescued_buzzer(p).is_some_and(|z| z),
+        Split::VengeflyKingTrans => { pds.zote_rescued_buzzer(p, g); false },
         Split::Hornet1 => g.killed_hornet(p).is_some_and(|k| k),
         Split::Aluba => g.killed_lazy_flyer(p).is_some_and(|k| k),
         Split::NoEyes => g.killed_ghost_no_eyes(p).is_some_and(|k| k),
@@ -1521,6 +1540,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
         Split::Markoth => g.killed_ghost_markoth(p).is_some_and(|k| k),
         Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
+        Split::ZoteKilled => g.killed_zote(p).is_some_and(|k| k),
         Split::GodTamer => g.killed_lobster_lancer(p).is_some_and(|k| k),
         // endregion: Kingdom's Edge
         // region: Fog Canyon
@@ -1533,6 +1553,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::TraitorLord => g.killed_traitor_lord(p).is_some_and(|k| k),
         // endregion: Queen's Gardens
         // region: Deepnest
+        Split::Zote2 => g.zote_rescued_deepnest(p).is_some_and(|z| z),
         Split::Nosk => g.killed_mimic_spider(p).is_some_and(|k| k),
         Split::Galien => g.killed_ghost_galien(p).is_some_and(|k| k),
         Split::GalienEssence => g.galien_defeated(p).is_some_and(|d| d == 2),

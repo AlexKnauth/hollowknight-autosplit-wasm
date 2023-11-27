@@ -283,6 +283,7 @@ struct PlayerDataPointers {
     killed_hollow_knight: UnityPointer<3>,
     killed_final_boss: UnityPointer<3>,
     killed_moss_knight: UnityPointer<3>,
+    zote_rescued_buzzer: UnityPointer<3>,
     killed_hornet: UnityPointer<3>,
     /// killedLazyFlyer: Aluba
     killed_lazy_flyer: UnityPointer<3>,
@@ -329,6 +330,7 @@ struct PlayerDataPointers {
     hornet_outskirts_defeated: UnityPointer<3>,
     killed_ghost_markoth: UnityPointer<3>,
     markoth_defeated: UnityPointer<3>,
+    killed_zote: UnityPointer<3>,
     // God Tamer
     killed_lobster_lancer: UnityPointer<3>,
     // Uumuu
@@ -337,6 +339,7 @@ struct PlayerDataPointers {
     killed_ghost_marmu: UnityPointer<3>,
     mum_caterpillar_defeated: UnityPointer<3>,
     killed_traitor_lord: UnityPointer<3>,
+    zote_rescued_deepnest: UnityPointer<3>,
     // Nosk
     killed_mimic_spider: UnityPointer<3>,
     killed_ghost_galien: UnityPointer<3>,
@@ -496,6 +499,7 @@ impl PlayerDataPointers {
             killed_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnight"]),
             killed_final_boss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFinalBoss"]),
             killed_moss_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMossKnight"]),
+            zote_rescued_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteRescuedBuzzer"]),
             killed_hornet: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHornet"]),
             killed_lazy_flyer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLazyFlyer"]),
             killed_ghost_no_eyes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostNoEyes"]),
@@ -537,12 +541,14 @@ impl PlayerDataPointers {
             hornet_outskirts_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hornetOutskirtsDefeated"]),
             killed_ghost_markoth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarkoth"]),
             markoth_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "markothDefeated"]),
+            killed_zote: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedZote"]),
             killed_lobster_lancer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLobsterLancer"]),
             encountered_mega_jelly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "encounteredMegaJelly"]),
             killed_mega_jellyfish: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
             killed_ghost_marmu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarmu"]),
             mum_caterpillar_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mumCaterpillarDefeated"]),
             killed_traitor_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedTraitorLord"]),
+            zote_rescued_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteRescuedDeepnest"]),
             killed_mimic_spider: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMimicSpider"]),
             killed_ghost_galien: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostGalien"]),
             galien_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "galienDefeated"]),
@@ -1229,6 +1235,10 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_moss_knight.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn zote_rescued_buzzer(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.zote_rescued_buzzer.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_hornet(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_hornet.deref(process, &self.module, &self.image).ok()
     }
@@ -1383,6 +1393,10 @@ impl GameManagerFinder {
         self.player_data_pointers.markoth_defeated.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn killed_zote(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_zote.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_lobster_lancer(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_lobster_lancer.deref(process, &self.module, &self.image).ok()
     }
@@ -1405,6 +1419,10 @@ impl GameManagerFinder {
 
     pub fn killed_traitor_lord(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_traitor_lord.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn zote_rescued_deepnest(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.zote_rescued_deepnest.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_mimic_spider(&self, process: &Process) -> Option<bool> {
@@ -1661,6 +1679,10 @@ impl PlayerDataStore {
 
     pub fn incremented_charm_slots(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "charm_slots", &game_manager_finder.player_data_pointers.charm_slots)
+    }
+
+    pub fn zote_rescued_buzzer(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "zote_rescued_buzzer", &g.player_data_pointers.zote_rescued_buzzer).unwrap_or(false)
     }
 
     pub fn mega_moss_charger_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
