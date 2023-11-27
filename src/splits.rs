@@ -986,6 +986,10 @@ pub enum Split {
     /// 
     /// Splits when killing Broken Vessel
     BrokenVessel,
+    /// Broken Vessel (Transition)
+    /// 
+    /// Splits on any non-death transition after defeating Broken Vessel
+    BrokenVesselTrans,
     /// Lost Kin (Boss)
     /// 
     /// Splits when killing Lost Kin
@@ -1208,6 +1212,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Waterways
         // region: Basin
         Split::Abyss19from18 => p.old == "Abyss_18" && p.current == "Abyss_19",
+        Split::BrokenVesselTrans => pds.killed_infected_knight(prc, g) && g.get_health(prc).is_some_and(|h| 0 < h),
         Split::MenuWings => pds.has_double_jump(prc, g) && is_menu(p.current),
         Split::MenuVoidHeart => pds.got_shade_charm(prc, g) && is_menu(p.current),
         // endregion: Basin
@@ -1488,6 +1493,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::WhiteDefenderEssence => g.white_defender_orbs_collected(p).is_some_and(|o| o),
         Split::Flukemarm => g.killed_fluke_mother(p).is_some_and(|k| k),
         Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
+        Split::BrokenVesselTrans => { pds.killed_infected_knight(p, g); false },
         Split::LostKin => g.infected_knight_dream_defeated(p).is_some_and(|k| k),
         Split::LostKinEssence => g.infected_knight_orbs_collected(p).is_some_and(|o| o),
         // endregion: Waterways

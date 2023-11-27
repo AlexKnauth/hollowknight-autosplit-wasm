@@ -1754,6 +1754,18 @@ impl PlayerDataStore {
         }
     }
 
+    pub fn killed_infected_knight(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.killed_infected_knight(process) {
+            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert("killed_infected_knight", k);
+                k
+            }
+            _ => {
+                *self.map_bool.get("killed_infected_knight").unwrap_or(&false)
+            }
+        }
+    }
+
     pub fn decremented_kills_zombie_miner(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.decremented_i32(process, game_manager_finder, "kills_zombie_miner", &game_manager_finder.player_data_pointers.kills_zombie_miner)
     }
