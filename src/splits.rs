@@ -827,6 +827,10 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Elder Hu
     ElderHuEssence,
+    /// Elder Hu Killed (Transition)
+    /// 
+    /// Splits on the transition after killing Elder Hu
+    ElderHuTrans,
     MenuMantisJournal,
     /// Mantis Lords (Boss)
     /// 
@@ -1185,6 +1189,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
         // endregion: Greenpath
         // region: Fungal
+        Split::ElderHuTrans => pds.killed_ghost_hu(prc, g) && p.current != p.old,
         Split::MenuDashmaster => pds.got_charm_31(prc, g) && is_menu(p.current),
         Split::MenuClaw => pds.has_wall_jump(prc, g) && is_menu(p.current),
         Split::MenuMantisJournal => is_menu(p.current) && p.old == "Fungus2_17",
@@ -1458,6 +1463,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Fungal
         Split::ElderHu => g.killed_ghost_hu(p).is_some_and(|k| k),
         Split::ElderHuEssence => g.elder_hu_defeated(p).is_some_and(|d| d == 2),
+        Split::ElderHuTrans => { pds.killed_ghost_hu(p, g); false },
         Split::MantisLords => g.defeated_mantis_lords(p).is_some_and(|k| k),
         // endregion: Fungal
         // region: Cliffs

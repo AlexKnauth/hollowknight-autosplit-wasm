@@ -1663,6 +1663,10 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "charm_slots", &game_manager_finder.player_data_pointers.charm_slots)
     }
 
+    pub fn killed_ghost_hu(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "killed_ghost_hu", &g.player_data_pointers.killed_ghost_hu).unwrap_or(false)
+    }
+
     pub fn killed_gorgeous_husk(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "killed_gorgeous_husk", &g.player_data_pointers.killed_gorgeous_husk).unwrap_or(false)
     }
