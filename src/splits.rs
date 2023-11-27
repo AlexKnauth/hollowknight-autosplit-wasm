@@ -817,6 +817,10 @@ pub enum Split {
     /// 
     /// Splits when killing Massive Moss Charger
     MegaMossCharger,
+    /// Massive Moss Charger Killed (Transition)
+    /// 
+    /// Splits on transition after Massive Moss Charger is killed
+    MegaMossChargerTrans,
     // endregion: Greenpath
     // region: Fungal
     /// Elder Hu (Boss)
@@ -1187,6 +1191,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterGreenpath => p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"),
         Split::EnterHornet1 => p.current.starts_with("Fungus1_04") && p.current != p.old,
         Split::MenuCloak => pds.has_dash(prc, g) && is_menu(p.current),
+        Split::MegaMossChargerTrans => pds.mega_moss_charger_defeated(prc, g) && p.current != p.old,
         // endregion: Greenpath
         // region: Fungal
         Split::ElderHuTrans => pds.killed_ghost_hu(prc, g) && p.current != p.old,
@@ -1459,6 +1464,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::NoEyes => g.killed_ghost_no_eyes(p).is_some_and(|k| k),
         Split::NoEyesEssence => g.no_eyes_defeated(p).is_some_and(|d| d == 2),
         Split::MegaMossCharger => g.mega_moss_charger_defeated(p).is_some_and(|k| k),
+        Split::MegaMossChargerTrans => { pds.mega_moss_charger_defeated(p, g); false },
         // endregion: Greenpath
         // region: Fungal
         Split::ElderHu => g.killed_ghost_hu(p).is_some_and(|k| k),
