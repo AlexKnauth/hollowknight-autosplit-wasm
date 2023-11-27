@@ -907,6 +907,10 @@ pub enum Split {
     /// 
     /// Splits on transition to the main menu after Gorgeous Husk defeated
     MenuGorgeousHusk,
+    /// Rafters (Transition)
+    /// 
+    /// Splits on any transition into the City Rafters room
+    EnterRafters,
     /// Lemm Shop (NPC)
     /// 
     /// Splits when talking to Lemm in the shop for the first time
@@ -1226,6 +1230,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: City
         Split::TransGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && p.current != p.old,
         Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && is_menu(p.current),
+        Split::EnterRafters => p.current == "Ruins1_03" && p.current != p.old,
         Split::EnterSoulMaster => p.current.starts_with("Ruins1_24") && p.current != p.old,
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
         Split::MenuShadeSoul => 2 <= pds.get_fireball_level(prc, g) && is_menu(p.current),
