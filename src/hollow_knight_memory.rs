@@ -139,7 +139,7 @@ struct PlayerDataPointers {
     has_wall_jump: UnityPointer<3>,
     has_double_jump: UnityPointer<3>,
     has_super_dash: UnityPointer<3>,
-    has_acid_armor: UnityPointer<3>,
+    has_acid_armour: UnityPointer<3>,
     /// hasCyclone: actually means Cyclone Slash, from Mato
     has_cyclone: UnityPointer<3>,
     /// hasDashSlash: secretly means Great Slash, from Sheo
@@ -363,7 +363,7 @@ impl PlayerDataPointers {
             has_wall_jump: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasWalljump"]),
             has_double_jump: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDoubleJump"]),
             has_super_dash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasSuperDash"]),
-            has_acid_armor: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasAcidArmour"]),
+            has_acid_armour: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasAcidArmour"]),
             has_cyclone: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCyclone"]),
             has_dash_slash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasDashSlash"]),
             has_upward_slash: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasUpwardSlash"]),
@@ -734,7 +734,7 @@ impl GameManagerFinder {
     }
 
     pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_acid_armor.deref(process, &self.module, &self.image).ok()
+        self.player_data_pointers.has_acid_armour.deref(process, &self.module, &self.image).ok()
     }
 
     /// hasCyclone: actually means Cyclone Slash, from Mato
@@ -1538,6 +1538,28 @@ impl PlayerDataStore {
         self.map_bool.clear();
     }
 
+    fn get_bool<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<bool> {
+        if !g.is_game_state_playing(p) {
+            return self.map_bool.get(key).copied();
+        };
+        let Ok(b) = pointer.deref(p, &g.module, &g.image) else {
+            return self.map_bool.get(key).copied();
+        };
+        self.map_bool.insert(key, b);
+        Some(b)
+    }
+
+    fn get_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
+        if !g.is_game_state_playing(p) {
+            return self.map_i32.get(key).copied();
+        };
+        let Ok(i) = pointer.deref(p, &g.module, &g.image) else {
+            return self.map_i32.get(key).copied();
+        };
+        self.map_i32.insert(key, i);
+        Some(i)
+    }
+
     fn changed_i32_delta<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
         let store_val = self.map_i32.get(key).cloned();
         let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
@@ -1561,137 +1583,48 @@ impl PlayerDataStore {
         self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| d == -1)
     }
 
-    pub fn guardians_defeated(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
-        match game_manager_finder.guardians_defeated(process) {
-            Some(d) if d != 0 || game_manager_finder.is_game_state_playing(process) => {
-                self.map_i32.insert("guardians_defeated", d);
-                d
-            }
-            _ => {
-                *self.map_i32.get("guardians_defeated").unwrap_or(&0)
-            }
-        }
+    pub fn guardians_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
+        self.get_i32(p, g, "guardians_defeated", &g.player_data_pointers.guardians_defeated).unwrap_or(0)
     }
 
-    pub fn get_fireball_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
-        match game_manager_finder.get_fireball_level(process) {
-            Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
-                self.map_i32.insert("fireball_level", l);
-                l
-            }
-            _ => {
-                *self.map_i32.get("fireball_level").unwrap_or(&0)
-            }
-        }
+    pub fn get_fireball_level(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
+        self.get_i32(p, g, "fireball_level", &g.player_data_pointers.fireball_level).unwrap_or(0)
     }
 
-    pub fn get_quake_level(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i32 {
-        match game_manager_finder.get_quake_level(process) {
-            Some(l) if l != 0 || game_manager_finder.is_game_state_playing(process) => {
-                self.map_i32.insert("quake_level", l);
-                l
-            }
-            _ => {
-                *self.map_i32.get("quake_level").unwrap_or(&0)
-            }
-        }
+    pub fn get_quake_level(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
+        self.get_i32(p, g, "quake_level", &g.player_data_pointers.quake_level).unwrap_or(0)
     }
 
-    pub fn has_dash(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.has_dash(process) {
-            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("has_dash", k);
-                k
-            }
-            _ => {
-                *self.map_bool.get("has_dash").unwrap_or(&false)
-            }
-        }
+    pub fn has_dash(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "has_dash", &g.player_data_pointers.has_dash).unwrap_or(false)
     }
 
-    pub fn has_wall_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.has_wall_jump(process) {
-            Some(w) if w || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("has_wall_jump", w);
-                w
-            }
-            _ => {
-                *self.map_bool.get("has_wall_jump").unwrap_or(&false)
-            }
-        }
+    pub fn has_wall_jump(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "has_wall_jump", &g.player_data_pointers.has_wall_jump).unwrap_or(false)
     }
 
-    pub fn has_double_jump(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.has_double_jump(process) {
-            Some(d) if d || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("has_double_jump", d);
-                d
-            }
-            _ => {
-                *self.map_bool.get("has_double_jump").unwrap_or(&false)
-            }
-        }
+    pub fn has_double_jump(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "has_double_jump", &g.player_data_pointers.has_double_jump).unwrap_or(false)
     }
 
-    pub fn has_acid_armour(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.has_acid_armour(process) {
-            Some(a) if a || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("has_acid_armor", a);
-                a
-            }
-            _ => {
-                *self.map_bool.get("has_acid_armor").unwrap_or(&false)
-            }
-        }
+    pub fn has_acid_armour(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "has_acid_armour", &g.player_data_pointers.has_acid_armour).unwrap_or(false)
     }
 
-    pub fn has_dream_nail(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.has_dream_nail(process) {
-            Some(d) if d || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("has_dream_nail", d);
-                d
-            }
-            _ => {
-                *self.map_bool.get("has_dream_nail").unwrap_or(&false)
-            }
-        }
+    pub fn has_dream_nail(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "has_dream_nail", &g.player_data_pointers.has_dream_nail).unwrap_or(false)
     }
 
-    pub fn has_dream_gate(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.has_dream_gate(process) {
-            // if `d` is true but `is_game_state_playing` is not, do NOT trust `d`
-            Some(d) if game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("has_dream_gate", d);
-                d
-            }
-            _ => {
-                *self.map_bool.get("has_dream_gate").unwrap_or(&false)
-            }
-        }
+    pub fn has_dream_gate(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "has_dream_gate", &g.player_data_pointers.has_dream_gate).unwrap_or(false)
     }
 
-    pub fn got_charm_31(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.got_charm_31(process) {
-            Some(c) if c || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("got_charm_31", c);
-                c
-            }
-            _ => {
-                *self.map_bool.get("got_charm_31").unwrap_or(&false)
-            }
-        }
+    pub fn got_charm_31(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "got_charm_31", &g.player_data_pointers.got_charm_31).unwrap_or(false)
     }
 
-    pub fn got_shade_charm(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.got_shade_charm(process) {
-            Some(c) if c || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("got_shade_charm", c);
-                c
-            }
-            _ => {
-                *self.map_bool.get("got_shade_charm").unwrap_or(&false)
-            }
-        }
+    pub fn got_shade_charm(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "got_shade_charm", &g.player_data_pointers.got_shade_charm).unwrap_or(false)
     }
 
     pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
@@ -1730,52 +1663,20 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "charm_slots", &game_manager_finder.player_data_pointers.charm_slots)
     }
 
-    pub fn killed_gorgeous_husk(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.killed_gorgeous_husk(process) {
-            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("killed_gorgeous_husk", k);
-                k
-            }
-            _ => {
-                *self.map_bool.get("killed_gorgeous_husk").unwrap_or(&false)
-            }
-        }
+    pub fn killed_gorgeous_husk(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "killed_gorgeous_husk", &g.player_data_pointers.killed_gorgeous_husk).unwrap_or(false)
     }
 
-    pub fn killed_black_knight(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.killed_black_knight(process) {
-            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("killed_black_knight", k);
-                k
-            }
-            _ => {
-                *self.map_bool.get("killed_black_knight").unwrap_or(&false)
-            }
-        }
+    pub fn killed_black_knight(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "killed_black_knight", &g.player_data_pointers.killed_black_knight).unwrap_or(false)
     }
 
-    pub fn collector_defeated(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.collector_defeated(process) {
-            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("collector_defeated", k);
-                k
-            }
-            _ => {
-                *self.map_bool.get("collector_defeated").unwrap_or(&false)
-            }
-        }
+    pub fn collector_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "collector_defeated", &g.player_data_pointers.collector_defeated).unwrap_or(false)
     }
 
-    pub fn killed_infected_knight(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
-        match game_manager_finder.killed_infected_knight(process) {
-            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
-                self.map_bool.insert("killed_infected_knight", k);
-                k
-            }
-            _ => {
-                *self.map_bool.get("killed_infected_knight").unwrap_or(&false)
-            }
-        }
+    pub fn killed_infected_knight(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "killed_infected_knight", &g.player_data_pointers.killed_infected_knight).unwrap_or(false)
     }
 
     pub fn decremented_kills_zombie_miner(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
