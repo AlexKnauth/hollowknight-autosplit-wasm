@@ -1754,6 +1754,18 @@ impl PlayerDataStore {
         }
     }
 
+    pub fn collector_defeated(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        match game_manager_finder.collector_defeated(process) {
+            Some(k) if k || game_manager_finder.is_game_state_playing(process) => {
+                self.map_bool.insert("collector_defeated", k);
+                k
+            }
+            _ => {
+                *self.map_bool.get("collector_defeated").unwrap_or(&false)
+            }
+        }
+    }
+
     pub fn killed_infected_knight(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         match game_manager_finder.killed_infected_knight(process) {
             Some(k) if k || game_manager_finder.is_game_state_playing(process) => {

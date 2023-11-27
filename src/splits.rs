@@ -941,6 +941,10 @@ pub enum Split {
     /// 
     /// Splits when killing Collector
     Collector,
+    /// Collector Defeated (Transition)
+    /// 
+    /// Splits on transition after defeating the Collector
+    TransCollector,
     // endregion: City
     // region: Peak
     /// Husk Miner (Killed)
@@ -1201,6 +1205,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterBlackKnight => p.current == "Ruins2_03" && p.current != p.old,
         Split::BlackKnightTrans => pds.killed_black_knight(prc, g) && p.current != p.old,
         Split::EnterLoveTower => p.current.starts_with("Ruins2_11") && p.current != p.old,
+        Split::TransCollector => pds.collector_defeated(prc, g) && p.current != p.old,
         // endregion: City
         // region: Peak
         Split::MenuSlyKey => is_menu(p.current) && p.old == "Mines_11",
@@ -1481,6 +1486,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::BlackKnight => g.killed_black_knight(p).is_some_and(|k| k),
         Split::BlackKnightTrans => { pds.killed_black_knight(p, g); false },
         Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
+        Split::TransCollector => { pds.collector_defeated(p, g); false },
         // endregion: City
         // region: Peak
         Split::HuskMiner => pds.decremented_kills_zombie_miner(p, g),
