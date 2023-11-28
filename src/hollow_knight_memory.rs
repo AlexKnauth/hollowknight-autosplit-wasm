@@ -1549,7 +1549,10 @@ impl SceneStore {
         }
     }
 
-    pub fn transition_pair(&mut self) -> Option<Pair<&str>> {
+    pub fn transition_pair(&mut self, prc: &Process, g: &GameManagerFinder) -> Option<Pair<&str>> {
+        self.new_curr_scene_name1(g.get_scene_name(&prc));
+        self.new_next_scene_name1(g.get_next_scene_name(&prc));
+
         if self.new_data_next {
             self.new_data_curr = false;
             self.new_data_next = false;

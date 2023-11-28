@@ -75,12 +75,8 @@ async fn main() {
                         next_tick().await;
                         continue;
                     }
-                    let gmf = game_manager_finder.get_scene_name(&process);
 
-                    scene_store.new_curr_scene_name1(gmf.clone());
-                    let gmfn = game_manager_finder.get_next_scene_name(&process);
-                    scene_store.new_next_scene_name1(gmfn.clone());
-                    if let Some(scene_pair) = scene_store.transition_pair() {
+                    if let Some(scene_pair) = scene_store.transition_pair(&process, &game_manager_finder) {
                         if splits::transition_splits(current_split, &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
                             split_index(&mut i, n);
                         } else if auto_reset && splits::transition_splits(&splits[0], &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
