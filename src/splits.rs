@@ -1645,6 +1645,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
     }
 }
 
+pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, mp: &Option<Pair<&str>>, pds: &mut PlayerDataStore) -> bool {
+    continuous_splits(s, prc, g, pds) || mp.is_some_and(|p| transition_splits(s, &p, prc, g, pds))
+}
+
 pub fn default_splits() -> Vec<Split> {
     vec![Split::StartNewGame,
          Split::EndingSplit]

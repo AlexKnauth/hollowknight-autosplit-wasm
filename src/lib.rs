@@ -70,31 +70,18 @@ async fn main() {
                 let n = splits.len();
                 loop {
                     let current_split = &splits[i];
-                    if splits::continuous_splits(current_split, &process, &game_manager_finder, &mut player_data_store) {
+                    let mp = scene_store.transition_pair(&process, &game_manager_finder);
+                    if splits::splits(current_split, &process, &game_manager_finder, &mp, &mut player_data_store) {
                         split_index(&mut i, n);
                         next_tick().await;
-                        continue;
+                    } else if auto_reset && splits::splits(&splits[0], &process, &game_manager_finder, &mp, &mut player_data_store) {
+                        i = 0;
+                        load_remover.load_removal(&process, &game_manager_finder, i);
+                        split_index(&mut i, n);
                     }
 
-                    if let Some(scene_pair) = scene_store.transition_pair(&process, &game_manager_finder) {
-                        if splits::transition_splits(current_split, &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
-                            split_index(&mut i, n);
-                        } else if auto_reset && splits::transition_splits(&splits[0], &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
-                            i = 0;
-                            load_remover.load_removal(&process, &game_manager_finder, i);
-                            split_index(&mut i, n);
-                        }
-
-                        if scene_pair.old == MENU_TITLE {
-                            player_data_store.reset();
-                        }
-
-                        #[cfg(debug_assertions)]
-                        asr::print_message(&format!("{} -> {}", scene_pair.old, scene_pair.current));
-                        #[cfg(debug_assertions)]
-                        asr::print_message(&format!("fireballLevel: {:?}", game_manager_finder.get_fireball_level(&process)));
-                        #[cfg(debug_assertions)]
-                        asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
+                    if mp.is_some_and(|p| p.old == MENU_TITLE) {
+                        player_data_store.reset();
                     }
 
                     // detect manual resets
