@@ -1488,7 +1488,8 @@ pub struct SceneStore {
     curr_scene_name: String,
     next_scene_name: String,
     new_data_curr: bool,
-    new_data_next: bool
+    new_data_next: bool,
+    last_next: bool,
 }
 
 impl SceneStore {
@@ -1498,7 +1499,16 @@ impl SceneStore {
             curr_scene_name: "".to_string(),
             next_scene_name: "".to_string(),
             new_data_curr: false,
-            new_data_next: false
+            new_data_next: false,
+            last_next: true,
+        }
+    }
+
+    pub fn pair(&self) -> Pair<&str> {
+        if self.last_next {
+            Pair { old: &self.curr_scene_name, current: &self.next_scene_name }
+        } else {
+            Pair { old: &self.prev_scene_name, current: &self.curr_scene_name }
         }
     }
 
@@ -1556,10 +1566,16 @@ impl SceneStore {
         if self.new_data_next {
             self.new_data_curr = false;
             self.new_data_next = false;
-            Some(Pair{old: &self.curr_scene_name, current: &self.next_scene_name})
+            self.last_next = true;
+            #[cfg(debug_assertions)]
+            asr::print_message(&format!("curr {} -> next {}", &self.curr_scene_name, &self.next_scene_name));
+            Some(self.pair())
         } else if self.new_data_curr {
             self.new_data_curr = false;
-            Some(Pair{old: &self.prev_scene_name, current: &self.curr_scene_name})
+            self.last_next = false;
+            #[cfg(debug_assertions)]
+            asr::print_message(&format!("prev {} -> curr {}", &self.prev_scene_name, &self.curr_scene_name));
+            Some(self.pair())
         } else {
             None
         }
