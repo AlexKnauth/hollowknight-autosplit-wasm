@@ -1338,10 +1338,12 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
     match s {
         // region: Start
         Split::StartNewGame => {
-            (OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
+            starting_kings_pass(p, prc, g)
+            || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
         },
         Split::StartAnyGame => {
-            (is_menu(p.old) || OPENING_SCENES.contains(&p.old)) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
+            starting_kings_pass(p, prc, g)
+            || (is_menu(p.old) && (p.current == GG_ENTRANCE_CUTSCENE || is_play_scene(p.current)))
         }
         // endregion: Start
         // region: Stags
@@ -1665,6 +1667,10 @@ pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, 
         };
     if b { ss.split_this_transition = true; }
     b
+}
+
+fn starting_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> bool {
+    OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01" && g.get_game_state(prc).is_some_and(|gs| gs == GAME_STATE_ENTERING_LEVEL)
 }
 
 pub fn default_splits() -> Vec<Split> {
