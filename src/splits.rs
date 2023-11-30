@@ -1218,12 +1218,6 @@ impl Split {
 pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
         // region: Start, End, and Menu
-        Split::StartNewGame => {
-            (OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
-        },
-        Split::StartAnyGame => {
-            (is_menu(p.old) || OPENING_SCENES.contains(&p.old)) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
-        }
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
         Split::EndingA => p.current == "Cinematic_Ending_A",
         Split::EndingB => p.current == "Cinematic_Ending_B",
@@ -1342,6 +1336,19 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
 
 pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
+        // region: Start
+        Split::StartNewGame => {
+            (OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
+        },
+        Split::StartAnyGame => {
+            (is_menu(p.old) || OPENING_SCENES.contains(&p.old)) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
+        }
+        // endregion: Start
+        // region: Stags
+        Split::StagnestStation => p.current == "Cliffs_03"
+                               && g.travelling(prc).is_some_and(|t| t)
+                               && g.opened_stag_nest(prc).is_some_and(|o| o),
+        // endregion: Stags
         // else
         _ => false
     }
@@ -1515,9 +1522,6 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::HiddenStationStation => g.opened_hidden_station(p).is_some_and(|o| o),
         Split::DeepnestStation => g.opened_deepnest(p).is_some_and(|o| o),
         Split::QueensGardensStation => g.opened_royal_gardens(p).is_some_and(|o| o),
-        Split::StagnestStation => g.get_next_scene_name(p).is_some_and(|n| n == "Cliffs_03")
-                               && g.travelling(p).is_some_and(|t| t)
-                               && g.opened_stag_nest(p).is_some_and(|o| o),
         // endregion: Stags
         // region: Relics
         Split::OnObtainWanderersJournal => pds.incremented_trinket1(p, g),
