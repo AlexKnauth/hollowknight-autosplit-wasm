@@ -1340,6 +1340,13 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
     }
 }
 
+pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
+    match s {
+        // else
+        _ => false
+    }
+}
+
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
         // region: Dreamers
@@ -1645,8 +1652,15 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
     }
 }
 
-pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, mp: &Option<Pair<&str>>, pds: &mut PlayerDataStore) -> bool {
-    continuous_splits(s, prc, g, pds) || mp.is_some_and(|p| transition_splits(s, &p, prc, g, pds))
+pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, ss: &mut SceneStore, pds: &mut PlayerDataStore) -> bool {
+    let b = continuous_splits(s, prc, g, pds)
+        || {
+            let pair = ss.pair();
+            (!ss.split_this_transition && transition_once_splits(s, &pair, prc, g, pds))
+            || (trans_now && transition_splits(s, &pair, prc, g, pds))
+        };
+    if b { ss.split_this_transition = true; }
+    b
 }
 
 pub fn default_splits() -> Vec<Split> {

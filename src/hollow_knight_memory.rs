@@ -1490,6 +1490,7 @@ pub struct SceneStore {
     new_data_curr: bool,
     new_data_next: bool,
     last_next: bool,
+    pub split_this_transition: bool,
 }
 
 impl SceneStore {
@@ -1501,6 +1502,7 @@ impl SceneStore {
             new_data_curr: false,
             new_data_next: false,
             last_next: true,
+            split_this_transition: false,
         }
     }
 
@@ -1559,7 +1561,7 @@ impl SceneStore {
         }
     }
 
-    pub fn transition_pair(&mut self, prc: &Process, g: &GameManagerFinder) -> Option<Pair<&str>> {
+    pub fn transition_now(&mut self, prc: &Process, g: &GameManagerFinder) -> bool {
         self.new_curr_scene_name1(g.get_scene_name(&prc));
         self.new_next_scene_name1(g.get_next_scene_name(&prc));
 
@@ -1567,17 +1569,19 @@ impl SceneStore {
             self.new_data_curr = false;
             self.new_data_next = false;
             self.last_next = true;
+            self.split_this_transition = false;
             #[cfg(debug_assertions)]
             asr::print_message(&format!("curr {} -> next {}", &self.curr_scene_name, &self.next_scene_name));
-            Some(self.pair())
+            true
         } else if self.new_data_curr {
             self.new_data_curr = false;
             self.last_next = false;
+            self.split_this_transition = false;
             #[cfg(debug_assertions)]
             asr::print_message(&format!("prev {} -> curr {}", &self.prev_scene_name, &self.curr_scene_name));
-            Some(self.pair())
+            true
         } else {
-            None
+            false
         }
     }
 }

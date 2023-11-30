@@ -70,17 +70,17 @@ async fn main() {
                 let n = splits.len();
                 loop {
                     let current_split = &splits[i];
-                    let mp = scene_store.transition_pair(&process, &game_manager_finder);
-                    if splits::splits(current_split, &process, &game_manager_finder, &mp, &mut player_data_store) {
+                    let trans_now = scene_store.transition_now(&process, &game_manager_finder);
+                    if splits::splits(current_split, &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
                         split_index(&mut i, n);
                         next_tick().await;
-                    } else if auto_reset && splits::splits(&splits[0], &process, &game_manager_finder, &mp, &mut player_data_store) {
+                    } else if auto_reset && splits::splits(&splits[0], &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
                         i = 0;
                         load_remover.load_removal(&process, &game_manager_finder, i);
                         split_index(&mut i, n);
                     }
 
-                    if mp.is_some_and(|p| p.old == MENU_TITLE) {
+                    if trans_now && scene_store.pair().old == MENU_TITLE {
                         player_data_store.reset();
                     }
 
