@@ -585,6 +585,10 @@ pub enum Split {
     // endregion: Charms
 
     // region: Stags
+    /// Riding Stag (Event)
+    /// 
+    /// Splits while riding the stag
+    RidingStag,
     /// Stag Position Updated (Event)
     /// 
     /// Splits when the stag is called
@@ -1347,6 +1351,7 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
         }
         // endregion: Start
         // region: Stags
+        Split::RidingStag => g.travelling(prc).is_some_and(|t| t),
         Split::StagnestStation => p.current == "Cliffs_03"
                                && g.travelling(prc).is_some_and(|t| t)
                                && g.opened_stag_nest(prc).is_some_and(|o| o),
