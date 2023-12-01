@@ -75,7 +75,7 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
 impl<T: RadioButtonOptions> StoreWidget for RadioButton<T> {
     fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
         let new_s = options_str(&self.0);
-        settings_map.insert(key, &new_s.into());
+        settings_map.insert(key, new_s);
         set_tooltip(key, new_s);
         for o in T::radio_button_options() {
             let bool_key = o.bool_key(key);

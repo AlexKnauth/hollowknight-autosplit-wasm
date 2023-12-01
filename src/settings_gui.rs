@@ -37,9 +37,9 @@ impl SettingsGui {
             let settings3 = asr::settings::Map::new();
             let l = asr::settings::List::new();
             for split in splits2.iter() {
-                l.push(&split.to_string().as_str().into());
+                l.push(split.to_string().as_str());
             }
-            settings3.insert("splits", &(&l).into());
+            settings3.insert("splits", &l);
             SettingsObject::wait_load_merge_store(&SettingsObject::Map(settings3)).await;
         }
         let mut gui = SettingsGui::register();

@@ -27,6 +27,6 @@ pub trait StoreWidget: Widget {
 
 impl StoreWidget for bool {
     fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
-        settings_map.insert(key, &(*self).into());
+        settings_map.insert(key, *self);
     }
 }

@@ -172,7 +172,7 @@ impl<T: Clone + Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
 
 impl<T: Clone + StoreWidget> StoreWidget for UglyList<T> where T::Args: SetHeadingLevel {
     fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
-        settings_map.insert(&format!("{}_insert_0", key), &false.into());
+        settings_map.insert(&format!("{}_insert_0", key), false);
         let new_list = asr::settings::List::new();
         for i in 0..self.len {
             let key_i = format!("{}_{}", key, i);
@@ -182,7 +182,7 @@ impl<T: Clone + StoreWidget> StoreWidget for UglyList<T> where T::Args: SetHeadi
             new_list.push(&new_v);
             set_tooltip(&key_i, &format!("Item exists: {} < {}\n{:?}", i, self.len, new_v));
         }
-        settings_map.insert(key, &(&new_list).into());
+        settings_map.insert(key, &new_list);
         set_tooltip(key, &format!("{:?}", new_list));
         for i in self.len..self.ulis.len() {
             let key_i = format!("{}_{}", key, i);
