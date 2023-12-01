@@ -20,3 +20,9 @@ impl SetHeadingLevel for BoolArgs {
         ()
     }
 }
+
+impl SetHeadingLevel for () {
+    fn set_heading_level(&mut self, _: u32) {
+        ()
+    }
+}

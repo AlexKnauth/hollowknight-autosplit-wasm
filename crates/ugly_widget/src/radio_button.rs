@@ -99,7 +99,7 @@ impl RadioButtonArgs<'_> {
     }
 }
 
-fn options_str<T: RadioButtonOptions>(v: &T) -> &'static str {
+pub fn options_str<T: RadioButtonOptions>(v: &T) -> &'static str {
     T::radio_button_options().into_iter().find_map(|o| {
         if &o.value == v {
             Some(o.key)

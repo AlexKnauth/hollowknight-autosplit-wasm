@@ -6,7 +6,7 @@ use asr::settings::gui::{add_bool, add_title, set_tooltip, Gui, Widget};
 use crate::store::StoreWidget;
 
 use super::args::SetHeadingLevel;
-use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, RadioButtonOptions};
+use super::radio_button::{options_str, RadioButton, RadioButtonArgs, RadioButtonOption, RadioButtonOptions};
 
 // --------------------------------------------------------
 
@@ -26,6 +26,12 @@ pub enum ListItemAction {
     InsertBefore,
     /// Insert after
     InsertAfter,
+}
+
+impl StoreWidget for ListItemAction {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
+        settings_map.insert(key, options_str(self))
+    }
 }
 
 /*
@@ -67,7 +73,7 @@ impl<T: Widget> Widget for UglyListItem<T> where T::Args: SetHeadingLevel {
         t_args.set_heading_level(args.heading_level + 2);
         let item = T::register(&key_item, "", t_args);
         let key_action = format!("{}_action", key);
-        let mut rb_args = ListItemAction::Args::default();
+        let mut rb_args = <ListItemAction as Widget>::Args::default();
         rb_args.set_heading_level(args.heading_level + 2);
         let action = ListItemAction::register(&key_action, "Action", rb_args);
         UglyListItem { item, action }
@@ -79,7 +85,7 @@ impl<T: Widget> Widget for UglyListItem<T> where T::Args: SetHeadingLevel {
         t_args.set_heading_level(args.heading_level + 1);
         self.item.update_from(settings_map, &key_item, t_args);
         let key_action = format!("{}_action", key);
-        let mut rb_args = ListItemAction::Args::default();
+        let mut rb_args = <ListItemAction as Widget>::Args::default();
         rb_args.set_heading_level(args.heading_level + 1);
         self.action.update_from(settings_map, &key_action, rb_args);
     }
