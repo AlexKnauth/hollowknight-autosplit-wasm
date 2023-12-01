@@ -1,7 +1,7 @@
 
 use alloc::vec::Vec;
 
-use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
+use asr::settings::gui::{add_bool, add_title, set_tooltip, Gui, Widget};
 
 use crate::store::StoreWidget;
 
@@ -11,7 +11,7 @@ use super::radio_button::{RadioButton, RadioButtonArgs, RadioButtonOption, Radio
 // --------------------------------------------------------
 
 // #[derive(Gui)]
-#[derive(Clone, Default, Eq, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
+#[derive(Clone, Default, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum ListItemAction {
     /// None
     #[default]
@@ -54,7 +54,7 @@ pub struct UglyListArgs {
 #[derive(Clone)]
 struct UglyListItem<T> {
     item: T,
-    action: RadioButton<ListItemAction>,
+    action: ListItemAction,
 }
 
 impl<T: Widget> Widget for UglyListItem<T> where T::Args: SetHeadingLevel {
@@ -67,9 +67,9 @@ impl<T: Widget> Widget for UglyListItem<T> where T::Args: SetHeadingLevel {
         t_args.set_heading_level(args.heading_level + 2);
         let item = T::register(&key_item, "", t_args);
         let key_action = format!("{}_action", key);
-        let mut rb_args = RadioButtonArgs::default();
+        let mut rb_args = ListItemAction::Args::default();
         rb_args.set_heading_level(args.heading_level + 2);
-        let action = RadioButton::register(&key_action, "Action", rb_args);
+        let action = ListItemAction::register(&key_action, "Action", rb_args);
         UglyListItem { item, action }
     }
 
@@ -79,7 +79,7 @@ impl<T: Widget> Widget for UglyListItem<T> where T::Args: SetHeadingLevel {
         t_args.set_heading_level(args.heading_level + 1);
         self.item.update_from(settings_map, &key_item, t_args);
         let key_action = format!("{}_action", key);
-        let mut rb_args = RadioButtonArgs::default();
+        let mut rb_args = ListItemAction::Args::default();
         rb_args.set_heading_level(args.heading_level + 1);
         self.action.update_from(settings_map, &key_action, rb_args);
     }
@@ -142,7 +142,7 @@ impl<T: Clone + Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
         }
         for old_i in 0 .. map_len {
             let new_i = index_of(&index_new_to_old, &(old_i as i64)).unwrap_or_default();
-            match self.ulis[old_i].action.0 {
+            match self.ulis[old_i].action {
                 ListItemAction::None => (),
                 ListItemAction::Remove => { index_new_to_old.remove(new_i); () },
                 ListItemAction::InsertBefore => index_new_to_old.insert(new_i, -1),
@@ -164,7 +164,7 @@ impl<T: Clone + Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
             if 0 <= old_i && new_i as i64 != old_i {
                 self.ulis[new_i].item = old_items[old_i as usize].clone();
             }
-            self.ulis[new_i].action.0 = ListItemAction::None;
+            self.ulis[new_i].action = ListItemAction::None;
         }
         self.len = new_len;
     }
