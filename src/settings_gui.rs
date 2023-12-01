@@ -10,7 +10,7 @@ pub struct SettingsGui {
     _general_settings: Title,
     /// Splits
     #[heading_level = 1]
-    splits: UglyList<RadioButton<Split>>,
+    splits: UglyList<Split>,
 }
 
 impl StoreGui for SettingsGui {
@@ -22,7 +22,7 @@ impl StoreGui for SettingsGui {
 
 impl SettingsGui {
     pub fn get_splits(&self) -> Vec<Split> {
-        self.splits.get_list().into_iter().map(|rb| rb.0.clone()).collect()
+        self.splits.get_list().into_iter().map(|rb| rb.clone()).collect()
     }
 
     pub async fn wait_load_merge_register() -> SettingsGui {

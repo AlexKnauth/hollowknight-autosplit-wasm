@@ -4,7 +4,8 @@ use asr::Process;
 use asr::settings::Gui;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
-use ugly_widget::radio_button::{RadioButtonOption, RadioButtonOptions};
+use ugly_widget::radio_button::{RadioButtonOption, RadioButtonOptions, options_str};
+use ugly_widget::store::StoreWidget;
 
 use super::auto_splitter_settings::Settings;
 use super::hollow_knight_memory::*;
@@ -1201,6 +1202,12 @@ pub enum Split {
     /// Splits when killing Pure Vessel
     PureVessel,
     // endregion: Godhome
+}
+
+impl StoreWidget for Split {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
+        settings_map.insert(key, options_str(self))
+    }
 }
 
 impl ToString for Split {
