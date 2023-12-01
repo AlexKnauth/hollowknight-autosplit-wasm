@@ -51,6 +51,10 @@ pub enum Split {
     /// 
     /// Splits on the main menu
     Menu,
+    /// Any Transition (Transition)
+    /// 
+    /// Splits when the knight enters a transition (only one will split per transition)
+    AnyTransition,
     // endregion: Start, End, and Menu
 
     // region: Dreamers
@@ -1230,6 +1234,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EndingE => p.current == "Cinematic_Ending_E",
         Split::RadianceP => p.old.starts_with("GG_Radiance") && p.current.starts_with("Cinematic_Ending"),
         Split::Menu => is_menu(p.current),
+        Split::AnyTransition => p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old)),
         // endregion: Start, End, and Menu
         
         // region: Dreamers
