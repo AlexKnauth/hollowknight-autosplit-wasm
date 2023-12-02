@@ -1629,7 +1629,7 @@ impl PlayerDataStore {
             }
         }
         if player_data_val? == store_val? { return None; }
-        Some(player_data_val?)
+        player_data_val
     }
 
     fn get_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
