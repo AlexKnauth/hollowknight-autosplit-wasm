@@ -1356,8 +1356,7 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
         }
         // endregion: Start
         // region: Stags
-        Split::RidingStag => p.current == "Cinematic_Stag_travel"
-                          && g.travelling(prc).is_some_and(|t| t),
+        Split::RidingStag => pds.changed_travelling_true(prc, g),
         Split::StagnestStation => p.current == "Cliffs_03"
                                && g.travelling(prc).is_some_and(|t| t)
                                && g.opened_stag_nest(prc).is_some_and(|o| o),

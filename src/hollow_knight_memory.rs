@@ -1614,6 +1614,18 @@ impl PlayerDataStore {
         Some(b)
     }
 
+    fn changed_bool<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<bool> {
+        let store_val = self.map_bool.get(key).copied();
+        let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
+        if let Some(val) = player_data_val {
+            if val || g.is_game_state_playing(p) {
+                self.map_bool.insert(key, val);
+            }
+        }
+        if player_data_val? == store_val? { return None; }
+        Some(player_data_val?)
+    }
+
     fn get_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
         if !g.is_game_state_playing(p) {
             return self.map_i32.get(key).copied();
@@ -1710,6 +1722,10 @@ impl PlayerDataStore {
 
     pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "ore", &game_manager_finder.player_data_pointers.ore)
+    }
+
+    pub fn changed_travelling_true(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.changed_bool(process, game_manager_finder, "travelling", &game_manager_finder.player_data_pointers.travelling).is_some_and(|t| t)
     }
 
     pub fn changed_stag_position(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
