@@ -132,7 +132,10 @@ impl LoadRemover {
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, _i: usize) -> Option<()> {
 
         // only remove loads if timer is running
-        if asr::timer::state() != TimerState::Running { return Some(()); }
+        if asr::timer::state() != TimerState::Running {
+            asr::timer::pause_game_time();
+            return Some(());
+        }
 
         let maybe_ui_state = game_manager_finder.get_ui_state(process);
         let ui_state = maybe_ui_state.unwrap_or_default();
