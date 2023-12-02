@@ -1568,8 +1568,8 @@ impl SceneStore {
     }
 
     pub fn transition_now(&mut self, prc: &Process, g: &GameManagerFinder) -> bool {
-        self.new_curr_scene_name1(g.get_scene_name(&prc));
-        self.new_next_scene_name1(g.get_next_scene_name(&prc));
+        self.new_curr_scene_name1(g.get_scene_name(prc));
+        self.new_next_scene_name1(g.get_next_scene_name(prc));
 
         if self.new_data_next {
             self.new_data_curr = false;
@@ -1666,6 +1666,7 @@ impl PlayerDataStore {
         self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| d == -1)
     }
 
+    #[cfg(debug_assertions)]
     pub fn get_game_state(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
         let Ok(i) = g.pointers.game_state.deref(p, &g.module, &g.image) else {
             return self.map_i32.get("game_state").copied().unwrap_or(0);
