@@ -106,6 +106,12 @@ pub const GAME_STATE_LOADING: i32 = 2;
 pub const GAME_STATE_ENTERING_LEVEL: i32 = 3;
 pub const GAME_STATE_PLAYING: i32 = 4;
 pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
+pub const GAME_STATE_CUTSCENE: i32 = 7;
+
+pub const NON_MENU_GAME_STATES: [i32; 2] = [
+    GAME_STATE_PLAYING,
+    GAME_STATE_CUTSCENE,
+];
 
 pub const UI_STATE_PLAYING: i32 = 6;
 pub const UI_STATE_PAUSED: i32 = 7;
@@ -645,8 +651,8 @@ impl GameManagerFinder {
         self.pointers.game_state.deref(process, &self.module, &self.image).ok()
     }
 
-    fn is_game_state_playing(&self, process: &Process) -> bool {
-        self.get_game_state(process) == Some(GAME_STATE_PLAYING)
+    fn is_game_state_non_menu(&self, process: &Process) -> bool {
+        self.get_game_state(process).is_some_and(|gs| NON_MENU_GAME_STATES.contains(&gs))
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
@@ -1488,7 +1494,9 @@ pub struct SceneStore {
     curr_scene_name: String,
     next_scene_name: String,
     new_data_curr: bool,
-    new_data_next: bool
+    new_data_next: bool,
+    last_next: bool,
+    pub split_this_transition: bool,
 }
 
 impl SceneStore {
@@ -1498,7 +1506,17 @@ impl SceneStore {
             curr_scene_name: "".to_string(),
             next_scene_name: "".to_string(),
             new_data_curr: false,
-            new_data_next: false
+            new_data_next: false,
+            last_next: true,
+            split_this_transition: false,
+        }
+    }
+
+    pub fn pair(&self) -> Pair<&str> {
+        if self.last_next && self.next_scene_name != self.curr_scene_name {
+            Pair { old: &self.curr_scene_name, current: &self.next_scene_name }
+        } else {
+            Pair { old: &self.prev_scene_name, current: &self.curr_scene_name }
         }
     }
 
@@ -1549,19 +1567,27 @@ impl SceneStore {
         }
     }
 
-    pub fn transition_pair(&mut self, prc: &Process, g: &GameManagerFinder) -> Option<Pair<&str>> {
-        self.new_curr_scene_name1(g.get_scene_name(&prc));
-        self.new_next_scene_name1(g.get_next_scene_name(&prc));
+    pub fn transition_now(&mut self, prc: &Process, g: &GameManagerFinder) -> bool {
+        self.new_curr_scene_name1(g.get_scene_name(prc));
+        self.new_next_scene_name1(g.get_next_scene_name(prc));
 
         if self.new_data_next {
             self.new_data_curr = false;
             self.new_data_next = false;
-            Some(Pair{old: &self.curr_scene_name, current: &self.next_scene_name})
+            self.last_next = true;
+            self.split_this_transition = false;
+            #[cfg(debug_assertions)]
+            asr::print_message(&format!("curr {} -> next {}", &self.curr_scene_name, &self.next_scene_name));
+            true
         } else if self.new_data_curr {
             self.new_data_curr = false;
-            Some(Pair{old: &self.prev_scene_name, current: &self.curr_scene_name})
+            self.last_next = false;
+            self.split_this_transition = false;
+            #[cfg(debug_assertions)]
+            asr::print_message(&format!("prev {} -> curr {}", &self.prev_scene_name, &self.curr_scene_name));
+            true
         } else {
-            None
+            false
         }
     }
 }
@@ -1584,7 +1610,7 @@ impl PlayerDataStore {
     }
 
     fn get_bool<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<bool> {
-        if !g.is_game_state_playing(p) {
+        if !g.is_game_state_non_menu(p) {
             return self.map_bool.get(key).copied();
         };
         let Ok(b) = pointer.deref(p, &g.module, &g.image) else {
@@ -1594,8 +1620,20 @@ impl PlayerDataStore {
         Some(b)
     }
 
+    fn changed_bool<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<bool> {
+        let store_val = self.map_bool.get(key).copied();
+        let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
+        if let Some(val) = player_data_val {
+            if val || g.is_game_state_non_menu(p) {
+                self.map_bool.insert(key, val);
+            }
+        }
+        if player_data_val? == store_val? { return None; }
+        player_data_val
+    }
+
     fn get_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
-        if !g.is_game_state_playing(p) {
+        if !g.is_game_state_non_menu(p) {
             return self.map_i32.get(key).copied();
         };
         let Ok(i) = pointer.deref(p, &g.module, &g.image) else {
@@ -1609,7 +1647,7 @@ impl PlayerDataStore {
         let store_val = self.map_i32.get(key).cloned();
         let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
         if let Some(val) = player_data_val {
-            if val != 0 || g.is_game_state_playing(p) {
+            if val != 0 || g.is_game_state_non_menu(p) {
                 self.map_i32.insert(key, val);
             }
         }
@@ -1626,6 +1664,19 @@ impl PlayerDataStore {
 
     fn decremented_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> bool {
         self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| d == -1)
+    }
+
+    #[cfg(debug_assertions)]
+    pub fn get_game_state(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
+        let Ok(i) = g.pointers.game_state.deref(p, &g.module, &g.image) else {
+            return self.map_i32.get("game_state").copied().unwrap_or(0);
+        };
+        #[cfg(debug_assertions)]
+        if self.map_i32.get("game_state").is_some_and(|&old| old != i) {
+            asr::print_message(&format!("game_state: {}", i));
+        }
+        self.map_i32.insert("game_state", i);
+        i
     }
 
     pub fn guardians_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
@@ -1678,6 +1729,10 @@ impl PlayerDataStore {
 
     pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "ore", &game_manager_finder.player_data_pointers.ore)
+    }
+
+    pub fn changed_travelling_true(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.changed_bool(process, game_manager_finder, "travelling", &game_manager_finder.player_data_pointers.travelling).is_some_and(|t| t)
     }
 
     pub fn changed_stag_position(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {

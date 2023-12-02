@@ -70,31 +70,18 @@ async fn main() {
                 let n = splits.len();
                 loop {
                     let current_split = &splits[i];
-                    if splits::continuous_splits(current_split, &process, &game_manager_finder, &mut player_data_store) {
+                    let trans_now = scene_store.transition_now(&process, &game_manager_finder);
+                    if splits::splits(current_split, &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
                         split_index(&mut i, n);
                         next_tick().await;
-                        continue;
+                    } else if auto_reset && splits::splits(&splits[0], &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
+                        i = 0;
+                        load_remover.load_removal(&process, &game_manager_finder, i);
+                        split_index(&mut i, n);
                     }
 
-                    if let Some(scene_pair) = scene_store.transition_pair(&process, &game_manager_finder) {
-                        if splits::transition_splits(current_split, &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
-                            split_index(&mut i, n);
-                        } else if auto_reset && splits::transition_splits(&splits[0], &scene_pair, &process, &game_manager_finder, &mut player_data_store) {
-                            i = 0;
-                            load_remover.load_removal(&process, &game_manager_finder, i);
-                            split_index(&mut i, n);
-                        }
-
-                        if scene_pair.old == MENU_TITLE {
-                            player_data_store.reset();
-                        }
-
-                        #[cfg(debug_assertions)]
-                        asr::print_message(&format!("{} -> {}", scene_pair.old, scene_pair.current));
-                        #[cfg(debug_assertions)]
-                        asr::print_message(&format!("fireballLevel: {:?}", game_manager_finder.get_fireball_level(&process)));
-                        #[cfg(debug_assertions)]
-                        asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
+                    if trans_now && scene_store.pair().old == MENU_TITLE {
+                        player_data_store.reset();
                     }
 
                     // detect manual resets
@@ -145,7 +132,10 @@ impl LoadRemover {
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, _i: usize) -> Option<()> {
 
         // only remove loads if timer is running
-        if asr::timer::state() != TimerState::Running { return Some(()); }
+        if asr::timer::state() != TimerState::Running {
+            asr::timer::pause_game_time();
+            return Some(());
+        }
 
         let maybe_ui_state = game_manager_finder.get_ui_state(process);
         let ui_state = maybe_ui_state.unwrap_or_default();

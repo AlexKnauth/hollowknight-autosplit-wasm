@@ -51,6 +51,10 @@ pub enum Split {
     /// 
     /// Splits on the main menu
     Menu,
+    /// Any Transition (Transition)
+    /// 
+    /// Splits when the knight enters a transition (only one will split per transition)
+    AnyTransition,
     // endregion: Start, End, and Menu
 
     // region: Dreamers
@@ -585,6 +589,10 @@ pub enum Split {
     // endregion: Charms
 
     // region: Stags
+    /// Riding Stag (Event)
+    /// 
+    /// Splits while riding the stag
+    RidingStag,
     /// Stag Position Updated (Event)
     /// 
     /// Splits when the stag is called
@@ -1218,12 +1226,6 @@ impl Split {
 pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
         // region: Start, End, and Menu
-        Split::StartNewGame => {
-            (OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01") || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
-        },
-        Split::StartAnyGame => {
-            (is_menu(p.old) || OPENING_SCENES.contains(&p.old)) && (is_play_scene(p.current) || p.current == GG_ENTRANCE_CUTSCENE)
-        }
         Split::EndingSplit => p.current.starts_with("Cinematic_Ending"),
         Split::EndingA => p.current == "Cinematic_Ending_A",
         Split::EndingB => p.current == "Cinematic_Ending_B",
@@ -1232,6 +1234,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EndingE => p.current == "Cinematic_Ending_E",
         Split::RadianceP => p.old.starts_with("GG_Radiance") && p.current.starts_with("Cinematic_Ending"),
         Split::Menu => is_menu(p.current),
+        Split::AnyTransition => p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old)),
         // endregion: Start, End, and Menu
         
         // region: Dreamers
@@ -1335,6 +1338,23 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Godhome
         Split::EnterGodhome => p.current.starts_with("GG_Atrium") && p.current != p.old,
         // endregion: Godhome
+        // else
+        _ => false
+    }
+}
+
+pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, _pds: &mut PlayerDataStore) -> bool {
+    match s {
+        // region: Start
+        Split::StartNewGame => {
+            starting_kings_pass(p, prc, g)
+            || (is_menu(p.old) && p.current == GG_ENTRANCE_CUTSCENE)
+        },
+        Split::StartAnyGame => {
+            starting_kings_pass(p, prc, g)
+            || (is_menu(p.old) && (p.current == GG_ENTRANCE_CUTSCENE || is_play_scene(p.current)))
+        }
+        // endregion: Start
         // else
         _ => false
     }
@@ -1498,6 +1518,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MenuVoidHeart => { pds.got_shade_charm(p, g); false },
         // endregion: Charms
         // region: Stags
+        Split::RidingStag => pds.changed_travelling_true(p, g),
         Split::StagMoved => pds.changed_stag_position(p, g),
         Split::CrossroadsStation => g.opened_crossroads(p).is_some_and(|o| o),
         Split::GreenpathStation => g.opened_greenpath(p).is_some_and(|o| o),
@@ -1643,6 +1664,27 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // else
         _ => false
     }
+}
+
+pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, ss: &mut SceneStore, pds: &mut PlayerDataStore) -> bool {
+    #[cfg(debug_assertions)]
+    pds.get_game_state(prc, g);
+    let b = continuous_splits(s, prc, g, pds)
+        || {
+            let pair = ss.pair();
+            (!ss.split_this_transition && transition_once_splits(s, &pair, prc, g, pds))
+            || (trans_now && transition_splits(s, &pair, prc, g, pds))
+        };
+    if b { ss.split_this_transition = true; }
+    b
+}
+
+fn starting_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> bool {
+    OPENING_SCENES.contains(&p.old)
+    && p.current == "Tutorial_01"
+    && g.get_game_state(prc).is_some_and(|gs| {
+        gs == GAME_STATE_ENTERING_LEVEL
+    })
 }
 
 pub fn default_splits() -> Vec<Split> {
