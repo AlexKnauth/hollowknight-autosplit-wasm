@@ -1355,11 +1355,6 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
             || (is_menu(p.old) && (p.current == GG_ENTRANCE_CUTSCENE || is_play_scene(p.current)))
         }
         // endregion: Start
-        // region: Stags
-        Split::StagnestStation => p.current == "Cliffs_03"
-                               && g.travelling(prc).is_some_and(|t| t)
-                               && g.opened_stag_nest(prc).is_some_and(|o| o),
-        // endregion: Stags
         // else
         _ => false
     }
@@ -1534,6 +1529,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::HiddenStationStation => g.opened_hidden_station(p).is_some_and(|o| o),
         Split::DeepnestStation => g.opened_deepnest(p).is_some_and(|o| o),
         Split::QueensGardensStation => g.opened_royal_gardens(p).is_some_and(|o| o),
+        Split::StagnestStation => g.get_next_scene_name(p).is_some_and(|n| n == "Cliffs_03")
+                               && g.travelling(p).is_some_and(|t| t)
+                               && g.opened_stag_nest(p).is_some_and(|o| o),
         // endregion: Stags
         // region: Relics
         Split::OnObtainWanderersJournal => pds.incremented_trinket1(p, g),
