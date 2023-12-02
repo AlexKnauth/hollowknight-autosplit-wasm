@@ -1685,7 +1685,7 @@ fn starting_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> 
     OPENING_SCENES.contains(&p.old)
     && p.current == "Tutorial_01"
     && g.get_game_state(prc).is_some_and(|gs| {
-        gs == GAME_STATE_ENTERING_LEVEL || gs == GAME_STATE_PLAYING
+        gs == GAME_STATE_ENTERING_LEVEL
     })
 }
 

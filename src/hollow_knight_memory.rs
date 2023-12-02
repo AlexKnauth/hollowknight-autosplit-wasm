@@ -1507,7 +1507,7 @@ impl SceneStore {
     }
 
     pub fn pair(&self) -> Pair<&str> {
-        if self.last_next {
+        if self.last_next && self.next_scene_name != self.curr_scene_name {
             Pair { old: &self.curr_scene_name, current: &self.next_scene_name }
         } else {
             Pair { old: &self.prev_scene_name, current: &self.curr_scene_name }
