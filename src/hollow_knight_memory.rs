@@ -106,6 +106,12 @@ pub const GAME_STATE_LOADING: i32 = 2;
 pub const GAME_STATE_ENTERING_LEVEL: i32 = 3;
 pub const GAME_STATE_PLAYING: i32 = 4;
 pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
+pub const GAME_STATE_CUTSCENE: i32 = 7;
+
+pub const NON_MENU_GAME_STATES: [i32; 2] = [
+    GAME_STATE_PLAYING,
+    GAME_STATE_CUTSCENE,
+];
 
 pub const UI_STATE_PLAYING: i32 = 6;
 pub const UI_STATE_PAUSED: i32 = 7;
@@ -645,8 +651,8 @@ impl GameManagerFinder {
         self.pointers.game_state.deref(process, &self.module, &self.image).ok()
     }
 
-    fn is_game_state_playing(&self, process: &Process) -> bool {
-        self.get_game_state(process) == Some(GAME_STATE_PLAYING)
+    fn is_game_state_non_menu(&self, process: &Process) -> bool {
+        self.get_game_state(process).is_some_and(|gs| NON_MENU_GAME_STATES.contains(&gs))
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
@@ -1604,7 +1610,7 @@ impl PlayerDataStore {
     }
 
     fn get_bool<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<bool> {
-        if !g.is_game_state_playing(p) {
+        if !g.is_game_state_non_menu(p) {
             return self.map_bool.get(key).copied();
         };
         let Ok(b) = pointer.deref(p, &g.module, &g.image) else {
@@ -1618,7 +1624,7 @@ impl PlayerDataStore {
         let store_val = self.map_bool.get(key).copied();
         let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
         if let Some(val) = player_data_val {
-            if val || g.is_game_state_playing(p) {
+            if val || g.is_game_state_non_menu(p) {
                 self.map_bool.insert(key, val);
             }
         }
@@ -1627,7 +1633,7 @@ impl PlayerDataStore {
     }
 
     fn get_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
-        if !g.is_game_state_playing(p) {
+        if !g.is_game_state_non_menu(p) {
             return self.map_i32.get(key).copied();
         };
         let Ok(i) = pointer.deref(p, &g.module, &g.image) else {
@@ -1641,7 +1647,7 @@ impl PlayerDataStore {
         let store_val = self.map_i32.get(key).cloned();
         let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
         if let Some(val) = player_data_val {
-            if val != 0 || g.is_game_state_playing(p) {
+            if val != 0 || g.is_game_state_non_menu(p) {
                 self.map_i32.insert(key, val);
             }
         }
