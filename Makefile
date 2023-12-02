@@ -1,4 +1,4 @@
 
 xml:
-	tidy -iqm -xml splits.lss
-	tidy -iqm -xml layout.lsl
+	tidy -iqm -xml splits-direct.lss
+	tidy -iqm -xml layout-direct.lsl
