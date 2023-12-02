@@ -1356,7 +1356,6 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
         }
         // endregion: Start
         // region: Stags
-        Split::RidingStag => pds.changed_travelling_true(prc, g),
         Split::StagnestStation => p.current == "Cliffs_03"
                                && g.travelling(prc).is_some_and(|t| t)
                                && g.opened_stag_nest(prc).is_some_and(|o| o),
@@ -1524,6 +1523,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MenuVoidHeart => { pds.got_shade_charm(p, g); false },
         // endregion: Charms
         // region: Stags
+        Split::RidingStag => pds.changed_travelling_true(p, g),
         Split::StagMoved => pds.changed_stag_position(p, g),
         Split::CrossroadsStation => g.opened_crossroads(p).is_some_and(|o| o),
         Split::GreenpathStation => g.opened_greenpath(p).is_some_and(|o| o),
