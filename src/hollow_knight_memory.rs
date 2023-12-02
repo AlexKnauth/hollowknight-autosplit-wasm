@@ -1648,6 +1648,18 @@ impl PlayerDataStore {
         self.changed_i32_delta(p, g, key, pointer).is_some_and(|d| d == -1)
     }
 
+    pub fn get_game_state(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
+        let Ok(i) = g.pointers.game_state.deref(p, &g.module, &g.image) else {
+            return self.map_i32.get("game_state").copied().unwrap_or(0);
+        };
+        #[cfg(debug_assertions)]
+        if self.map_i32.get("game_state").is_some_and(|&old| old != i) {
+            asr::print_message(&format!("game_state: {}", i));
+        }
+        self.map_i32.insert("game_state", i);
+        i
+    }
+
     pub fn guardians_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
         self.get_i32(p, g, "guardians_defeated", &g.player_data_pointers.guardians_defeated).unwrap_or(0)
     }

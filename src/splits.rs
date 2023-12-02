@@ -1669,6 +1669,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
 }
 
 pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, ss: &mut SceneStore, pds: &mut PlayerDataStore) -> bool {
+    #[cfg(debug_assertions)]
+    pds.get_game_state(prc, g);
     let b = continuous_splits(s, prc, g, pds)
         || {
             let pair = ss.pair();
@@ -1680,7 +1682,11 @@ pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, 
 }
 
 fn starting_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> bool {
-    OPENING_SCENES.contains(&p.old) && p.current == "Tutorial_01" && g.get_game_state(prc).is_some_and(|gs| gs == GAME_STATE_ENTERING_LEVEL)
+    OPENING_SCENES.contains(&p.old)
+    && p.current == "Tutorial_01"
+    && g.get_game_state(prc).is_some_and(|gs| {
+        gs == GAME_STATE_ENTERING_LEVEL || gs == GAME_STATE_PLAYING
+    })
 }
 
 pub fn default_splits() -> Vec<Split> {
