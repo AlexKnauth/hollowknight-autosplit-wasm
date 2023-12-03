@@ -185,26 +185,7 @@
       <Settings>
         <Version>1.0</Version>
         <ScriptPath>C:\Users\Owner\Documents\git\LiveSplit\wasm-hollowknight-autosplit-prototype\target\wasm32-wasi\debug\wasm_hollowknight_autosplit.wasm</ScriptPath>
-        <CustomSettings>
-          <Setting id="AutosplitEndRuns" type="bool">True</Setting>
-          <Setting id="AutosplitStartRuns" type="string" value="" />
-          <Setting id="Ordered" type="bool">True</Setting>
-          <Setting id="Splits" type="list">
-            <Setting type="string" value="KingsPass" />
-            <Setting type="string" value="Grub1" />
-            <Setting type="string" value="EnterBroodingMawlek" />
-            <Setting type="string" value="MaskFragment1" />
-            <Setting type="string" value="Grub2" />
-            <Setting type="string" value="MaskFragment2" />
-            <Setting type="string" value="GruzMother" />
-            <Setting type="string" value="SlyRescued" />
-            <Setting type="string" value="Grub3" />
-            <Setting type="string" value="Grub4" />
-            <Setting type="string" value="Grub5" />
-            <Setting type="string" value="MaskFragment3" />
-            <Setting type="string" value="Mask1" />
-          </Setting>
-        </CustomSettings>
+        <CustomSettings />
       </Settings>
     </Component>
   </Components>
