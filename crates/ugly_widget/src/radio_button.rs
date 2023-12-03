@@ -73,8 +73,11 @@ impl<T: RadioButtonOptions> Widget for RadioButton<T> {
 }
 
 impl<T: RadioButtonOptions> StoreWidget for RadioButton<T> {
-    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
         let new_s = options_str(&self.0);
+        if settings_map.get(key).is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s)) {
+            return false;
+        }
         settings_map.insert(key, new_s);
         set_tooltip(key, new_s);
         for o in T::radio_button_options() {
@@ -82,6 +85,7 @@ impl<T: RadioButtonOptions> StoreWidget for RadioButton<T> {
             let new_b = &self.0 == &o.value;
             new_b.insert_into(settings_map, &bool_key);
         }
+        true
     }
 }
 

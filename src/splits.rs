@@ -1205,8 +1205,13 @@ pub enum Split {
 }
 
 impl StoreWidget for Split {
-    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
-        settings_map.insert(key, options_str(self))
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
+        let new_s = options_str(self);
+        if settings_map.get(key).is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s)) {
+            return false;
+        }
+        settings_map.insert(key, new_s);
+        true
     }
 }
 

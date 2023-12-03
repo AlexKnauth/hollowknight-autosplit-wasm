@@ -14,8 +14,8 @@ pub struct SettingsGui {
 }
 
 impl StoreGui for SettingsGui {
-    fn insert_into(&self, settings_map: &asr::settings::Map) {
-        self.splits.insert_into(settings_map, "splits");
+    fn insert_into(&self, settings_map: &asr::settings::Map) -> bool {
+        self.splits.insert_into(settings_map, "splits")
     }
 }
 

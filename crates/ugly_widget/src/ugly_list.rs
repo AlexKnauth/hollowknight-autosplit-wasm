@@ -29,8 +29,13 @@ pub enum ListItemAction {
 }
 
 impl StoreWidget for ListItemAction {
-    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
-        settings_map.insert(key, options_str(self))
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
+        let new_s = options_str(self);
+        if settings_map.get(key).is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s)) {
+            return false;
+        }
+        settings_map.insert(key, new_s);
+        true
     }
 }
 
@@ -92,11 +97,12 @@ impl<T: Widget> Widget for UglyListItem<T> where T::Args: SetHeadingLevel {
 }
 
 impl<T: StoreWidget> StoreWidget for UglyListItem<T> where T::Args: SetHeadingLevel {
-    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
         let key_item = format!("{}_item", key);
-        self.item.insert_into(settings_map, &key_item);
+        let a = self.item.insert_into(settings_map, &key_item);
         let key_action = format!("{}_action", key);
-        self.action.insert_into(settings_map, &key_action);
+        let b = self.action.insert_into(settings_map, &key_action);
+        a || b
     }
 }
 
@@ -177,23 +183,37 @@ impl<T: Clone + Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
 }
 
 impl<T: Clone + StoreWidget> StoreWidget for UglyList<T> where T::Args: SetHeadingLevel {
-    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) {
-        settings_map.insert(&format!("{}_insert_0", key), false);
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
+        let mut changed = false;
+        let key_insert_0 = &format!("{}_insert_0", key);
+        if !settings_map.get(&key_insert_0).is_some_and(|v| v.get_bool().is_some_and(|b| !b)) {
+            settings_map.insert(&key_insert_0, false);
+            changed = true;
+        }
+        let old_len = settings_map.get(key).and_then(|old_v| old_v.get_list()).map(|old_list| old_list.len()).unwrap_or(0);
         let new_list = asr::settings::List::new();
         for i in 0..self.len {
             let key_i = format!("{}_{}", key, i);
             let key_i_item = format!("{}_item", key_i);
-            self.ulis[i].insert_into(&settings_map, &key_i);
+            changed = self.ulis[i].insert_into(&settings_map, &key_i) || changed;
             let new_v = settings_map.get(&key_i_item).unwrap_or(false.into());
             new_list.push(&new_v);
-            set_tooltip(&key_i, &format!("Item exists: {} < {}\n{:?}", i, self.len, new_v));
+            if old_len != self.len as u64 {
+                set_tooltip(&key_i, &format!("Item exists: {} < {}\n{:?}", i, self.len, new_v));
+            }
         }
-        settings_map.insert(key, &new_list);
-        set_tooltip(key, &format!("{:?}", new_list));
-        for i in self.len..self.ulis.len() {
-            let key_i = format!("{}_{}", key, i);
-            set_tooltip(&key_i, &format!("DOES NOT EXIST"));
+        if old_len != self.len as u64 {
+            changed = true;
+            for i in self.len..self.ulis.len() {
+                let key_i = format!("{}_{}", key, i);
+                set_tooltip(&key_i, &format!("DOES NOT EXIST"));
+            }
         }
+        if changed {
+            settings_map.insert(key, &new_list);
+            set_tooltip(key, &format!("{:?}", new_list));    
+        }
+        changed
     }
 }
 
