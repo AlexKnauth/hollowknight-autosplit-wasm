@@ -185,7 +185,17 @@
       <Settings>
         <Version>1.0</Version>
         <ScriptPath>C:\Users\Owner\Documents\git\LiveSplit\wasm-hollowknight-autosplit-prototype\target\wasm32-wasi\debug\wasm_hollowknight_autosplit.wasm</ScriptPath>
-        <CustomSettings></CustomSettings>
+        <CustomSettings>
+          <Setting id="splits" type="list">
+            <Setting type="string" value="StartNewGame" />
+            <Setting type="string" value="EndingSplit" />
+          </Setting>
+          <Setting id="splits_0_item" type="string" value="StartNewGame" />
+          <Setting id="splits_1_item" type="string" value="EndingSplit" />
+          <Setting id="splits_insert_0" type="bool">False</Setting>
+          <Setting id="splits_0_action" type="string" value="None" />
+          <Setting id="splits_1_action" type="string" value="None" />
+        </CustomSettings>
       </Settings>
     </Component>
   </Components>
