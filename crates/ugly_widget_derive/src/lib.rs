@@ -67,7 +67,7 @@ fn impl_radio_button_options(ast: &DeriveInput) -> TokenStream {
     });
 
     let gen = quote! {
-        impl #impl_generics RadioButtonOptions for #name #ty_generics #where_clause {
+        impl #impl_generics ::ugly_widget::radio_button::RadioButtonOptions for #name #ty_generics #where_clause {
             fn radio_button_options() -> Vec<::ugly_widget::radio_button::RadioButtonOption<'static, Self>> {
                 vec![ #(#options ,)* ]
             }
