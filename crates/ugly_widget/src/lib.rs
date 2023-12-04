@@ -1,5 +1,6 @@
 
 extern crate alloc;
+extern crate self as ugly_widget;
 
 pub mod args;
 pub mod radio_button;

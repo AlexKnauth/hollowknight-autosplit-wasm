@@ -4,7 +4,7 @@ use asr::Process;
 use asr::settings::Gui;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
-use ugly_widget::radio_button::{RadioButtonOption, RadioButtonOptions, options_str};
+use ugly_widget::radio_button::{RadioButtonOptions, options_str};
 use ugly_widget::store::StoreWidget;
 
 use super::auto_splitter_settings::Settings;
