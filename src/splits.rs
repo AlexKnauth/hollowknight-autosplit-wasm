@@ -1250,7 +1250,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::Menu => is_menu(p.current),
         Split::AnyTransition => p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old)),
         // endregion: Start, End, and Menu
-        
+
         // region: Dreamers
         /*
         // Old scene-transition based dreamer splits from when I only knew how to read the scene name
