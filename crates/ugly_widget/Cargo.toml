@@ -1,6 +1,6 @@
 [package]
-name = "wasm-hollowknight-autosplit"
-version = "0.1.1"
+name = "ugly_widget"
+version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -21,26 +21,4 @@ asr = { git = "https://github.com/AlexKnauth/asr", branch = "mono-3", features =
     # "genesis", # Accessing Genesis emulators.
     # "ps1", # Accessing PlayStation emulators.
 ] }
-
-ugly_widget = { path = "crates/ugly_widget", version = "0.1.0" }
-ugly_widget_derive = { path = "crates/ugly_widget_derive", version = "0.1.0" }
-
-# Bytemuck can be used to define structs that are being read from the game's process.
-bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
-
-serde = { version = "1", features = ["derive"]}
-serde_json = { version = "1" }
-
-xmltree = { version = "0.10.3" }
-
-[lib]
-crate-type = ["cdylib"]
-
-[profile.release]
-lto = true
-panic = "abort"
-codegen-units = 1
-strip = true
-
-[profile.release.build-override]
-opt-level = 0
+ugly_widget_derive = { path = "../ugly_widget_derive" }

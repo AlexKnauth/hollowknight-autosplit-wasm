@@ -1,13 +1,16 @@
 use std::str::FromStr;
 
 use asr::Process;
+use asr::settings::Gui;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
+use ugly_widget::radio_button::{RadioButtonOptions, options_str};
+use ugly_widget::store::StoreWidget;
 
 use super::auto_splitter_settings::Settings;
 use super::hollow_knight_memory::*;
 
-#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
 pub enum Split {
     // region: Start, End, and Menu
     /// Start New Game (Start)
@@ -1201,6 +1204,17 @@ pub enum Split {
     // endregion: Godhome
 }
 
+impl StoreWidget for Split {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
+        let new_s = options_str(self);
+        if settings_map.get(key).is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s)) {
+            return false;
+        }
+        settings_map.insert(key, new_s);
+        true
+    }
+}
+
 impl ToString for Split {
     fn to_string(&self) -> String {
         serde_json::to_value(self).unwrap_or_default().as_str().unwrap_or_default().to_string()
@@ -1215,10 +1229,10 @@ impl FromStr for Split {
 }
 
 impl Split {
-    fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
+    pub fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
         Split::from_str(&s.as_string()?).ok()
     }
-    fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
+    pub fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
         Split::from_settings_str(s.dict_get("Split").unwrap_or(s))
     }
 }
@@ -1236,7 +1250,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::Menu => is_menu(p.current),
         Split::AnyTransition => p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old)),
         // endregion: Start, End, and Menu
-        
+
         // region: Dreamers
         /*
         // Old scene-transition based dreamer splits from when I only knew how to read the scene name
@@ -1696,33 +1710,4 @@ pub fn auto_reset_safe(s: &[Split]) -> bool {
     s.first() == Some(&Split::StartNewGame)
     && !s[1..].contains(&Split::StartNewGame)
     && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
-}
-
-pub fn splits_from_settings<S: Settings>(s: &S) -> Vec<Split> {
-    let maybe_ordered = s.dict_get("Ordered");
-    let maybe_start = s.dict_get("AutosplitStartRuns");
-    let maybe_end = s.dict_get("AutosplitEndRuns");
-    let maybe_splits = s.dict_get("Splits");
-    if maybe_ordered.is_some() || maybe_start.is_some() || maybe_end.is_some() {
-        // Splits files from up through version 3 of ShootMe/LiveSplit.HollowKnight
-        let start = maybe_start.and_then(Split::from_settings_str).unwrap_or(Split::StartNewGame);
-        let end = maybe_end.and_then(|s| s.as_bool()).unwrap_or_default();
-        let mut result = vec![start];
-        if let Some(splits) = maybe_splits {
-            result.append(&mut splits_from_settings_split_list(&splits));
-        }
-        if !end {
-            result.push(Split::EndingSplit);
-        }
-        result
-    } else if let Some(splits) = maybe_splits {
-        // Splits files from after version 4 of mayonnaisical/LiveSplit.HollowKnight
-        splits_from_settings_split_list(&splits)
-    } else {
-        default_splits()
-    }
-}
-
-fn splits_from_settings_split_list<S: Settings>(s: &S) -> Vec<Split> {
-    s.as_list().unwrap_or_default().into_iter().filter_map(Split::from_settings_split).collect()
 }

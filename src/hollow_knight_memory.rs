@@ -8,6 +8,7 @@ use asr::watcher::Pair;
 use asr::{Process, Address64};
 use asr::game_engine::unity::mono::{self, UnityPointer};
 use asr::string::ArrayWString;
+use ugly_widget::store::StoreGui;
 
 #[cfg(debug_assertions)]
 use std::string::String;
@@ -795,7 +796,7 @@ impl GameManagerFinder {
     pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_dream_gate.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.dream_nail_upgraded.deref(process, &self.module, &self.image).ok()
     }
@@ -813,11 +814,11 @@ impl GameManagerFinder {
     pub fn mask_broken_lurien(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.mask_broken_lurien.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn mask_broken_monomon(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.mask_broken_monomon.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn mask_broken_hegemol(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.mask_broken_hegemol.deref(process, &self.module, &self.image).ok()
     }
@@ -851,7 +852,7 @@ impl GameManagerFinder {
     pub fn got_lurker_key(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_lurker_key.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn sly_simple_key(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_simple_key.deref(process, &self.module, &self.image).ok()
     }
@@ -870,7 +871,7 @@ impl GameManagerFinder {
     }
 
     // Nail and Pale Ore
-    
+
     pub fn nail_smith_upgrades(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.nail_smith_upgrades.deref(process, &self.module, &self.image).ok()
     }
@@ -888,43 +889,43 @@ impl GameManagerFinder {
     pub fn opened_crossroads(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_crossroads.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_greenpath(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_greenpath.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_fungal_wastes(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_fungal_wastes.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_ruins1(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_ruins1.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_ruins2(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_ruins2.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_resting_grounds(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_resting_grounds.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_hidden_station(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_hidden_station.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_deepnest(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_deepnest.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_royal_gardens(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_royal_gardens.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn opened_stag_nest(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_stag_nest.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn travelling(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.travelling.deref(process, &self.module, &self.image).ok()
     }
@@ -1124,27 +1125,27 @@ impl GameManagerFinder {
     }
 
     // Fragile / Unbreakable Charms
-    
+
     pub fn got_charm_23(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_23.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn got_charm_24(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_24.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn got_charm_25(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_25.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn broken_charm_23(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.broken_charm_23.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn broken_charm_24(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.broken_charm_24.deref(process, &self.module, &self.image).ok()
     }
-    
+
     pub fn broken_charm_25(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.broken_charm_25.deref(process, &self.module, &self.image).ok()
     }
@@ -1180,7 +1181,7 @@ impl GameManagerFinder {
     }
 
     // Kingsoul / VoidHeart
-    
+
     pub fn charm_cost_36(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.charm_cost_36.deref(process, &self.module, &self.image).ok()
     }
@@ -1486,7 +1487,7 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_hollow_knight_prime.deref(process, &self.module, &self.image).ok()
     }
 
-    
+
 }
 
 pub struct SceneStore {
@@ -1806,8 +1807,9 @@ impl PlayerDataStore {
 
 // --------------------------------------------------------
 
-pub async fn wait_attach_hollow_knight() -> Process {
+pub async fn wait_attach_hollow_knight<G: StoreGui>(gui: &mut G) -> Process {
     retry(|| {
+        gui.loop_load_update_store();
         HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
     }).await
 }

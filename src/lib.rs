@@ -4,16 +4,20 @@ extern crate alloc;
 
 mod auto_splitter_settings;
 mod hollow_knight_memory;
+mod settings_gui;
 mod splits;
 
 use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
-use auto_splitter_settings::{XMLSettings, SettingsObject, Settings};
+use settings_gui::SettingsGui;
 use hollow_knight_memory::*;
+use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
 // asr::panic_handler!();
+
+const TICKS_PER_GUI: usize = 0x100;
 
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
@@ -24,35 +28,16 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
-    let settings1 = SettingsObject::load();
-    let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
-    let settings2 = XMLSettings::from_xml_string(auto_splitter_settings, &[("Splits", "Split")]).unwrap_or_default();
-    let splits: Vec<splits::Split> = if settings1.dict_get("Splits").is_some() {
-        asr::print_message("settings1: from asr::settings::Map::load");
-        let splits1 = splits::splits_from_settings(&settings1);
-        let splits2 = splits::splits_from_settings(&settings2);
-        if splits2 != splits1 {
-            asr::print_message("WARNING: splits from asr::settings::Map::load differ from AutoSplitterSettings.txt");
-            asr::print_message("assuming AutoSplitterSettings.txt is out of date, using asr::settings::Map::load");
-        }
-        splits1
-    } else {
-        asr::print_message("settings2: from AutoSplitterSettings.txt");
-        let splits2 = splits::splits_from_settings(&settings2);
-        let settings3 = SettingsObject::wait_load_merge_store(&settings2).await;
-        let splits3 = splits::splits_from_settings(&settings3);
-        if splits3 != splits2 {
-            asr::print_message("BAD: splits3 != splits2");
-        }
-        splits2
-    };
-     
+    let mut gui = SettingsGui::wait_load_merge_register().await;
+
+    let mut ticks_since_gui = 0;
+    let mut splits = gui.get_splits();
     asr::print_message(&format!("splits: {:?}", splits));
 
-    let auto_reset = splits::auto_reset_safe(&splits);
+    let mut auto_reset = splits::auto_reset_safe(&splits);
 
     loop {
-        let process = wait_attach_hollow_knight().await;
+        let process = wait_attach_hollow_knight(&mut gui).await;
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
@@ -66,8 +51,15 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
 
+                let gui_splits = gui.get_splits();
+                if gui_splits != splits {
+                    splits = gui_splits;
+                    asr::print_message(&format!("splits: {:?}", splits));
+                    auto_reset = splits::auto_reset_safe(&splits);
+                }
+
                 let mut i = 0;
-                let n = splits.len();
+                let mut n = splits.len();
                 loop {
                     let current_split = &splits[i];
                     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
@@ -90,6 +82,18 @@ async fn main() {
                     }
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
+
+                    ticks_since_gui += 1;
+                    if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
+                        let gui_splits = gui.get_splits();
+                        if gui_splits != splits {
+                            splits = gui_splits;
+                            asr::print_message(&format!("splits: {:?}", splits));
+                            auto_reset = splits::auto_reset_safe(&splits);
+                            n = splits.len();
+                        }
+                        ticks_since_gui = 0;
+                    }
 
                     next_tick().await;
                 }
