@@ -192,28 +192,30 @@ impl<T: Clone + StoreWidget> StoreWidget for UglyList<T> where T::Args: SetHeadi
         }
         let maybe_old_list = settings_map.get(key).and_then(|old_v| old_v.get_list());
         let old_len = maybe_old_list.as_ref().map(|old_list| old_list.len()).unwrap_or(0);
+        if old_len != self.len as u64 {
+            changed = true;
+        }
         let new_list = asr::settings::List::new();
         for i in 0..self.len {
             let key_i = format!("{}_{}", key, i);
             let key_i_item = format!("{}_item", key_i);
-            changed = self.ulis[i].insert_into(&settings_map, &key_i) || changed;
+            if self.ulis[i].insert_into(&settings_map, &key_i) {
+                changed = true;
+            }
             let new_v = settings_map.get(&key_i_item).unwrap_or(false.into());
             new_list.push(&new_v);
             if !maybe_old_list.as_ref().is_some_and(|old_list| old_list.get(i as u64).is_some_and(|old_v| value_equal_now(&new_v, &old_v))) {
                 changed = true;
             }
-            if old_len != self.len as u64 {
+            if changed {
                 set_tooltip(&key_i, &format!("Item exists: {} < {}\n{:?}", i, self.len, new_v));
             }
         }
-        if old_len != self.len as u64 {
-            changed = true;
+        if changed {
             for i in self.len..self.ulis.len() {
                 let key_i = format!("{}_{}", key, i);
                 set_tooltip(&key_i, &format!("DOES NOT EXIST"));
             }
-        }
-        if changed {
             settings_map.insert(key, &new_list);
             set_tooltip(key, &format!("{:?}", new_list));    
         }
