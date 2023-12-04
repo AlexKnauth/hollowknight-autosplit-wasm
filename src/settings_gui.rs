@@ -1,6 +1,6 @@
 use asr::settings::gui::{Gui, Title};
 
-use ugly_widget::{ugly_list::UglyList, radio_button::RadioButton, store::{StoreWidget, StoreGui}};
+use ugly_widget::{ugly_list::UglyList, store::{StoreWidget, StoreGui}};
 
 use crate::{splits::{Split, self}, auto_splitter_settings::{Settings, SettingsObject, XMLSettings}};
 

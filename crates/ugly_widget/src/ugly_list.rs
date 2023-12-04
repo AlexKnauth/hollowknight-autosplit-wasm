@@ -6,7 +6,7 @@ use asr::settings::gui::{add_bool, add_title, set_tooltip, Gui, Widget};
 use crate::store::StoreWidget;
 
 use super::args::SetHeadingLevel;
-use super::radio_button::{options_str, RadioButton, RadioButtonArgs, RadioButtonOption, RadioButtonOptions};
+use super::radio_button::{options_str, RadioButtonOption, RadioButtonOptions};
 
 // --------------------------------------------------------
 
