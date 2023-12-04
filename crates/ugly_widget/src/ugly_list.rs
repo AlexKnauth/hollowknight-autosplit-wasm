@@ -190,7 +190,8 @@ impl<T: Clone + StoreWidget> StoreWidget for UglyList<T> where T::Args: SetHeadi
             settings_map.insert(&key_insert_0, false);
             changed = true;
         }
-        let old_len = settings_map.get(key).and_then(|old_v| old_v.get_list()).map(|old_list| old_list.len()).unwrap_or(0);
+        let maybe_old_list = settings_map.get(key).and_then(|old_v| old_v.get_list());
+        let old_len = maybe_old_list.as_ref().map(|old_list| old_list.len()).unwrap_or(0);
         let new_list = asr::settings::List::new();
         for i in 0..self.len {
             let key_i = format!("{}_{}", key, i);
@@ -198,6 +199,9 @@ impl<T: Clone + StoreWidget> StoreWidget for UglyList<T> where T::Args: SetHeadi
             changed = self.ulis[i].insert_into(&settings_map, &key_i) || changed;
             let new_v = settings_map.get(&key_i_item).unwrap_or(false.into());
             new_list.push(&new_v);
+            if !maybe_old_list.as_ref().is_some_and(|old_list| old_list.get(i as u64).is_some_and(|old_v| value_equal_now(&new_v, &old_v))) {
+                changed = true;
+            }
             if old_len != self.len as u64 {
                 set_tooltip(&key_i, &format!("Item exists: {} < {}\n{:?}", i, self.len, new_v));
             }
@@ -226,4 +230,47 @@ fn index_of<T>(slice: &[T], v: &T) -> Option<usize> where T: PartialEq<T> {
         }
     }
     None
+}
+
+fn value_equal_now(a: &asr::settings::Value, b: &asr::settings::Value) -> bool {
+    let t = a.get_type();
+    if t != b.get_type() { return false; }
+    match t {
+        asr::settings::ValueType::Bool => a.get_bool() == b.get_bool(),
+        asr::settings::ValueType::I64 => a.get_i64() == b.get_i64(),
+        asr::settings::ValueType::F64 => a.get_f64() == b.get_f64(),
+        asr::settings::ValueType::String => a.get_string() == b.get_string(),
+        asr::settings::ValueType::List => {
+            let Some(al) = a.get_list() else { return false; };
+            let Some(bl) = b.get_list() else { return false; };
+            list_equal_now(&al, &bl)
+        },
+        asr::settings::ValueType::Map => {
+            let Some(am) = a.get_map() else { return false; };
+            let Some(bm) = b.get_map() else { return false; };
+            map_equal_now(&am, &bm)
+        },
+        _ => false,
+    }
+}
+
+fn list_equal_now(a: &asr::settings::List, b: &asr::settings::List) -> bool {
+    let n = a.len();
+    if n != b.len() { return false; }
+    for i in 0..n {
+        let Some(ai) = a.get(i) else { return false; };
+        let Some(bi) = b.get(i) else { return false; };
+        if !value_equal_now(&ai, &bi) { return false; }
+    }
+    true
+}
+
+fn map_equal_now(a: &asr::settings::Map, b: &asr::settings::Map) -> bool {
+    let n = a.len();
+    if n != b.len() { return false; }
+    for (k, av) in a.iter() {
+        let Some(bv) = b.get(&k) else { return false; };
+        if !value_equal_now(&av, &bv) { return false; }
+    }
+    true
 }
