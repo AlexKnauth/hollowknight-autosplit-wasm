@@ -129,9 +129,13 @@ impl<T: Clone + Widget> Widget for UglyList<T> where T::Args: SetHeadingLevel {
     fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
         let map_list: Vec<asr::settings::Value> = settings_map.get(key).and_then(|v| v.get_list()).map(|l| l.iter().collect()).unwrap_or_default();
         let map_len = map_list.len();
-        for i in self.ulis.len()..map_len {
-            let key_i = format!("{}_{}", key, i);
-            self.ulis.push(UglyListItem::register(&key_i, &format!("Item {}", i), args.clone()))
+        if self.ulis.len() < map_len {
+            set_tooltip(key, &format!("{:?}", map_list));
+            for i in self.ulis.len()..map_len {
+                let key_i = format!("{}_{}", key, i);
+                self.ulis.push(UglyListItem::register(&key_i, &format!("Item {}", i), args.clone()));
+                set_tooltip(&key_i, &format!("Item exists: {} < {}\n{:?}", i, map_len, map_list[i]));
+            }
         }
         // --------------------------
         // map_len <= self.ulis.len()
@@ -217,7 +221,7 @@ impl<T: Clone + StoreWidget> StoreWidget for UglyList<T> where T::Args: SetHeadi
                 set_tooltip(&key_i, &format!("DOES NOT EXIST"));
             }
             settings_map.insert(key, &new_list);
-            set_tooltip(key, &format!("{:?}", new_list));    
+            set_tooltip(key, &format!("{:?}", new_list));
         }
         changed
     }
