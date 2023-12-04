@@ -18,7 +18,7 @@ fn impl_set_heading_level(ast: &DeriveInput) -> TokenStream {
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     let gen = quote! {
-        impl #impl_generics SetHeadingLevel for #name #ty_generics #where_clause {
+        impl #impl_generics ::ugly_widget::args::SetHeadingLevel for #name #ty_generics #where_clause {
             fn set_heading_level(&mut self, heading_level: u32) {
                 self.heading_level = heading_level;
             }
