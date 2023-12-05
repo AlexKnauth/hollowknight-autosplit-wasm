@@ -63,6 +63,9 @@ then navigate to the compiled `wasm` file found at
 of this repository.
 Click `Ok` and and save the layout with `Save Layout` or `Save Layout As...`.
 
+For running multiple categories/routes with different splits settings,
+you should make a different Layout file for each one.
+
 Deactivate the existing Hollow Knight autosplitter by Right-click -> `Edit Splits...`
 then next to `Configurable Load Remover / Auto Splitter. (By DevilSquirrel)`,
 click `Deactivate`.
