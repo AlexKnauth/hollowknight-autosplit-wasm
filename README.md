@@ -106,6 +106,18 @@ The autosplitter will not know that you did that, and the autosplitter's state w
 
 ## Instructions for livesplit-one-desktop
 
+Note: The main `livesplit-one-desktop` repository might not
+be up-to-date enough to run this autosplitter.
+- If https://github.com/CryZe/livesplit-one-desktop has a commit from December 2023 or later,
+  then that's probably going to be up-to-date enough for this.
+- However, if the most recent commit is still from July 2023,
+  then you'll need to use a more up-to-date version,
+  such as my fork https://github.com/AlexKnauth/livesplit-one-desktop,
+  on branch `deps-3`.
+- Or if another repository, such as https://github.com/CryZe/livesplit-one-druid,
+  has a commit from December of 2023 or later, you may be able to try that out,
+  but I don't have specific instructions for how to use that yet.
+
 Clone `livesplit-one-desktop` from https://github.com/CryZe/livesplit-one-desktop
 
 In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that it contains
