@@ -118,7 +118,11 @@ be up-to-date enough to run this autosplitter.
   has a commit from December of 2023 or later, you may be able to try that out,
   but I don't have specific instructions for how to use that yet.
 
-Clone `livesplit-one-desktop` from https://github.com/CryZe/livesplit-one-desktop
+Clone `livesplit-one-desktop` from https://github.com/CryZe/livesplit-one-desktop,
+or, if you want to clone my fork on branch `deps-3` directly, you can do so with
+```sh
+git clone -b deps-3 https://github.com/AlexKnauth/livesplit-one-desktop.git
+```
 
 In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that it contains
 ```yaml
