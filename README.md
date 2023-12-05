@@ -45,6 +45,29 @@ The debugger is able to step through the code. You can set breakpoints in VSCode
 and it should stop there when the breakpoint is hit. Inspecting variables
 currently does not work all the time.
 
+## Instructions for Splits Settings
+
+There are 2 ways that this autosplitter can currently get Splits Settings:
+ - From the `src/AutoSplitterSettings.txt` file of this repository
+ - From a `.lsl` LiveSplit Layout file that's been saved with Splits Settings before
+
+For starting out with new Splits that you haven't run with this autosplitter before,
+you should start with the `src/AutoSplitterSettings.txt` file.
+
+If you're unsure of what to put there,
+you can open up a Splits `.lss` file in a text editor,
+and near the end,
+copy what's in between `<AutoSplitterSettings>` and `</AutoSplitterSettings>`, exclusive.
+
+Or if you're making new splits using https://hksplitmaker.com/, after you click `Generate`,
+you can scroll down in the `Output Splits File` section,
+and again, near the end, between `<AutoSplitterSettings>` and `</AutoSplitterSettings>` exclusive.
+
+After modifying `src/AutoSplitterSettings.txt`, re-compile this repository with
+```sh
+cargo release
+```
+
 ## Instructions for LiveSplit Windows
 
 Create a LiveSplit Layout (`.lsl`) file that you can edit
@@ -92,11 +115,6 @@ general:
   auto-splitter: <path-to-wasm_hollowknight_autosplit.wasm>
 ```
 where you replace `<path-to-splits.lss>` with the path to your splits file, and you replace `<path-to-wasm_hollowknight_autosplit.wasm>` with a path to the compiled `wasm` file found at `target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm` of this repository.
-
-If you're running anything other than the specific placeholder splits in the `src/AutoSplitterSettings.txt` file of this repository, you should modify that file to have the splits you want, in the order you want, and then re-compile this repository with
-```sh
-cargo b
-```
 
 When you run either `livesplit-one-desktop` or the `asr-debugger`, it needs to have permission to read memory of other processes.
 On Mac, that might require running it under `sudo`.
