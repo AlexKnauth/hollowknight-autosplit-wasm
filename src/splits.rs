@@ -1204,6 +1204,8 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Markoth
     MarkothEssence,
+    // endregion: Kingdom's Edge
+    // region: Colosseum
     /// Zote Defeated - Colosseum (Mini Boss)
     /// 
     /// Splits when defeating Zote in the Colosseum
@@ -1212,7 +1214,7 @@ pub enum Split {
     /// 
     /// Splits when killing the God Tamer
     GodTamer,
-    // endregion: Kingdom's Edge
+    // endregion: Colosseum
     // region: Fog Canyon
     /// Teachers Archive (Area)
     /// 
@@ -1770,9 +1772,11 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
         Split::Markoth => g.killed_ghost_markoth(p).is_some_and(|k| k),
         Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
+        // endregion: Kingdom's Edge
+        // region: Colosseum
         Split::ZoteKilled => g.killed_zote(p).is_some_and(|k| k),
         Split::GodTamer => g.killed_lobster_lancer(p).is_some_and(|k| k),
-        // endregion: Kingdom's Edge
+        // endregion: Colosseum
         // region: Fog Canyon
         Split::UumuuEncountered => g.encountered_mega_jelly(p).is_some_and(|b| b),
         Split::Uumuu => g.killed_mega_jellyfish(p).is_some_and(|k| k),
