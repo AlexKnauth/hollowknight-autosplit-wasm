@@ -296,6 +296,10 @@ pub enum Split {
     // endregion: Nail and Pale Ore
 
     // region: Masks and Mask Shards
+    /// Mask Shard (Obtain)
+    /// 
+    /// Splits when obtaining a Mask Shard or upgrade for complete Mask
+    OnObtainMaskShard,
     /// Mask Shard 1 (Fragment)
     /// 
     /// Splits when getting 1st Mask Shard
@@ -312,7 +316,98 @@ pub enum Split {
     /// 
     /// Splits when getting 1 extra Mask (6 base HP)
     Mask1,
+    /// Mask Shard 5 (Fragment)
+    /// 
+    /// Splits when getting 5th Mask Shard
+    MaskFragment5,
+    /// Mask Shard 6 (Fragment)
+    /// 
+    /// Splits when getting 6th Mask Shard
+    MaskFragment6,
+    /// Mask Shard 7 (Fragment)
+    /// 
+    /// Splits when getting 7th Mask Shard
+    MaskFragment7,
+    /// Mask Upgrade 8 (Upgrade)
+    /// 
+    /// Splits when getting 2 extra Masks (7 base HP)
+    Mask2,
+    /// Mask Shard 9 (Fragment)
+    /// 
+    /// Splits when getting 9th Mask Shard
+    MaskFragment9,
+    /// Mask Shard 10 (Fragment)
+    /// 
+    /// Splits when getting 10th Mask Shard
+    MaskFragment10,
+    /// Mask Shard 11 (Fragment)
+    /// 
+    /// Splits when getting 11th Mask Shard
+    MaskFragment11,
+    /// Mask Upgrade 12 (Upgrade)
+    /// 
+    /// Splits when getting 3 extra Masks (8 base HP)
+    Mask3,
+    /// Mask Shard 13 (Fragment)
+    /// 
+    /// Splits when getting 13th Mask Shard
+    MaskFragment13,
+    /// Mask Shard 14 (Fragment)
+    /// 
+    /// Splits when getting 14th Mask Shard
+    MaskFragment14,
+    /// Mask Shard 15 (Fragment)
+    /// 
+    /// Splits when getting 15th Mask Shard
+    MaskFragment15,
+    /// Mask Upgrade 16 (Upgrade)
+    /// 
+    /// Splits when getting 4 extra Masks (9 base HP)
+    Mask4,
     // endregion: Masks and Mask Shards
+
+    // region: Vessels and Vessel Fragments
+    /// Vessel Fragment (Obtain)
+    /// 
+    /// Splits when obtaining a Vessel Fragment or on upgrade for full Soul Vessel
+    OnObtainVesselFragment,
+    /// Vessel Fragment 1 (Fragment)
+    /// 
+    /// Splits when getting 1st Soul Vessel Fragment
+    VesselFragment1,
+    /// Vessel Fragment 2 (Fragment)
+    /// 
+    /// Splits when getting 2nd Soul Vessel Fragment
+    VesselFragment2,
+    /// Soul Vessel 1 (Upgrade)
+    /// 
+    /// Splits when upgrading to 1 Soul Vessel (3 Soul Vessel Fragments)
+    Vessel1,
+    /// Vessel Fragment 4 (Fragment)
+    /// 
+    /// Splits when getting 4th Soul Vessel Fragment
+    VesselFragment4,
+    /// Vessel Fragment 5 (Fragment)
+    /// 
+    /// Splits when getting 5th Soul Vessel Fragment
+    VesselFragment5,
+    /// Soul Vessel 2 (Upgrade)
+    /// 
+    /// Splits when upgrading to 2 Soul Vessels (6 Soul Vessel Fragments)
+    Vessel2,
+    /// Vessel Fragment 7 (Fragment)
+    /// 
+    /// Splits when getting 7th Soul Vessel Fragment
+    VesselFragment7,
+    /// Vessel Fragment 8 (Fragment)
+    /// 
+    /// Splits when getting 8th Soul Vessel Fragment
+    VesselFragment8,
+    /// Soul Vessel 3 (Upgrade)
+    /// 
+    /// Splits when upgrading to 3 Soul Vessels (9 Soul Vessel Fragments)
+    Vessel3,
+    // endregion: Vessels and Vessel Fragments
 
     // region: Charm Notches
     /// Shrumal Ogres (Charm Notch)
@@ -1448,11 +1543,36 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Ore6 => g.ore_gross(p).is_some_and(|o| 6 <= o),
         // endregion: Nail and Pale Ore
         // region: Masks and Mask Shards
+        Split::OnObtainMaskShard => pds.obtained_mask_shard(p, g),
         Split::MaskFragment1 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 1),
         Split::MaskFragment2 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 2),
         Split::MaskFragment3 => g.max_health_base(p).is_some_and(|h| h == 5) && g.heart_pieces(p).is_some_and(|p| p == 3),
         Split::Mask1 => g.max_health_base(p).is_some_and(|h| h == 6),
+        Split::MaskFragment5 => g.heart_pieces(p).is_some_and(|s| s == 5 || (g.max_health_base(p).is_some_and(|h| h == 6) && s == 1)),
+        Split::MaskFragment6 => g.heart_pieces(p).is_some_and(|s| s == 6 || (g.max_health_base(p).is_some_and(|h| h == 6) && s == 2)),
+        Split::MaskFragment7 => g.heart_pieces(p).is_some_and(|s| s == 7 || (g.max_health_base(p).is_some_and(|h| h == 6) && s == 3)),
+        Split::Mask2 => g.max_health_base(p).is_some_and(|h| h == 7),
+        Split::MaskFragment9  => g.heart_pieces(p).is_some_and(|s| s ==  9 || (g.max_health_base(p).is_some_and(|h| h == 7) && s == 1)),
+        Split::MaskFragment10 => g.heart_pieces(p).is_some_and(|s| s == 10 || (g.max_health_base(p).is_some_and(|h| h == 7) && s == 2)),
+        Split::MaskFragment11 => g.heart_pieces(p).is_some_and(|s| s == 11 || (g.max_health_base(p).is_some_and(|h| h == 7) && s == 3)),
+        Split::Mask3 => g.max_health_base(p).is_some_and(|h| h == 8),
+        Split::MaskFragment13 => g.heart_pieces(p).is_some_and(|s| s == 13 || (g.max_health_base(p).is_some_and(|h| h == 8) && s == 1)),
+        Split::MaskFragment14 => g.heart_pieces(p).is_some_and(|s| s == 14 || (g.max_health_base(p).is_some_and(|h| h == 8) && s == 2)),
+        Split::MaskFragment15 => g.heart_pieces(p).is_some_and(|s| s == 15 || (g.max_health_base(p).is_some_and(|h| h == 8) && s == 3)),
+        Split::Mask4 => g.max_health_base(p).is_some_and(|h| h == 9),
         // endregion: Masks and Mask Shards
+        // region: Vessels and Vessel Fragments
+        Split::OnObtainVesselFragment => pds.obtained_vessel_fragment(p, g),
+        Split::VesselFragment1 => g.mp_reserve_max(p).is_some_and(|mp| mp == 0) && g.vessel_fragments(p).is_some_and(|f| f == 1),
+        Split::VesselFragment2 => g.mp_reserve_max(p).is_some_and(|mp| mp == 0) && g.vessel_fragments(p).is_some_and(|f| f == 2),
+        Split::Vessel1 => g.mp_reserve_max(p).is_some_and(|mp| mp == 33),
+        Split::VesselFragment4 => g.vessel_fragments(p).is_some_and(|f| f == 4 || (g.mp_reserve_max(p).is_some_and(|mp| mp == 33) && f == 1)),
+        Split::VesselFragment5 => g.vessel_fragments(p).is_some_and(|f| f == 5 || (g.mp_reserve_max(p).is_some_and(|mp| mp == 33) && f == 2)),
+        Split::Vessel2 => g.mp_reserve_max(p).is_some_and(|mp| mp == 66),
+        Split::VesselFragment7 => g.vessel_fragments(p).is_some_and(|f| f == 7 || (g.mp_reserve_max(p).is_some_and(|mp| mp == 66) && f == 1)),
+        Split::VesselFragment8 => g.vessel_fragments(p).is_some_and(|f| f == 8 || (g.mp_reserve_max(p).is_some_and(|mp| mp == 66) && f == 2)),
+        Split::Vessel3 => g.mp_reserve_max(p).is_some_and(|mp| mp == 99),
+        // endregion: Vessels and Vessel Fragments
         // region: Charm Notches
         Split::NotchShrumalOgres => g.notch_shroom_ogres(p).is_some_and(|n| n),
         Split::NotchSalubra1 => g.salubra_notch1(p).is_some_and(|n| n),

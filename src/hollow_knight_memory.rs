@@ -188,6 +188,9 @@ struct PlayerDataPointers {
     //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
     // and I'm not sure which one
     heart_pieces: UnityPointer<3>,
+    /// Magic Power Reserve Max: amount of soul that can be held by soul vessels, 33 each
+    mp_reserve_max: UnityPointer<3>,
+    vessel_fragments: UnityPointer<3>,
     // Dreamers
     mask_broken_lurien: UnityPointer<3>,
     mask_broken_monomon: UnityPointer<3>,
@@ -406,6 +409,8 @@ impl PlayerDataPointers {
             dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
             max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            mp_reserve_max: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "MPReserveMax"]),
+            vessel_fragments: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "vesselFragments"]),
             // Dreamers
             mask_broken_lurien: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenLurien"]),
             mask_broken_monomon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenMonomon"]),
@@ -807,6 +812,14 @@ impl GameManagerFinder {
 
     pub fn heart_pieces(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.heart_pieces.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn mp_reserve_max(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.mp_reserve_max.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn vessel_fragments(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.vessel_fragments.deref(process, &self.module, &self.image).ok()
     }
 
     // Dreamers
@@ -1678,6 +1691,18 @@ impl PlayerDataStore {
         }
         self.map_i32.insert("game_state", i);
         i
+    }
+
+    pub fn obtained_mask_shard(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.incremented_i32(p, g, "max_health_base", &g.player_data_pointers.max_health_base)
+        || (self.incremented_i32(p, g, "heart_pieces", &g.player_data_pointers.heart_pieces)
+            && self.map_i32.get("heart_pieces").is_some_and(|&s| s < 4))
+    }
+
+    pub fn obtained_vessel_fragment(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.increased_i32(p, g, "mp_reserve_max", &g.player_data_pointers.mp_reserve_max)
+        || (self.incremented_i32(p, g, "vessel_fragments", &g.player_data_pointers.vessel_fragments)
+            && self.map_i32.get("vessel_fragments").is_some_and(|&f| f < 3))
     }
 
     pub fn guardians_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
