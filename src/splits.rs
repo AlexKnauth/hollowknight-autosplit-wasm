@@ -1206,14 +1206,62 @@ pub enum Split {
     MarkothEssence,
     // endregion: Kingdom's Edge
     // region: Colosseum
+    /// Colosseum Unlocked 1 (Trial)
+    /// 
+    /// Splits when the knight unlocks the Trial of the Warrior at Little Fool
+    ColosseumBronzeUnlocked,
+    /// Colosseum Entrance 1 (Transition)
+    /// 
+    /// Splits on the transition into the Trial of the Warrior
+    ColosseumBronzeEntry,
     /// Zote Defeated - Colosseum (Mini Boss)
     /// 
     /// Splits when defeating Zote in the Colosseum
     ZoteKilled,
+    /// Colosseum Fight 1 (Trial)
+    /// 
+    /// Splits when beating the Trial of the Warrior
+    ColosseumBronze,
+    /// Colosseum Exit 1 (Transition)
+    /// 
+    /// Splits on the transition out of the trial, or in the load-in after quitout
+    ColosseumBronzeExit,
+    /// Colosseum Unlocked 2 (Trial)
+    /// 
+    /// Splits when the knight unlocks the Trial of the Conqueror at Little Fool
+    ColosseumSilverUnlocked,
+    /// Colosseum Entrance 2 (Transition)
+    /// 
+    /// Splits on the transition into the Trial of the Conqueror
+    ColosseumSilverEntry,
+    /// Colosseum Fight 2 (Trial)
+    /// 
+    /// Splits when beating the Trial of the Conqueror
+    ColosseumSilver,
+    /// Colosseum Exit 2 (Transition)
+    /// 
+    /// Splits on the transition out of the trial, or in the load-in after quitout
+    ColosseumSilverExit,
+    /// Colosseum Unlocked 3 (Trial)
+    /// 
+    /// Splits when the knight unlocks the Trial of the Fool at Little Fool
+    ColosseumGoldUnlocked,
+    /// Colosseum Entrance 3 (Transition)
+    /// 
+    /// Splits on the transition into the Trial of the Warrior
+    ColosseumGoldEntry,
     /// God Tamer (Boss)
     /// 
     /// Splits when killing the God Tamer
     GodTamer,
+    /// Colosseum Fight 3 (Trial)
+    /// 
+    /// Splits when beating the Trial of the Warrior
+    ColosseumGold,
+    /// Colosseum Exit 3 (Transition)
+    /// 
+    /// Splits on the transition out of the trial, or in the load-in after quitout
+    ColosseumGoldExit,
     // endregion: Colosseum
     // region: Fog Canyon
     /// Teachers Archive (Area)
