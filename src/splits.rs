@@ -1484,6 +1484,14 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterHiveKnight => p.current.starts_with("Hive_05") && p.current != p.old,
         Split::EnterHornet2 => p.current.starts_with("Deepnest_East_Hornet") && p.current != p.old,
         // endregion: Kingdom's Edge
+        // region: Colosseum
+        Split::ColosseumBronzeEntry => p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Bronze",
+        Split::ColosseumBronzeExit => pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Bronze"),
+        Split::ColosseumSilverEntry => p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Silver",
+        Split::ColosseumSilverExit => pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Silver"),
+        Split::ColosseumGoldEntry => p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Gold",
+        Split::ColosseumGoldExit => pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Gold"),
+        // endregion: Colosseum
         // region: Fog Canyon
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
         // endregion: Fog Canyon
@@ -1822,8 +1830,17 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
         // endregion: Kingdom's Edge
         // region: Colosseum
+        Split::ColosseumBronzeUnlocked => g.colosseum_bronze_opened(p).is_some_and(|o| o),
         Split::ZoteKilled => g.killed_zote(p).is_some_and(|k| k),
+        Split::ColosseumBronze => g.colosseum_bronze_completed(p).is_some_and(|c| c),
+        Split::ColosseumBronzeExit => { pds.colosseum_bronze_completed(p, g); false },
+        Split::ColosseumSilverUnlocked => g.colosseum_silver_opened(p).is_some_and(|o| o),
+        Split::ColosseumSilver => g.colosseum_silver_completed(p).is_some_and(|c| c),
+        Split::ColosseumSilverExit => { pds.colosseum_silver_completed(p, g); false },
+        Split::ColosseumGoldUnlocked => g.colosseum_gold_opened(p).is_some_and(|o| o),
         Split::GodTamer => g.killed_lobster_lancer(p).is_some_and(|k| k),
+        Split::ColosseumGold => g.colosseum_gold_completed(p).is_some_and(|c| c),
+        Split::ColosseumGoldExit => { pds.colosseum_gold_completed(p, g); false },
         // endregion: Colosseum
         // region: Fog Canyon
         Split::UumuuEncountered => g.encountered_mega_jelly(p).is_some_and(|b| b),

@@ -1861,6 +1861,18 @@ impl PlayerDataStore {
         self.decremented_i32(process, game_manager_finder, "kills_zombie_miner", &game_manager_finder.player_data_pointers.kills_zombie_miner)
     }
 
+    pub fn colosseum_bronze_completed(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "colosseum_bronze_completed", &g.player_data_pointers.colosseum_bronze_completed).unwrap_or(false)
+    }
+
+    pub fn colosseum_silver_completed(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "colosseum_silver_completed", &g.player_data_pointers.colosseum_silver_completed).unwrap_or(false)
+    }
+
+    pub fn colosseum_gold_completed(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "colosseum_gold_completed", &g.player_data_pointers.colosseum_gold_completed).unwrap_or(false)
+    }
+
     pub fn increased_royal_charm_state(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
     }
