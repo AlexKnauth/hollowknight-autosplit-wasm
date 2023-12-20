@@ -1326,6 +1326,10 @@ pub enum Split {
     BeastsDenTrapBench,
     // endregion: Deepnest
     // region: Godhome
+    /// God Tuner (Item)
+    /// 
+    /// Splits when obtaining the God Tuner
+    GodTuner,
     /// Godhome (Transition)
     /// 
     /// Splits on transition to Godhome
@@ -1859,6 +1863,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::BeastsDenTrapBench => g.spider_capture(p).is_some_and(|c| c),
         // endregion: Deepnest
         // region: Godhome
+        Split::GodTuner => g.has_godfinder(p).is_some_and(|g| g),
         Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
         Split::SheoPaintmaster => g.killed_paintmaster(p).is_some_and(|k| k),
         Split::SlyNailsage => g.killed_nailsage(p).is_some_and(|k| k),

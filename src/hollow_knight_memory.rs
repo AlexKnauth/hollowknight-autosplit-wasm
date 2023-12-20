@@ -385,6 +385,7 @@ struct PlayerDataPointers {
     killed_ghost_galien: UnityPointer<3>,
     galien_defeated: UnityPointer<3>,
     spider_capture: UnityPointer<3>,
+    has_godfinder: UnityPointer<3>,
     // Oro & Mato
     killed_nail_bros: UnityPointer<3>,
     killed_paintmaster: UnityPointer<3>,
@@ -601,6 +602,7 @@ impl PlayerDataPointers {
             killed_ghost_galien: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostGalien"]),
             galien_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "galienDefeated"]),
             spider_capture: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
+            has_godfinder: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasGodfinder"]),
             killed_nail_bros: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailBros"]),
             killed_paintmaster: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedPaintmaster"]),
             killed_nailsage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailsage"]),
@@ -1518,6 +1520,10 @@ impl GameManagerFinder {
 
     pub fn spider_capture(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.spider_capture.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn has_godfinder(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_godfinder.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_nail_bros(&self, process: &Process) -> Option<bool> {
