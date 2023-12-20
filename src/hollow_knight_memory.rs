@@ -364,9 +364,15 @@ struct PlayerDataPointers {
     hornet_outskirts_defeated: UnityPointer<3>,
     killed_ghost_markoth: UnityPointer<3>,
     markoth_defeated: UnityPointer<3>,
+    colosseum_bronze_opened: UnityPointer<3>,
     killed_zote: UnityPointer<3>,
+    colosseum_bronze_completed: UnityPointer<3>,
+    colosseum_silver_opened: UnityPointer<3>,
+    colosseum_silver_completed: UnityPointer<3>,
+    colosseum_gold_opened: UnityPointer<3>,
     // God Tamer
     killed_lobster_lancer: UnityPointer<3>,
+    colosseum_gold_completed: UnityPointer<3>,
     // Uumuu
     encountered_mega_jelly: UnityPointer<3>,
     killed_mega_jellyfish: UnityPointer<3>,
@@ -577,8 +583,14 @@ impl PlayerDataPointers {
             hornet_outskirts_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hornetOutskirtsDefeated"]),
             killed_ghost_markoth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarkoth"]),
             markoth_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "markothDefeated"]),
+            colosseum_bronze_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumBronzeOpened"]),
             killed_zote: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedZote"]),
+            colosseum_bronze_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumBronzeCompleted"]),
+            colosseum_silver_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumSilverOpened"]),
+            colosseum_silver_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumSilverCompleted"]),
+            colosseum_gold_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumGoldOpened"]),
             killed_lobster_lancer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLobsterLancer"]),
+            colosseum_gold_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumGoldCompleted"]),
             encountered_mega_jelly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "encounteredMegaJelly"]),
             killed_mega_jellyfish: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
             killed_ghost_marmu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarmu"]),
@@ -1437,12 +1449,36 @@ impl GameManagerFinder {
         self.player_data_pointers.markoth_defeated.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn colosseum_bronze_opened(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.colosseum_bronze_opened.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_zote(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_zote.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn colosseum_bronze_completed(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.colosseum_bronze_completed.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn colosseum_silver_opened(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.colosseum_silver_opened.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn colosseum_silver_completed(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.colosseum_silver_completed.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn colosseum_gold_opened(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.colosseum_gold_opened.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_lobster_lancer(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_lobster_lancer.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn colosseum_gold_completed(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.colosseum_gold_completed.deref(process, &self.module, &self.image).ok()
     }
 
     // Uumuu
