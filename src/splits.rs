@@ -1144,6 +1144,10 @@ pub enum Split {
     /// Splits on the transition after killing Elder Hu
     ElderHuTrans,
     MenuMantisJournal,
+    /// Bretta Rescued (NPC)
+    /// 
+    /// Splits when saving Bretta
+    BrettaRescued,
     /// Mantis Lords (Boss)
     /// 
     /// Splits when killing Mantis Lords
@@ -2010,6 +2014,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::ElderHu => g.killed_ghost_hu(p).is_some_and(|k| k),
         Split::ElderHuEssence => g.elder_hu_defeated(p).is_some_and(|d| d == 2),
         Split::ElderHuTrans => { pds.killed_ghost_hu(p, g); false },
+        Split::BrettaRescued => g.bretta_rescued(p).is_some_and(|b| b),
         Split::MantisLords => g.defeated_mantis_lords(p).is_some_and(|k| k),
         // endregion: Fungal
         // region: Cliffs

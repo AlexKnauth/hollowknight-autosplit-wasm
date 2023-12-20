@@ -326,6 +326,7 @@ struct PlayerDataPointers {
     mega_moss_charger_defeated: UnityPointer<3>,
     killed_ghost_hu: UnityPointer<3>,
     elder_hu_defeated: UnityPointer<3>,
+    bretta_rescued: UnityPointer<3>,
     defeated_mantis_lords: UnityPointer<3>,
     // Gorb
     killed_ghost_aladar: UnityPointer<3>,
@@ -550,6 +551,7 @@ impl PlayerDataPointers {
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
             killed_ghost_hu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostHu"]),
             elder_hu_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderHuDefeated"]),
+            bretta_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "brettaRescued"]),
             defeated_mantis_lords: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMantisLords"]),
             // Gorb
             killed_ghost_aladar: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostAladar"]),
@@ -1322,6 +1324,10 @@ impl GameManagerFinder {
     }
     pub fn elder_hu_defeated(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.elder_hu_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn bretta_rescued(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.bretta_rescued.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn defeated_mantis_lords(&self, process: &Process) -> Option<bool> {
