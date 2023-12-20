@@ -817,6 +817,170 @@ pub enum Split {
     /// 
     /// Splits when rescuing grub #5
     Grub5,
+    /// Rescued Grub 6 (Grub)
+    /// 
+    /// Splits when rescuing grub #6
+    Grub6,
+    /// Rescued Grub 7 (Grub)
+    /// 
+    /// Splits when rescuing grub #7
+    Grub7,
+    /// Rescued Grub 8 (Grub)
+    /// 
+    /// Splits when rescuing grub #8
+    Grub8,
+    /// Rescued Grub 9 (Grub)
+    /// 
+    /// Splits when rescuing grub #9
+    Grub9,
+    /// Rescued Grub 10 (Grub)
+    /// 
+    /// Splits when rescuing grub #10
+    Grub10,
+    /// Rescued Grub 11 (Grub)
+    /// 
+    /// Splits when rescuing grub #11
+    Grub11,
+    /// Rescued Grub 12 (Grub)
+    /// 
+    /// Splits when rescuing grub #12
+    Grub12,
+    /// Rescued Grub 13 (Grub)
+    /// 
+    /// Splits when rescuing grub #13
+    Grub13,
+    /// Rescued Grub 14 (Grub)
+    /// 
+    /// Splits when rescuing grub #14
+    Grub14,
+    /// Rescued Grub 15 (Grub)
+    /// 
+    /// Splits when rescuing grub #15
+    Grub15,
+    /// Rescued Grub 16 (Grub)
+    /// 
+    /// Splits when rescuing grub #16
+    Grub16,
+    /// Rescued Grub 17 (Grub)
+    /// 
+    /// Splits when rescuing grub #17
+    Grub17,
+    /// Rescued Grub 18 (Grub)
+    /// 
+    /// Splits when rescuing grub #18
+    Grub18,
+    /// Rescued Grub 19 (Grub)
+    /// 
+    /// Splits when rescuing grub #19
+    Grub19,
+    /// Rescued Grub 20 (Grub)
+    /// 
+    /// Splits when rescuing grub #20
+    Grub20,
+    /// Rescued Grub 21 (Grub)
+    /// 
+    /// Splits when rescuing grub #21
+    Grub21,
+    /// Rescued Grub 22 (Grub)
+    /// 
+    /// Splits when rescuing grub #22
+    Grub22,
+    /// Rescued Grub 23 (Grub)
+    /// 
+    /// Splits when rescuing grub #23
+    Grub23,
+    /// Rescued Grub 24 (Grub)
+    /// 
+    /// Splits when rescuing grub #24
+    Grub24,
+    /// Rescued Grub 25 (Grub)
+    /// 
+    /// Splits when rescuing grub #25
+    Grub25,
+    /// Rescued Grub 26 (Grub)
+    /// 
+    /// Splits when rescuing grub #26
+    Grub26,
+    /// Rescued Grub 27 (Grub)
+    /// 
+    /// Splits when rescuing grub #27
+    Grub27,
+    /// Rescued Grub 28 (Grub)
+    /// 
+    /// Splits when rescuing grub #28
+    Grub28,
+    /// Rescued Grub 29 (Grub)
+    /// 
+    /// Splits when rescuing grub #29
+    Grub29,
+    /// Rescued Grub 30 (Grub)
+    /// 
+    /// Splits when rescuing grub #30
+    Grub30,
+    /// Rescued Grub 31 (Grub)
+    /// 
+    /// Splits when rescuing grub #31
+    Grub31,
+    /// Rescued Grub 32 (Grub)
+    /// 
+    /// Splits when rescuing grub #32
+    Grub32,
+    /// Rescued Grub 33 (Grub)
+    /// 
+    /// Splits when rescuing grub #33
+    Grub33,
+    /// Rescued Grub 34 (Grub)
+    /// 
+    /// Splits when rescuing grub #34
+    Grub34,
+    /// Rescued Grub 35 (Grub)
+    /// 
+    /// Splits when rescuing grub #35
+    Grub35,
+    /// Rescued Grub 36 (Grub)
+    /// 
+    /// Splits when rescuing grub #36
+    Grub36,
+    /// Rescued Grub 37 (Grub)
+    /// 
+    /// Splits when rescuing grub #37
+    Grub37,
+    /// Rescued Grub 38 (Grub)
+    /// 
+    /// Splits when rescuing grub #38
+    Grub38,
+    /// Rescued Grub 39 (Grub)
+    /// 
+    /// Splits when rescuing grub #39
+    Grub39,
+    /// Rescued Grub 40 (Grub)
+    /// 
+    /// Splits when rescuing grub #40
+    Grub40,
+    /// Rescued Grub 41 (Grub)
+    /// 
+    /// Splits when rescuing grub #41
+    Grub41,
+    /// Rescued Grub 42 (Grub)
+    /// 
+    /// Splits when rescuing grub #42
+    Grub42,
+    /// Rescued Grub 43 (Grub)
+    /// 
+    /// Splits when rescuing grub #43
+    Grub43,
+    /// Rescued Grub 44 (Grub)
+    /// 
+    /// Splits when rescuing grub #44
+    Grub44,
+    /// Rescued Grub 45 (Grub)
+    /// 
+    /// Splits when rescuing grub #45
+    Grub45,
+    /// Rescued Grub 46 (Grub)
+    /// 
+    /// Splits when rescuing grub #46
+    Grub46,
     // endregion: Grubs
 
     // region: Dirtmouth
@@ -1771,6 +1935,47 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub3 => g.grubs_collected(p).is_some_and(|g| g == 3),
         Split::Grub4 => g.grubs_collected(p).is_some_and(|g| g == 4),
         Split::Grub5 => g.grubs_collected(p).is_some_and(|g| g == 5),
+        Split::Grub6 => g.grubs_collected(p).is_some_and(|g| g == 6),
+        Split::Grub7 => g.grubs_collected(p).is_some_and(|g| g == 7),
+        Split::Grub8 => g.grubs_collected(p).is_some_and(|g| g == 8),
+        Split::Grub9 => g.grubs_collected(p).is_some_and(|g| g == 9),
+        Split::Grub10 => g.grubs_collected(p).is_some_and(|g| g == 10),
+        Split::Grub11 => g.grubs_collected(p).is_some_and(|g| g == 11),
+        Split::Grub12 => g.grubs_collected(p).is_some_and(|g| g == 12),
+        Split::Grub13 => g.grubs_collected(p).is_some_and(|g| g == 13),
+        Split::Grub14 => g.grubs_collected(p).is_some_and(|g| g == 14),
+        Split::Grub15 => g.grubs_collected(p).is_some_and(|g| g == 15),
+        Split::Grub16 => g.grubs_collected(p).is_some_and(|g| g == 16),
+        Split::Grub17 => g.grubs_collected(p).is_some_and(|g| g == 17),
+        Split::Grub18 => g.grubs_collected(p).is_some_and(|g| g == 18),
+        Split::Grub19 => g.grubs_collected(p).is_some_and(|g| g == 19),
+        Split::Grub20 => g.grubs_collected(p).is_some_and(|g| g == 20),
+        Split::Grub21 => g.grubs_collected(p).is_some_and(|g| g == 21),
+        Split::Grub22 => g.grubs_collected(p).is_some_and(|g| g == 22),
+        Split::Grub23 => g.grubs_collected(p).is_some_and(|g| g == 23),
+        Split::Grub24 => g.grubs_collected(p).is_some_and(|g| g == 24),
+        Split::Grub25 => g.grubs_collected(p).is_some_and(|g| g == 25),
+        Split::Grub26 => g.grubs_collected(p).is_some_and(|g| g == 26),
+        Split::Grub27 => g.grubs_collected(p).is_some_and(|g| g == 27),
+        Split::Grub28 => g.grubs_collected(p).is_some_and(|g| g == 28),
+        Split::Grub29 => g.grubs_collected(p).is_some_and(|g| g == 29),
+        Split::Grub30 => g.grubs_collected(p).is_some_and(|g| g == 30),
+        Split::Grub31 => g.grubs_collected(p).is_some_and(|g| g == 31),
+        Split::Grub32 => g.grubs_collected(p).is_some_and(|g| g == 32),
+        Split::Grub33 => g.grubs_collected(p).is_some_and(|g| g == 33),
+        Split::Grub34 => g.grubs_collected(p).is_some_and(|g| g == 34),
+        Split::Grub35 => g.grubs_collected(p).is_some_and(|g| g == 35),
+        Split::Grub36 => g.grubs_collected(p).is_some_and(|g| g == 36),
+        Split::Grub37 => g.grubs_collected(p).is_some_and(|g| g == 37),
+        Split::Grub38 => g.grubs_collected(p).is_some_and(|g| g == 38),
+        Split::Grub39 => g.grubs_collected(p).is_some_and(|g| g == 39),
+        Split::Grub40 => g.grubs_collected(p).is_some_and(|g| g == 40),
+        Split::Grub41 => g.grubs_collected(p).is_some_and(|g| g == 41),
+        Split::Grub42 => g.grubs_collected(p).is_some_and(|g| g == 42),
+        Split::Grub43 => g.grubs_collected(p).is_some_and(|g| g == 43),
+        Split::Grub44 => g.grubs_collected(p).is_some_and(|g| g == 44),
+        Split::Grub45 => g.grubs_collected(p).is_some_and(|g| g == 45),
+        Split::Grub46 => g.grubs_collected(p).is_some_and(|g| g == 46),
         // endregion: Grubs
         // region: Dirtmouth
         Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
