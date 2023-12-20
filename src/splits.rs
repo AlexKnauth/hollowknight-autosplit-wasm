@@ -96,10 +96,18 @@ pub enum Split {
     /// 
     /// Splits when obtaining Vengeful Spirit
     VengefulSpirit,
+    /// Has Vengeful Spirit (Transition)
+    /// 
+    /// Splits on transition after Vengeful Spirit acquired
+    TransVS,
     /// Shade Soul (Skill)
     /// 
     /// Splits when obtaining Shade Soul
     ShadeSoul,
+    /// Has Shade Soul (Transition)
+    /// 
+    /// Splits on transition after Shade Soul acquired
+    TransShadeSoul,
     MenuShadeSoul,
     /// Desolate Dive (Skill)
     /// 
@@ -140,6 +148,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining Mantis Claw
     MantisClaw,
+    /// Has Claw (Transition)
+    /// 
+    /// Splits on transition after Mantis Claw acquired
+    TransClaw,
     /// Main Menu w/ Claw (Menu)
     /// 
     /// Splits on transition to the main menu after Mantis Claw acquired
@@ -157,6 +169,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining Isma's Tear
     IsmasTear,
+    /// Has Isma's Tear (Transition)
+    /// 
+    /// Splits on transition after Isma's Tear acquired
+    TransTear,
     /// Main Menu w/ Isma's Tear (Menu)
     /// 
     /// Splits on transition to the main menu after Isma's Tear acquired
@@ -1425,6 +1441,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Crossroads
         Split::EnterBroodingMawlek => p.current == "Crossroads_09" && p.current != p.old,
         Split::AncestralMound => p.current == "Crossroads_ShamanTemple" && p.current != p.old,
+        Split::TransVS => 1 <= pds.get_fireball_level(prc, g) && p.current != p.old,
         Split::SalubraExit => p.old == "Room_Charm_Shop" && p.current != p.old,
         Split::EnterHollowKnight => p.current == "Room_Final_Boss_Core" && p.current != p.old,
         Split::HollowKnightDreamnail => p.current.starts_with("Dream_Final") && p.current != p.old,
@@ -1440,6 +1457,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::FungalWastesEntry => starts_with_any(p.current, FUNGAL_WASTES_ENTRY_SCENES) && p.current != p.old,
         Split::ElderHuTrans => pds.killed_ghost_hu(prc, g) && p.current != p.old,
         Split::MenuDashmaster => pds.got_charm_31(prc, g) && is_menu(p.current),
+        Split::TransClaw => pds.has_wall_jump(prc, g) && p.current != p.old,
         Split::MenuClaw => pds.has_wall_jump(prc, g) && is_menu(p.current),
         Split::MenuMantisJournal => is_menu(p.current) && p.old == "Fungus2_17",
         // endregion: Fungal
@@ -1458,6 +1476,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterSanctum => p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23"),
         Split::EnterSoulMaster => p.current.starts_with("Ruins1_24") && p.current != p.old,
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
+        Split::TransShadeSoul => 2 <= pds.get_fireball_level(prc, g) && p.current != p.old,
         Split::MenuShadeSoul => 2 <= pds.get_fireball_level(prc, g) && is_menu(p.current),
         Split::EnterBlackKnight => p.current == "Ruins2_03" && p.current != p.old,
         Split::BlackKnightTrans => pds.killed_black_knight(prc, g) && p.current != p.old,
@@ -1473,6 +1492,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Peak
         // region: Waterways
         Split::DungDefenderExit => p.old == "Waterways_05" && p.current == "Abyss_01",
+        Split::TransTear => pds.has_acid_armour(prc, g) && p.current != p.old,
         Split::MenuIsmasTear => pds.has_acid_armour(prc, g) && is_menu(p.current),
         Split::EnterJunkPit => p.current == "GG_Waterways" && p.current != p.old,
         // endregion: Waterways
@@ -1544,7 +1564,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Dreamers
         // region: Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
+        Split::TransVS => { pds.get_fireball_level(p, g); false },
         Split::ShadeSoul => g.get_fireball_level(p).is_some_and(|l| 2 <= l),
+        Split::TransShadeSoul => { pds.get_fireball_level(p, g); false },
         Split::MenuShadeSoul => { pds.get_fireball_level(p, g); false },
         Split::DesolateDive => g.get_quake_level(p).is_some_and(|l| 1 <= l),
         Split::DescendingDark => g.get_quake_level(p).is_some_and(|l| 2 <= l),
@@ -1557,11 +1579,13 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MenuCloak => { pds.has_dash(p, g); false },
         Split::ShadeCloak => g.has_shadow_dash(p).is_some_and(|s| s),
         Split::MantisClaw => g.has_wall_jump(p).is_some_and(|w| w),
+        Split::TransClaw => { pds.has_wall_jump(p, g); false },
         Split::MenuClaw => { pds.has_wall_jump(p, g); false },
         Split::MonarchWings => g.has_double_jump(p).is_some_and(|w| w),
         Split::MenuWings => { pds.has_double_jump(p, g); false },
         Split::CrystalHeart => g.has_super_dash(p).is_some_and(|s| s),
         Split::IsmasTear => g.has_acid_armour(p).is_some_and(|a| a),
+        Split::TransTear => { pds.has_acid_armour(p, g); false },
         Split::MenuIsmasTear => { pds.has_acid_armour(p, g); false },
         // endregion: Movement Abilities
         // region: Nail Arts
