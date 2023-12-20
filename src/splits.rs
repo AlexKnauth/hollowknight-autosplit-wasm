@@ -1206,14 +1206,62 @@ pub enum Split {
     MarkothEssence,
     // endregion: Kingdom's Edge
     // region: Colosseum
+    /// Colosseum Unlocked 1 (Trial)
+    /// 
+    /// Splits when the knight unlocks the Trial of the Warrior at Little Fool
+    ColosseumBronzeUnlocked,
+    /// Colosseum Entrance 1 (Transition)
+    /// 
+    /// Splits on the transition into the Trial of the Warrior
+    ColosseumBronzeEntry,
     /// Zote Defeated - Colosseum (Mini Boss)
     /// 
     /// Splits when defeating Zote in the Colosseum
     ZoteKilled,
+    /// Colosseum Fight 1 (Trial)
+    /// 
+    /// Splits when beating the Trial of the Warrior
+    ColosseumBronze,
+    /// Colosseum Exit 1 (Transition)
+    /// 
+    /// Splits on the transition out of the trial, or in the load-in after quitout
+    ColosseumBronzeExit,
+    /// Colosseum Unlocked 2 (Trial)
+    /// 
+    /// Splits when the knight unlocks the Trial of the Conqueror at Little Fool
+    ColosseumSilverUnlocked,
+    /// Colosseum Entrance 2 (Transition)
+    /// 
+    /// Splits on the transition into the Trial of the Conqueror
+    ColosseumSilverEntry,
+    /// Colosseum Fight 2 (Trial)
+    /// 
+    /// Splits when beating the Trial of the Conqueror
+    ColosseumSilver,
+    /// Colosseum Exit 2 (Transition)
+    /// 
+    /// Splits on the transition out of the trial, or in the load-in after quitout
+    ColosseumSilverExit,
+    /// Colosseum Unlocked 3 (Trial)
+    /// 
+    /// Splits when the knight unlocks the Trial of the Fool at Little Fool
+    ColosseumGoldUnlocked,
+    /// Colosseum Entrance 3 (Transition)
+    /// 
+    /// Splits on the transition into the Trial of the Warrior
+    ColosseumGoldEntry,
     /// God Tamer (Boss)
     /// 
     /// Splits when killing the God Tamer
     GodTamer,
+    /// Colosseum Fight 3 (Trial)
+    /// 
+    /// Splits when beating the Trial of the Warrior
+    ColosseumGold,
+    /// Colosseum Exit 3 (Transition)
+    /// 
+    /// Splits on the transition out of the trial, or in the load-in after quitout
+    ColosseumGoldExit,
     // endregion: Colosseum
     // region: Fog Canyon
     /// Teachers Archive (Area)
@@ -1436,6 +1484,14 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterHiveKnight => p.current.starts_with("Hive_05") && p.current != p.old,
         Split::EnterHornet2 => p.current.starts_with("Deepnest_East_Hornet") && p.current != p.old,
         // endregion: Kingdom's Edge
+        // region: Colosseum
+        Split::ColosseumBronzeEntry => p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Bronze",
+        Split::ColosseumBronzeExit => pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Bronze"),
+        Split::ColosseumSilverEntry => p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Silver",
+        Split::ColosseumSilverExit => pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Silver"),
+        Split::ColosseumGoldEntry => p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Gold",
+        Split::ColosseumGoldExit => pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Gold"),
+        // endregion: Colosseum
         // region: Fog Canyon
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
         // endregion: Fog Canyon
@@ -1774,8 +1830,17 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
         // endregion: Kingdom's Edge
         // region: Colosseum
+        Split::ColosseumBronzeUnlocked => g.colosseum_bronze_opened(p).is_some_and(|o| o),
         Split::ZoteKilled => g.killed_zote(p).is_some_and(|k| k),
+        Split::ColosseumBronze => g.colosseum_bronze_completed(p).is_some_and(|c| c),
+        Split::ColosseumBronzeExit => { pds.colosseum_bronze_completed(p, g); false },
+        Split::ColosseumSilverUnlocked => g.colosseum_silver_opened(p).is_some_and(|o| o),
+        Split::ColosseumSilver => g.colosseum_silver_completed(p).is_some_and(|c| c),
+        Split::ColosseumSilverExit => { pds.colosseum_silver_completed(p, g); false },
+        Split::ColosseumGoldUnlocked => g.colosseum_gold_opened(p).is_some_and(|o| o),
         Split::GodTamer => g.killed_lobster_lancer(p).is_some_and(|k| k),
+        Split::ColosseumGold => g.colosseum_gold_completed(p).is_some_and(|c| c),
+        Split::ColosseumGoldExit => { pds.colosseum_gold_completed(p, g); false },
         // endregion: Colosseum
         // region: Fog Canyon
         Split::UumuuEncountered => g.encountered_mega_jelly(p).is_some_and(|b| b),
