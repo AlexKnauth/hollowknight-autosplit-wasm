@@ -10,11 +10,11 @@ use crate::{splits::{Split, self}, auto_splitter_settings::{Settings, SettingsOb
 
 #[derive(Gui)]
 pub struct SettingsGui {
-    /// General Settings
-    _general_settings: Title,
     /// Import Splits
     #[filter((_, "*.lss *.lsl"))]
     import: Pair<FileSelect>,
+    /// General Settings
+    _general_settings: Title,
     /// Splits
     #[heading_level = 1]
     splits: UglyList<Split>,
