@@ -2048,6 +2048,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Peak
         Split::HuskMiner => pds.decremented_kills_zombie_miner(p, g),
         Split::CrystalGuardian1 => g.defeated_mega_beam_miner(p).is_some_and(|k| k),
+        Split::CrystalGuardian2 => g.kills_mega_beam_miner(p).is_some_and(|k| k == 0),
         Split::MineLiftOpened => g.mine_lift_opened(p).is_some_and(|o| o),
         // endregion: Peak
         // region: Waterways
