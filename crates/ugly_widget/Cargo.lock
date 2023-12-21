@@ -11,7 +11,7 @@ checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=mono-3#32e9fac030f7913c6d6f67a008dcb0d2560e015e"
+source = "git+https://github.com/AlexKnauth/asr?branch=mono-3#4a4890ecb3766bb589f44e7edc8a4d7e2942e56b"
 dependencies = [
  "arrayvec",
  "asr-derive",
@@ -25,9 +25,10 @@ dependencies = [
 [[package]]
 name = "asr-derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=mono-3#32e9fac030f7913c6d6f67a008dcb0d2560e015e"
+source = "git+https://github.com/AlexKnauth/asr?branch=mono-3#4a4890ecb3766bb589f44e7edc8a4d7e2942e56b"
 dependencies = [
  "heck",
+ "proc-macro2",
  "quote",
  "syn",
 ]
@@ -87,9 +88,9 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.69"
+version = "1.0.70"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "134c189feb4956b20f6f547d2cf727d4c0fe06722b20a0eec87ed445a97f92da"
+checksum = "39278fbbf5fb4f646ce651690877f89d1c5811a3d4acb27700c1cb3cdb78fd3b"
 dependencies = [
  "unicode-ident",
 ]
@@ -105,9 +106,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.39"
+version = "2.0.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23e78b90f2fcf45d3e842032ce32e3f2d1545ba6636271dcbf24fa306d87be7a"
+checksum = "5b7d0a2c048d661a1a59fcd7355baa232f7ed34e0ee4df2eef3c1c1c0d3852d8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -136,6 +137,15 @@ name = "ugly_widget"
 version = "0.1.0"
 dependencies = [
  "asr",
+ "ugly_widget_derive",
+]
+
+[[package]]
+name = "ugly_widget_derive"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]
