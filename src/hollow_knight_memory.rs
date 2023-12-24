@@ -82,6 +82,12 @@ pub const CRYSTAL_PEAK_ENTRY_SCENES: &[&str] = &[
     "Mines_10",
 ];
 
+pub const WATERWAYS_ENTRY_SCENES: &[&str] = &[
+    "Waterways_01", // Simple Key manhole entrance
+    // Note: Waterways_06 does not show the Area Text
+    "Waterways_07", // Where the Spike-tunnel and KE-Tram-CDash entrances meet
+];
+
 pub const FOG_CANYON_ENTRY_SCENES: &[&str] = &[
     "Fungus3_01", // West Fog Canyon entrance from Greenpath
     "Fungus3_02", // West Fog Canyon entrance from Queen's Station or QGA
