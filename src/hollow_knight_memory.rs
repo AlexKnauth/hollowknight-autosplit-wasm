@@ -340,6 +340,7 @@ struct PlayerDataPointers {
     killed_gorgeous_husk: UnityPointer<3>,
     // Lemm
     met_relic_dealer_shop: UnityPointer<3>,
+    toll_bench_city: UnityPointer<3>,
     // Soul Master
     mage_lord_encountered: UnityPointer<3>,
     mage_lord_encountered_2: UnityPointer<3>,
@@ -354,10 +355,12 @@ struct PlayerDataPointers {
     defeated_mega_beam_miner: UnityPointer<3>,
     kills_mega_beam_miner: UnityPointer<3>,
     mine_lift_opened: UnityPointer<3>,
+    opened_waterways_manhole: UnityPointer<3>,
     killed_dung_defender: UnityPointer<3>,
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
+    toll_bench_abyss: UnityPointer<3>,
     // Broken Vessel
     killed_infected_knight: UnityPointer<3>,
     infected_knight_dream_defeated: UnityPointer<3>,
@@ -379,10 +382,12 @@ struct PlayerDataPointers {
     // Uumuu
     encountered_mega_jelly: UnityPointer<3>,
     killed_mega_jellyfish: UnityPointer<3>,
+    toll_bench_queens_gardens: UnityPointer<3>,
     killed_ghost_marmu: UnityPointer<3>,
     mum_caterpillar_defeated: UnityPointer<3>,
     killed_traitor_lord: UnityPointer<3>,
     zote_rescued_deepnest: UnityPointer<3>,
+    opened_tram_lower: UnityPointer<3>,
     // Nosk
     killed_mimic_spider: UnityPointer<3>,
     killed_ghost_galien: UnityPointer<3>,
@@ -566,6 +571,7 @@ impl PlayerDataPointers {
             opened_city_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCityGate"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
             met_relic_dealer_shop: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
+            toll_bench_city: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchCity"]),
             mage_lord_encountered: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordEncountered"]),
             mage_lord_encountered_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordEncountered_2"]),
             killed_mage_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMageLord"]),
@@ -578,10 +584,12 @@ impl PlayerDataPointers {
             defeated_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMegaBeamMiner"]),
             kills_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMegaBeamMiner"]),
             mine_lift_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mineLiftOpened"]),
+            opened_waterways_manhole: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedWaterwaysManhole"]),
             killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
+            toll_bench_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchAbyss"]),
             killed_infected_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedInfectedKnight"]),
             infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
             infected_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightOrbsCollected"]),
@@ -600,10 +608,12 @@ impl PlayerDataPointers {
             colosseum_gold_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumGoldCompleted"]),
             encountered_mega_jelly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "encounteredMegaJelly"]),
             killed_mega_jellyfish: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
+            toll_bench_queens_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchQueensGardens"]),
             killed_ghost_marmu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarmu"]),
             mum_caterpillar_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mumCaterpillarDefeated"]),
             killed_traitor_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedTraitorLord"]),
             zote_rescued_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteRescuedDeepnest"]),
+            opened_tram_lower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedTramLower"]),
             killed_mimic_spider: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMimicSpider"]),
             killed_ghost_galien: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostGalien"]),
             galien_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "galienDefeated"]),
@@ -1377,6 +1387,10 @@ impl GameManagerFinder {
         self.player_data_pointers.met_relic_dealer_shop.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn toll_bench_city(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.toll_bench_city.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn mage_lord_encountered(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.mage_lord_encountered.deref(process, &self.module, &self.image).ok()
     }
@@ -1423,6 +1437,10 @@ impl GameManagerFinder {
         self.player_data_pointers.mine_lift_opened.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn opened_waterways_manhole(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_waterways_manhole.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_dung_defender(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_dung_defender.deref(process, &self.module, &self.image).ok()
     }
@@ -1437,6 +1455,10 @@ impl GameManagerFinder {
 
     pub fn killed_fluke_mother(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_fluke_mother.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn toll_bench_abyss(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.toll_bench_abyss.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_infected_knight(&self, process: &Process) -> Option<bool> {
@@ -1511,6 +1533,10 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_mega_jellyfish.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn toll_bench_queens_gardens(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.toll_bench_queens_gardens.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_ghost_marmu(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_ghost_marmu.deref(process, &self.module, &self.image).ok()
     }
@@ -1525,6 +1551,11 @@ impl GameManagerFinder {
     pub fn zote_rescued_deepnest(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.zote_rescued_deepnest.deref(process, &self.module, &self.image).ok()
     }
+
+    pub fn opened_tram_lower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.opened_tram_lower.deref(process, &self.module, &self.image).ok()
+    }
+
 
     pub fn killed_mimic_spider(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_mimic_spider.deref(process, &self.module, &self.image).ok()

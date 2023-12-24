@@ -1227,6 +1227,10 @@ pub enum Split {
     /// 
     /// Splits when talking to Lemm in the shop for the first time
     Lemm2,
+    /// Sanctum Bench (Toll)
+    /// 
+    /// Splits when buying City/Sanctum toll bench by Cornifer's location
+    TollBenchCity,
     /// Soul Sanctum (Transition)
     /// 
     /// Splits when entering Soul Sanctum
@@ -1314,6 +1318,10 @@ pub enum Split {
     MineLiftOpened,
     // endregion: Peak
     // region: Waterways
+    /// Waterways Manhole (Toll)
+    /// 
+    /// Splits when opening the Waterways Manhole
+    WaterwaysManhole,
     /// Dung Defender (Boss)
     /// 
     /// Splits when killing Dung Defender
@@ -1341,6 +1349,10 @@ pub enum Split {
     /// 
     /// Splits on transition to Ancient Basin
     BasinEntry,
+    /// Basin Bench (Toll)
+    /// 
+    /// Splits when buying Ancient Basin toll bench
+    TollBenchBasin,
     Abyss19from18,
     /// Broken Vessel (Boss)
     /// 
@@ -1470,6 +1482,10 @@ pub enum Split {
     /// 
     /// Splits on transition to QG scene following QGA or above Deepnest
     QueensGardensEntry,
+    /// Queen's Garden Bench (Toll)
+    /// 
+    /// Splits when buying Queen's Garden toll bench
+    TollBenchQG,
     /// Marmu (Boss)
     /// 
     /// Splits when killing Marmu
@@ -1492,6 +1508,10 @@ pub enum Split {
     /// 
     /// Splits when rescuing Zote in Deepnest
     Zote2,
+    /// Tram Deepnest (Tram)
+    /// 
+    /// Splits when unlocking the tram in Deepnest
+    TramDeepnest,
     /// Nosk (Transition)
     /// 
     /// Splits when entering Nosk boss arena transition
@@ -2039,6 +2059,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::TransGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },
         Split::MenuGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },
         Split::Lemm2 => g.met_relic_dealer_shop(p).is_some_and(|m| m),
+        Split::TollBenchCity => g.toll_bench_city(p).is_some_and(|b| b),
         Split::SoulMasterEncountered => g.mage_lord_encountered(p).is_some_and(|b| b),
         Split::SoulMasterPhase1 => g.mage_lord_encountered_2(p).is_some_and(|b| b),
         Split::SoulMaster => g.killed_mage_lord(p).is_some_and(|k| k),
@@ -2057,15 +2078,19 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MineLiftOpened => g.mine_lift_opened(p).is_some_and(|o| o),
         // endregion: Peak
         // region: Waterways
+        Split::WaterwaysManhole => g.opened_waterways_manhole(p).is_some_and(|o| o),
         Split::DungDefender => g.killed_dung_defender(p).is_some_and(|k| k),
         Split::WhiteDefender => g.killed_white_defender(p).is_some_and(|k| k),
         Split::WhiteDefenderEssence => g.white_defender_orbs_collected(p).is_some_and(|o| o),
         Split::Flukemarm => g.killed_fluke_mother(p).is_some_and(|k| k),
+        // endregion: Waterways
+        // region: Basin
+        Split::TollBenchBasin => g.toll_bench_abyss(p).is_some_and(|b| b),
         Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
         Split::BrokenVesselTrans => { pds.killed_infected_knight(p, g); false },
         Split::LostKin => g.infected_knight_dream_defeated(p).is_some_and(|k| k),
         Split::LostKinEssence => g.infected_knight_orbs_collected(p).is_some_and(|o| o),
-        // endregion: Waterways
+        // endregion: Basin
         // region: Kingdom's Edge
         Split::HiveKnight => g.killed_hive_knight(p).is_some_and(|k| k),
         Split::GreatHopper => g.killed_giant_hopper(p).is_some_and(|k| k),
@@ -2091,12 +2116,14 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Uumuu => g.killed_mega_jellyfish(p).is_some_and(|k| k),
         // endregion: Fog Canyon
         // region: Queen's Gardens
+        Split::TollBenchQG => g.toll_bench_queens_gardens(p).is_some_and(|b| b),
         Split::Marmu => g.killed_ghost_marmu(p).is_some_and(|k| k),
         Split::MarmuEssence => g.mum_caterpillar_defeated(p).is_some_and(|d| d == 2),
         Split::TraitorLord => g.killed_traitor_lord(p).is_some_and(|k| k),
         // endregion: Queen's Gardens
         // region: Deepnest
         Split::Zote2 => g.zote_rescued_deepnest(p).is_some_and(|z| z),
+        Split::TramDeepnest => g.opened_tram_lower(p).is_some_and(|o| o),
         Split::Nosk => g.killed_mimic_spider(p).is_some_and(|k| k),
         Split::Galien => g.killed_ghost_galien(p).is_some_and(|k| k),
         Split::GalienEssence => g.galien_defeated(p).is_some_and(|d| d == 2),
