@@ -1354,6 +1354,10 @@ pub enum Split {
     /// 
     /// Splits when opening the Waterways Manhole
     WaterwaysManhole,
+    /// Waterways (Transition)
+    /// 
+    /// Splits on transition to Waterways
+    WaterwaysEntry,
     /// Royal Waterways (Area)
     /// 
     /// Splits when entering Royal Waterways text first appears
@@ -1538,6 +1542,10 @@ pub enum Split {
     ColosseumGoldExit,
     // endregion: Colosseum
     // region: Fog Canyon
+    /// Fog Canyon (Transition)
+    /// 
+    /// Splits on transition to Fog Canyon
+    FogCanyonEntry,
     /// Fog Canyon (Area)
     /// 
     /// Splits when entering Fog Canyon text first appears
@@ -1789,6 +1797,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::CrystalMoundExit => p.old.starts_with("Mines_35") && p.current != p.old,
         // endregion: Peak
         // region: Waterways
+        Split::WaterwaysEntry => starts_with_any(p.current, WATERWAYS_ENTRY_SCENES) && p.current != p.old,
         Split::DungDefenderExit => p.old == "Waterways_05" && p.current == "Abyss_01",
         Split::TransTear => pds.has_acid_armour(prc, g) && p.current != p.old,
         Split::MenuIsmasTear => pds.has_acid_armour(prc, g) && is_menu(p.current),
@@ -1821,6 +1830,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::ColosseumGoldExit => pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Gold"),
         // endregion: Colosseum
         // region: Fog Canyon
+        Split::FogCanyonEntry => starts_with_any(p.current, FOG_CANYON_ENTRY_SCENES) && p.current != p.old,
         Split::TeachersArchive => p.current.starts_with("Fungus3_archive") && !p.old.starts_with("Fungus3_archive"),
         // endregion: Fog Canyon
         // region: Queen's Gardens
