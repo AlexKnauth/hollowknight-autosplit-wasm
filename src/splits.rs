@@ -1313,6 +1313,10 @@ pub enum Split {
     /// 
     /// Splits on transition after defeating the Collector
     TransCollector,
+    /// Nailsmith Killed (Event)
+    /// 
+    /// Splits when Nailsmith is killed
+    NailsmithKilled,
     // endregion: City
     // region: Peak
     /// Crystal Peak Entry (Transition)
@@ -2208,6 +2212,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::BlackKnightTrans => { pds.killed_black_knight(p, g); false },
         Split::Collector => g.collector_defeated(p).is_some_and(|k| k),
         Split::TransCollector => { pds.collector_defeated(p, g); false },
+        Split::NailsmithKilled => g.nailsmith_killed(p).is_some_and(|k| k),
         // endregion: City
         // region: Peak
         Split::CrystalPeak => g.visited_mines(p).is_some_and(|v| v),
