@@ -1221,10 +1221,26 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Xero
     XeroEssence,
+    /// Spirit Glade Door (Event)
+    /// 
+    /// Splits when the Seer opens the Spirits' Glade after bringing back 200 essence
+    SpiritGladeOpen,
+    /// Seer Departs (Event)
+    /// 
+    /// Splits when the Seer Departs after bringing back 2400 essence
+    SeerDeparts,
     /// Catacombs Entry (Transition)
     /// 
     /// Splits on entry to the catacombs below Resting Grounds
     CatacombsEntry,
+    /// Met Grey Mourner (NPC)
+    /// 
+    /// Splits when talking to Grey Mourner for the first time
+    MetGreyMourner,
+    /// Mourner w/ Seer Ascended (NPC)
+    /// 
+    /// Splits when both talked to Grey Mourner and Seer has ascended
+    GreyMournerSeerAscended,
     // endregion: Resting Grounds
     // region: City
     /// City Gate (Event)
