@@ -1426,6 +1426,14 @@ pub enum Split {
     WhitePalaceSecretRoom,
     // endregion: White Palace
     // region: Kingdom's Edge
+    /// Kingdom's Edge (Transition)
+    /// 
+    /// Splits on transition to Kingdom's Edge from King's Station
+    // Question: should this be any entrance to Kingdom's Edge,
+    //           or just the King's Station entrance?
+    //           Maybe the room off the side of the RG elevator shouldn't count,
+    //           but what about the Tram entrance?
+    KingdomsEdgeEntry,
     /// Kingdom's Edge (Area)
     /// 
     /// Splits when entering Kingdom's Edge text first appears
@@ -1797,6 +1805,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::WhitePalaceEntry => p.current.starts_with("qWhite_Palace_11") && p.current != p.old,
         // endregion: White Palace
         // region: Kingdom's Edge
+        // Deepnest_East_03 is the KE room with Cornifer, acid, and raining fools,
+        // where the King's Station and Tram entrances meet
+        Split::KingdomsEdgeEntry => p.current.starts_with("Deepnest_East_03") && p.current != p.old,
         Split::HiveEntry => p.current.starts_with("Hive_01") && p.current != p.old,
         Split::EnterHiveKnight => p.current.starts_with("Hive_05") && p.current != p.old,
         Split::EnterHornet2 => p.current.starts_with("Deepnest_East_Hornet") && p.current != p.old,
