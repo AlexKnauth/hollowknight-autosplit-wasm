@@ -1592,6 +1592,10 @@ pub enum Split {
     /// 
     /// Splits on transition to room after upper arena in QG
     QueensGardensPostArenaTransition,
+    /// Flower Quest (Event)
+    /// 
+    /// Splits when placing the flower at the grave of the Traitors' Child
+    FlowerQuest,
     /// Queen's Garden - Frogs (Transition)
     /// 
     /// Splits on transition to QG frogs scene
@@ -2275,6 +2279,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Queen's Gardens
         Split::QueensGardens => g.visited_royal_gardens(p).is_some_and(|v| v),
         Split::TollBenchQG => g.toll_bench_queens_gardens(p).is_some_and(|b| b),
+        Split::FlowerQuest => g.xun_flower_given(p).is_some_and(|g| g),
         Split::Marmu => g.killed_ghost_marmu(p).is_some_and(|k| k),
         Split::MarmuEssence => g.mum_caterpillar_defeated(p).is_some_and(|d| d == 2),
         Split::TraitorLord => g.killed_traitor_lord(p).is_some_and(|k| k),

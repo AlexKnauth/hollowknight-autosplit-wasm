@@ -417,6 +417,7 @@ struct PlayerDataPointers {
     killed_mega_jellyfish: UnityPointer<3>,
     visited_royal_gardens: UnityPointer<3>,
     toll_bench_queens_gardens: UnityPointer<3>,
+    xun_flower_given: UnityPointer<3>,
     killed_ghost_marmu: UnityPointer<3>,
     mum_caterpillar_defeated: UnityPointer<3>,
     killed_traitor_lord: UnityPointer<3>,
@@ -665,6 +666,7 @@ impl PlayerDataPointers {
             killed_mega_jellyfish: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
             visited_royal_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRoyalGardens"]),
             toll_bench_queens_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchQueensGardens"]),
+            xun_flower_given: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "xunFlowerGiven"]),
             killed_ghost_marmu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarmu"]),
             mum_caterpillar_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mumCaterpillarDefeated"]),
             killed_traitor_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedTraitorLord"]),
@@ -1670,6 +1672,10 @@ impl GameManagerFinder {
 
     pub fn toll_bench_queens_gardens(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.toll_bench_queens_gardens.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn xun_flower_given(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.xun_flower_given.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_ghost_marmu(&self, process: &Process) -> Option<bool> {
