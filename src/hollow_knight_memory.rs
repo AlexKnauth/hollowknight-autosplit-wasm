@@ -397,6 +397,7 @@ struct PlayerDataPointers {
     hornet_outskirts_defeated: UnityPointer<3>,
     killed_ghost_markoth: UnityPointer<3>,
     markoth_defeated: UnityPointer<3>,
+    little_fool_met: UnityPointer<3>,
     colosseum_bronze_opened: UnityPointer<3>,
     seen_colosseum_title: UnityPointer<3>,
     killed_zote: UnityPointer<3>,
@@ -643,6 +644,7 @@ impl PlayerDataPointers {
             hornet_outskirts_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hornetOutskirtsDefeated"]),
             killed_ghost_markoth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarkoth"]),
             markoth_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "markothDefeated"]),
+            little_fool_met: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "littleFoolMet"]),
             colosseum_bronze_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumBronzeOpened"]),
             seen_colosseum_title: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "seenColosseumTitle"]),
             killed_zote: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedZote"]),
@@ -1588,6 +1590,10 @@ impl GameManagerFinder {
     }
     pub fn markoth_defeated(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.markoth_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn little_fool_met(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.little_fool_met.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn colosseum_bronze_opened(&self, process: &Process) -> Option<bool> {

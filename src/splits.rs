@@ -1480,6 +1480,10 @@ pub enum Split {
     MarkothEssence,
     // endregion: Kingdom's Edge
     // region: Colosseum
+    /// Little Fool (NPC)
+    /// 
+    /// Splits when talking to the Little Fool for the first time
+    LittleFool,
     /// Colosseum Unlocked 1 (Trial)
     /// 
     /// Splits when the knight unlocks the Trial of the Warrior at Little Fool
@@ -2239,6 +2243,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MarkothEssence => g.markoth_defeated(p).is_some_and(|d| d == 2),
         // endregion: Kingdom's Edge
         // region: Colosseum
+        Split::LittleFool => g.little_fool_met(p).is_some_and(|m| m),
         Split::ColosseumBronzeUnlocked => g.colosseum_bronze_opened(p).is_some_and(|o| o),
         Split::Colosseum => g.seen_colosseum_title(p).is_some_and(|s| s),
         Split::ZoteKilled => g.killed_zote(p).is_some_and(|k| k),
