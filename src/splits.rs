@@ -1560,6 +1560,14 @@ pub enum Split {
     /// 
     /// Splits when buying Queen's Garden toll bench
     TollBenchQG,
+    /// Queen's Garden - Post-Upper Arena (Transition)
+    /// 
+    /// Splits on transition to room after upper arena in QG
+    QueensGardensPostArenaTransition,
+    /// Queen's Garden - Frogs (Transition)
+    /// 
+    /// Splits on transition to QG frogs scene
+    QueensGardensFrogsTrans,
     /// Marmu (Boss)
     /// 
     /// Splits when killing Marmu
@@ -1806,6 +1814,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Fog Canyon
         // region: Queen's Gardens
         Split::QueensGardensEntry => starts_with_any(p.current, QUEENS_GARDENS_ENTRY_SCENES) && p.current != p.old,
+        Split::QueensGardensPostArenaTransition => p.current.starts_with("Fungus3_13") && p.current != p.old,
+        // Fungus1_23 is the first frogs room in QG, even though QG usually uses Fungus3, and GP usually uses Fungus1
+        Split::QueensGardensFrogsTrans => p.current.starts_with("Fungus1_23") && p.current != p.old,
         // endregion: Queen's Gardens
         // region: Deepnest
         Split::EnterDeepnest => starts_with_any(p.current, DEEPNEST_ENTRY_SCENES) && p.current != p.old,
