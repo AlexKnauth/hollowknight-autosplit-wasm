@@ -302,10 +302,13 @@ struct PlayerDataPointers {
     royal_charm_state: UnityPointer<3>,
     got_shade_charm: UnityPointer<3>,
     grubs_collected: UnityPointer<3>,
+    visited_dirtmouth: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
     killed_nightmare_grimm: UnityPointer<3>,
     killed_grey_prince: UnityPointer<3>,
     grey_prince_orbs_collected: UnityPointer<3>,
+    visited_crossroads: UnityPointer<3>,
+    crossroads_infected: UnityPointer<3>,
     killed_mender_bug: UnityPointer<3>,
     killed_mawlek: UnityPointer<3>,
     // Gruz Mother
@@ -317,6 +320,7 @@ struct PlayerDataPointers {
     unchained_hollow_knight: UnityPointer<3>,
     killed_hollow_knight: UnityPointer<3>,
     killed_final_boss: UnityPointer<3>,
+    visited_greenpath: UnityPointer<3>,
     killed_moss_knight: UnityPointer<3>,
     zote_rescued_buzzer: UnityPointer<3>,
     killed_hornet: UnityPointer<3>,
@@ -325,6 +329,7 @@ struct PlayerDataPointers {
     killed_ghost_no_eyes: UnityPointer<3>,
     no_eyes_defeated: UnityPointer<3>,
     mega_moss_charger_defeated: UnityPointer<3>,
+    visited_fungus: UnityPointer<3>,
     killed_ghost_hu: UnityPointer<3>,
     elder_hu_defeated: UnityPointer<3>,
     bretta_rescued: UnityPointer<3>,
@@ -334,9 +339,11 @@ struct PlayerDataPointers {
     aladar_slug_defeated: UnityPointer<3>,
     nightmare_lantern_lit: UnityPointer<3>,
     destroyed_nightmare_lantern: UnityPointer<3>,
+    visited_resting_grounds: UnityPointer<3>,
     killed_ghost_xero: UnityPointer<3>,
     xero_defeated: UnityPointer<3>,
     opened_city_gate: UnityPointer<3>,
+    visited_ruins: UnityPointer<3>,
     killed_gorgeous_husk: UnityPointer<3>,
     // Lemm
     met_relic_dealer_shop: UnityPointer<3>,
@@ -350,27 +357,35 @@ struct PlayerDataPointers {
     watcher_chandelier: UnityPointer<3>,
     killed_black_knight: UnityPointer<3>,
     collector_defeated: UnityPointer<3>,
+    visited_mines: UnityPointer<3>,
     kills_zombie_miner: UnityPointer<3>,
     // Crystal Guardian
     defeated_mega_beam_miner: UnityPointer<3>,
     kills_mega_beam_miner: UnityPointer<3>,
     mine_lift_opened: UnityPointer<3>,
     opened_waterways_manhole: UnityPointer<3>,
+    visited_waterways: UnityPointer<3>,
     killed_dung_defender: UnityPointer<3>,
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
+    /// Visited Ancient Basin
+    visited_abyss: UnityPointer<3>,
     toll_bench_abyss: UnityPointer<3>,
     // Broken Vessel
     killed_infected_knight: UnityPointer<3>,
     infected_knight_dream_defeated: UnityPointer<3>,
     infected_knight_orbs_collected: UnityPointer<3>,
+    /// Visited Kingdom's Edge
+    visited_outskirts: UnityPointer<3>,
+    visited_hive: UnityPointer<3>,
     killed_hive_knight: UnityPointer<3>,
     killed_giant_hopper: UnityPointer<3>,
     hornet_outskirts_defeated: UnityPointer<3>,
     killed_ghost_markoth: UnityPointer<3>,
     markoth_defeated: UnityPointer<3>,
     colosseum_bronze_opened: UnityPointer<3>,
+    seen_colosseum_title: UnityPointer<3>,
     killed_zote: UnityPointer<3>,
     colosseum_bronze_completed: UnityPointer<3>,
     colosseum_silver_opened: UnityPointer<3>,
@@ -379,13 +394,17 @@ struct PlayerDataPointers {
     // God Tamer
     killed_lobster_lancer: UnityPointer<3>,
     colosseum_gold_completed: UnityPointer<3>,
+    visited_fog_canyon: UnityPointer<3>,
     // Uumuu
     encountered_mega_jelly: UnityPointer<3>,
     killed_mega_jellyfish: UnityPointer<3>,
+    visited_royal_gardens: UnityPointer<3>,
     toll_bench_queens_gardens: UnityPointer<3>,
     killed_ghost_marmu: UnityPointer<3>,
     mum_caterpillar_defeated: UnityPointer<3>,
     killed_traitor_lord: UnityPointer<3>,
+    visited_deepnest: UnityPointer<3>,
+    visited_deepnest_spa: UnityPointer<3>,
     zote_rescued_deepnest: UnityPointer<3>,
     opened_tram_lower: UnityPointer<3>,
     // Nosk
@@ -394,6 +413,7 @@ struct PlayerDataPointers {
     galien_defeated: UnityPointer<3>,
     spider_capture: UnityPointer<3>,
     has_godfinder: UnityPointer<3>,
+    visited_godhome: UnityPointer<3>,
     // Oro & Mato
     killed_nail_bros: UnityPointer<3>,
     killed_paintmaster: UnityPointer<3>,
@@ -536,10 +556,13 @@ impl PlayerDataPointers {
             royal_charm_state: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "royalCharmState"]),
             got_shade_charm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotShadeCharm"]),
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
+            visited_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDirtmouth"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
             killed_grey_prince: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGreyPrince"]),
             grey_prince_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "greyPrinceOrbsCollected"]),
+            visited_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedCrossroads"]),
+            crossroads_infected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "crossroadsInfected"]),
             killed_mender_bug: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMenderBug"]),
             killed_mawlek: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMawlek"]),
             killed_big_fly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBigFly"]),
@@ -550,6 +573,7 @@ impl PlayerDataPointers {
             unchained_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
             killed_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnight"]),
             killed_final_boss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFinalBoss"]),
+            visited_greenpath: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedGreenpath"]),
             killed_moss_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMossKnight"]),
             zote_rescued_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteRescuedBuzzer"]),
             killed_hornet: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHornet"]),
@@ -557,6 +581,7 @@ impl PlayerDataPointers {
             killed_ghost_no_eyes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostNoEyes"]),
             no_eyes_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "noEyesDefeated"]),
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
+            visited_fungus: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedFungus"]),
             killed_ghost_hu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostHu"]),
             elder_hu_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderHuDefeated"]),
             bretta_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "brettaRescued"]),
@@ -566,9 +591,11 @@ impl PlayerDataPointers {
             aladar_slug_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "aladarSlugDefeated"]),
             nightmare_lantern_lit: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nightmareLanternLit"]),
             destroyed_nightmare_lantern: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "destroyedNightmareLantern"]),
+            visited_resting_grounds: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRestingGrounds"]),
             killed_ghost_xero: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostXero"]),
             xero_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "xeroDefeated"]),
             opened_city_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCityGate"]),
+            visited_ruins: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRuins"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
             met_relic_dealer_shop: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
             toll_bench_city: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchCity"]),
@@ -580,25 +607,31 @@ impl PlayerDataPointers {
             watcher_chandelier: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
             killed_black_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
             collector_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "collectorDefeated"]),
+            visited_mines: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedMines"]),
             kills_zombie_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsZombieMiner"]),
             defeated_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMegaBeamMiner"]),
             kills_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMegaBeamMiner"]),
             mine_lift_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mineLiftOpened"]),
             opened_waterways_manhole: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedWaterwaysManhole"]),
+            visited_waterways: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedWaterways"]),
             killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
+            visited_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedAbyss"]),
             toll_bench_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchAbyss"]),
             killed_infected_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedInfectedKnight"]),
             infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
             infected_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightOrbsCollected"]),
+            visited_outskirts: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedOutskirts"]),
+            visited_hive: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedHive"]),
             killed_hive_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHiveKnight"]),
             killed_giant_hopper: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGiantHopper"]),
             hornet_outskirts_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hornetOutskirtsDefeated"]),
             killed_ghost_markoth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarkoth"]),
             markoth_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "markothDefeated"]),
             colosseum_bronze_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumBronzeOpened"]),
+            seen_colosseum_title: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "seenColosseumTitle"]),
             killed_zote: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedZote"]),
             colosseum_bronze_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumBronzeCompleted"]),
             colosseum_silver_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumSilverOpened"]),
@@ -606,12 +639,16 @@ impl PlayerDataPointers {
             colosseum_gold_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumGoldOpened"]),
             killed_lobster_lancer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLobsterLancer"]),
             colosseum_gold_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumGoldCompleted"]),
+            visited_fog_canyon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedFogCanyon"]),
             encountered_mega_jelly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "encounteredMegaJelly"]),
             killed_mega_jellyfish: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMegaJellyfish"]),
+            visited_royal_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRoyalGardens"]),
             toll_bench_queens_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchQueensGardens"]),
             killed_ghost_marmu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarmu"]),
             mum_caterpillar_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mumCaterpillarDefeated"]),
             killed_traitor_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedTraitorLord"]),
+            visited_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDeepnest"]),
+            visited_deepnest_spa: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDeepnestSpa"]),
             zote_rescued_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteRescuedDeepnest"]),
             opened_tram_lower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedTramLower"]),
             killed_mimic_spider: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMimicSpider"]),
@@ -619,6 +656,7 @@ impl PlayerDataPointers {
             galien_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "galienDefeated"]),
             spider_capture: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
             has_godfinder: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasGodfinder"]),
+            visited_godhome: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedGodhome"]),
             killed_nail_bros: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailBros"]),
             killed_paintmaster: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedPaintmaster"]),
             killed_nailsage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailsage"]),
@@ -1252,6 +1290,10 @@ impl GameManagerFinder {
         self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn visited_dirtmouth(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_dirtmouth.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_grimm(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_grimm.deref(process, &self.module, &self.image).ok()
     }
@@ -1266,6 +1308,13 @@ impl GameManagerFinder {
 
     pub fn grey_prince_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.grey_prince_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn visited_crossroads(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_crossroads.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn crossroads_infected(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.crossroads_infected.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_mender_bug(&self, process: &Process) -> Option<bool> {
@@ -1309,6 +1358,10 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_final_boss.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn visited_greenpath(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_greenpath.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_moss_knight(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_moss_knight.deref(process, &self.module, &self.image).ok()
     }
@@ -1335,6 +1388,10 @@ impl GameManagerFinder {
 
     pub fn mega_moss_charger_defeated(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.mega_moss_charger_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn visited_fungus(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_fungus.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_ghost_hu(&self, process: &Process) -> Option<bool> {
@@ -1367,6 +1424,10 @@ impl GameManagerFinder {
         self.player_data_pointers.destroyed_nightmare_lantern.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn visited_resting_grounds(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_resting_grounds.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_ghost_xero(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_ghost_xero.deref(process, &self.module, &self.image).ok()
     }
@@ -1376,6 +1437,10 @@ impl GameManagerFinder {
 
     pub fn opened_city_gate(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_city_gate.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn visited_ruins(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_ruins.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
@@ -1423,6 +1488,10 @@ impl GameManagerFinder {
         self.player_data_pointers.collector_defeated.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn visited_mines(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_mines.deref(process, &self.module, &self.image).ok()
+    }
+
     /// Defeated Crystal Guardian
     pub fn defeated_mega_beam_miner(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.defeated_mega_beam_miner.deref(process, &self.module, &self.image).ok()
@@ -1441,6 +1510,10 @@ impl GameManagerFinder {
         self.player_data_pointers.opened_waterways_manhole.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn visited_waterways(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_waterways.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_dung_defender(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_dung_defender.deref(process, &self.module, &self.image).ok()
     }
@@ -1457,6 +1530,10 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_fluke_mother.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn visited_abyss(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_abyss.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn toll_bench_abyss(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.toll_bench_abyss.deref(process, &self.module, &self.image).ok()
     }
@@ -1471,6 +1548,14 @@ impl GameManagerFinder {
 
     pub fn infected_knight_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.infected_knight_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// Visited Kingdom's Edge
+    pub fn visited_outskirts(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_outskirts.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn visited_hive(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_hive.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_hive_knight(&self, process: &Process) -> Option<bool> {
@@ -1494,6 +1579,10 @@ impl GameManagerFinder {
 
     pub fn colosseum_bronze_opened(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.colosseum_bronze_opened.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn seen_colosseum_title(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.seen_colosseum_title.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_zote(&self, process: &Process) -> Option<bool> {
@@ -1524,6 +1613,10 @@ impl GameManagerFinder {
         self.player_data_pointers.colosseum_gold_completed.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn visited_fog_canyon(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_fog_canyon.deref(process, &self.module, &self.image).ok()
+    }
+
     // Uumuu
     pub fn encountered_mega_jelly(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.encountered_mega_jelly.deref(process, &self.module, &self.image).ok()
@@ -1531,6 +1624,10 @@ impl GameManagerFinder {
 
     pub fn killed_mega_jellyfish(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_mega_jellyfish.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn visited_royal_gardens(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_royal_gardens.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn toll_bench_queens_gardens(&self, process: &Process) -> Option<bool> {
@@ -1546,6 +1643,13 @@ impl GameManagerFinder {
 
     pub fn killed_traitor_lord(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_traitor_lord.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn visited_deepnest(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_deepnest.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn visited_deepnest_spa(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_deepnest_spa.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn zote_rescued_deepnest(&self, process: &Process) -> Option<bool> {
@@ -1574,6 +1678,10 @@ impl GameManagerFinder {
 
     pub fn has_godfinder(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_godfinder.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn visited_godhome(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_godhome.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_nail_bros(&self, process: &Process) -> Option<bool> {

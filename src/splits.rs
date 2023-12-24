@@ -996,6 +996,10 @@ pub enum Split {
     /// 
     /// Splits on any transition into Dirtmouth Town
     EnterDirtmouth,
+    /// Dirtmouth (Area)
+    /// 
+    /// Splits when entering Dirtmouth text first appears
+    Dirtmouth,
     SlyShopExit,
     /// Enter Troupe Master Grimm (Transition)
     /// 
@@ -1023,6 +1027,14 @@ pub enum Split {
     GreyPrinceEssence,
     // endregion: Dirtmouth
     // region: Crossroads
+    /// Forgotten Crossroads (Area)
+    /// 
+    /// Splits when entering Forgotten Crossroads text first appears
+    ForgottenCrossroads,
+    /// Infected Crossroads (Area)
+    /// 
+    /// Splits when entering Infected Crossroads text first appears
+    InfectedCrossroads,
     /// Menderbug (Killed)
     /// 
     /// Splits when killing Menderbug
@@ -1087,6 +1099,10 @@ pub enum Split {
     /// 
     /// Splits when entering Greenpath
     EnterGreenpath,
+    /// Greenpath (Area)
+    /// 
+    /// Splits when entering Greenpath text first appears
+    Greenpath,
     /// Moss Knight (Mini Boss)
     /// 
     /// Splits when killing Moss Knight
@@ -1135,6 +1151,10 @@ pub enum Split {
     /// 
     /// (Room below Crossroads, right of Queen's Station, left of Waterways or Spore Shroom room)
     FungalWastesEntry,
+    /// Fungal Wastes (Area)
+    /// 
+    /// Splits when entering Fungal Wastes text first appears
+    FungalWastes,
     /// Elder Hu (Boss)
     /// 
     /// Splits when killing Elder Hu
@@ -1185,6 +1205,10 @@ pub enum Split {
     /// Splits when entering any dream world
     EnterAnyDream,
     DreamNailExit,
+    /// Resting Grounds (Area)
+    /// 
+    /// Splits when entering Resting Grounds text first appears
+    RestingGrounds,
     /// Xero (Boss)
     /// 
     /// Splits when killing Xero
@@ -1207,6 +1231,10 @@ pub enum Split {
     /// 
     /// To make sure you don't forget Mantis Lords
     CityGateAndMantisLords,
+    /// City of Tears (Area)
+    /// 
+    /// Splits when entering City of Tears text first appears
+    CityOfTears,
     /// Gorgeous Husk (Killed)
     /// 
     /// Splits when killing Gorgeous Husk
@@ -1291,6 +1319,10 @@ pub enum Split {
     /// 
     /// Splits on transition to the room where the dive and toll entrances meet, or the room right of Dirtmouth
     CrystalPeakEntry,
+    /// Crystal Peak (Area)
+    /// 
+    /// Splits when entering Crystal Peak text first appears
+    CrystalPeak,
     /// Husk Miner (Killed)
     /// 
     /// Splits when killing a Husk Miner
@@ -1322,6 +1354,10 @@ pub enum Split {
     /// 
     /// Splits when opening the Waterways Manhole
     WaterwaysManhole,
+    /// Royal Waterways (Area)
+    /// 
+    /// Splits when entering Royal Waterways text first appears
+    RoyalWaterways,
     /// Dung Defender (Boss)
     /// 
     /// Splits when killing Dung Defender
@@ -1349,6 +1385,10 @@ pub enum Split {
     /// 
     /// Splits on transition to Ancient Basin
     BasinEntry,
+    /// Ancient Basin (Area)
+    /// 
+    /// Splits when entering Ancient Basin text first appears
+    Abyss,
     /// Basin Bench (Toll)
     /// 
     /// Splits when buying Ancient Basin toll bench
@@ -1371,11 +1411,29 @@ pub enum Split {
     /// Splits when getting Lost Kin essence
     LostKinEssence,
     // endregion: Basin
+    // region: White Palace
+    /// White Palace (Area)
+    /// 
+    /// Splits when entering White Palace text for the first time
+    WhitePalace,
+    /// White Palace - Workshop (Area)
+    /// 
+    /// Splits when visiting the secret room in White Palace
+    WhitePalaceSecretRoom,
+    // endregion: White Palace
     // region: Kingdom's Edge
+    /// Kingdom's Edge (Area)
+    /// 
+    /// Splits when entering Kingdom's Edge text first appears
+    KingdomsEdge,
     /// Hive (Transition)
     /// 
     /// Splits on transition to Hive
     HiveEntry,
+    /// Hive (Area)
+    /// 
+    /// Splits when entering Hive text first appears
+    Hive,
     /// Enter Hive Knight (Transition)
     /// 
     /// Splits when entering Hive Knight boss arena transition
@@ -1414,6 +1472,10 @@ pub enum Split {
     /// 
     /// Splits on the transition into the Trial of the Warrior
     ColosseumBronzeEntry,
+    /// Colosseum (Area)
+    /// 
+    /// Splits when entering Colosseum text first appears
+    Colosseum,
     /// Zote Defeated - Colosseum (Mini Boss)
     /// 
     /// Splits when defeating Zote in the Colosseum
@@ -1464,6 +1526,10 @@ pub enum Split {
     ColosseumGoldExit,
     // endregion: Colosseum
     // region: Fog Canyon
+    /// Fog Canyon (Area)
+    /// 
+    /// Splits when entering Fog Canyon text first appears
+    FogCanyon,
     /// Teachers Archive (Area)
     /// 
     /// Splits when entering Teachers Archive for the first time
@@ -1482,6 +1548,10 @@ pub enum Split {
     /// 
     /// Splits on transition to QG scene following QGA or above Deepnest
     QueensGardensEntry,
+    /// Queen's Gardens (Area)
+    /// 
+    /// Splits when entering Queen's Gardens text first appears
+    QueensGardens,
     /// Queen's Garden Bench (Toll)
     /// 
     /// Splits when buying Queen's Garden toll bench
@@ -1504,6 +1574,14 @@ pub enum Split {
     /// 
     /// Splits on transition into Deepnest
     EnterDeepnest,
+    /// Deepnest (Area)
+    /// 
+    /// Splits when entering Deepnest text first appears
+    Deepnest,
+    /// Deepnest Spa (Area)
+    /// 
+    /// Splits when entering the Deepnest Spa area with bench
+    DeepnestSpa,
     /// Zote Rescued - Deepnest (Mini Boss)
     /// 
     /// Splits when rescuing Zote in Deepnest
@@ -1542,6 +1620,10 @@ pub enum Split {
     /// 
     /// Splits on transition to Godhome
     EnterGodhome,
+    /// Godhome (Area)
+    /// 
+    /// Splits when entering Godhome text first appears
+    Godhome,
     /// Oro & Mato Nail Bros (Boss)
     /// 
     /// Splits when defeating Brothers Oro & Mato
@@ -1653,6 +1735,10 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuClaw => pds.has_wall_jump(prc, g) && is_menu(p.current),
         Split::MenuMantisJournal => is_menu(p.current) && p.old == "Fungus2_17",
         // endregion: Fungal
+        // TODO: should there be a HowlingCliffsEntry or EnterHowlingCliffs transition split?
+        //       and what scenes should it be based on?
+        //       should the room with Baldur Shell count,
+        //       or only the rooms that the area text can appear in?
         // region: Resting Grounds
         Split::BlueLake => p.current.starts_with("Crossroads_50") && !p.old.starts_with("Crossroads_50"), // blue lake is Crossroads_50
         Split::EnterAnyDream => p.current.starts_with("Dream_") && p.current != p.old,
@@ -2007,12 +2093,15 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub46 => g.grubs_collected(p).is_some_and(|g| g == 46),
         // endregion: Grubs
         // region: Dirtmouth
+        Split::Dirtmouth => g.visited_dirtmouth(p).is_some_and(|v| v),
         Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
         Split::NightmareKingGrimm => g.killed_nightmare_grimm(p).is_some_and(|k| k),
         Split::GreyPrince => g.killed_grey_prince(p).is_some_and(|k| k),
         Split::GreyPrinceEssence => g.grey_prince_orbs_collected(p).is_some_and(|o| o),
         // endregion: Dirtmouth
         // region: Crossroads
+        Split::ForgottenCrossroads => g.visited_crossroads(p).is_some_and(|v| v) && g.get_scene_name(p).is_some_and(|s| s.starts_with("Crossroads_")),
+        Split::InfectedCrossroads => g.crossroads_infected(p).is_some_and(|i| i) && g.visited_crossroads(p).is_some_and(|v| v),
         Split::MenderBug => g.killed_mender_bug(p).is_some_and(|k| k),
         Split::BroodingMawlek => g.killed_mawlek(p).is_some_and(|k| k),
         Split::GruzMother => g.killed_big_fly(p).is_some_and(|f| f),
@@ -2025,6 +2114,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::RadianceBoss => g.killed_final_boss(p).is_some_and(|k| k),
         // endregion: Crossroads
         // region: Greenpath
+        Split::Greenpath => g.visited_greenpath(p).is_some_and(|v| v),
         Split::MossKnight => g.killed_moss_knight(p).is_some_and(|k| k),
         Split::Zote1 => g.zote_rescued_buzzer(p).is_some_and(|z| z),
         Split::VengeflyKingTrans => { pds.zote_rescued_buzzer(p, g); false },
@@ -2036,6 +2126,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MegaMossChargerTrans => { pds.mega_moss_charger_defeated(p, g); false },
         // endregion: Greenpath
         // region: Fungal
+        Split::FungalWastes => g.visited_fungus(p).is_some_and(|v| v),
         Split::ElderHu => g.killed_ghost_hu(p).is_some_and(|k| k),
         Split::ElderHuEssence => g.elder_hu_defeated(p).is_some_and(|d| d == 2),
         Split::ElderHuTrans => { pds.killed_ghost_hu(p, g); false },
@@ -2043,18 +2134,22 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MantisLords => g.defeated_mantis_lords(p).is_some_and(|k| k),
         // endregion: Fungal
         // region: Cliffs
+        // TODO: is there a Howling Cliffs Area Text split? should there be?
+        //       or would it be better to just have a transition split instead?
         Split::Gorb => g.killed_ghost_aladar(p).is_some_and(|k| k),
         Split::GorbEssence => g.aladar_slug_defeated(p).is_some_and(|d| d == 2),
         Split::NightmareLantern => g.nightmare_lantern_lit(p).is_some_and(|l| l),
         Split::NightmareLanternDestroyed => g.destroyed_nightmare_lantern(p).is_some_and(|l| l),
         // endregion: Cliffs
         // region: Resting Grounds
+        Split::RestingGrounds => g.visited_resting_grounds(p).is_some_and(|v| v),
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         Split::XeroEssence => g.xero_defeated(p).is_some_and(|d| d == 2),
         // endregion: Resting Grounds
         // region: City
         Split::CityGateOpen => g.opened_city_gate(p).is_some_and(|o| o),
         Split::CityGateAndMantisLords => g.opened_city_gate(p).is_some_and(|o| o) && g.defeated_mantis_lords(p).is_some_and(|k| k),
+        Split::CityOfTears => g.visited_ruins(p).is_some_and(|v| v),
         Split::GorgeousHusk => pds.killed_gorgeous_husk(p, g),
         Split::TransGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },
         Split::MenuGorgeousHusk => { pds.killed_gorgeous_husk(p, g); false },
@@ -2072,6 +2167,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::TransCollector => { pds.collector_defeated(p, g); false },
         // endregion: City
         // region: Peak
+        Split::CrystalPeak => g.visited_mines(p).is_some_and(|v| v),
         Split::HuskMiner => pds.decremented_kills_zombie_miner(p, g),
         Split::CrystalGuardian1 => g.defeated_mega_beam_miner(p).is_some_and(|k| k),
         Split::CrystalGuardian2 => g.kills_mega_beam_miner(p).is_some_and(|k| k == 0),
@@ -2079,19 +2175,24 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Peak
         // region: Waterways
         Split::WaterwaysManhole => g.opened_waterways_manhole(p).is_some_and(|o| o),
+        Split::RoyalWaterways => g.visited_waterways(p).is_some_and(|v| v),
         Split::DungDefender => g.killed_dung_defender(p).is_some_and(|k| k),
         Split::WhiteDefender => g.killed_white_defender(p).is_some_and(|k| k),
         Split::WhiteDefenderEssence => g.white_defender_orbs_collected(p).is_some_and(|o| o),
         Split::Flukemarm => g.killed_fluke_mother(p).is_some_and(|k| k),
         // endregion: Waterways
         // region: Basin
+        Split::Abyss => g.visited_abyss(p).is_some_and(|v| v),
         Split::TollBenchBasin => g.toll_bench_abyss(p).is_some_and(|b| b),
         Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
         Split::BrokenVesselTrans => { pds.killed_infected_knight(p, g); false },
         Split::LostKin => g.infected_knight_dream_defeated(p).is_some_and(|k| k),
         Split::LostKinEssence => g.infected_knight_orbs_collected(p).is_some_and(|o| o),
+        // TODO: should there be a split for the actual Abyss Area Text?
         // endregion: Basin
         // region: Kingdom's Edge
+        Split::KingdomsEdge => g.visited_outskirts(p).is_some_and(|v| v),
+        Split::Hive => g.visited_hive(p).is_some_and(|v| v),
         Split::HiveKnight => g.killed_hive_knight(p).is_some_and(|k| k),
         Split::GreatHopper => g.killed_giant_hopper(p).is_some_and(|k| k),
         Split::Hornet2 => g.hornet_outskirts_defeated(p).is_some_and(|k| k),
@@ -2100,6 +2201,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Kingdom's Edge
         // region: Colosseum
         Split::ColosseumBronzeUnlocked => g.colosseum_bronze_opened(p).is_some_and(|o| o),
+        Split::Colosseum => g.seen_colosseum_title(p).is_some_and(|s| s),
         Split::ZoteKilled => g.killed_zote(p).is_some_and(|k| k),
         Split::ColosseumBronze => g.colosseum_bronze_completed(p).is_some_and(|c| c),
         Split::ColosseumBronzeExit => { pds.colosseum_bronze_completed(p, g); false },
@@ -2112,16 +2214,20 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::ColosseumGoldExit => { pds.colosseum_gold_completed(p, g); false },
         // endregion: Colosseum
         // region: Fog Canyon
+        Split::FogCanyon => g.visited_fog_canyon(p).is_some_and(|v| v),
         Split::UumuuEncountered => g.encountered_mega_jelly(p).is_some_and(|b| b),
         Split::Uumuu => g.killed_mega_jellyfish(p).is_some_and(|k| k),
         // endregion: Fog Canyon
         // region: Queen's Gardens
+        Split::QueensGardens => g.visited_royal_gardens(p).is_some_and(|v| v),
         Split::TollBenchQG => g.toll_bench_queens_gardens(p).is_some_and(|b| b),
         Split::Marmu => g.killed_ghost_marmu(p).is_some_and(|k| k),
         Split::MarmuEssence => g.mum_caterpillar_defeated(p).is_some_and(|d| d == 2),
         Split::TraitorLord => g.killed_traitor_lord(p).is_some_and(|k| k),
         // endregion: Queen's Gardens
         // region: Deepnest
+        Split::Deepnest => g.visited_deepnest(p).is_some_and(|v| v),
+        Split::DeepnestSpa => g.visited_deepnest_spa(p).is_some_and(|v| v),
         Split::Zote2 => g.zote_rescued_deepnest(p).is_some_and(|z| z),
         Split::TramDeepnest => g.opened_tram_lower(p).is_some_and(|o| o),
         Split::Nosk => g.killed_mimic_spider(p).is_some_and(|k| k),
@@ -2131,6 +2237,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Deepnest
         // region: Godhome
         Split::GodTuner => g.has_godfinder(p).is_some_and(|g| g),
+        Split::Godhome => g.visited_godhome(p).is_some_and(|v| v),
         Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
         Split::SheoPaintmaster => g.killed_paintmaster(p).is_some_and(|k| k),
         Split::SlyNailsage => g.killed_nailsage(p).is_some_and(|k| k),
