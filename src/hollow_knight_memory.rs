@@ -82,6 +82,12 @@ pub const CRYSTAL_PEAK_ENTRY_SCENES: &[&str] = &[
     "Mines_10",
 ];
 
+pub const FOG_CANYON_ENTRY_SCENES: &[&str] = &[
+    "Fungus3_01", // West Fog Canyon entrance from Greenpath
+    "Fungus3_02", // West Fog Canyon entrance from Queen's Station
+    "Fungus3_26", // East Fog Canyon, where the Crossroads acid and Leg Eater acid entrances meet
+];
+
 pub const QUEENS_GARDENS_ENTRY_SCENES: &[&str] = &[
     "Fungus3_34",
     "Deepnest_43",
