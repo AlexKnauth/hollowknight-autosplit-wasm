@@ -342,6 +342,7 @@ struct PlayerDataPointers {
     killed_ghost_no_eyes: UnityPointer<3>,
     no_eyes_defeated: UnityPointer<3>,
     mega_moss_charger_defeated: UnityPointer<3>,
+    nailsmith_convo_art: UnityPointer<3>,
     visited_fungus: UnityPointer<3>,
     killed_ghost_hu: UnityPointer<3>,
     elder_hu_defeated: UnityPointer<3>,
@@ -597,6 +598,7 @@ impl PlayerDataPointers {
             killed_ghost_no_eyes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostNoEyes"]),
             no_eyes_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "noEyesDefeated"]),
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
+            nailsmith_convo_art: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nailsmithConvoArt"]),
             visited_fungus: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedFungus"]),
             killed_ghost_hu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostHu"]),
             elder_hu_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderHuDefeated"]),
@@ -1407,6 +1409,10 @@ impl GameManagerFinder {
 
     pub fn mega_moss_charger_defeated(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.mega_moss_charger_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn nailsmith_convo_art(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.nailsmith_convo_art.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn visited_fungus(&self, process: &Process) -> Option<bool> {

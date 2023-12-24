@@ -1143,6 +1143,10 @@ pub enum Split {
     /// 
     /// Splits on transition after Massive Moss Charger is killed
     MegaMossChargerTrans,
+    /// Happy Couple (Event)
+    /// 
+    /// Splits when talking to Nailsmith in Sheo's hut for the first time
+    HappyCouplePlayerDataEvent,
     // endregion: Greenpath
     // region: Fungal
     /// Fungal Wastes Entry (Transition)
@@ -2171,6 +2175,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::NoEyesEssence => g.no_eyes_defeated(p).is_some_and(|d| d == 2),
         Split::MegaMossCharger => g.mega_moss_charger_defeated(p).is_some_and(|k| k),
         Split::MegaMossChargerTrans => { pds.mega_moss_charger_defeated(p, g); false },
+        Split::HappyCouplePlayerDataEvent => g.nailsmith_convo_art(p).is_some_and(|c| c),
         // endregion: Greenpath
         // region: Fungal
         Split::FungalWastes => g.visited_fungus(p).is_some_and(|v| v),
