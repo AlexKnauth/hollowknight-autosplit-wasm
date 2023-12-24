@@ -1412,6 +1412,10 @@ pub enum Split {
     LostKinEssence,
     // endregion: Basin
     // region: White Palace
+    /// White Palace Entry (Transition)
+    /// 
+    /// Splits when entering the first White Palace scene
+    WhitePalaceEntry,
     /// White Palace (Area)
     /// 
     /// Splits when entering White Palace text for the first time
@@ -1781,6 +1785,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuWings => pds.has_double_jump(prc, g) && is_menu(p.current),
         Split::MenuVoidHeart => pds.got_shade_charm(prc, g) && is_menu(p.current),
         // endregion: Basin
+        // region: White Palace
+        Split::WhitePalaceEntry => p.current.starts_with("qWhite_Palace_11") && p.current != p.old,
+        // endregion: White Palace
         // region: Kingdom's Edge
         Split::HiveEntry => p.current.starts_with("Hive_01") && p.current != p.old,
         Split::EnterHiveKnight => p.current.starts_with("Hive_05") && p.current != p.old,
