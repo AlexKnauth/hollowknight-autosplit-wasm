@@ -191,6 +191,7 @@ struct PlayerDataPointers {
     /// Magic Power Reserve Max: amount of soul that can be held by soul vessels, 33 each
     mp_reserve_max: UnityPointer<3>,
     vessel_fragments: UnityPointer<3>,
+    at_bench: UnityPointer<3>,
     // Dreamers
     mask_broken_lurien: UnityPointer<3>,
     mask_broken_monomon: UnityPointer<3>,
@@ -420,6 +421,7 @@ impl PlayerDataPointers {
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
             mp_reserve_max: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "MPReserveMax"]),
             vessel_fragments: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "vesselFragments"]),
+            at_bench: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "atBench"]),
             // Dreamers
             mask_broken_lurien: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenLurien"]),
             mask_broken_monomon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenMonomon"]),
@@ -838,6 +840,10 @@ impl GameManagerFinder {
 
     pub fn vessel_fragments(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.vessel_fragments.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn at_bench(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.at_bench.deref(process, &self.module, &self.image).ok()
     }
 
     // Dreamers

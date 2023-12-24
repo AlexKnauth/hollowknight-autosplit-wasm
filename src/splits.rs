@@ -54,6 +54,10 @@ pub enum Split {
     /// 
     /// Splits on the main menu
     Menu,
+    /// Any Bench (Bench)
+    /// 
+    /// Splits when sitting on a bench
+    BenchAny,
     /// Any Transition (Transition)
     /// 
     /// Splits when the knight enters a transition (only one will split per transition)
@@ -1721,6 +1725,7 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
 
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
+        Split::BenchAny => g.at_bench(p).is_some_and(|b| b),
         // region: Dreamers
         Split::Lurien => g.mask_broken_lurien(p).is_some_and(|b| b),
         Split::Monomon => g.mask_broken_monomon(p).is_some_and(|b| b),
