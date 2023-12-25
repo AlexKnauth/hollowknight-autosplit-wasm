@@ -2217,6 +2217,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::RestingGrounds => g.visited_resting_grounds(p).is_some_and(|v| v),
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         Split::XeroEssence => g.xero_defeated(p).is_some_and(|d| d == 2),
+        Split::SpiritGladeOpen => g.glade_door_opened(p).is_some_and(|o| o),
+        Split::SeerDeparts => g.moth_departed(p).is_some_and(|d| d),
+        Split::MetGreyMourner => g.met_xun(p).is_some_and(|m| m),
+        Split::GreyMournerSeerAscended => g.met_xun(p).is_some_and(|m| m) && g.moth_departed(p).is_some_and(|d| d),
         // endregion: Resting Grounds
         // region: City
         Split::CityGateOpen => g.opened_city_gate(p).is_some_and(|o| o),
