@@ -985,6 +985,10 @@ pub enum Split {
     /// 
     /// Splits when rescuing grub #46
     Grub46,
+    /// Rescued Any Grub (Grub)
+    /// 
+    /// Splits when rescuing any grub
+    OnObtainGrub,
     /// Mimic 1 (Killed)
     /// 
     /// Splits when rescuing mimic #1
@@ -2182,6 +2186,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub44 => g.grubs_collected(p).is_some_and(|g| g == 44),
         Split::Grub45 => g.grubs_collected(p).is_some_and(|g| g == 45),
         Split::Grub46 => g.grubs_collected(p).is_some_and(|g| g == 46),
+        Split::OnObtainGrub => pds.incremented_grubs_collected(p, g),
         Split::Mimic1 => g.kills_grub_mimic(p).is_some_and(|k| k == 4),
         Split::Mimic2 => g.kills_grub_mimic(p).is_some_and(|k| k == 3),
         Split::Mimic3 => g.kills_grub_mimic(p).is_some_and(|k| k == 2),

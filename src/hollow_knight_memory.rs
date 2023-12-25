@@ -2022,6 +2022,10 @@ impl PlayerDataStore {
         self.get_bool(p, g, "got_shade_charm", &g.player_data_pointers.got_shade_charm).unwrap_or(false)
     }
 
+    pub fn incremented_grubs_collected(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "grubs_collected", &game_manager_finder.player_data_pointers.grubs_collected)
+    }
+
     pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "ore", &game_manager_finder.player_data_pointers.ore)
     }
