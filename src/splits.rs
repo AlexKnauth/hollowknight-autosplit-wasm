@@ -1221,10 +1221,26 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Xero
     XeroEssence,
+    /// Spirit Glade Door (Event)
+    /// 
+    /// Splits when the Seer opens the Spirits' Glade after bringing back 200 essence
+    SpiritGladeOpen,
+    /// Seer Departs (Event)
+    /// 
+    /// Splits when the Seer Departs after bringing back 2400 essence
+    SeerDeparts,
     /// Catacombs Entry (Transition)
     /// 
     /// Splits on entry to the catacombs below Resting Grounds
     CatacombsEntry,
+    /// Met Grey Mourner (NPC)
+    /// 
+    /// Splits when talking to Grey Mourner for the first time
+    MetGreyMourner,
+    /// Mourner w/ Seer Ascended (NPC)
+    /// 
+    /// Splits when both talked to Grey Mourner and Seer has ascended
+    GreyMournerSeerAscended,
     // endregion: Resting Grounds
     // region: City
     /// City Gate (Event)
@@ -2201,6 +2217,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::RestingGrounds => g.visited_resting_grounds(p).is_some_and(|v| v),
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         Split::XeroEssence => g.xero_defeated(p).is_some_and(|d| d == 2),
+        Split::SpiritGladeOpen => g.glade_door_opened(p).is_some_and(|o| o),
+        Split::SeerDeparts => g.moth_departed(p).is_some_and(|d| d),
+        Split::MetGreyMourner => g.met_xun(p).is_some_and(|m| m),
+        Split::GreyMournerSeerAscended => g.met_xun(p).is_some_and(|m| m) && g.moth_departed(p).is_some_and(|d| d),
         // endregion: Resting Grounds
         // region: City
         Split::CityGateOpen => g.opened_city_gate(p).is_some_and(|o| o),

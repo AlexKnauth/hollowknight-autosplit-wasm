@@ -356,6 +356,10 @@ struct PlayerDataPointers {
     visited_resting_grounds: UnityPointer<3>,
     killed_ghost_xero: UnityPointer<3>,
     xero_defeated: UnityPointer<3>,
+    glade_door_opened: UnityPointer<3>,
+    moth_departed: UnityPointer<3>,
+    /// Met Grey Mourner
+    met_xun: UnityPointer<3>,
     opened_city_gate: UnityPointer<3>,
     visited_ruins: UnityPointer<3>,
     killed_gorgeous_husk: UnityPointer<3>,
@@ -613,6 +617,9 @@ impl PlayerDataPointers {
             visited_resting_grounds: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRestingGrounds"]),
             killed_ghost_xero: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostXero"]),
             xero_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "xeroDefeated"]),
+            glade_door_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gladeDoorOpened"]),
+            moth_departed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mothDeparted"]),
+            met_xun: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metXun"]),
             opened_city_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCityGate"]),
             visited_ruins: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRuins"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
@@ -1460,6 +1467,18 @@ impl GameManagerFinder {
     }
     pub fn xero_defeated(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.xero_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn glade_door_opened(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.glade_door_opened.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn moth_departed(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.moth_departed.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// Met Grey Mourner
+    pub fn met_xun(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.met_xun.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn opened_city_gate(&self, process: &Process) -> Option<bool> {
