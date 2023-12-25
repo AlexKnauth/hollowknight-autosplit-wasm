@@ -985,6 +985,26 @@ pub enum Split {
     /// 
     /// Splits when rescuing grub #46
     Grub46,
+    /// Mimic 1 (Killed)
+    /// 
+    /// Splits when rescuing mimic #1
+    Mimic1,
+    /// Mimic 2 (Killed)
+    /// 
+    /// Splits when rescuing mimic #2
+    Mimic2,
+    /// Mimic 3 (Killed)
+    /// 
+    /// Splits when rescuing mimic #3
+    Mimic3,
+    /// Mimic 4 (Killed)
+    /// 
+    /// Splits when rescuing mimic #4
+    Mimic4,
+    /// Mimic 5 (Killed)
+    /// 
+    /// Splits when rescuing mimic #5
+    Mimic5,
     // endregion: Grubs and Mimics
 
     // region: Dirtmouth
@@ -2162,6 +2182,11 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub44 => g.grubs_collected(p).is_some_and(|g| g == 44),
         Split::Grub45 => g.grubs_collected(p).is_some_and(|g| g == 45),
         Split::Grub46 => g.grubs_collected(p).is_some_and(|g| g == 46),
+        Split::Mimic1 => g.kills_grub_mimic(p).is_some_and(|k| k == 4),
+        Split::Mimic2 => g.kills_grub_mimic(p).is_some_and(|k| k == 3),
+        Split::Mimic3 => g.kills_grub_mimic(p).is_some_and(|k| k == 2),
+        Split::Mimic4 => g.kills_grub_mimic(p).is_some_and(|k| k == 1),
+        Split::Mimic5 => g.kills_grub_mimic(p).is_some_and(|k| k == 0),
         // endregion: Grubs and Mimics
         // region: Dirtmouth
         Split::Dirtmouth => g.visited_dirtmouth(p).is_some_and(|v| v),
