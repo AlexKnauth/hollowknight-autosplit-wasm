@@ -1263,6 +1263,10 @@ pub enum Split {
     /// 
     /// Splits when getting Failed Champion essence
     FailedChampionEssence,
+    /// Salubra's Blessing (Item)
+    /// 
+    /// Splits when obtaining Salubra's Blessing
+    SalubrasBlessing,
     /// Salubra Exit (Transition)
     /// 
     /// Splits on the transition out of Salubra's Hut
@@ -2657,6 +2661,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::FalseKnight => g.killed_false_knight(p).is_some_and(|k| k),
         Split::FailedKnight => g.false_knight_dream_defeated(p).is_some_and(|k| k),
         Split::FailedChampionEssence => g.false_knight_orbs_collected(p).is_some_and(|o| o),
+        Split::SalubrasBlessing => g.salubra_blessing(p).is_some_and(|b| b),
         Split::UnchainedHollowKnight => g.unchained_hollow_knight(p).is_some_and(|u| u),
         Split::HollowKnightBoss => g.killed_hollow_knight(p).is_some_and(|k| k),
         Split::RadianceBoss => g.killed_final_boss(p).is_some_and(|k| k),

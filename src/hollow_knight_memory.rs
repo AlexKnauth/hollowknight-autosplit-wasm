@@ -337,6 +337,7 @@ struct PlayerDataPointers {
     killed_false_knight: UnityPointer<3>,
     false_knight_dream_defeated: UnityPointer<3>,
     false_knight_orbs_collected: UnityPointer<3>,
+    salubra_blessing: UnityPointer<3>,
     unchained_hollow_knight: UnityPointer<3>,
     killed_hollow_knight: UnityPointer<3>,
     killed_final_boss: UnityPointer<3>,
@@ -600,6 +601,7 @@ impl PlayerDataPointers {
             killed_false_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFalseKnight"]),
             false_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "falseKnightDreamDefeated"]),
             false_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "falseKnightOrbsCollected"]),
+            salubra_blessing: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraBlessing"]),
             unchained_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
             killed_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnight"]),
             killed_final_boss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFinalBoss"]),
@@ -1386,6 +1388,10 @@ impl GameManagerFinder {
 
     pub fn false_knight_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.false_knight_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn salubra_blessing(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.salubra_blessing.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
