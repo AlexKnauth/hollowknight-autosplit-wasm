@@ -107,6 +107,12 @@ pub const DEEPNEST_ENTRY_SCENES: &[&str] = &[
     "Deepnest_01b", // Near Spore Shroom
 ];
 
+pub const GODHOME_LORE_SCENES: &[&str] = &[
+    "GG_Engine", // includes GG_Engine_Prime when using starts_with_any
+    "GG_Unn",
+    "GG_Wyrm",
+];
+
 // --------------------------------------------------------
 
 // const VERSION_VEC_MAJOR: usize = 0;

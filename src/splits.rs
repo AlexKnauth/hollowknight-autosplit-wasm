@@ -1884,6 +1884,14 @@ pub enum Split {
     /// 
     /// Splits on entry to any of Pantheon 1 - 4
     Pantheon1to4Entry,
+    /// Godhome Bench (Transition)
+    /// 
+    /// Splits when leaving a Godhome Bench room
+    GodhomeBench,
+    /// Godhome Lore Room (Transition)
+    /// 
+    /// Splits when leaving a Godhome lore room
+    GodhomeLoreRoom,
     /// Oro & Mato Nail Bros (Boss)
     /// 
     /// Splits when defeating Brothers Oro & Mato
@@ -2082,6 +2090,8 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Godhome
         Split::EnterGodhome => p.current.starts_with("GG_Atrium") && p.current != p.old,
         Split::Pantheon1to4Entry => p.current.starts_with("GG_Boss_Door_Entrance") && p.current != p.old,
+        Split::GodhomeBench => p.old.starts_with("GG_Spa") && p.current != p.old,
+        Split::GodhomeLoreRoom => starts_with_any(p.old, GODHOME_LORE_SCENES) && p.current != p.old,
         Split::Pantheon5Entry => p.current.starts_with("GG_Vengefly_V") && p.old.starts_with("GG_Atrium_Roof"),
         // endregion: Godhome
         // else
