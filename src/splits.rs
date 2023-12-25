@@ -1896,18 +1896,34 @@ pub enum Split {
     /// 
     /// Splits when defeating Brothers Oro & Mato
     MatoOroNailBros,
+    /// Oro & Mato Nail Bros (Pantheon)
+    /// 
+    /// Splits after killing Brothers Oro & Mato in Pantheon 1 or Pantheon 5
+    OroMatoNailBrosP,
     /// Paintmaster Sheo (Boss)
     /// 
     /// Splits when killing Paintmaster Sheo
     SheoPaintmaster,
+    /// Paintmaster Sheo (Pantheon)
+    /// 
+    /// Splits after killing Paintmaster Sheo in Pantheon 2 or Pantheon 5
+    SheoPaintmasterP,
     /// Great Nailsage Sly (Boss)
     /// 
     /// Splits when killing Great Nailsage Sly
     SlyNailsage,
+    /// Great Nailsage Sly (Pantheon)
+    /// 
+    /// Splits after killing Great Nailsage Sly in Pantheon 3 or Pantheon 5
+    SlyP,
     /// Pure Vessel (Boss)
     /// 
     /// Splits when killing Pure Vessel
     PureVessel,
+    /// Pure Vessel (Pantheon)
+    /// 
+    /// Splits after killing Pure Vessel in Pantheon 4 or Pantheon 5
+    PureVesselP,
     /// Pantheon 5 (Transition)
     /// 
     /// Splits on entry to Pantheon 5
@@ -2092,6 +2108,11 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::Pantheon1to4Entry => p.current.starts_with("GG_Boss_Door_Entrance") && p.current != p.old,
         Split::GodhomeBench => p.old.starts_with("GG_Spa") && p.current != p.old,
         Split::GodhomeLoreRoom => starts_with_any(p.old, GODHOME_LORE_SCENES) && p.current != p.old,
+        Split::OroMatoNailBrosP => p.old.starts_with("GG_Nailmasters") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Spa"]),
+        Split::SheoPaintmasterP => p.old.starts_with("GG_Painter") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Spa"]),
+        Split::SlyP => p.old.starts_with("GG_Sly") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Hornet_2"]),
+        // Pure Vessel (Pantheon) can transition from PV to either GG_Door_5_Finale for first P4 cutscene, GG_End_Sequence for subsequent P4s, or GG_Radiance in P5
+        Split::PureVesselP => p.old.starts_with("GG_Hollow_Knight") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Radiance", "GG_Door_5_Finale"]),
         Split::Pantheon5Entry => p.current.starts_with("GG_Vengefly_V") && p.old.starts_with("GG_Atrium_Roof"),
         // endregion: Godhome
         // else
