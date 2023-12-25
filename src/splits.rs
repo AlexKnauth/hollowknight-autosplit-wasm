@@ -2072,6 +2072,14 @@ pub enum Split {
     /// 
     /// Splits on entry to Pantheon 5
     Pantheon5Entry,
+    /// Winged Nosk (Pantheon)
+    /// 
+    /// Splits after killing Winged Nosk in Pantheon 5
+    NoskHornetP,
+    /// Nightmare King Grimm (Pantheon)
+    /// 
+    /// Splits after killing Nightmare King Grimm in Pantheon 5
+    NightmareKingGrimmP,
     // endregion: Godhome
 }
 
@@ -2294,6 +2302,8 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // Pure Vessel (Pantheon) can transition from PV to either GG_Door_5_Finale for first P4 cutscene, GG_End_Sequence for subsequent P4s, or GG_Radiance in P5
         Split::PureVesselP => p.old.starts_with("GG_Hollow_Knight") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Radiance", "GG_Door_5_Finale"]),
         Split::Pantheon5Entry => p.current.starts_with("GG_Vengefly_V") && p.old.starts_with("GG_Atrium_Roof"),
+        Split::NoskHornetP => p.old.starts_with("GG_Nosk_Hornet") && p.current.starts_with("GG_Sly"),
+        Split::NightmareKingGrimmP => p.old.starts_with("GG_Grimm_Nightmare") && p.current.starts_with("GG_Spa"),
         // endregion: Godhome
         // else
         _ => false
