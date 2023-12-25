@@ -1936,6 +1936,42 @@ pub enum Split {
     /// 
     /// Splits after killing Brothers Oro & Mato in Pantheon 1 or Pantheon 5
     OroMatoNailBrosP,
+    /// Xero (Pantheon)
+    /// 
+    /// Splits after killing Xero in Pantheon 2 or Pantheon 5
+    XeroP,
+    /// Crystal Guardian (Pantheon)
+    /// 
+    /// Splits after killing Crystal Guardian in Pantheon 2 or Pantheon 5
+    CrystalGuardianP,
+    /// Soul Master (Pantheon)
+    /// 
+    /// Splits after killing Soul Master in Pantheon 2 or Pantheon 5
+    SoulMasterP,
+    /// Oblobbles (Pantheon)
+    /// 
+    /// Splits after killing Oblobbles in Pantheon 2 or Pantheon 5
+    OblobblesP,
+    /// Mantis Lords (Pantheon)
+    /// 
+    /// Splits after killing Mantis Lords in Pantheon 2 or Sisters of Battle Pantheon 5
+    MantisLordsP,
+    /// Marmu (Pantheon)
+    /// 
+    /// Splits after killing Marmu in Pantheon 2 or Pantheon 5
+    MarmuP,
+    /// Nosk (Pantheon)
+    /// 
+    /// Splits after killing Nosk in Pantheon 2
+    NoskP,
+    /// Flukemarm (Pantheon)
+    /// 
+    /// Splits after killing Flukemarm in Pantheon 2 or Pantheon 5
+    FlukemarmP,
+    /// Broken Vessel (Pantheon)
+    /// 
+    /// Splits after killing Broken Vessel in Pantheon 2 or Pantheon 5
+    BrokenVesselP,
     /// Paintmaster Sheo (Boss)
     /// 
     /// Splits when killing Paintmaster Sheo
@@ -2154,6 +2190,15 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::BroodingMawlekP => p.old.starts_with("GG_Brooding_Mawlek") && starts_with_any(p.current, &["GG_Engine", "GG_Nailmasters"]),
         Split::GodhomeLoreRoom => starts_with_any(p.old, GODHOME_LORE_SCENES) && p.current != p.old,
         Split::OroMatoNailBrosP => p.old.starts_with("GG_Nailmasters") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Spa"]),
+        Split::XeroP => p.old.starts_with("GG_Ghost_Xero") && p.current.starts_with("GG_Crystal_Guardian"),
+        Split::CrystalGuardianP => p.old.starts_with("GG_Crystal_Guardian") && p.current.starts_with("GG_Soul_Master"),
+        Split::SoulMasterP => p.old.starts_with("GG_Soul_Master") && p.current.starts_with("GG_Oblobbles"),
+        Split::OblobblesP => p.old.starts_with("GG_Oblobbles") && p.current.starts_with("GG_Mantis_Lords"),
+        Split::MantisLordsP => p.old.starts_with("GG_Mantis_Lords") && p.current.starts_with("GG_Spa"),
+        Split::MarmuP => p.old.starts_with("GG_Ghost_Marmu") && starts_with_any(p.current, &["GG_Nosk", "GG_Flukemarm"]),
+        Split::NoskP => p.old.starts_with("GG_Nosk") && p.current.starts_with("GG_Flukemarm"),
+        Split::FlukemarmP => p.old.starts_with("GG_Flukemarm") && p.current.starts_with("GG_Broken_Vessel"),
+        Split::BrokenVesselP => p.old.starts_with("GG_Broken_Vessel") && starts_with_any(p.current, &["GG_Engine", "GG_Ghost_Galien"]),
         Split::SheoPaintmasterP => p.old.starts_with("GG_Painter") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Spa"]),
         Split::SlyP => p.old.starts_with("GG_Sly") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Hornet_2"]),
         // Pure Vessel (Pantheon) can transition from PV to either GG_Door_5_Finale for first P4 cutscene, GG_End_Sequence for subsequent P4s, or GG_Radiance in P5
