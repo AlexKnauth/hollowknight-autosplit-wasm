@@ -447,10 +447,15 @@ struct PlayerDataPointers {
     visited_godhome: UnityPointer<3>,
     // Oro & Mato
     killed_nail_bros: UnityPointer<3>,
+    boss_door_state_tier1: UnityPointer<3>,
     killed_paintmaster: UnityPointer<3>,
+    boss_door_state_tier2: UnityPointer<3>,
     killed_nailsage: UnityPointer<3>,
+    boss_door_state_tier3: UnityPointer<3>,
     // Pure Vessel
     killed_hollow_knight_prime: UnityPointer<3>,
+    boss_door_state_tier4: UnityPointer<3>,
+    boss_door_state_tier5: UnityPointer<3>,
 }
 
 impl PlayerDataPointers {
@@ -700,9 +705,14 @@ impl PlayerDataPointers {
             has_godfinder: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasGodfinder"]),
             visited_godhome: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedGodhome"]),
             killed_nail_bros: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailBros"]),
+            boss_door_state_tier1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier1"]),
             killed_paintmaster: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedPaintmaster"]),
+            boss_door_state_tier2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier2"]),
             killed_nailsage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailsage"]),
+            boss_door_state_tier3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier3"]),
             killed_hollow_knight_prime: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnightPrime"]),
+            boss_door_state_tier4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier4"]),
+            boss_door_state_tier5: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier5"]),
         }
     }
 }
