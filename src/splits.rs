@@ -2024,6 +2024,42 @@ pub enum Split {
     /// 
     /// Splits after killing Great Nailsage Sly in Pantheon 3 or Pantheon 5
     SlyP,
+    /// Enraged Guardian (Pantheon)
+    /// 
+    /// Splits after killing Enraged Guardian in Pantheon 4 or Pantheon 5
+    EnragedGuardianP,
+    /// Lost Kin (Pantheon)
+    /// 
+    /// Splits after killing Lost Kin in Pantheon 4 or Pantheon 5
+    LostKinP,
+    /// No Eyes (Pantheon)
+    /// 
+    /// Splits after killing No Eyes in Pantheon 4 or Pantheon 5
+    NoEyesP,
+    /// Traitor Lord (Pantheon)
+    /// 
+    /// Splits after killing Traitor Lord in Pantheon 4 or Pantheon 5
+    TraitorLordP,
+    /// White Defender (Pantheon)
+    /// 
+    /// Splits after killing White Defender in Pantheon 4 or Pantheon 5
+    WhiteDefenderP,
+    /// Failed Champion (Pantheon)
+    /// 
+    /// Splits after killing Failed Champion in Pantheon 4 or Pantheon 5
+    FailedChampionP,
+    /// Markoth (Pantheon)
+    /// 
+    /// Splits after killing Markoth in Pantheon 4 or Pantheon 5
+    MarkothP,
+    /// Watcher Knights (Pantheon)
+    /// 
+    /// Splits after killing Watcher Knights in Pantheon 4 or Pantheon 5
+    WatcherKnightsP,
+    /// Soul Tyrant (Pantheon)
+    /// 
+    /// Splits after killing Soul Tyrant in Pantheon 4 or Pantheon 5
+    SoulTyrantP,
     /// Pure Vessel (Boss)
     /// 
     /// Splits when killing Pure Vessel
@@ -2246,6 +2282,15 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::UumuuP => p.old.starts_with("GG_Uumuu") && starts_with_any(p.current, &["GG_Hornet_2", "GG_Nosk_Hornet"]),
         Split::Hornet2P => p.old.starts_with("GG_Hornet_2") && starts_with_any(p.current, &["GG_Engine", "GG_Spa"]),
         Split::SlyP => p.old.starts_with("GG_Sly") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Hornet_2"]),
+        Split::EnragedGuardianP => p.old.starts_with("GG_Crystal_Guardian_2") && p.current.starts_with("GG_Lost_Kin"),
+        Split::LostKinP => p.old.starts_with("GG_Lost_Kin") && p.current.starts_with("GG_Ghost_No_Eyes"),
+        Split::NoEyesP => p.old.starts_with("GG_Ghost_No_Eyes") && p.current.starts_with("GG_Traitor_Lord"),
+        Split::TraitorLordP => p.old.starts_with("GG_Traitor_Lord") && p.current.starts_with("GG_White_Defender"),
+        Split::WhiteDefenderP => p.old.starts_with("GG_White_Defender") && p.current.starts_with("GG_Spa"),
+        Split::FailedChampionP => p.old.starts_with("GG_Failed_Champion") && starts_with_any(p.current, &["GG_Ghost_Markoth", "GG_Grimm_Nightmare"]),
+        Split::MarkothP => p.old.starts_with("GG_Ghost_Markoth") && starts_with_any(p.current, &["GG_Watcher_Knights", "GG_Grey_Prince_Zote", "GG_Failed_Champion"]),
+        Split::WatcherKnightsP => p.old.starts_with("GG_Watcher_Knights") && starts_with_any(p.current, &["GG_Soul_Tyrant", "GG_Uumuu"]),
+        Split::SoulTyrantP => p.old.starts_with("GG_Soul_Tyrant") && starts_with_any(p.current, &["GG_Engine_Prime", "GG_Ghost_Markoth"]),
         // Pure Vessel (Pantheon) can transition from PV to either GG_Door_5_Finale for first P4 cutscene, GG_End_Sequence for subsequent P4s, or GG_Radiance in P5
         Split::PureVesselP => p.old.starts_with("GG_Hollow_Knight") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Radiance", "GG_Door_5_Finale"]),
         Split::Pantheon5Entry => p.current.starts_with("GG_Vengefly_V") && p.old.starts_with("GG_Atrium_Roof"),
