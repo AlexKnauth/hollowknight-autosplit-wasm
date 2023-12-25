@@ -1880,6 +1880,10 @@ pub enum Split {
     /// 
     /// Splits when entering Godhome text first appears
     Godhome,
+    /// Pantheon 1-4 (Transition)
+    /// 
+    /// Splits on entry to any of Pantheon 1 - 4
+    Pantheon1to4Entry,
     /// Oro & Mato Nail Bros (Boss)
     /// 
     /// Splits when defeating Brothers Oro & Mato
@@ -1896,6 +1900,10 @@ pub enum Split {
     /// 
     /// Splits when killing Pure Vessel
     PureVessel,
+    /// Pantheon 5 (Transition)
+    /// 
+    /// Splits on entry to Pantheon 5
+    Pantheon5Entry,
     // endregion: Godhome
 }
 
@@ -2073,6 +2081,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Deepnest
         // region: Godhome
         Split::EnterGodhome => p.current.starts_with("GG_Atrium") && p.current != p.old,
+        Split::Pantheon1to4Entry => p.current.starts_with("GG_Boss_Door_Entrance") && p.current != p.old,
+        // TODO: does Pantheon5Entry need to check that it's not just entering ascended VK in the HoG?
+        Split::Pantheon5Entry => p.current.starts_with("GG_Vengefly_V") && p.current != p.old,
         // endregion: Godhome
         // else
         _ => false
