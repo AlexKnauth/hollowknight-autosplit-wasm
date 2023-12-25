@@ -1323,6 +1323,10 @@ pub enum Split {
     /// 
     /// Splits when killing an Aluba
     Aluba,
+    /// Hunter's Mark (Item)
+    /// 
+    /// Splits when obtaining the Hunter's Mark
+    HuntersMark,
     /// No Eyes (Boss)
     /// 
     /// Splits when killing No Eyes
@@ -2673,6 +2677,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::VengeflyKingTrans => { pds.zote_rescued_buzzer(p, g); false },
         Split::Hornet1 => g.killed_hornet(p).is_some_and(|k| k),
         Split::Aluba => g.killed_lazy_flyer(p).is_some_and(|k| k),
+        Split::HuntersMark => g.killed_hunter_mark(p).is_some_and(|k| k),
         Split::NoEyes => g.killed_ghost_no_eyes(p).is_some_and(|k| k),
         Split::NoEyesEssence => g.no_eyes_defeated(p).is_some_and(|d| d == 2),
         Split::MegaMossCharger => g.mega_moss_charger_defeated(p).is_some_and(|k| k),

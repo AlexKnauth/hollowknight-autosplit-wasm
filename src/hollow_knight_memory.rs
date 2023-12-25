@@ -347,6 +347,7 @@ struct PlayerDataPointers {
     killed_hornet: UnityPointer<3>,
     /// killedLazyFlyer: Aluba
     killed_lazy_flyer: UnityPointer<3>,
+    killed_hunter_mark: UnityPointer<3>,
     killed_ghost_no_eyes: UnityPointer<3>,
     no_eyes_defeated: UnityPointer<3>,
     mega_moss_charger_defeated: UnityPointer<3>,
@@ -610,6 +611,7 @@ impl PlayerDataPointers {
             zote_rescued_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteRescuedBuzzer"]),
             killed_hornet: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHornet"]),
             killed_lazy_flyer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLazyFlyer"]),
+            killed_hunter_mark: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHunterMark"]),
             killed_ghost_no_eyes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostNoEyes"]),
             no_eyes_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "noEyesDefeated"]),
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
@@ -1425,6 +1427,10 @@ impl GameManagerFinder {
     /// killedLazyFlyer: Aluba
     pub fn killed_lazy_flyer(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_lazy_flyer.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn killed_hunter_mark(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_hunter_mark.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_ghost_no_eyes(&self, process: &Process) -> Option<bool> {
