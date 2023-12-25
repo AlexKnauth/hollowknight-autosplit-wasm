@@ -800,7 +800,7 @@ pub enum Split {
     OnObtainRancidEgg,
     // endregion: Relics
 
-    // region: Grubs
+    // region: Grubs and Mimics
     /// Rescued Grub 1 (Grub)
     /// 
     /// Splits when rescuing grub #1
@@ -985,7 +985,7 @@ pub enum Split {
     /// 
     /// Splits when rescuing grub #46
     Grub46,
-    // endregion: Grubs
+    // endregion: Grubs and Mimics
 
     // region: Dirtmouth
     /// King's Pass (Transition)
@@ -2115,7 +2115,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainArcaneEgg => pds.incremented_trinket4(p, g),
         Split::OnObtainRancidEgg => pds.incremented_rancid_eggs(p, g),
         // endregion: Relics
-        // region: Grubs
+        // region: Grubs and Mimics
         Split::Grub1 => g.grubs_collected(p).is_some_and(|g| g == 1),
         Split::Grub2 => g.grubs_collected(p).is_some_and(|g| g == 2),
         Split::Grub3 => g.grubs_collected(p).is_some_and(|g| g == 3),
@@ -2162,7 +2162,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub44 => g.grubs_collected(p).is_some_and(|g| g == 44),
         Split::Grub45 => g.grubs_collected(p).is_some_and(|g| g == 45),
         Split::Grub46 => g.grubs_collected(p).is_some_and(|g| g == 46),
-        // endregion: Grubs
+        // endregion: Grubs and Mimics
         // region: Dirtmouth
         Split::Dirtmouth => g.visited_dirtmouth(p).is_some_and(|v| v),
         Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
