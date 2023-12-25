@@ -1884,10 +1884,46 @@ pub enum Split {
     /// 
     /// Splits on entry to any of Pantheon 1 - 4
     Pantheon1to4Entry,
+    /// Vengefly King (Pantheon)
+    /// 
+    /// Splits after killing Vengefly King in Pantheon 1 or Pantheon 5
+    VengeflyKingP,
+    /// Gruz Mother (Pantheon)
+    /// 
+    /// Splits after killing Gruz Mother in Pantheon 1 or Pantheon 5
+    GruzMotherP,
+    /// False Knight (Pantheon)
+    /// 
+    /// Splits after killing False Knight in Pantheon 1 or Pantheon 5
+    FalseKnightP,
+    /// Massive Moss Charger (Pantheon)
+    /// 
+    /// Splits after killing Massive Moss Charger in Pantheon 1 or Pantheon 5
+    MassiveMossChargerP,
+    /// Hornet 1 (Pantheon)
+    /// 
+    /// Splits after killing Hornet Protector in Pantheon 1 or Pantheon 5
+    Hornet1P,
     /// Godhome Bench (Transition)
     /// 
     /// Splits when leaving a Godhome Bench room
     GodhomeBench,
+    /// Gorb (Pantheon)
+    /// 
+    /// Splits after killing Gorb in Pantheon 1 or Pantheon 5
+    GorbP,
+    /// Dung Defender (Pantheon)
+    /// 
+    /// Splits after killing Dung Defender in Pantheon 1 or Pantheon 5
+    DungDefenderP,
+    /// Soul Warrior (Pantheon)
+    /// 
+    /// Splits after killing Soul Warrior in Pantheon 1 or Pantheon 5
+    SoulWarriorP,
+    /// Brooding Mawlek (Pantheon)
+    /// 
+    /// Splits after killing Brooding Mawlek in Pantheon 1 or Pantheon 5
+    BroodingMawlekP,
     /// Godhome Lore Room (Transition)
     /// 
     /// Splits when leaving a Godhome lore room
@@ -2106,7 +2142,16 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Godhome
         Split::EnterGodhome => p.current.starts_with("GG_Atrium") && p.current != p.old,
         Split::Pantheon1to4Entry => p.current.starts_with("GG_Boss_Door_Entrance") && p.current != p.old,
+        Split::VengeflyKingP => p.old.starts_with("GG_Vengefly") && p.current.starts_with("GG_Gruz_Mother"),
+        Split::GruzMotherP => p.old.starts_with("GG_Gruz_Mother") && p.current.starts_with("GG_False_Knight"),
+        Split::FalseKnightP => p.old.starts_with("GG_False_Knight") && p.current.starts_with("GG_Mega_Moss_Charger"),
+        Split::MassiveMossChargerP => p.old.starts_with("GG_Mega_Moss_Charger") && p.current.starts_with("GG_Hornet_1"),
+        Split::Hornet1P => p.old.starts_with("GG_Hornet_1") && starts_with_any(p.current, &["GG_Spa", "GG_Engine"]),
         Split::GodhomeBench => p.old.starts_with("GG_Spa") && p.current != p.old,
+        Split::GorbP => p.old.starts_with("GG_Ghost_Gorb") && p.current.starts_with("GG_Dung_Defender"),
+        Split::DungDefenderP => p.old.starts_with("GG_Dung_Defender") && p.current.starts_with("GG_Mage_Knight"),
+        Split::SoulWarriorP => p.old.starts_with("GG_Mage_Knight") && p.current.starts_with("GG_Brooding_Mawlek"),
+        Split::BroodingMawlekP => p.old.starts_with("GG_Brooding_Mawlek") && starts_with_any(p.current, &["GG_Engine", "GG_Nailmasters"]),
         Split::GodhomeLoreRoom => starts_with_any(p.old, GODHOME_LORE_SCENES) && p.current != p.old,
         Split::OroMatoNailBrosP => p.old.starts_with("GG_Nailmasters") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Spa"]),
         Split::SheoPaintmasterP => p.old.starts_with("GG_Painter") && starts_with_any(p.current, &["GG_End_Sequence", "GG_Spa"]),
