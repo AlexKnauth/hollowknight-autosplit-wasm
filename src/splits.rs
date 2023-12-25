@@ -989,6 +989,178 @@ pub enum Split {
     /// 
     /// Splits when rescuing any grub
     OnObtainGrub,
+    /// Rescued Grub Basin Dive (Grub)
+    /// 
+    /// Splits when rescuing the grub in Abyss_17
+    GrubBasinDive,
+    /// Rescued Grub Basin Wings (Grub)
+    /// 
+    /// Splits when rescuing the grub in Abyss_19
+    GrubBasinWings,
+    /// Rescued Grub City Below Love Tower (Grub)
+    /// 
+    /// Splits when rescuing the grub in Ruins2_07
+    GrubCityBelowLoveTower,
+    /// Rescued Grub City Below Sanctum (Grub)
+    /// 
+    /// Splits when rescuing the grub in Ruins1_05
+    GrubCityBelowSanctum,
+    /// Rescued Grub City Guard House (Grub)
+    /// 
+    /// Splits when rescuing the grub in Ruins_House_01
+    GrubCityGuardHouse,
+    /// Rescued Grub City Sanctum (Grub)
+    /// 
+    /// Splits when rescuing the grub in Ruins1_32
+    GrubCitySanctum,
+    /// Rescued Grub City Spire (Grub)
+    /// 
+    /// Splits when rescuing the grub in Ruins2_03
+    GrubCitySpire,
+    /// Rescued Grub Cliffs Baldur Shell (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus1_28
+    GrubCliffsBaldurShell,
+    /// Rescued Grub Crossroads Acid (Grub)
+    /// 
+    /// Splits when rescuing the grub in Crossroads_35
+    GrubCrossroadsAcid,
+    /// Rescued Grub Crossroads Guarded (Grub)
+    /// 
+    /// Splits when rescuing the grub in Crossroads_48
+    GrubCrossroadsGuarded,
+    /// Rescued Grub Crossroads Spikes (Grub)
+    /// 
+    /// Splits when rescuing the grub in Crossroads_31
+    GrubCrossroadsSpikes,
+    /// Rescued Grub Crossroads Vengefly (Grub)
+    /// 
+    /// Splits when rescuing the grub in Crossroads_05
+    GrubCrossroadsVengefly,
+    /// Rescued Grub Crossroads Wall (Grub)
+    /// 
+    /// Splits when rescuing the grub in Crossroads_03
+    GrubCrossroadsWall,
+    /// Rescued Grub Crystal Peak Bottom Lever (Grub)
+    /// 
+    /// Splits when rescuing the grub in Mines_04
+    GrubCrystalPeaksBottomLever,
+    /// Rescued Grub Crystal Peak Crown (Grub)
+    /// 
+    /// Splits when rescuing the grub in Mines_24
+    GrubCrystalPeaksCrown,
+    /// Rescued Grub Crystal Peak Crushers (Grub)
+    /// 
+    /// Splits when rescuing the grub in Mines_19
+    GrubCrystalPeaksCrushers,
+    /// Rescued Grub Crystal Peak Crystal Heart (Grub)
+    /// 
+    /// Splits when rescuing the grub in Mines_31
+    GrubCrystalPeaksCrystalHeart,
+    /// Rescued Grub Crystal Peak Mimic (Grub)
+    /// 
+    /// Splits when rescuing the grub in Mines_16
+    GrubCrystalPeaksMimics,
+    /// Rescued Grub Crystal Peak Mound (Grub)
+    /// 
+    /// Splits when rescuing the grub in Mines_35
+    GrubCrystalPeaksMound,
+    /// Rescued Grub Crystal Peak Spikes (Grub)
+    /// 
+    /// Splits when rescuing the grub in Mines_03
+    GrubCrystalPeaksSpikes,
+    /// Rescued Grub Deepnest Beast's Den (Grub)
+    /// 
+    /// Splits when rescuing the grub in Deepnest_Spider_Town
+    GrubDeepnestBeastsDen,
+    /// Rescued Grub Deepnest Dark (Grub)
+    /// 
+    /// Splits when rescuing the grub in Deepnest_39
+    GrubDeepnestDark,
+    /// Rescued Grub Deepnest Mimics (Grub)
+    /// 
+    /// Splits when rescuing the grub in Deepnest_36
+    GrubDeepnestMimics,
+    /// Rescued Grub Deepnest Nosk (Grub)
+    /// 
+    /// Splits when rescuing the grub in Deepnest_31
+    GrubDeepnestNosk,
+    /// Rescued Grub Deepnest Spikes (Grub)
+    /// 
+    /// Splits when rescuing the grub in Deepnest_03
+    GrubDeepnestSpikes,
+    /// Rescued Grub Fog Canyon Archives (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus3_47
+    GrubFogCanyonArchives,
+    /// Rescued Grub Fungal Bouncy (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus2_18
+    GrubFungalBouncy,
+    /// Rescued Grub Fungal Spore Shroom (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus2_20
+    GrubFungalSporeShroom,
+    /// Rescued Grub Greenpath Cornifer (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus1_06
+    GrubGreenpathCornifer,
+    /// Rescued Grub Greenpath Hunter (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus1_07
+    GrubGreenpathHunter,
+    /// Rescued Grub Greenpath Moss Knight (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus1_21
+    GrubGreenpathMossKnight,
+    /// Rescued Grub Greenpath Vessel Fragment (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus1_13
+    GrubGreenpathVesselFragment,
+    /// Rescued Grub Hive External (Grub)
+    /// 
+    /// Splits when rescuing the grub in Hive_03
+    GrubHiveExternal,
+    /// Rescued Grub Hive Internal (Grub)
+    /// 
+    /// Splits when rescuing the grub in Hive_04
+    GrubHiveInternal,
+    /// Rescued Grub Kingdom's Edge Center (Grub)
+    /// 
+    /// Splits when rescuing the grub in Deepnest_East_11
+    GrubKingdomsEdgeCenter,
+    /// Rescued Grub Kingdom's Edge Oro (Grub)
+    /// 
+    /// Splits when rescuing the grub in Deepnest_East_14
+    GrubKingdomsEdgeOro,
+    /// Rescued Grub Queen's Gardens Below Stag (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus3_10
+    GrubQueensGardensBelowStag,
+    /// Rescued Grub Queen's Gardens Upper (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus3_22
+    GrubQueensGardensUpper,
+    /// Rescued Grub Queen's Gardens White Lady (Grub)
+    /// 
+    /// Splits when rescuing the grub in Fungus3_48
+    GrubQueensGardensWhiteLady,
+    /// Rescued Grub Resting Grounds Crypts (Grub)
+    /// 
+    /// Splits when rescuing the grub in RestingGrounds_10
+    GrubRestingGroundsCrypts,
+    /// Rescued Grub Waterways Center (Grub)
+    /// 
+    /// Splits when rescuing the grub in Waterways_04
+    GrubWaterwaysCenter,
+    /// Rescued Grub Waterways Hwurmps (Grub)
+    /// 
+    /// Splits when rescuing the grub in Waterways_14
+    GrubWaterwaysHwurmps,
+    /// Rescued Grub Waterways Isma (Grub)
+    /// 
+    /// Splits when rescuing the grub in Waterways_13
+    GrubWaterwaysIsma,
     /// Mimic 1 (Killed)
     /// 
     /// Splits when rescuing mimic #1
@@ -2187,6 +2359,49 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Grub45 => g.grubs_collected(p).is_some_and(|g| g == 45),
         Split::Grub46 => g.grubs_collected(p).is_some_and(|g| g == 46),
         Split::OnObtainGrub => pds.incremented_grubs_collected(p, g),
+        Split::GrubBasinDive => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Abyss_17"),
+        Split::GrubBasinWings => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Abyss_19"),
+        Split::GrubCityBelowLoveTower => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_07"),
+        Split::GrubCityBelowSanctum => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_05"),
+        Split::GrubCityGuardHouse => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_House_01"),
+        Split::GrubCitySanctum => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_32"),
+        Split::GrubCitySpire => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_03"),
+        Split::GrubCliffsBaldurShell => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_28"),
+        Split::GrubCrossroadsAcid => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_35"),
+        Split::GrubCrossroadsGuarded => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_48"),
+        Split::GrubCrossroadsSpikes => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_31"),
+        Split::GrubCrossroadsVengefly => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_05"),
+        Split::GrubCrossroadsWall => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_03"),
+        Split::GrubCrystalPeaksBottomLever => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Mines_04"),
+        Split::GrubCrystalPeaksCrown => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Mines_24"),
+        Split::GrubCrystalPeaksCrushers => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Mines_19"),
+        Split::GrubCrystalPeaksCrystalHeart => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Mines_31"),
+        Split::GrubCrystalPeaksMimics => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Mines_16"),
+        Split::GrubCrystalPeaksMound => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Mines_35"),
+        Split::GrubCrystalPeaksSpikes => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Mines_03"),
+        Split::GrubDeepnestBeastsDen => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Deepnest_Spider_Town"),
+        Split::GrubDeepnestDark => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Deepnest_39"),
+        Split::GrubDeepnestMimics => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Deepnest_36"),
+        Split::GrubDeepnestNosk => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Deepnest_31"),
+        Split::GrubDeepnestSpikes => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Deepnest_03"),
+        Split::GrubFogCanyonArchives => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_47"),
+        Split::GrubFungalBouncy => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus2_18"),
+        Split::GrubFungalSporeShroom => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus2_20"),
+        Split::GrubGreenpathCornifer => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_06"),
+        Split::GrubGreenpathHunter => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_07"),
+        Split::GrubGreenpathMossKnight => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_21"),
+        Split::GrubGreenpathVesselFragment => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_13"),
+        Split::GrubHiveExternal => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Hive_03"),
+        Split::GrubHiveInternal => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Hive_04"),
+        Split::GrubKingdomsEdgeCenter => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Deepnest_East_11"),
+        Split::GrubKingdomsEdgeOro => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Deepnest_East_14"),
+        Split::GrubQueensGardensBelowStag => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_10"),
+        Split::GrubQueensGardensUpper => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_22"),
+        Split::GrubQueensGardensWhiteLady => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_48"),
+        Split::GrubRestingGroundsCrypts => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "RestingGrounds_10"),
+        Split::GrubWaterwaysCenter => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Waterways_04"),
+        Split::GrubWaterwaysHwurmps => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Waterways_14"),
+        Split::GrubWaterwaysIsma => pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Waterways_13"),
         Split::Mimic1 => g.kills_grub_mimic(p).is_some_and(|k| k == 4),
         Split::Mimic2 => g.kills_grub_mimic(p).is_some_and(|k| k == 3),
         Split::Mimic3 => g.kills_grub_mimic(p).is_some_and(|k| k == 2),
