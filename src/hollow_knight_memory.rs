@@ -228,6 +228,7 @@ struct PlayerDataPointers {
     sly_simple_key: UnityPointer<3>,
     has_kings_brand: UnityPointer<3>,
     has_tram_pass: UnityPointer<3>,
+    cornifer_at_home: UnityPointer<3>,
     #[cfg(debug_assertions)]
     geo: UnityPointer<3>,
     // Nail and Pale Ore
@@ -496,6 +497,7 @@ impl PlayerDataPointers {
             sly_simple_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slySimpleKey"]),
             has_kings_brand: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasKingsBrand"]),
             has_tram_pass: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasTramPass"]),
+            cornifer_at_home: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "corniferAtHome"]),
             #[cfg(debug_assertions)]
             geo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "geo"]),
             // Nail and Pale Ore
@@ -2093,6 +2095,10 @@ impl PlayerDataStore {
 
     pub fn has_lantern(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "has_lantern", &g.player_data_pointers.has_lantern).unwrap_or(false)
+    }
+
+    pub fn cornifer_at_home(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "cornifer_at_home", &g.player_data_pointers.cornifer_at_home).unwrap_or(false)
     }
 
     pub fn got_charm_31(&mut self, p: &Process, g: &GameManagerFinder) -> bool {

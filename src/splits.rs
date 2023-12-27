@@ -1224,6 +1224,10 @@ pub enum Split {
     /// Splits when entering Dirtmouth text first appears
     Dirtmouth,
     SlyShopExit,
+    /// Cornifer at Home (Transition)
+    /// 
+    /// Splits when entering Iselda's hut while Cornifer is sleeping
+    CorniferAtHome,
     /// Enter Troupe Master Grimm (Transition)
     /// 
     /// Splits when entering Grimm tent with requirements to trigger Troupe Master Grimm boss
@@ -2203,6 +2207,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterDirtmouth => p.current == "Town" && p.current != p.old,
         Split::SlyShopExit => p.old == "Room_shop" && p.current != p.old,
         Split::LumaflyLanternTransition => pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop"),
+        Split::CorniferAtHome => pds.cornifer_at_home(prc, g) && p.old.starts_with("Town") && p.current.starts_with("Room_mapper"),
         // TODO: should EnterTMG check that Grimmchild is actually equipped?
         Split::EnterTMG => p.current.starts_with("Grimm_Main_Tent")
                         && p.current != p.old
