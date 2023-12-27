@@ -325,6 +325,7 @@ struct PlayerDataPointers {
     grubs_collected: UnityPointer<3>,
     kills_grub_mimic: UnityPointer<3>,
     visited_dirtmouth: UnityPointer<3>,
+    elderbug_gave_flower: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
     killed_nightmare_grimm: UnityPointer<3>,
     killed_grey_prince: UnityPointer<3>,
@@ -593,6 +594,7 @@ impl PlayerDataPointers {
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
             kills_grub_mimic: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGrubMimic"]),
             visited_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDirtmouth"]),
+            elderbug_gave_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderbugGaveFlower"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
             killed_grey_prince: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGreyPrince"]),
@@ -1383,6 +1385,10 @@ impl GameManagerFinder {
 
     pub fn visited_dirtmouth(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.visited_dirtmouth.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn elderbug_gave_flower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.elderbug_gave_flower.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_grimm(&self, process: &Process) -> Option<bool> {

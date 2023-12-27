@@ -1228,6 +1228,10 @@ pub enum Split {
     /// Splits when entering Dirtmouth text first appears
     Dirtmouth,
     SlyShopExit,
+    /// Elderbug Flower Quest (NPC)
+    /// 
+    /// Splits when giving the flower to the Elderbug
+    ElderbugFlower,
     /// Cornifer at Home (Transition)
     /// 
     /// Splits when entering Iselda's hut while Cornifer is sleeping
@@ -2720,6 +2724,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Grubs and Mimics
         // region: Dirtmouth
         Split::Dirtmouth => g.visited_dirtmouth(p).is_some_and(|v| v),
+        Split::ElderbugFlower => g.elderbug_gave_flower(p).is_some_and(|g| g),
         Split::TroupeMasterGrimm => g.killed_grimm(p).is_some_and(|k| k),
         Split::NightmareKingGrimm => g.killed_nightmare_grimm(p).is_some_and(|k| k),
         Split::GreyPrince => g.killed_grey_prince(p).is_some_and(|k| k),
