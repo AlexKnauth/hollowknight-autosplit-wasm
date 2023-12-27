@@ -1011,6 +1011,10 @@ impl GameManagerFinder {
         self.player_data_pointers.has_lantern.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn simple_keys(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.simple_keys.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn has_sly_key(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_sly_key.deref(process, &self.module, &self.image).ok()
     }

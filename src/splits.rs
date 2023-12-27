@@ -265,6 +265,10 @@ pub enum Split {
     /// 
     /// Splits on transition after Lantern has been acquired
     LumaflyLanternTransition,
+    /// Simple Key - First (Item)
+    /// 
+    /// Splits when obtaining the first Simple Key
+    SimpleKey,
     /// Simple Key (Obtain)
     /// 
     /// Splits when obtaining a Simple Key
@@ -2466,6 +2470,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::CityKey => g.has_city_key(p).is_some_and(|k| k),
         Split::LumaflyLantern => g.has_lantern(p).is_some_and(|l| l),
         Split::LumaflyLanternTransition => { pds.has_lantern(p, g); false },
+        Split::SimpleKey => g.simple_keys(p).is_some_and(|k| 1 <= k),
         Split::OnObtainSimpleKey => pds.incremented_simple_keys(p, g),
         Split::SlyKey => g.has_sly_key(p).is_some_and(|k| k),
         Split::ElegantKey => g.has_white_key(p).is_some_and(|k| k),
