@@ -707,6 +707,41 @@ impl PlayerDataPointers {
     }
 }
 
+/// boss door state pointers to BossSequenceDoorCompletion
+struct CompletionPointers {
+    boss_door_state_tier1: UnityPointer<3>,
+    boss_door_state_tier2: UnityPointer<3>,
+    boss_door_state_tier3: UnityPointer<3>,
+    boss_door_state_tier4: UnityPointer<3>,
+    boss_door_state_tier5: UnityPointer<3>,
+}
+
+impl CompletionPointers {
+    fn new() -> CompletionPointers {
+        CompletionPointers {
+            boss_door_state_tier1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier1"]),
+            boss_door_state_tier2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier2"]),
+            boss_door_state_tier3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier3"]),
+            boss_door_state_tier4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier4"]),
+            boss_door_state_tier5: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "bossDoorStateTier5"]),
+        }
+    }
+}
+
+#[derive(bytemuck::CheckedBitPattern, Clone, Copy)] // bytemuck::Zeroable
+#[repr(C)]
+pub struct BossSequenceDoorCompletion {
+    can_unlock: bool,
+    unlocked: bool,
+    pub completed: bool,
+    all_bindings: bool,
+    no_hits: bool,
+    bound_nail: bool,
+    bound_shell: bool,
+    bound_charms: bool,
+    bound_soul: bool,
+}
+
 // --------------------------------------------------------
 // --------------------------------------------------------
 
@@ -715,6 +750,7 @@ pub struct GameManagerFinder {
     image: mono::Image,
     pointers: GameManagerPointers,
     player_data_pointers: PlayerDataPointers,
+    completion_pointers: CompletionPointers,
     ui_state_offset: OnceCell<u32>,
 }
 
@@ -740,6 +776,7 @@ impl GameManagerFinder {
                         image,
                         pointers: GameManagerPointers::new(),
                         player_data_pointers: PlayerDataPointers::new(),
+                        completion_pointers: CompletionPointers::new(),
                         ui_state_offset: OnceCell::new(),
                     };
                 }
@@ -1775,16 +1812,36 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_nail_bros.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn boss_door_state_tier1(&self, process: &Process) -> Option<BossSequenceDoorCompletion> {
+        self.completion_pointers.boss_door_state_tier1.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_paintmaster(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_paintmaster.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn boss_door_state_tier2(&self, process: &Process) -> Option<BossSequenceDoorCompletion> {
+        self.completion_pointers.boss_door_state_tier2.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_nailsage(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_nailsage.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn boss_door_state_tier3(&self, process: &Process) -> Option<BossSequenceDoorCompletion> {
+        self.completion_pointers.boss_door_state_tier3.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_hollow_knight_prime(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_hollow_knight_prime.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn boss_door_state_tier4(&self, process: &Process) -> Option<BossSequenceDoorCompletion> {
+        self.completion_pointers.boss_door_state_tier4.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn boss_door_state_tier5(&self, process: &Process) -> Option<BossSequenceDoorCompletion> {
+        self.completion_pointers.boss_door_state_tier5.deref(process, &self.module, &self.image).ok()
     }
 
 

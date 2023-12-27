@@ -1940,6 +1940,10 @@ pub enum Split {
     /// 
     /// Splits after killing Brothers Oro & Mato in Pantheon 1 or Pantheon 5
     OroMatoNailBrosP,
+    /// Pantheon 1 (Trial)
+    /// 
+    /// Splits when beating the Pantheon of the Master
+    Pantheon1,
     /// Xero (Pantheon)
     /// 
     /// Splits after killing Xero in Pantheon 2 or Pantheon 5
@@ -1984,6 +1988,10 @@ pub enum Split {
     /// 
     /// Splits after killing Paintmaster Sheo in Pantheon 2 or Pantheon 5
     SheoPaintmasterP,
+    /// Pantheon 2 (Trial)
+    /// 
+    /// Splits when beating the Pantheon of the Artist
+    Pantheon2,
     /// Hive Knight (Pantheon)
     /// 
     /// Splits after killing Hive Knight in Pantheon 3 or Pantheon 5
@@ -2028,6 +2036,10 @@ pub enum Split {
     /// 
     /// Splits after killing Great Nailsage Sly in Pantheon 3 or Pantheon 5
     SlyP,
+    /// Pantheon 3 (Trial)
+    /// 
+    /// Splits when beating the Pantheon of the Sage
+    Pantheon3,
     /// Enraged Guardian (Pantheon)
     /// 
     /// Splits after killing Enraged Guardian in Pantheon 4 or Pantheon 5
@@ -2072,6 +2084,10 @@ pub enum Split {
     /// 
     /// Splits after killing Pure Vessel in Pantheon 4 or Pantheon 5
     PureVesselP,
+    /// Pantheon 4 (Trial)
+    /// 
+    /// Splits when beating the Pantheon of the Knight
+    Pantheon4,
     /// Pantheon 5 (Transition)
     /// 
     /// Splits on entry to Pantheon 5
@@ -2088,6 +2104,10 @@ pub enum Split {
     /// 
     /// Splits after killing Absolute Radiance in Pantheon 5
     RadianceP,
+    /// Pantheon 5 (Trial)
+    /// 
+    /// Splits when beating the Pantheon of Hallownest
+    Pantheon5,
     // endregion: Godhome
 }
 
@@ -2805,9 +2825,14 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::GodTuner => g.has_godfinder(p).is_some_and(|g| g),
         Split::Godhome => g.visited_godhome(p).is_some_and(|v| v),
         Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
+        Split::Pantheon1 => g.boss_door_state_tier1(p).is_some_and(|c| c.completed),
         Split::SheoPaintmaster => g.killed_paintmaster(p).is_some_and(|k| k),
+        Split::Pantheon2 => g.boss_door_state_tier2(p).is_some_and(|c| c.completed),
         Split::SlyNailsage => g.killed_nailsage(p).is_some_and(|k| k),
+        Split::Pantheon3 => g.boss_door_state_tier3(p).is_some_and(|c| c.completed),
         Split::PureVessel => g.killed_hollow_knight_prime(p).is_some_and(|k| k),
+        Split::Pantheon4 => g.boss_door_state_tier4(p).is_some_and(|c| c.completed),
+        Split::Pantheon5 => g.boss_door_state_tier5(p).is_some_and(|c| c.completed),
         // endregion: Godhome
         // else
         _ => false
