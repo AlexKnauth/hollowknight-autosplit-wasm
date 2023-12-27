@@ -741,15 +741,15 @@ impl CompletionPointers {
 #[derive(bytemuck::CheckedBitPattern, Clone, Copy)] // bytemuck::Zeroable
 #[repr(C)]
 pub struct BossSequenceDoorCompletion {
-    can_unlock: bool,
+    can_unlock: bool, // canUnlock
     unlocked: bool,
     pub completed: bool,
-    all_bindings: bool,
-    no_hits: bool,
-    bound_nail: bool,
-    bound_shell: bool,
-    bound_charms: bool,
-    bound_soul: bool,
+    all_bindings: bool, // allBindings
+    no_hits: bool, // noHits
+    bound_nail: bool, // boundNail
+    bound_shell: bool, // boundShell
+    bound_charms: bool, // boundCharms
+    bound_soul: bool, // boundSoul
 }
 
 // --------------------------------------------------------
