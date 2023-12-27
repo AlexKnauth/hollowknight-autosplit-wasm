@@ -2825,14 +2825,14 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::GodTuner => g.has_godfinder(p).is_some_and(|g| g),
         Split::Godhome => g.visited_godhome(p).is_some_and(|v| v),
         Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
-        Split::Pantheon1 => todo!("bossDoorStateTier1"),
+        Split::Pantheon1 => g.boss_door_state_tier1(p).is_some_and(|c| c.completed),
         Split::SheoPaintmaster => g.killed_paintmaster(p).is_some_and(|k| k),
-        Split::Pantheon2 => todo!("bossDoorStateTier2"),
+        Split::Pantheon2 => g.boss_door_state_tier2(p).is_some_and(|c| c.completed),
         Split::SlyNailsage => g.killed_nailsage(p).is_some_and(|k| k),
-        Split::Pantheon3 => todo!("bossDoorStateTier3"),
+        Split::Pantheon3 => g.boss_door_state_tier3(p).is_some_and(|c| c.completed),
         Split::PureVessel => g.killed_hollow_knight_prime(p).is_some_and(|k| k),
-        Split::Pantheon4 => todo!("bossDoorStateTier4"),
-        Split::Pantheon5 => todo!("bossDoorStateTier5"),
+        Split::Pantheon4 => g.boss_door_state_tier4(p).is_some_and(|c| c.completed),
+        Split::Pantheon5 => g.boss_door_state_tier5(p).is_some_and(|c| c.completed),
         // endregion: Godhome
         // else
         _ => false
