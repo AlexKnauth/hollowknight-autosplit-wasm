@@ -1668,6 +1668,10 @@ pub enum Split {
     /// 
     /// Splits when entering Ancient Basin text first appears
     Abyss,
+    /// Saved Cloth (Event)
+    /// 
+    /// Splits when saving Cloth in Ancient Basin
+    SavedCloth,
     /// Basin Bench (Toll)
     /// 
     /// Splits when buying Ancient Basin toll bench
@@ -2832,6 +2836,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Waterways
         // region: Basin
         Split::Abyss => g.visited_abyss(p).is_some_and(|v| v),
+        Split::SavedCloth => g.saved_cloth(p).is_some_and(|s| s),
         Split::TollBenchBasin => g.toll_bench_abyss(p).is_some_and(|b| b),
         Split::BrokenVessel => g.killed_infected_knight(p).is_some_and(|k| k),
         Split::BrokenVesselTrans => { pds.killed_infected_knight(p, g); false },

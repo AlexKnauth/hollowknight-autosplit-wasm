@@ -404,6 +404,7 @@ struct PlayerDataPointers {
     killed_fluke_mother: UnityPointer<3>,
     /// Visited Ancient Basin
     visited_abyss: UnityPointer<3>,
+    saved_cloth: UnityPointer<3>,
     toll_bench_abyss: UnityPointer<3>,
     // Broken Vessel
     killed_infected_knight: UnityPointer<3>,
@@ -667,6 +668,7 @@ impl PlayerDataPointers {
             met_emilitia: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metEmilitia"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
             visited_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedAbyss"]),
+            saved_cloth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "savedCloth"]),
             toll_bench_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchAbyss"]),
             killed_infected_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedInfectedKnight"]),
             infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
@@ -1672,6 +1674,10 @@ impl GameManagerFinder {
 
     pub fn visited_abyss(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.visited_abyss.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn saved_cloth(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.saved_cloth.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn toll_bench_abyss(&self, process: &Process) -> Option<bool> {
