@@ -1530,6 +1530,10 @@ pub enum Split {
     /// 
     /// Splits when entering Soul Sanctum
     EnterSanctum,
+    /// Soul Sanctum w/ Shade Soul (Transition)
+    /// 
+    /// Splits when entering Soul Sanctum after obtaining Shade Soul
+    EnterSanctumWithShadeSoul,
     /// Enter Soul Master (Transition)
     /// 
     /// Splits when entering Soul Master boss arena transition
@@ -2275,6 +2279,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuGorgeousHusk => pds.killed_gorgeous_husk(prc, g) && is_menu(p.current),
         Split::EnterRafters => p.current == "Ruins1_03" && p.current != p.old,
         Split::EnterSanctum => p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23"),
+        Split::EnterSanctumWithShadeSoul => 2 <= pds.get_fireball_level(prc, g) && p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23"),
         Split::EnterSoulMaster => p.current.starts_with("Ruins1_24") && p.current != p.old,
         Split::MenuStoreroomsSimpleKey => is_menu(p.current) && p.old == "Ruins1_17",
         Split::TransShadeSoul => 2 <= pds.get_fireball_level(prc, g) && p.current != p.old,
