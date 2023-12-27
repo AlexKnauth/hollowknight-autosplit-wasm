@@ -1646,6 +1646,10 @@ pub enum Split {
     /// 
     /// Splits when getting White Defender essence
     WhiteDefenderEssence,
+    /// Met Emilitia (Event)
+    /// 
+    /// Splits when talking to Emilitia for the first time
+    MetEmilitia,
     /// Flukemarm (Boss)
     /// 
     /// Splits when killing Flukemarm
@@ -2823,6 +2827,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DungDefender => g.killed_dung_defender(p).is_some_and(|k| k),
         Split::WhiteDefender => g.killed_white_defender(p).is_some_and(|k| k),
         Split::WhiteDefenderEssence => g.white_defender_orbs_collected(p).is_some_and(|o| o),
+        Split::MetEmilitia => g.met_emilitia(p).is_some_and(|m| m),
         Split::Flukemarm => g.killed_fluke_mother(p).is_some_and(|k| k),
         // endregion: Waterways
         // region: Basin

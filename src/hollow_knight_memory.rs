@@ -400,6 +400,7 @@ struct PlayerDataPointers {
     killed_dung_defender: UnityPointer<3>,
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
+    met_emilitia: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
     /// Visited Ancient Basin
     visited_abyss: UnityPointer<3>,
@@ -663,6 +664,7 @@ impl PlayerDataPointers {
             killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
+            met_emilitia: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metEmilitia"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
             visited_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedAbyss"]),
             toll_bench_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchAbyss"]),
@@ -1658,6 +1660,10 @@ impl GameManagerFinder {
 
     pub fn white_defender_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.white_defender_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn met_emilitia(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.met_emilitia.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_fluke_mother(&self, process: &Process) -> Option<bool> {
