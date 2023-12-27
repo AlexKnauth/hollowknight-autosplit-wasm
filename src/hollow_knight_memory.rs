@@ -216,6 +216,7 @@ struct PlayerDataPointers {
     mask_broken_monomon: UnityPointer<3>,
     mask_broken_hegemol: UnityPointer<3>,
     guardians_defeated: UnityPointer<3>,
+    mr_mushroom_state: UnityPointer<3>,
     // Keys
     has_city_key: UnityPointer<3>,
     has_lantern: UnityPointer<3>,
@@ -483,6 +484,7 @@ impl PlayerDataPointers {
             mask_broken_monomon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenMonomon"]),
             mask_broken_hegemol: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenHegemol"]),
             guardians_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "guardiansDefeated"]),
+            mr_mushroom_state: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mrMushroomState"]),
             // Keys
             has_city_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCityKey"]),
             has_lantern: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasLantern"]),
@@ -989,6 +991,10 @@ impl GameManagerFinder {
 
     pub fn guardians_defeated(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.guardians_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn mr_mushroom_state(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.mr_mushroom_state.deref(process, &self.module, &self.image).ok()
     }
 
     // Keys

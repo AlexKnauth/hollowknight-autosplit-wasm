@@ -91,6 +91,37 @@ pub enum Split {
     MenuDreamer3,
     // endregion: Dreamers
 
+    // region: Mr Mushroom
+    /// Mr. Mushroom 1 (Spot)
+    /// 
+    /// Splits when talking to Mister Mushroom in Fungal Wastes
+    MrMushroom1,
+    /// Mr. Mushroom 2 (Spot)
+    /// 
+    /// Splits when talking to Mister Mushroom in Kingdom's Edge
+    MrMushroom2,
+    /// Mr. Mushroom 3 (Spot)
+    /// 
+    /// Splits when talking to Mister Mushroom in Deepnest
+    MrMushroom3,
+    /// Mr. Mushroom 4 (Spot)
+    /// 
+    /// Splits when talking to Mister Mushroom in Mato's Hut
+    MrMushroom4,
+    /// Mr. Mushroom 5 (Spot)
+    /// 
+    /// Splits when talking to Mister Mushroom in Ancient Basin
+    MrMushroom5,
+    /// Mr. Mushroom 6 (Spot)
+    /// 
+    /// Splits when talking to Mister Mushroom by Overgrown Mound
+    MrMushroom6,
+    /// Mr. Mushroom 7 (Spot)
+    /// 
+    /// Splits when talking to Mister Mushroom in King's Pass
+    MrMushroom7,
+    // endregion: Mr Mushroom
+
     // region: Spell Levels
     /// Vengeful Spirit (Skill)
     /// 
@@ -2368,6 +2399,15 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Dreamer3 => g.guardians_defeated(p).is_some_and(|d| 3 <= d),
         Split::MenuDreamer3 => { pds.guardians_defeated(p, g); false },
         // endregion: Dreamers
+        // region: Mr Mushroom
+        Split::MrMushroom1 => g.mr_mushroom_state(p).is_some_and(|s| 2 <= s),
+        Split::MrMushroom2 => g.mr_mushroom_state(p).is_some_and(|s| 3 <= s),
+        Split::MrMushroom3 => g.mr_mushroom_state(p).is_some_and(|s| 4 <= s),
+        Split::MrMushroom4 => g.mr_mushroom_state(p).is_some_and(|s| 5 <= s),
+        Split::MrMushroom5 => g.mr_mushroom_state(p).is_some_and(|s| 6 <= s),
+        Split::MrMushroom6 => g.mr_mushroom_state(p).is_some_and(|s| 7 <= s),
+        Split::MrMushroom7 => g.mr_mushroom_state(p).is_some_and(|s| 8 <= s),
+        // endregion: Mr Mushroom
         // region: Spell Levels
         Split::VengefulSpirit => g.get_fireball_level(p).is_some_and(|l| 1 <= l),
         Split::TransVS => { pds.get_fireball_level(p, g); false },
