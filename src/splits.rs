@@ -1703,22 +1703,62 @@ pub enum Split {
     /// 
     /// Splits when entering the first White Palace scene
     WhitePalaceEntry,
+    /// White Palace - Lower Entry (Room)
+    /// 
+    /// Splits on transition to White_Palace_01
+    WhitePalaceLowerEntry,
     /// White Palace (Area)
     /// 
     /// Splits when entering White Palace text for the first time
     WhitePalace,
+    /// White Palace - Lower Orb (Room)
+    /// 
+    /// Splits on transition to White_Palace_02
+    WhitePalaceLowerOrb,
     /// White Palace - Lower Orb (Lever)
     /// 
     /// Splits when lighting the orb in White Palace lowest floor
     WhitePalaceOrb1,
+    /// White Palace - Atrium (Room)
+    /// 
+    /// Splits on any transition to White_Palace_03_Hub
+    WhitePalaceAtrium,
+    /// White Palace - Left Entry (Room)
+    /// 
+    /// Splits on transition to White_Palace_04
+    WhitePalaceLeftEntry,
+    /// White Palace - Left Midpoint (Room)
+    /// 
+    /// Splits on transition between White_Palace_04 and _14
+    WhitePalaceLeftWingMid,
     /// White Palace - Left Orb (Lever)
     /// 
     /// Splits when lighting the orb in White Palace left wing
     WhitePalaceOrb3,
+    /// White Palace - Right Side Entry (Room)
+    /// 
+    /// Splits on transition between White_Palace_03_Hub and _15
+    WhitePalaceRightEntry,
+    /// White Palace - Right Side Climb (Room)
+    /// 
+    /// Splits on transition between White_Palace_05 and _16
+    WhitePalaceRightClimb,
+    /// White Palace - Right Side Saw Squeeze (Room)
+    /// 
+    /// Splits on transition between White_Palace_16 and _05
+    WhitePalaceRightSqueeze,
+    /// White Palace - Right Side Exit (Room)
+    /// 
+    /// Splits on transition between White_Palace_05 and _15
+    WhitePalaceRightDone,
     /// White Palace - Right Orb (Lever)
     /// 
     /// Splits when lighting the orb in White Palace right wing
     WhitePalaceOrb2,
+    /// White Palace - Top Entry (Room)
+    /// 
+    /// Splits on transition between White_Palace_03_Hub and _06
+    WhitePalaceTopEntry,
     /// Path of Pain Room 1 (Room)
     /// 
     /// Splits on transition to the first room in PoP (entry to PoP)
@@ -1739,10 +1779,26 @@ pub enum Split {
     /// 
     /// Splits when completing the Path of Pain in White Palace
     PathOfPain,
+    /// White Palace - Top Cursed Cycle (Room)
+    /// 
+    /// Splits on transition between White_Palace_06 and _07
+    WhitePalaceTopClimb,
+    /// White Palace - Top Lever (Room)
+    /// 
+    /// Splits on transition between White_Palace_07 and _12
+    WhitePalaceTopLeverRoom,
+    /// White Palace - Top Final Platforming (Room)
+    /// 
+    /// Splits on transition between White_Palace_12 and _13
+    WhitePalaceTopLastPlats,
     /// White Palace - Workshop (Area)
     /// 
     /// Splits when visiting the secret room in White Palace
     WhitePalaceSecretRoom,
+    /// White Palace - Throne Room (Room)
+    /// 
+    /// Splits on transition between White_Palace_13 and _09
+    WhitePalaceThroneRoom,
     // endregion: White Palace
     // region: Kingdom's Edge
     /// Kingdom's Edge (Transition)
@@ -2344,10 +2400,24 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Basin
         // region: White Palace
         Split::WhitePalaceEntry => p.current.starts_with("White_Palace_11") && p.current != p.old,
+        Split::WhitePalaceLowerEntry => p.current.starts_with("White_Palace_01") && p.current != p.old,
+        Split::WhitePalaceLowerOrb => p.current.starts_with("White_Palace_02") && p.current != p.old,
+        Split::WhitePalaceAtrium => p.current.starts_with("White_Palace_03_hub") && p.current != p.old,
+        Split::WhitePalaceLeftEntry => p.current.starts_with("White_Palace_04") && p.current != p.old,
+        Split::WhitePalaceLeftWingMid => p.old.starts_with("White_Palace_04") && p.current.starts_with("White_Palace_14"),
+        Split::WhitePalaceRightEntry => p.current.starts_with("White_Palace_15") && p.current != p.old,
+        Split::WhitePalaceRightClimb => p.old.starts_with("White_Palace_05") && p.current.starts_with("White_Palace_16"),
+        Split::WhitePalaceRightSqueeze => p.old.starts_with("White_Palace_16") && p.current.starts_with("White_Palace_05"),
+        Split::WhitePalaceRightDone => p.old.starts_with("White_Palace_05") && p.current.starts_with("White_Palace_15"),
+        Split::WhitePalaceTopEntry => p.old.starts_with("White_Palace_03_hub") && p.current.starts_with("White_Palace_06"),
         Split::PathOfPainEntry => p.current.starts_with("White_Palace_18") && p.old.starts_with("White_Palace_06"),
         Split::PathOfPainTransition1 => p.current.starts_with("White_Palace_17") && p.old.starts_with("White_Palace_18"),
         Split::PathOfPainTransition2 => p.current.starts_with("White_Palace_19") && p.old.starts_with("White_Palace_17"),
         Split::PathOfPainTransition3 => p.current.starts_with("White_Palace_20") && p.old.starts_with("White_Palace_19"),
+        Split::WhitePalaceTopClimb => p.old.starts_with("White_Palace_06") && p.current.starts_with("White_Palace_07"),
+        Split::WhitePalaceTopLeverRoom => p.old.starts_with("White_Palace_07") && p.current.starts_with("White_Palace_12"),
+        Split::WhitePalaceTopLastPlats => p.old.starts_with("White_Palace_12") && p.current.starts_with("White_Palace_13"),
+        Split::WhitePalaceThroneRoom => p.old.starts_with("White_Palace_13") && p.current.starts_with("White_Palace_09"),
         // endregion: White Palace
         // region: Kingdom's Edge
         // Deepnest_East_03 is the KE room with Cornifer, acid, and raining fools,
