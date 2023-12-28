@@ -439,6 +439,54 @@ pub enum Split {
     /// 
     /// Splits when getting 4 extra Masks (9 base HP)
     Mask4,
+    /// Brooding Mawlek Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard from Brooding Mawlek
+    MaskShardMawlek,
+    /// Grub Reward Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard given by Grubfather
+    MaskShardGrubfather,
+    /// Goam Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Goam Mask Shard in Forgotten Crossroads
+    MaskShardGoam,
+    /// Queen's Station Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard in Queen's Station
+    MaskShardQueensStation,
+    /// Bretta Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard in Bretta's hut in Dirtmouth
+    MaskShardBretta,
+    /// Stone Sanctuary Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard in Stone Sanctuary
+    MaskShardStoneSanctuary,
+    /// Waterways Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard in Royal Wayerways
+    MaskShardWaterways,
+    /// Fungal Core Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard below Fungal Core
+    MaskShardFungalCore,
+    /// Enraged Guardian Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard from Enraged Guardian
+    MaskShardEnragedGuardian,
+    /// Hive Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard in the Hive
+    MaskShardHive,
+    /// Seer Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard from Seer
+    MaskShardSeer,
+    /// Grey Mourner Mask Shard (Obtain)
+    /// 
+    /// Splits when getting the Mask Shard from Grey Mourner
+    MaskShardFlower,
     // endregion: Masks and Mask Shards
 
     // region: Vessels and Vessel Fragments
@@ -2675,6 +2723,18 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MaskFragment14 => g.heart_pieces(p).is_some_and(|s| s == 14 || (g.max_health_base(p).is_some_and(|h| h == 8) && s == 2)),
         Split::MaskFragment15 => g.heart_pieces(p).is_some_and(|s| s == 15 || (g.max_health_base(p).is_some_and(|h| h == 8) && s == 3)),
         Split::Mask4 => g.max_health_base(p).is_some_and(|h| h == 9),
+        Split::MaskShardMawlek => g.get_scene_name(p).is_some_and(|s| s == "Crossroads_09") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardGrubfather => g.get_scene_name(p).is_some_and(|s| s == "Crossroads_38") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardBretta => g.get_scene_name(p).is_some_and(|s| s == "Room_Bretta") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardQueensStation => g.get_scene_name(p).is_some_and(|s| s == "Fungus2_01") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardEnragedGuardian => g.get_scene_name(p).is_some_and(|s| s == "Mines_32") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardSeer => g.get_scene_name(p).is_some_and(|s| s == "RestingGrounds_07") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardGoam => g.get_scene_name(p).is_some_and(|s| s == "Crossroads_13") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardStoneSanctuary => g.get_scene_name(p).is_some_and(|s| s == "Fungus1_36") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardWaterways => g.get_scene_name(p).is_some_and(|s| s == "Waterways_04b") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardFungalCore => g.get_scene_name(p).is_some_and(|s| s == "Fungus2_25") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardHive => g.get_scene_name(p).is_some_and(|s| s == "Hive_04") && pds.obtained_mask_shard(p, g),
+        Split::MaskShardFlower => g.get_scene_name(p).is_some_and(|s| s == "Room_Mansion") && pds.obtained_mask_shard(p, g),
         // endregion: Masks and Mask Shards
         // region: Vessels and Vessel Fragments
         Split::OnObtainVesselFragment => pds.obtained_vessel_fragment(p, g),
