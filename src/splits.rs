@@ -530,6 +530,34 @@ pub enum Split {
     /// 
     /// Splits when upgrading to 3 Soul Vessels (9 Soul Vessel Fragments)
     Vessel3,
+    /// Greenpath Vessel Fragment (Obtain)
+    /// 
+    /// Splits when getting Vessel Fragment in Greenpath
+    VesselFragGreenpath,
+    /// Crossroads Vessel Fragment (Obtain)
+    /// 
+    /// Splits when getting the Vessel Fragment in Forgotten Crossroads
+    VesselFragCrossroadsLift,
+    /// King's Station Vessel Fragment (Obtain)
+    /// 
+    /// Splits when getting the Vessel Fragment after the arena above King's Station
+    VesselFragKingsStation,
+    /// Deepnest Vessel Fragment (Obtain)
+    /// 
+    /// Splits when getting the Vessel Fragment in Deepnest
+    VesselFragGarpedes,
+    /// Stag Nest Vessel Fragment (Obtain)
+    /// 
+    /// Splits when getting the Vessel Fragment in Stag Nest
+    VesselFragStagNest,
+    /// Seer Vessel Fragment (Obtain)
+    /// 
+    /// Splits when getting the Vessel Fragment from Seer
+    VesselFragSeer,
+    /// Basin Fountain Vessel Fragment (Obtain)
+    /// 
+    /// Splits when getting the Vessel Fragment from the fountain in Ancient Basin
+    VesselFragFountain,
     // endregion: Vessels and Vessel Fragments
 
     // region: Charm Notches
@@ -2747,6 +2775,13 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::VesselFragment7 => g.vessel_fragments(p).is_some_and(|f| f == 7 || (g.mp_reserve_max(p).is_some_and(|mp| mp == 66) && f == 1)),
         Split::VesselFragment8 => g.vessel_fragments(p).is_some_and(|f| f == 8 || (g.mp_reserve_max(p).is_some_and(|mp| mp == 66) && f == 2)),
         Split::Vessel3 => g.mp_reserve_max(p).is_some_and(|mp| mp == 99),
+        Split::VesselFragGreenpath => g.get_scene_name(p).is_some_and(|s| s == "Fungus1_13") && pds.obtained_vessel_fragment(p, g),
+        Split::VesselFragCrossroadsLift => g.get_scene_name(p).is_some_and(|s| s == "Crossroads_37") && pds.obtained_vessel_fragment(p, g),
+        Split::VesselFragKingsStation => g.get_scene_name(p).is_some_and(|s| s == "Ruins2_09") && pds.obtained_vessel_fragment(p, g),
+        Split::VesselFragGarpedes => g.get_scene_name(p).is_some_and(|s| s == "Deepnest_38") && pds.obtained_vessel_fragment(p, g),
+        Split::VesselFragStagNest => g.get_scene_name(p).is_some_and(|s| s == "Cliffs_03") && pds.obtained_vessel_fragment(p, g),
+        Split::VesselFragSeer => g.get_scene_name(p).is_some_and(|s| s == "RestingGrounds_07") && pds.obtained_vessel_fragment(p, g),
+        Split::VesselFragFountain => g.get_scene_name(p).is_some_and(|s| s == "Abyss_04") && pds.obtained_vessel_fragment(p, g),
         // endregion: Vessels and Vessel Fragments
         // region: Charm Notches
         Split::NotchShrumalOgres => g.notch_shroom_ogres(p).is_some_and(|n| n),
