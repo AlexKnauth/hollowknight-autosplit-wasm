@@ -21,6 +21,10 @@ pub enum Split {
     /// 
     /// Splits when entering a new or existing save file
     StartAnyGame,
+    /// Rando Wake (Event)
+    /// 
+    /// Splits when gaining control after waking up in Rando
+    RandoWake,
     /// Credits Roll (Event)
     /// 
     /// Splits on any credits rolling
@@ -2537,6 +2541,9 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
 
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> bool {
     match s {
+        Split::RandoWake => g.disable_pause(p).is_some_and(|d| !d)
+                         && g.get_game_state(p).is_some_and(|s| s == GAME_STATE_PLAYING)
+                         && g.get_scene_name(p).is_some_and(|s| !is_menu(&s)),
         Split::BenchAny => g.at_bench(p).is_some_and(|b| b),
         Split::PlayerDeath => g.get_health(p).is_some_and(|h| h == 0),
         // region: Dreamers

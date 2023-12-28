@@ -29,6 +29,7 @@ const STRING_CONTENTS_OFFSET: u64 = 0x14;
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
 pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
+pub const PERMA_DEATH: &str = "PermaDeath";
 pub const INTRO_CUTSCENE: &str = "Intro_Cutscene";
 pub const OPENING_SEQUENCE: &str = "Opening_Sequence";
 pub const GG_ENTRANCE_CUTSCENE: &str = "GG_Entrance_Cutscene";
@@ -52,7 +53,7 @@ const NON_PLAY_SCENES: [&str; 16] = [
     "End_Credits",
     "Cinematic_MrMushroom",
     "End_Game_Completion",
-    "PermaDeath",
+    PERMA_DEATH,
     "PermaDeath_Unlock",
 ];
 
@@ -180,6 +181,7 @@ impl GameManagerPointers {
 
 struct PlayerDataPointers {
     version: UnityPointer<4>,
+    disable_pause: UnityPointer<3>,
     health: UnityPointer<3>,
     fireball_level: UnityPointer<3>,
     quake_level: UnityPointer<3>,
@@ -471,6 +473,7 @@ impl PlayerDataPointers {
     fn new() -> PlayerDataPointers {
         PlayerDataPointers {
             version: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "version"]),
+            disable_pause: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "disablePause"]),
             health: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "health"]),
             fireball_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
             quake_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "quakeLevel"]),
@@ -911,6 +914,10 @@ impl GameManagerFinder {
         Some(self.get_version_string(process)?.split('.').map(|s| {
             s.parse().unwrap_or(0)
         }).collect())
+    }
+
+    pub fn disable_pause(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.disable_pause.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn get_health(&self, process: &Process) -> Option<i32> {
@@ -2294,7 +2301,7 @@ fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option
 // --------------------------------------------------------
 
 pub fn is_menu(s: &str) -> bool {
-    s == MENU_TITLE || s == QUIT_TO_MENU
+    s == MENU_TITLE || s == QUIT_TO_MENU || s == PERMA_DEATH
 }
 
 pub fn is_play_scene(s: &str) -> bool {
