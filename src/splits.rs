@@ -66,6 +66,10 @@ pub enum Split {
     /// 
     /// Splits when the knight enters a transition (only one will split per transition)
     AnyTransition,
+    /// Transition excluding Save State (Transition)
+    /// 
+    /// Splits when the knight enters a transition (excludes save states and Sly's basement)
+    TransitionAfterSaveState,
     // endregion: Start, End, and Menu
 
     // region: Dreamers
@@ -2318,6 +2322,12 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EndingE => p.current == "Cinematic_Ending_E",
         Split::Menu => is_menu(p.current),
         Split::AnyTransition => p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old)),
+        Split::TransitionAfterSaveState => p.current != p.old
+                                        && !(p.old.is_empty()
+                                             || p.current.is_empty()
+                                             || is_menu(p.old)
+                                             || is_debug_save_state_scene(p.old)
+                                             || is_debug_save_state_scene(p.current)),
         // endregion: Start, End, and Menu
 
         // region: Dreamers

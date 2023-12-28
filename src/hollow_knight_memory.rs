@@ -57,6 +57,11 @@ const NON_PLAY_SCENES: [&str; 16] = [
     "PermaDeath_Unlock",
 ];
 
+const DEBUG_SAVE_STATE_SCENE_NAMES: [&str; 2] = [
+    "Room_Mender_House",
+    "Room_Sly_Storeroom",
+];
+
 const BAD_SCENE_NAMES: [&str; 11] = [
     "Untagged",
     "left1",
@@ -2306,6 +2311,10 @@ pub fn is_menu(s: &str) -> bool {
 
 pub fn is_play_scene(s: &str) -> bool {
     !NON_PLAY_SCENES.contains(&s) && !BAD_SCENE_NAMES.contains(&s)
+}
+
+pub fn is_debug_save_state_scene(s: &str) -> bool {
+    DEBUG_SAVE_STATE_SCENE_NAMES.contains(&s)
 }
 
 pub fn starts_with_any(full: &str, prefixes: &[&str]) -> bool {
