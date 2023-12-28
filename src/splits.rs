@@ -1707,6 +1707,18 @@ pub enum Split {
     /// 
     /// Splits when entering White Palace text for the first time
     WhitePalace,
+    /// White Palace - Lower Orb (Lever)
+    /// 
+    /// Splits when lighting the orb in White Palace lowest floor
+    WhitePalaceOrb1,
+    /// White Palace - Left Orb (Lever)
+    /// 
+    /// Splits when lighting the orb in White Palace left wing
+    WhitePalaceOrb3,
+    /// White Palace - Right Orb (Lever)
+    /// 
+    /// Splits when lighting the orb in White Palace right wing
+    WhitePalaceOrb2,
     /// Path of Pain Room 1 (Room)
     /// 
     /// Splits on transition to the first room in PoP (entry to PoP)
@@ -2875,6 +2887,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Basin
         // region: White Palace
         Split::WhitePalace => g.visited_white_palace(p).is_some_and(|v| v),
+        Split::WhitePalaceOrb1 => g.white_palace_orb_1(p).is_some_and(|o| o),
+        Split::WhitePalaceOrb3 => g.white_palace_orb_3(p).is_some_and(|o| o),
+        Split::WhitePalaceOrb2 => g.white_palace_orb_2(p).is_some_and(|o| o),
         Split::PathOfPain => g.new_data_binding_seal(p).is_some_and(|n| n),
         Split::WhitePalaceSecretRoom => g.white_palace_secret_room_visited(p).is_some_and(|v| v),
         // endregion: White Palace
