@@ -1707,6 +1707,26 @@ pub enum Split {
     /// 
     /// Splits when entering White Palace text for the first time
     WhitePalace,
+    /// Path of Pain Room 1 (Room)
+    /// 
+    /// Splits on transition to the first room in PoP (entry to PoP)
+    PathOfPainEntry,
+    /// Path of Pain Room 2 (Room)
+    /// 
+    /// Splits on transition to the second room in PoP
+    PathOfPainTransition1,
+    /// Path of Pain Room 3 (Room)
+    /// 
+    /// Splits on transition to the third room in PoP
+    PathOfPainTransition2,
+    /// Path of Pain Room 4 (Room)
+    /// 
+    /// Splits on transition to the fourth room in PoP (Final room)
+    PathOfPainTransition3,
+    /// Path of Pain (Completed)
+    /// 
+    /// Splits when completing the Path of Pain in White Palace
+    PathOfPain,
     /// White Palace - Workshop (Area)
     /// 
     /// Splits when visiting the secret room in White Palace
@@ -2311,7 +2331,11 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuVoidHeart => pds.got_shade_charm(prc, g) && is_menu(p.current),
         // endregion: Basin
         // region: White Palace
-        Split::WhitePalaceEntry => p.current.starts_with("qWhite_Palace_11") && p.current != p.old,
+        Split::WhitePalaceEntry => p.current.starts_with("White_Palace_11") && p.current != p.old,
+        Split::PathOfPainEntry => p.current.starts_with("White_Palace_18") && p.old.starts_with("White_Palace_06"),
+        Split::PathOfPainTransition1 => p.current.starts_with("White_Palace_17") && p.old.starts_with("White_Palace_18"),
+        Split::PathOfPainTransition2 => p.current.starts_with("White_Palace_19") && p.old.starts_with("White_Palace_17"),
+        Split::PathOfPainTransition3 => p.current.starts_with("White_Palace_20") && p.old.starts_with("White_Palace_19"),
         // endregion: White Palace
         // region: Kingdom's Edge
         // Deepnest_East_03 is the KE room with Cornifer, acid, and raining fools,
@@ -2849,6 +2873,11 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::LostKinEssence => g.infected_knight_orbs_collected(p).is_some_and(|o| o),
         // TODO: should there be a split for the actual Abyss Area Text?
         // endregion: Basin
+        // region: White Palace
+        Split::WhitePalace => g.visited_white_palace(p).is_some_and(|v| v),
+        Split::PathOfPain => g.new_data_binding_seal(p).is_some_and(|n| n),
+        Split::WhitePalaceSecretRoom => g.white_palace_secret_room_visited(p).is_some_and(|v| v),
+        // endregion: White Palace
         // region: Kingdom's Edge
         Split::KingdomsEdge => g.visited_outskirts(p).is_some_and(|v| v),
         Split::Hive => g.visited_hive(p).is_some_and(|v| v),

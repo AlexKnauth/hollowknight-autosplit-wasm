@@ -410,6 +410,10 @@ struct PlayerDataPointers {
     killed_infected_knight: UnityPointer<3>,
     infected_knight_dream_defeated: UnityPointer<3>,
     infected_knight_orbs_collected: UnityPointer<3>,
+    visited_white_palace: UnityPointer<3>,
+    /// New data on hunter's journal entry Seal of Binding / Path of Pain
+    new_data_binding_seal: UnityPointer<3>,
+    white_palace_secret_room_visited: UnityPointer<3>,
     /// Visited Kingdom's Edge
     visited_outskirts: UnityPointer<3>,
     visited_hive: UnityPointer<3>,
@@ -673,6 +677,9 @@ impl PlayerDataPointers {
             killed_infected_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedInfectedKnight"]),
             infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
             infected_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightOrbsCollected"]),
+            visited_white_palace: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedWhitePalace"]),
+            new_data_binding_seal: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "newDataBindingSeal"]),
+            white_palace_secret_room_visited: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whitePalaceSecretRoomVisited"]),
             visited_outskirts: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedOutskirts"]),
             visited_hive: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedHive"]),
             killed_hive_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHiveKnight"]),
@@ -1694,6 +1701,19 @@ impl GameManagerFinder {
 
     pub fn infected_knight_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.infected_knight_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn visited_white_palace(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.visited_white_palace.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// New data on hunter's journal entry Seal of Binding / Path of Pain
+    pub fn new_data_binding_seal(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.new_data_binding_seal.deref(process, &self.module, &self.image).ok()
+    }
+    
+    pub fn white_palace_secret_room_visited(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.white_palace_secret_room_visited.deref(process, &self.module, &self.image).ok()
     }
 
     /// Visited Kingdom's Edge
