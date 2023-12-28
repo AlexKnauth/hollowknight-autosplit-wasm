@@ -457,6 +457,8 @@ struct PlayerDataPointers {
     spider_capture: UnityPointer<3>,
     has_godfinder: UnityPointer<3>,
     visited_godhome: UnityPointer<3>,
+    zote_statue_wall_broken: UnityPointer<3>,
+    ordeal_achieved: UnityPointer<3>,
     // Oro & Mato
     killed_nail_bros: UnityPointer<3>,
     killed_paintmaster: UnityPointer<3>,
@@ -722,6 +724,8 @@ impl PlayerDataPointers {
             spider_capture: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
             has_godfinder: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasGodfinder"]),
             visited_godhome: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedGodhome"]),
+            zote_statue_wall_broken: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteStatueWallBroken"]),
+            ordeal_achieved: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "ordealAchieved"]),
             killed_nail_bros: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailBros"]),
             killed_paintmaster: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedPaintmaster"]),
             killed_nailsage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNailsage"]),
@@ -1874,6 +1878,13 @@ impl GameManagerFinder {
 
     pub fn visited_godhome(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.visited_godhome.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn zote_statue_wall_broken(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.zote_statue_wall_broken.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn ordeal_achieved(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.ordeal_achieved.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_nail_bros(&self, process: &Process) -> Option<bool> {

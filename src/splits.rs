@@ -2031,6 +2031,14 @@ pub enum Split {
     /// 
     /// Splits when entering Godhome text first appears
     Godhome,
+    /// Eternal Ordeal Unlocked (Event)
+    /// 
+    /// Splits when breaking the wall to the Zote statue in Godhome
+    EternalOrdealUnlocked,
+    /// Eternal Ordeal Achieved (Event)
+    /// 
+    /// Splits when achieving the ordeal (57th Zote killed)
+    EternalOrdealAchieved,
     /// Pantheon 1-4 (Transition)
     /// 
     /// Splits on entry to any of Pantheon 1 - 4
@@ -3013,6 +3021,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Godhome
         Split::GodTuner => g.has_godfinder(p).is_some_and(|g| g),
         Split::Godhome => g.visited_godhome(p).is_some_and(|v| v),
+        Split::EternalOrdealUnlocked => g.zote_statue_wall_broken(p).is_some_and(|b| b),
+        Split::EternalOrdealAchieved => g.ordeal_achieved(p).is_some_and(|a| a),
         Split::MatoOroNailBros => g.killed_nail_bros(p).is_some_and(|k| k),
         Split::Pantheon1 => g.boss_door_state_tier1(p).is_some_and(|c| c.completed),
         Split::SheoPaintmaster => g.killed_paintmaster(p).is_some_and(|k| k),
