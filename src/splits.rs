@@ -101,6 +101,18 @@ pub enum Split {
     /// 
     /// Splits on transition to the main menu after 3 Dreamers acquired
     MenuDreamer3,
+    /// Lurien (Old Dreamer Timing)
+    /// 
+    /// Matches the old legacy split. Splits when Lurien is registered as defeated (After killing Watcher Knight)
+    LurienDreamer,
+    /// Monomon (Old Dreamer Timing)
+    /// 
+    /// Matches the old legacy split. Splits when Monomon is registered as defeated (After killing Uumuu)
+    MonomonDreamer,
+    /// Herrah (Old Dreamer Timing)
+    /// 
+    /// Matches the old legacy split. Splits when Herrah is registered as defeated (In Spider Area)
+    HegemolDreamer,
     // endregion: Dreamers
 
     // region: Mr Mushroom
@@ -2564,6 +2576,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Dreamer2 => g.guardians_defeated(p).is_some_and(|d| 2 <= d),
         Split::Dreamer3 => g.guardians_defeated(p).is_some_and(|d| 3 <= d),
         Split::MenuDreamer3 => { pds.guardians_defeated(p, g); false },
+        // Old Dreamer Timings, mark deprecated or whatever
+        Split::LurienDreamer => g.lurien_defeated(p).is_some_and(|d| d),
+        Split::MonomonDreamer => g.monomon_defeated(p).is_some_and(|d| d),
+        Split::HegemolDreamer => g.hegemol_defeated(p).is_some_and(|d| d),
         // endregion: Dreamers
         // region: Mr Mushroom
         Split::MrMushroom1 => g.mr_mushroom_state(p).is_some_and(|s| 2 <= s),

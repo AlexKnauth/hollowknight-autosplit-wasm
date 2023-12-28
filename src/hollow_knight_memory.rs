@@ -223,6 +223,10 @@ struct PlayerDataPointers {
     mask_broken_monomon: UnityPointer<3>,
     mask_broken_hegemol: UnityPointer<3>,
     guardians_defeated: UnityPointer<3>,
+    // Old Dreamer Timings, mark deprecated or whatever
+    lurien_defeated: UnityPointer<3>,
+    monomon_defeated: UnityPointer<3>,
+    hegemol_defeated: UnityPointer<3>,
     mr_mushroom_state: UnityPointer<3>,
     // Keys
     has_city_key: UnityPointer<3>,
@@ -505,6 +509,9 @@ impl PlayerDataPointers {
             mask_broken_monomon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenMonomon"]),
             mask_broken_hegemol: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maskBrokenHegemol"]),
             guardians_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "guardiansDefeated"]),
+            lurien_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "lurienDefeated"]),
+            monomon_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "monomonDefeated"]),
+            hegemol_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hegemolDefeated"]),
             mr_mushroom_state: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mrMushroomState"]),
             // Keys
             has_city_key: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasCityKey"]),
@@ -1028,6 +1035,17 @@ impl GameManagerFinder {
 
     pub fn guardians_defeated(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.guardians_defeated.deref(process, &self.module, &self.image).ok()
+    }
+
+    // Old Dreamer Timings, mark deprecated or whatever
+    pub fn lurien_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.lurien_defeated.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn monomon_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.monomon_defeated.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn hegemol_defeated(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.hegemol_defeated.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn mr_mushroom_state(&self, process: &Process) -> Option<i32> {
