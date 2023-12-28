@@ -1460,6 +1460,10 @@ pub enum Split {
     /// 
     /// Splits when entering Resting Grounds text first appears
     RestingGrounds,
+    /// Resting Grounds Stag (Bench)
+    /// 
+    /// Splits when sitting on the bench at Resting Grounds Stag
+    BenchRGStag,
     /// Xero (Boss)
     /// 
     /// Splits when killing Xero
@@ -2909,6 +2913,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Cliffs
         // region: Resting Grounds
         Split::RestingGrounds => g.visited_resting_grounds(p).is_some_and(|v| v),
+        Split::BenchRGStag => g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "RestingGrounds_09"),
         Split::Xero => g.killed_ghost_xero(p).is_some_and(|k| k),
         Split::XeroEssence => g.xero_defeated(p).is_some_and(|d| d == 2),
         Split::SpiritGladeOpen => g.glade_door_opened(p).is_some_and(|o| o),
