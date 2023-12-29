@@ -335,6 +335,7 @@ struct PlayerDataPointers {
     got_shade_charm: UnityPointer<3>,
     grubs_collected: UnityPointer<3>,
     kills_grub_mimic: UnityPointer<3>,
+    dream_orbs: UnityPointer<3>,
     visited_dirtmouth: UnityPointer<3>,
     elderbug_gave_flower: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
@@ -619,6 +620,7 @@ impl PlayerDataPointers {
             got_shade_charm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotShadeCharm"]),
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
             kills_grub_mimic: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGrubMimic"]),
+            dream_orbs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamOrbs"]),
             visited_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDirtmouth"]),
             elderbug_gave_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderbugGaveFlower"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
@@ -2252,6 +2254,10 @@ impl PlayerDataStore {
 
     pub fn incremented_charm_slots(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "charm_slots", &game_manager_finder.player_data_pointers.charm_slots)
+    }
+
+    pub fn incremented_dream_orbs(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "dream_orbs", &game_manager_finder.player_data_pointers.dream_orbs)
     }
 
     pub fn zote_rescued_buzzer(&mut self, p: &Process, g: &GameManagerFinder) -> bool {

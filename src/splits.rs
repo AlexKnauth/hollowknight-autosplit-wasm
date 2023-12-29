@@ -1314,6 +1314,30 @@ pub enum Split {
     Mimic5,
     // endregion: Grubs and Mimics
 
+    // region: Essence, Trees, and Ghosts
+    /// Dream Nail Marissa (Obtain)
+    /// 
+    /// Splits when obtaining the essence from Marissa
+    OnObtainGhostMarissa,
+    /// Dream Nail Caelif and Fera (Obtain)
+    /// 
+    /// Splits when obtaining the essence from Caelif and Fera Orthop
+    OnObtainGhostCaelifFera,
+    /// Dream Nail Poggy (Obtain)
+    /// 
+    /// Splits when obtaining the essence from Poggy Thorax
+    OnObtainGhostPoggy,
+    /// Dream Nail Gravedigger (Obtain)
+    /// 
+    /// Splits when obtaining the essence from Gravedigger
+    OnObtainGhostGravedigger,
+    /// Dream Nail Joni (Obtain)
+    /// 
+    /// Splits when obtaining the essence from Blue Child Joni
+    OnObtainGhostJoni,
+    // TODO: resolve possible confounding essence sources for Cloth, Vespa, and Revek
+    // endregion: Essence, Trees, and Ghosts
+
     // region: Dirtmouth
     /// King's Pass (Transition)
     /// 
@@ -2986,6 +3010,14 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Mimic4 => g.kills_grub_mimic(p).is_some_and(|k| k == 1),
         Split::Mimic5 => g.kills_grub_mimic(p).is_some_and(|k| k == 0),
         // endregion: Grubs and Mimics
+        // region: Essence, Trees, and Ghosts
+        Split::OnObtainGhostMarissa => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Bathhouse"),
+        Split::OnObtainGhostCaelifFera => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_24"),
+        Split::OnObtainGhostPoggy => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Elevator"),
+        Split::OnObtainGhostGravedigger => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Town"),
+        Split::OnObtainGhostJoni => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Cliffs_05"),
+        // TODO: resolve possible confounding essence sources for Cloth, Vespa, and Revek
+        // endregion: Essence, Trees, and Ghosts
         // region: Dirtmouth
         Split::Dirtmouth => g.visited_dirtmouth(p).is_some_and(|v| v),
         Split::ElderbugFlower => g.elderbug_gave_flower(p).is_some_and(|g| g),
