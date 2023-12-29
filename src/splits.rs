@@ -1315,6 +1315,102 @@ pub enum Split {
     // endregion: Grubs and Mimics
 
     // region: Essence, Trees, and Ghosts
+    /// 100 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 100 Essence
+    Essence100,
+    /// 200 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 200 Essence
+    Essence200,
+    /// 300 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 300 Essence
+    Essence300,
+    /// 400 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 400 Essence
+    Essence400,
+    /// 500 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 500 Essence
+    Essence500,
+    /// 600 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 600 Essence
+    Essence600,
+    /// 700 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 700 Essence
+    Essence700,
+    /// 800 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 800 Essence
+    Essence800,
+    /// 900 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 900 Essence
+    Essence900,
+    /// 1000 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1000 Essence
+    Essence1000,
+    /// 1100 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1100 Essence
+    Essence1100,
+    /// 1200 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1200 Essence
+    Essence1200,
+    /// 1300 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1300 Essence
+    Essence1300,
+    /// 1400 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1400 Essence
+    Essence1400,
+    /// 1500 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1500 Essence
+    Essence1500,
+    /// 1600 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1600 Essence
+    Essence1600,
+    /// 1700 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1700 Essence
+    Essence1700,
+    /// 1800 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1800 Essence
+    Essence1800,
+    /// 1900 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 1900 Essence
+    Essence1900,
+    /// 2000 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 2000 Essence
+    Essence2000,
+    /// 2100 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 2100 Essence
+    Essence2100,
+    /// 2200 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 2200 Essence
+    Essence2200,
+    /// 2300 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 2300 Essence
+    Essence2300,
+    /// 2400 Essence (Essence)
+    /// 
+    /// Splits upon obtaining 2400 Essence
+    Essence2400,
     /// Dream Nail Marissa (Obtain)
     /// 
     /// Splits when obtaining the essence from Marissa
@@ -3011,6 +3107,30 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Mimic5 => g.kills_grub_mimic(p).is_some_and(|k| k == 0),
         // endregion: Grubs and Mimics
         // region: Essence, Trees, and Ghosts
+        Split::Essence100 => g.dream_orbs(p).is_some_and(|o| 100 <= o),
+        Split::Essence200 => g.dream_orbs(p).is_some_and(|o| 200 <= o),
+        Split::Essence300 => g.dream_orbs(p).is_some_and(|o| 300 <= o),
+        Split::Essence400 => g.dream_orbs(p).is_some_and(|o| 400 <= o),
+        Split::Essence500 => g.dream_orbs(p).is_some_and(|o| 500 <= o),
+        Split::Essence600 => g.dream_orbs(p).is_some_and(|o| 600 <= o),
+        Split::Essence700 => g.dream_orbs(p).is_some_and(|o| 700 <= o),
+        Split::Essence800 => g.dream_orbs(p).is_some_and(|o| 800 <= o),
+        Split::Essence900 => g.dream_orbs(p).is_some_and(|o| 900 <= o),
+        Split::Essence1000 => g.dream_orbs(p).is_some_and(|o| 1000 <= o),
+        Split::Essence1100 => g.dream_orbs(p).is_some_and(|o| 1100 <= o),
+        Split::Essence1200 => g.dream_orbs(p).is_some_and(|o| 1200 <= o),
+        Split::Essence1300 => g.dream_orbs(p).is_some_and(|o| 1300 <= o),
+        Split::Essence1400 => g.dream_orbs(p).is_some_and(|o| 1400 <= o),
+        Split::Essence1500 => g.dream_orbs(p).is_some_and(|o| 1500 <= o),
+        Split::Essence1600 => g.dream_orbs(p).is_some_and(|o| 1600 <= o),
+        Split::Essence1700 => g.dream_orbs(p).is_some_and(|o| 1700 <= o),
+        Split::Essence1800 => g.dream_orbs(p).is_some_and(|o| 1800 <= o),
+        Split::Essence1900 => g.dream_orbs(p).is_some_and(|o| 1900 <= o),
+        Split::Essence2000 => g.dream_orbs(p).is_some_and(|o| 2000 <= o),
+        Split::Essence2100 => g.dream_orbs(p).is_some_and(|o| 2100 <= o),
+        Split::Essence2200 => g.dream_orbs(p).is_some_and(|o| 2200 <= o),
+        Split::Essence2300 => g.dream_orbs(p).is_some_and(|o| 2300 <= o),
+        Split::Essence2400 => g.dream_orbs(p).is_some_and(|o| 2400 <= o),
         Split::OnObtainGhostMarissa => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Bathhouse"),
         Split::OnObtainGhostCaelifFera => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_24"),
         Split::OnObtainGhostPoggy => pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Elevator"),
