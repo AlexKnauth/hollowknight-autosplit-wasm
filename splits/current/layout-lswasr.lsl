@@ -188,50 +188,13 @@
         <CustomSettings>
           <Setting id="splits" type="list">
             <Setting type="string" value="StartNewGame" />
-            <Setting type="string" value="KingsPass" />
-            <Setting type="string" value="Grub1" />
-            <Setting type="string" value="EnterBroodingMawlek" />
-            <Setting type="string" value="MaskFragment1" />
-            <Setting type="string" value="Grub2" />
-            <Setting type="string" value="MaskFragment2" />
-            <Setting type="string" value="GruzMother" />
-            <Setting type="string" value="SlyRescued" />
-            <Setting type="string" value="Grub3" />
-            <Setting type="string" value="Grub4" />
-            <Setting type="string" value="Grub5" />
-            <Setting type="string" value="MaskFragment3" />
-            <Setting type="string" value="Mask1" />
+            <Setting type="string" value="EndingSplit" />
           </Setting>
           <Setting id="splits_0_item" type="string" value="StartNewGame" />
-          <Setting id="splits_1_item" type="string" value="KingsPass" />
-          <Setting id="splits_2_item" type="string" value="Grub1" />
-          <Setting id="splits_3_item" type="string" value="EnterBroodingMawlek" />
-          <Setting id="splits_4_item" type="string" value="MaskFragment1" />
-          <Setting id="splits_5_item" type="string" value="Grub2" />
-          <Setting id="splits_6_item" type="string" value="MaskFragment2" />
-          <Setting id="splits_7_item" type="string" value="GruzMother" />
-          <Setting id="splits_8_item" type="string" value="SlyRescued" />
-          <Setting id="splits_9_item" type="string" value="Grub3" />
-          <Setting id="splits_10_item" type="string" value="Grub4" />
-          <Setting id="splits_11_item" type="string" value="Grub5" />
-          <Setting id="splits_12_item" type="string" value="MaskFragment3" />
-          <Setting id="splits_13_item" type="string" value="Mask1" />
+          <Setting id="splits_1_item" type="string" value="EndingSplit" />
           <Setting id="splits_insert_0" type="bool">False</Setting>
           <Setting id="splits_0_action" type="string" value="None" />
           <Setting id="splits_1_action" type="string" value="None" />
-          <Setting id="splits_2_action" type="string" value="None" />
-          <Setting id="splits_3_action" type="string" value="None" />
-          <Setting id="splits_4_action" type="string" value="None" />
-          <Setting id="splits_5_action" type="string" value="None" />
-          <Setting id="splits_6_action" type="string" value="None" />
-          <Setting id="splits_7_action" type="string" value="None" />
-          <Setting id="splits_8_action" type="string" value="None" />
-          <Setting id="splits_9_action" type="string" value="None" />
-          <Setting id="splits_10_action" type="string" value="None" />
-          <Setting id="splits_11_action" type="string" value="None" />
-          <Setting id="splits_12_action" type="string" value="None" />
-          <Setting id="splits_13_action" type="string" value="None" />
-          <Setting id="import" type="string" value="/mnt/c/Users/Owner/Documents/git/LiveSplit/hollowknight-autosplit-wasm/splits/current/splits-control.lss" />
         </CustomSettings>
       </Settings>
     </Component>
