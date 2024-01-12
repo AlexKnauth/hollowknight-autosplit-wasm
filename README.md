@@ -45,38 +45,15 @@ The debugger is able to step through the code. You can set breakpoints in VSCode
 and it should stop there when the breakpoint is hit. Inspecting variables
 currently does not work all the time.
 
-## Instructions for Splits Settings
-
-There are 2 ways that this autosplitter can currently get Splits Settings:
- - From the `src/AutoSplitterSettings.txt` file of this repository
- - From a `.lsl` LiveSplit Layout file that's been saved with Splits Settings before
-
-For starting out with new Splits that you haven't run with this autosplitter before,
-you should start with the `src/AutoSplitterSettings.txt` file.
-
-If you're unsure of what to put there,
-you can open up a Splits `.lss` file in a text editor,
-and near the end,
-copy what's in between `<AutoSplitterSettings>` and `</AutoSplitterSettings>`, exclusive.
-
-Or if you're making new splits using https://hksplitmaker.com/, after you click `Generate`,
-you can scroll down in the `Output Splits File` section,
-and again, near the end, between `<AutoSplitterSettings>` and `</AutoSplitterSettings>` exclusive.
-
-After modifying `src/AutoSplitterSettings.txt`, re-compile this repository with
-```sh
-cargo release
-```
-
 ## Instructions for LiveSplit Windows
 
-Create a LiveSplit Layout (`.lsl`) file that you can edit
-to point to this autosplitter.
-Right-click -> `Open Layout` -> `From file...`,
-then navigate to the Layout file that you want to edit.
-Then Right-click -> `Edit Layout...`,
-and you should see a Layout Editor with components like
-`Title`, `Splits`, `Timer`, etc.
+LiveSplit connects to this autosplitter and its settings
+via a LiveSplit Layout (`.lsl`) file.
+Make sure to use a different copy of your Layout for every
+different splits file you run with this autosplitter.
+
+Right-click -> `Edit Layout...` and you should see a Layout
+Editor with components like `Title`, `Splits`, `Timer`, etc.
 If it does not have a component named `Auto Splitting Runtime`,
 add one using the `+` Plus button -> `Control` -> `Auto Splitting Runtime`.
 Once that's there, click `Layout Settings` -> `Auto Splitting Runtime`,
@@ -84,21 +61,19 @@ and next to `Script Path`, click `Browse...`,
 then navigate to the compiled `wasm` file found at
 `target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
 of this repository.
-Click `Ok` and and save the layout with `Save Layout` or `Save Layout As...`.
-
-For running multiple categories/routes with different splits settings,
-you should make a different Layout file for each one.
+Then click `Import Splits` and select your splits file.
+Click `Ok` and and save the layout with `Save Layout As...`,
+with a name specific to the splits you're running with.
 
 Deactivate the existing Hollow Knight autosplitter by Right-click -> `Edit Splits...`
 then next to `Configurable Load Remover / Auto Splitter. (By DevilSquirrel)`,
 click `Deactivate`.
 
-Then add this autosplitter via the Layout file you created or edited earlier.
+Then add this autosplitter via the Layout file you saved earlier.
 In the same Splits Editor from Right-click -> `Edit Splits...`,
 below where `Configurable Load Remover / Auto Splitter. (By DevilSquirrel)` was,
 check the `Use Layout` checkbox, click `Browse` next to that,
-and navigate to the Layout file that you saved with the `Auto Splitting Runtime`
-component previously.
+and navigate to the Layout file from before.
 Select it and click `Ok`.
 
 Finally, do not manually split, skip, or undo splits while running with this autosplitter.
