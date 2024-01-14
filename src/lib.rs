@@ -60,48 +60,8 @@ async fn main() {
                 }
 
                 let mut i = 0;
-                let mut n = splits.len();
                 loop {
-                    let current_split = &splits[i];
-                    let trans_now = scene_store.transition_now(&process, &game_manager_finder);
-                    match splits::splits(current_split, &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
-                        SplitterAction::Split => {
-                            splitter_action(SplitterAction::Split, &mut i, n);
-                            next_tick().await;
-                        }
-                        SplitterAction::Skip => {
-                            splitter_action(SplitterAction::Skip, &mut i, n);
-                            next_tick().await;
-                        }
-                        SplitterAction::Reset => {
-                            i = 0;
-                            load_remover.load_removal(&process, &game_manager_finder, i);
-                            splitter_action(SplitterAction::Reset, &mut i, n);
-                        }
-                        SplitterAction::Pass => {
-                            if auto_reset {
-                                match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
-                                    SplitterAction::Split | SplitterAction::Reset => {
-                                        i = 0;
-                                        load_remover.load_removal(&process, &game_manager_finder, i);
-                                        splitter_action(SplitterAction::Split, &mut i, n);
-                                    }
-                                    _ => (),
-                                }
-                            }
-                        }
-                    }
-
-                    if trans_now && scene_store.pair().old == MENU_TITLE {
-                        player_data_store.reset();
-                    }
-
-                    // detect manual resets
-                    if 0 < i && asr::timer::state() == TimerState::NotRunning {
-                        i = 0;
-                    }
-
-                    load_remover.load_removal(&process, &game_manager_finder, i);
+                    tick_action(&process, &splits, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut load_remover).await;
 
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
@@ -110,7 +70,6 @@ async fn main() {
                             splits = gui_splits;
                             asr::print_message(&format!("splits: {:?}", splits));
                             auto_reset = splits::auto_reset_safe(&splits);
-                            n = splits.len();
                         }
                         ticks_since_gui = 0;
                     }
@@ -120,6 +79,59 @@ async fn main() {
             })
             .await;
     }
+}
+
+async fn tick_action(
+    process: &Process,
+    splits: &[splits::Split],
+    i: &mut usize,
+    auto_reset: bool,
+    game_manager_finder: &GameManagerFinder,
+    scene_store: &mut SceneStore,
+    player_data_store: &mut PlayerDataStore,
+    load_remover: &mut LoadRemover,
+) {
+    let n = splits.len();
+    let current_split = &splits[*i];
+    let trans_now = scene_store.transition_now(&process, &game_manager_finder);
+    match splits::splits(current_split, &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+        SplitterAction::Split => {
+            splitter_action(SplitterAction::Split, i, n);
+            next_tick().await;
+        }
+        SplitterAction::Skip => {
+            splitter_action(SplitterAction::Skip, i, n);
+            next_tick().await;
+        }
+        SplitterAction::Reset => {
+            *i = 0;
+            load_remover.load_removal(&process, &game_manager_finder, *i);
+            splitter_action(SplitterAction::Reset, i, n);
+        }
+        SplitterAction::Pass => {
+            if auto_reset {
+                match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+                    SplitterAction::Split | SplitterAction::Reset => {
+                        *i = 0;
+                        load_remover.load_removal(&process, &game_manager_finder, *i);
+                        splitter_action(SplitterAction::Split, i, n);
+                    }
+                    _ => (),
+                }
+            }
+        }
+    }
+
+    if trans_now && scene_store.pair().old == MENU_TITLE {
+        player_data_store.reset();
+    }
+
+    // detect manual resets
+    if 0 < *i && asr::timer::state() == TimerState::NotRunning {
+        *i = 0;
+    }
+
+    load_remover.load_removal(&process, &game_manager_finder, *i);
 }
 
 fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
