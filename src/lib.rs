@@ -105,7 +105,7 @@ async fn tick_action(
         }
         SplitterAction::Reset => {
             *i = 0;
-            load_remover.load_removal(&process, &game_manager_finder, *i);
+            load_remover.reset();
             splitter_action(SplitterAction::Reset, i, n);
         }
         SplitterAction::Pass => {
@@ -113,7 +113,7 @@ async fn tick_action(
                 match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
                     SplitterAction::Split | SplitterAction::Reset => {
                         *i = 0;
-                        load_remover.load_removal(&process, &game_manager_finder, *i);
+                        load_remover.reset();
                         splitter_action(SplitterAction::Split, i, n);
                     }
                     _ => (),
