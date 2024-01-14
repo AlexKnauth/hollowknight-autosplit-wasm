@@ -178,6 +178,8 @@ impl LoadRemover {
         }
     }
 
+    fn reset(&mut self) {}
+
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, _i: usize) -> Option<()> {
 
         // only remove loads if timer is running
@@ -273,15 +275,19 @@ impl HitCounter {
         }
     }
 
+    fn reset(&mut self) {
+        self.hits = 0;
+        asr::timer::set_game_time(Duration::seconds(0));
+        asr::timer::set_variable_int("hits", 0);
+    }
+
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, i: usize) -> Option<()> {
 
         asr::timer::pause_game_time();
 
         // detect resets
         if i == 0 && 0 < self.last_index {
-            self.hits = 0;
-            asr::timer::set_game_time(Duration::seconds(0));
-            asr::timer::set_variable_int("hits", 0);
+            self.reset();
         }
         self.last_index = i;
 
