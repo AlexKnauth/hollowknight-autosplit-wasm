@@ -799,6 +799,17 @@ pub struct GameManagerFinder {
 }
 
 impl GameManagerFinder {
+    fn new(module: mono::Module, image: mono::Image) -> GameManagerFinder {
+        GameManagerFinder {
+            module,
+            image,
+            pointers: GameManagerPointers::new(),
+            player_data_pointers: PlayerDataPointers::new(),
+            completion_pointers: CompletionPointers::new(),
+            ui_state_offset: OnceCell::new(),
+        }
+    }
+
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
@@ -815,14 +826,7 @@ impl GameManagerFinder {
                 if let Some(image) = module.get_default_image(process) {
                     asr::print_message("GameManagerFinder wait_attach: got module and image");
                     next_tick().await;
-                    return GameManagerFinder {
-                        module,
-                        image,
-                        pointers: GameManagerPointers::new(),
-                        player_data_pointers: PlayerDataPointers::new(),
-                        completion_pointers: CompletionPointers::new(),
-                        ui_state_offset: OnceCell::new(),
-                    };
+                    return GameManagerFinder::new(module, image);
                 }
                 next_tick().await;
             }
