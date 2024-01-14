@@ -93,6 +93,13 @@ async fn tick_action(
     player_data_store: &mut PlayerDataStore,
     load_remover: &mut LoadRemover,
 ) {
+    // detect manual resets
+    if 0 < *i && asr::timer::state() == TimerState::NotRunning {
+        *i = 0;
+        load_remover.reset();
+        asr::print_message("Detected a manual reset.");
+    }
+
     let n = splits.len();
     let current_split = &splits[*i];
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
@@ -126,11 +133,6 @@ async fn tick_action(
 
     if trans_now && scene_store.pair().old == MENU_TITLE {
         player_data_store.reset();
-    }
-
-    // detect manual resets
-    if 0 < *i && asr::timer::state() == TimerState::NotRunning {
-        *i = 0;
     }
 }
 
