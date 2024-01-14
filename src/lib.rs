@@ -93,11 +93,19 @@ async fn tick_action(
     player_data_store: &mut PlayerDataStore,
     load_remover: &mut LoadRemover,
 ) {
-    // detect manual resets
-    if 0 < *i && asr::timer::state() == TimerState::NotRunning {
-        *i = 0;
-        load_remover.reset();
-        asr::print_message("Detected a manual reset.");
+    match asr::timer::state() {
+        // detect manual resets
+        TimerState::NotRunning if 0 < *i => {
+            *i = 0;
+            load_remover.reset();
+            asr::print_message("Detected a manual reset.");
+        }
+        // detect manual starts
+        TimerState::Running if *i == 0 => {
+            *i = 1;
+            asr::print_message("Detected a manual start.");
+        }
+        _ => ()
     }
 
     let n = splits.len();
