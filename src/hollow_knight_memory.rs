@@ -15,7 +15,7 @@ use std::string::String;
 
 // --------------------------------------------------------
 
-const HOLLOW_KNIGHT_NAMES: [&str; 3] = [
+static HOLLOW_KNIGHT_NAMES: [&str; 3] = [
     "hollow_knight.exe", // Windows
     "Hollow Knight", // Mac
     "hollow_knight", // Mac
@@ -33,12 +33,12 @@ pub const PERMA_DEATH: &str = "PermaDeath";
 pub const INTRO_CUTSCENE: &str = "Intro_Cutscene";
 pub const OPENING_SEQUENCE: &str = "Opening_Sequence";
 pub const GG_ENTRANCE_CUTSCENE: &str = "GG_Entrance_Cutscene";
-pub const OPENING_SCENES: [&str; 2] = [
+pub static OPENING_SCENES: [&str; 2] = [
     INTRO_CUTSCENE,
     OPENING_SEQUENCE,
 ];
 
-const NON_PLAY_SCENES: [&str; 16] = [
+static NON_PLAY_SCENES: [&str; 16] = [
     PRE_MENU_INTRO,
     MENU_TITLE,
     QUIT_TO_MENU,
@@ -57,12 +57,12 @@ const NON_PLAY_SCENES: [&str; 16] = [
     "PermaDeath_Unlock",
 ];
 
-const DEBUG_SAVE_STATE_SCENE_NAMES: [&str; 2] = [
+static DEBUG_SAVE_STATE_SCENE_NAMES: [&str; 2] = [
     "Room_Mender_House",
     "Room_Sly_Storeroom",
 ];
 
-const BAD_SCENE_NAMES: [&str; 11] = [
+static BAD_SCENE_NAMES: [&str; 11] = [
     "Untagged",
     "left1",
     "oncomplete",
@@ -76,44 +76,44 @@ const BAD_SCENE_NAMES: [&str; 11] = [
     "material",
 ];
 
-pub const FUNGAL_WASTES_ENTRY_SCENES: &[&str] = &[
+pub static FUNGAL_WASTES_ENTRY_SCENES: &[&str] = &[
     "Fungus2_06", // Room outside Leg Eater
     "Fungus2_03", // From Queens' Station
     "Fungus2_23", // Bretta from Waterways
     "Fungus2_20", // Spore Shroom room, from QG (this one's unlikely to come up)
 ];
 
-pub const CRYSTAL_PEAK_ENTRY_SCENES: &[&str] = &[
+pub static CRYSTAL_PEAK_ENTRY_SCENES: &[&str] = &[
     "Mines_02",
     "Mines_10",
 ];
 
-pub const WATERWAYS_ENTRY_SCENES: &[&str] = &[
+pub static WATERWAYS_ENTRY_SCENES: &[&str] = &[
     "Waterways_01", // Simple Key manhole entrance
     // Note: Waterways_06 does not show the Area Text
     "Waterways_07", // Where the Spike-tunnel and KE-Tram-CDash entrances meet
 ];
 
-pub const FOG_CANYON_ENTRY_SCENES: &[&str] = &[
+pub static FOG_CANYON_ENTRY_SCENES: &[&str] = &[
     "Fungus3_01", // West Fog Canyon entrance from Greenpath
     "Fungus3_02", // West Fog Canyon entrance from Queen's Station or QGA
     "Fungus3_24", // West Fog Canyon entrance from Queen's Gardens via Overgrown Mound
     "Fungus3_26", // East Fog Canyon, where the Crossroads acid and Leg Eater acid entrances meet
 ];
 
-pub const QUEENS_GARDENS_ENTRY_SCENES: &[&str] = &[
+pub static QUEENS_GARDENS_ENTRY_SCENES: &[&str] = &[
     "Fungus3_34",
     "Deepnest_43",
 ];
 
-pub const DEEPNEST_ENTRY_SCENES: &[&str] = &[
+pub static DEEPNEST_ENTRY_SCENES: &[&str] = &[
     "Fungus2_25", // Room after Mantis Lords
     "Deepnest_42", // Room outside Mask Maker
     "Abyss_03b", // Deepnest Tram
     "Deepnest_01b", // Near Spore Shroom
 ];
 
-pub const GODHOME_LORE_SCENES: &[&str] = &[
+pub static GODHOME_LORE_SCENES: &[&str] = &[
     "GG_Engine", // includes GG_Engine_Prime when using starts_with_any
     "GG_Unn",
     "GG_Wyrm",
@@ -134,7 +134,7 @@ pub const GAME_STATE_PLAYING: i32 = 4;
 pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
 pub const GAME_STATE_CUTSCENE: i32 = 7;
 
-pub const NON_MENU_GAME_STATES: [i32; 2] = [
+pub static NON_MENU_GAME_STATES: [i32; 2] = [
     GAME_STATE_PLAYING,
     GAME_STATE_CUTSCENE,
 ];
@@ -792,13 +792,24 @@ pub struct BossSequenceDoorCompletion {
 pub struct GameManagerFinder {
     module: mono::Module,
     image: mono::Image,
-    pointers: GameManagerPointers,
-    player_data_pointers: PlayerDataPointers,
-    completion_pointers: CompletionPointers,
+    pointers: Box<GameManagerPointers>,
+    player_data_pointers: Box<PlayerDataPointers>,
+    completion_pointers: Box<CompletionPointers>,
     ui_state_offset: OnceCell<u32>,
 }
 
 impl GameManagerFinder {
+    fn new(module: mono::Module, image: mono::Image) -> GameManagerFinder {
+        GameManagerFinder {
+            module,
+            image,
+            pointers: Box::new(GameManagerPointers::new()),
+            player_data_pointers: Box::new(PlayerDataPointers::new()),
+            completion_pointers: Box::new(CompletionPointers::new()),
+            ui_state_offset: OnceCell::new(),
+        }
+    }
+
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
@@ -815,14 +826,7 @@ impl GameManagerFinder {
                 if let Some(image) = module.get_default_image(process) {
                     asr::print_message("GameManagerFinder wait_attach: got module and image");
                     next_tick().await;
-                    return GameManagerFinder {
-                        module,
-                        image,
-                        pointers: GameManagerPointers::new(),
-                        player_data_pointers: PlayerDataPointers::new(),
-                        completion_pointers: CompletionPointers::new(),
-                        ui_state_offset: OnceCell::new(),
-                    };
+                    return GameManagerFinder::new(module, image);
                 }
                 next_tick().await;
             }
