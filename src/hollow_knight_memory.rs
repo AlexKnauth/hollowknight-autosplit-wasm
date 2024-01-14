@@ -792,9 +792,9 @@ pub struct BossSequenceDoorCompletion {
 pub struct GameManagerFinder {
     module: mono::Module,
     image: mono::Image,
-    pointers: GameManagerPointers,
-    player_data_pointers: PlayerDataPointers,
-    completion_pointers: CompletionPointers,
+    pointers: Box<GameManagerPointers>,
+    player_data_pointers: Box<PlayerDataPointers>,
+    completion_pointers: Box<CompletionPointers>,
     ui_state_offset: OnceCell<u32>,
 }
 
@@ -803,9 +803,9 @@ impl GameManagerFinder {
         GameManagerFinder {
             module,
             image,
-            pointers: GameManagerPointers::new(),
-            player_data_pointers: PlayerDataPointers::new(),
-            completion_pointers: CompletionPointers::new(),
+            pointers: Box::new(GameManagerPointers::new()),
+            player_data_pointers: Box::new(PlayerDataPointers::new()),
+            completion_pointers: Box::new(CompletionPointers::new()),
             ui_state_offset: OnceCell::new(),
         }
     }
