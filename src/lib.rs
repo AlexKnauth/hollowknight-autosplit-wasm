@@ -63,6 +63,8 @@ async fn main() {
                 loop {
                     tick_action(&process, &splits, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut load_remover).await;
 
+                    load_remover.load_removal(&process, &game_manager_finder, i);
+
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
                         let gui_splits = gui.get_splits();
@@ -130,8 +132,6 @@ async fn tick_action(
     if 0 < *i && asr::timer::state() == TimerState::NotRunning {
         *i = 0;
     }
-
-    load_remover.load_removal(&process, &game_manager_finder, *i);
 }
 
 fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
