@@ -12,6 +12,7 @@ use asr::time::Duration;
 use asr::timer::TimerState;
 use settings_gui::SettingsGui;
 use hollow_knight_memory::*;
+use splits::SplitterAction;
 use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
@@ -59,27 +60,8 @@ async fn main() {
                 }
 
                 let mut i = 0;
-                let mut n = splits.len();
                 loop {
-                    let current_split = &splits[i];
-                    let trans_now = scene_store.transition_now(&process, &game_manager_finder);
-                    if splits::splits(current_split, &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
-                        split_index(&mut i, n);
-                        next_tick().await;
-                    } else if auto_reset && splits::splits(&splits[0], &process, &game_manager_finder, trans_now, &mut scene_store, &mut player_data_store) {
-                        i = 0;
-                        load_remover.load_removal(&process, &game_manager_finder, i);
-                        split_index(&mut i, n);
-                    }
-
-                    if trans_now && scene_store.pair().old == MENU_TITLE {
-                        player_data_store.reset();
-                    }
-
-                    // detect manual resets
-                    if 0 < i && asr::timer::state() == TimerState::NotRunning {
-                        i = 0;
-                    }
+                    tick_action(&process, &splits, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut load_remover).await;
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
@@ -90,7 +72,6 @@ async fn main() {
                             splits = gui_splits;
                             asr::print_message(&format!("splits: {:?}", splits));
                             auto_reset = splits::auto_reset_safe(&splits);
-                            n = splits.len();
                         }
                         ticks_since_gui = 0;
                     }
@@ -102,14 +83,93 @@ async fn main() {
     }
 }
 
-fn split_index(i: &mut usize, n: usize) {
-    if *i == 0 {
-        asr::timer::reset();
-        asr::timer::start();
-    } else {
-        asr::timer::split();
+async fn tick_action(
+    process: &Process,
+    splits: &[splits::Split],
+    i: &mut usize,
+    auto_reset: bool,
+    game_manager_finder: &GameManagerFinder,
+    scene_store: &mut SceneStore,
+    player_data_store: &mut PlayerDataStore,
+    load_remover: &mut LoadRemover,
+) {
+    match asr::timer::state() {
+        // detect manual resets
+        TimerState::NotRunning if 0 < *i => {
+            *i = 0;
+            load_remover.reset();
+            asr::print_message("Detected a manual reset.");
+        }
+        // detect manual starts
+        TimerState::Running if *i == 0 => {
+            *i = 1;
+            asr::print_message("Detected a manual start.");
+        }
+        _ => ()
     }
-    *i += 1;
+
+    let n = splits.len();
+    let trans_now = scene_store.transition_now(&process, &game_manager_finder);
+    loop {
+        match splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+            SplitterAction::Split => {
+                splitter_action(SplitterAction::Split, i, n);
+                next_tick().await;
+                break;
+            }
+            SplitterAction::Skip => {
+                splitter_action(SplitterAction::Skip, i, n);
+                next_tick().await;
+                // no break, allow other actions after a skip
+            }
+            SplitterAction::Reset => {
+                *i = 0;
+                load_remover.reset();
+                splitter_action(SplitterAction::Reset, i, n);
+                break;
+            }
+            SplitterAction::Pass => {
+                if auto_reset {
+                    match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+                        SplitterAction::Split | SplitterAction::Reset => {
+                            *i = 0;
+                            load_remover.reset();
+                            splitter_action(SplitterAction::Split, i, n);
+                        }
+                        _ => (),
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    if trans_now && scene_store.pair().old == MENU_TITLE {
+        player_data_store.reset();
+    }
+}
+
+fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
+    match a {
+        SplitterAction::Pass => (),
+        SplitterAction::Reset => {
+            asr::timer::reset();
+            *i = 0;
+        }
+        SplitterAction::Skip => {
+            asr::timer::skip_split();
+            *i += 1;
+        }
+        SplitterAction::Split if *i == 0 => {
+            asr::timer::reset();
+            asr::timer::start();
+            *i += 1;
+        }
+        SplitterAction::Split => {
+            asr::timer::split();
+            *i += 1;
+        }
+    }
     if n <= *i {
         *i = 0;
     }
@@ -132,6 +192,8 @@ impl LoadRemover {
             last_paused: false,
         }
     }
+
+    fn reset(&mut self) {}
 
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, _i: usize) -> Option<()> {
 
@@ -228,15 +290,19 @@ impl HitCounter {
         }
     }
 
+    fn reset(&mut self) {
+        self.hits = 0;
+        asr::timer::set_game_time(Duration::seconds(0));
+        asr::timer::set_variable_int("hits", 0);
+    }
+
     fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, i: usize) -> Option<()> {
 
         asr::timer::pause_game_time();
 
         // detect resets
         if i == 0 && 0 < self.last_index {
-            self.hits = 0;
-            asr::timer::set_game_time(Duration::seconds(0));
-            asr::timer::set_variable_int("hits", 0);
+            self.reset();
         }
         self.last_index = i;
 
