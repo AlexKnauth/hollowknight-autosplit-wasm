@@ -6,6 +6,7 @@
       <Split>GrubCrossroadsVengeflyChoice</Split>
       <Split>EnterBroodingMawlekChoice</Split>
       <Split>MaskShardMawlekChoice</Split>
+      <Split>EnterCrossroadsCornifer</Split>
       <Split>GrubCrossroadsAcidChoice</Split>
       <Split>MaskShardGoamChoice</Split>
       <Split>GruzMother</Split>
