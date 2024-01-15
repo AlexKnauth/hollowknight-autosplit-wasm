@@ -1580,7 +1580,8 @@ pub enum Split {
     /// Radiance Dream Entry (Event)
     /// 
     /// Splits upon entering the Radiance dream
-    // TODO: Skips upon killing the Hollow Knight (requires ordered splits)
+    /// 
+    /// Skips upon killing the Hollow Knight
     HollowKnightDreamnail,
     /// Segment Practice - Radiance (Boss)
     /// 
@@ -2601,7 +2602,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::TransVS => should_split(1 <= pds.get_fireball_level(prc, g) && p.current != p.old),
         Split::SalubraExit => should_split(p.old == "Room_Charm_Shop" && p.current != p.old),
         Split::EnterHollowKnight => should_split(p.current == "Room_Final_Boss_Core" && p.current != p.old),
-        Split::HollowKnightDreamnail => should_split(p.current.starts_with("Dream_Final") && p.current != p.old),
+        Split::HollowKnightDreamnail => should_split(p.current.starts_with("Dream_Final") && p.current != p.old).or_else(|| {
+            should_skip(g.killed_hollow_knight(prc).is_some_and(|k| k))
+        }),
         // endregion: Crossroads
         // region: Greenpath
         Split::EnterGreenpath => should_split(p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01")),
