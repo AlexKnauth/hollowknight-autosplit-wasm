@@ -1541,6 +1541,7 @@ pub enum Split {
     /// 
     /// Splits when killing Brooding Mawlek
     BroodingMawlek,
+    EnterCrossroadsCornifer,
     /// Gruz Mother (Boss)
     /// 
     /// Splits when killing Gruz Mother
@@ -2612,6 +2613,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterBroodingMawlekChoice => should_split(p.current == "Crossroads_09" && p.current != p.old).or_else(|| {
             should_skip(p.old == "Crossroads_07" && p.current == "Crossroads_33")
         }),
+        Split::EnterCrossroadsCornifer => should_split(p.current == "Crossroads_33" && p.current != p.old),
         Split::AncestralMound => should_split(p.current == "Crossroads_ShamanTemple" && p.current != p.old),
         Split::TransVS => should_split(1 <= pds.get_fireball_level(prc, g) && p.current != p.old),
         Split::SalubraExit => should_split(p.old == "Room_Charm_Shop" && p.current != p.old),
