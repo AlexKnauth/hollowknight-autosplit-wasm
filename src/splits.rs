@@ -1843,6 +1843,12 @@ pub enum Split {
     /// 
     /// Splits when Nailsmith is killed
     NailsmithKilled,
+    /// Nailsmith Killed/Spared (Event)
+    /// 
+    /// Splits when Nailsmith is killed
+    /// 
+    /// Skips when nailsmith is spared
+    NailsmithChoice,
     // endregion: City
     // region: Peak
     /// Crystal Peak Entry (Transition)
@@ -3258,6 +3264,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Collector => should_split(g.collector_defeated(p).is_some_and(|k| k)),
         Split::TransCollector => { pds.collector_defeated(p, g); should_split(false) },
         Split::NailsmithKilled => should_split(g.nailsmith_killed(p).is_some_and(|k| k)),
+        Split::NailsmithChoice => should_split(g.nailsmith_killed(p).is_some_and(|k| k)).or_else(|| {
+            should_skip(g.nailsmith_spared(p).is_some_and(|s| s))
+        }),
         // endregion: City
         // region: Peak
         Split::CrystalPeak => should_split(g.visited_mines(p).is_some_and(|v| v)),

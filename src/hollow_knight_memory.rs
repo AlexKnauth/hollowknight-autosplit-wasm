@@ -400,7 +400,7 @@ struct PlayerDataPointers {
     killed_black_knight: UnityPointer<3>,
     collector_defeated: UnityPointer<3>,
     nailsmith_killed: UnityPointer<3>,
-    // nailsmith_spared: UnityPointer<3>,
+    nailsmith_spared: UnityPointer<3>,
     visited_mines: UnityPointer<3>,
     kills_zombie_miner: UnityPointer<3>,
     // Crystal Guardian
@@ -680,7 +680,7 @@ impl PlayerDataPointers {
             killed_black_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
             collector_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "collectorDefeated"]),
             nailsmith_killed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nailsmithKilled"]),
-            // nailsmith_spared: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nailsmithSpared"]),
+            nailsmith_spared: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nailsmithSpared"]),
             visited_mines: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedMines"]),
             kills_zombie_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsZombieMiner"]),
             defeated_mega_beam_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "defeatedMegaBeamMiner"]),
@@ -1677,11 +1677,9 @@ impl GameManagerFinder {
     pub fn nailsmith_killed(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.nailsmith_killed.deref(process, &self.module, &self.image).ok()
     }
-    /*
     pub fn nailsmith_spared(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.nailsmith_spared.deref(process, &self.module, &self.image).ok()
     }
-    */
 
     pub fn visited_mines(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.visited_mines.deref(process, &self.module, &self.image).ok()
