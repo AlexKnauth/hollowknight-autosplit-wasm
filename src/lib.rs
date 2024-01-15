@@ -105,6 +105,12 @@ async fn tick_action(
             *i = 1;
             asr::print_message("Detected a manual start.");
         }
+        // detect manual end-splits
+        TimerState::Ended if 0 < *i => {
+            *i = 0;
+            load_remover.reset();
+            asr::print_message("Detected a manual end-split.");
+        }
         _ => ()
     }
 
