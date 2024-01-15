@@ -36,6 +36,14 @@ fn should_split(b: bool) -> SplitterAction {
     }
 }
 
+fn should_skip(b: bool) -> SplitterAction {
+    if b {
+        SplitterAction::Skip
+    } else {
+        SplitterAction::Pass
+    }
+}
+
 #[derive(Clone, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
 pub enum Split {
     // region: Start, End, and Menu
@@ -1572,7 +1580,8 @@ pub enum Split {
     /// Radiance Dream Entry (Event)
     /// 
     /// Splits upon entering the Radiance dream
-    // TODO: Skips upon killing the Hollow Knight (requires ordered splits)
+    /// 
+    /// Skips upon killing the Hollow Knight
     HollowKnightDreamnail,
     /// Segment Practice - Radiance (Boss)
     /// 
@@ -1834,6 +1843,12 @@ pub enum Split {
     /// 
     /// Splits when Nailsmith is killed
     NailsmithKilled,
+    /// Nailsmith Killed/Spared (Event)
+    /// 
+    /// Splits when Nailsmith is killed
+    /// 
+    /// Skips when nailsmith is spared
+    NailsmithChoice,
     // endregion: City
     // region: Peak
     /// Crystal Peak Entry (Transition)
@@ -2593,7 +2608,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::TransVS => should_split(1 <= pds.get_fireball_level(prc, g) && p.current != p.old),
         Split::SalubraExit => should_split(p.old == "Room_Charm_Shop" && p.current != p.old),
         Split::EnterHollowKnight => should_split(p.current == "Room_Final_Boss_Core" && p.current != p.old),
-        Split::HollowKnightDreamnail => should_split(p.current.starts_with("Dream_Final") && p.current != p.old),
+        Split::HollowKnightDreamnail => should_split(p.current.starts_with("Dream_Final") && p.current != p.old).or_else(|| {
+            should_skip(g.killed_hollow_knight(prc).is_some_and(|k| k))
+        }),
         // endregion: Crossroads
         // region: Greenpath
         Split::EnterGreenpath => should_split(p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01")),
@@ -3247,6 +3264,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Collector => should_split(g.collector_defeated(p).is_some_and(|k| k)),
         Split::TransCollector => { pds.collector_defeated(p, g); should_split(false) },
         Split::NailsmithKilled => should_split(g.nailsmith_killed(p).is_some_and(|k| k)),
+        Split::NailsmithChoice => should_split(g.nailsmith_killed(p).is_some_and(|k| k)).or_else(|| {
+            should_skip(g.nailsmith_spared(p).is_some_and(|s| s))
+        }),
         // endregion: City
         // region: Peak
         Split::CrystalPeak => should_split(g.visited_mines(p).is_some_and(|v| v)),
