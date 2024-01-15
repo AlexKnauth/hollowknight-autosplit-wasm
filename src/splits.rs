@@ -1536,10 +1536,6 @@ pub enum Split {
     /// 
     /// Splits when killing Brooding Mawlek
     BroodingMawlek,
-    /// Ancestral Mound (Transition)
-    /// 
-    /// Splits on transition into Ancestral Mound
-    AncestralMound,
     /// Gruz Mother (Boss)
     /// 
     /// Splits when killing Gruz Mother
@@ -1560,6 +1556,10 @@ pub enum Split {
     /// 
     /// Splits when getting Failed Champion essence
     FailedChampionEssence,
+    /// Ancestral Mound (Transition)
+    /// 
+    /// Splits on transition into Ancestral Mound
+    AncestralMound,
     /// Salubra's Blessing (Item)
     /// 
     /// Splits when obtaining Salubra's Blessing
