@@ -109,32 +109,37 @@ async fn tick_action(
     }
 
     let n = splits.len();
-    let current_split = &splits[*i];
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
-    match splits::splits(current_split, &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
-        SplitterAction::Split => {
-            splitter_action(SplitterAction::Split, i, n);
-            next_tick().await;
-        }
-        SplitterAction::Skip => {
-            splitter_action(SplitterAction::Skip, i, n);
-            next_tick().await;
-        }
-        SplitterAction::Reset => {
-            *i = 0;
-            load_remover.reset();
-            splitter_action(SplitterAction::Reset, i, n);
-        }
-        SplitterAction::Pass => {
-            if auto_reset {
-                match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
-                    SplitterAction::Split | SplitterAction::Reset => {
-                        *i = 0;
-                        load_remover.reset();
-                        splitter_action(SplitterAction::Split, i, n);
+    loop {
+        match splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+            SplitterAction::Split => {
+                splitter_action(SplitterAction::Split, i, n);
+                next_tick().await;
+                break;
+            }
+            SplitterAction::Skip => {
+                splitter_action(SplitterAction::Skip, i, n);
+                next_tick().await;
+                // no break, allow other actions after a skip
+            }
+            SplitterAction::Reset => {
+                *i = 0;
+                load_remover.reset();
+                splitter_action(SplitterAction::Reset, i, n);
+                break;
+            }
+            SplitterAction::Pass => {
+                if auto_reset {
+                    match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+                        SplitterAction::Split | SplitterAction::Reset => {
+                            *i = 0;
+                            load_remover.reset();
+                            splitter_action(SplitterAction::Split, i, n);
+                        }
+                        _ => (),
                     }
-                    _ => (),
                 }
+                break;
             }
         }
     }
