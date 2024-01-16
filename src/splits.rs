@@ -44,6 +44,14 @@ fn should_skip(b: bool) -> SplitterAction {
     }
 }
 
+fn should_split_skip(mb: Option<bool>) -> SplitterAction {
+    match mb  {
+        Some(true) => SplitterAction::Split,
+        Some(false) => SplitterAction::Skip,
+        None => SplitterAction::Pass,
+    }
+}
+
 #[derive(Clone, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
 pub enum Split {
     // region: Start, End, and Menu
@@ -3323,7 +3331,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::ColosseumBronze => should_split(g.colosseum_bronze_completed(p).is_some_and(|c| c)),
         Split::ColosseumBronzeExit => { pds.colosseum_bronze_completed(p, g); should_split(false) },
         Split::ColosseumSilverUnlocked => should_split(g.colosseum_silver_opened(p).is_some_and(|o| o)),
-        Split::KilledOblobbles => todo!("split when 2 Oblobbles are deafeated in a row"),
+        Split::KilledOblobbles => should_split_skip(pds.killed_oblobbles(p, g)),
         Split::ColosseumSilver => should_split(g.colosseum_silver_completed(p).is_some_and(|c| c)),
         Split::ColosseumSilverExit => { pds.colosseum_silver_completed(p, g); should_split(false) },
         Split::ColosseumGoldUnlocked => should_split(g.colosseum_gold_opened(p).is_some_and(|o| o)),

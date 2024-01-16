@@ -131,12 +131,18 @@ pub const GAME_STATE_MAIN_MENU: i32 = 1;
 pub const GAME_STATE_LOADING: i32 = 2;
 pub const GAME_STATE_ENTERING_LEVEL: i32 = 3;
 pub const GAME_STATE_PLAYING: i32 = 4;
+pub const GAME_STATE_PAUSED: i32 = 5;
 pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
 pub const GAME_STATE_CUTSCENE: i32 = 7;
 
 pub static NON_MENU_GAME_STATES: [i32; 2] = [
     GAME_STATE_PLAYING,
     GAME_STATE_CUTSCENE,
+];
+pub static NON_TRANSITION_GAME_STATES: [i32; 3] = [
+    GAME_STATE_PLAYING,
+    GAME_STATE_CUTSCENE,
+    GAME_STATE_PAUSED,
 ];
 
 pub const UI_STATE_PLAYING: i32 = 6;
@@ -856,6 +862,10 @@ impl GameManagerFinder {
 
     fn is_game_state_non_menu(&self, process: &Process) -> bool {
         self.get_game_state(process).is_some_and(|gs| NON_MENU_GAME_STATES.contains(&gs))
+    }
+
+    fn is_game_state_non_transition(&self, process: &Process) -> bool {
+        self.get_game_state(process).is_some_and(|gs| NON_TRANSITION_GAME_STATES.contains(&gs))
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
@@ -2318,6 +2328,36 @@ impl PlayerDataStore {
 
     pub fn increased_royal_charm_state(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
+    }
+
+    /// Produces Some(true) when 2 Oblobbles have been killed in a row,
+    /// produces Some(false) when the journal kills have reached 0 without that,
+    /// or produces None when neither has happened yet.
+    pub fn killed_oblobbles(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        if !gmf.is_game_state_non_transition(prc) {
+            self.map_i32.remove("kills_oblobble_on_entry");
+            return None;
+        }
+        let k = gmf.player_data_pointers.kills_oblobble.deref(prc, &gmf.module, &gmf.image).ok()?;
+        match self.map_i32.get("kills_oblobble_on_entry") {
+            None => {
+                if k == 0 {
+                    Some(false)
+                } else {
+                    self.map_i32.insert("kills_oblobble_on_entry", k);
+                    None
+                }
+            }
+            Some(kills_oblobble_on_entry) => {
+                if k + 2 == *kills_oblobble_on_entry {
+                    Some(true)
+                } else if k == 0 {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+        }
     }
 }
 
