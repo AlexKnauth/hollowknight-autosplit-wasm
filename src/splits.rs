@@ -2708,9 +2708,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::ColosseumBronzeEntry => should_split(p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Bronze"),
         Split::ColosseumBronzeExit => should_split(pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Bronze")),
         Split::ColosseumSilverEntry => should_split(p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Silver"),
-        Split::ColosseumSilverExit => should_split(pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Silver")),
+        Split::ColosseumSilverExit => should_split(pds.colosseum_silver_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Silver")),
         Split::ColosseumGoldEntry => should_split(p.old == "Room_Colosseum_01" && p.current == "Room_Colosseum_Gold"),
-        Split::ColosseumGoldExit => should_split(pds.colosseum_bronze_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Gold")),
+        Split::ColosseumGoldExit => should_split(pds.colosseum_gold_completed(prc, g) && !p.current.starts_with("Room_Colosseum_Gold")),
         // endregion: Colosseum
         // region: Fog Canyon
         Split::FogCanyonEntry => should_split(starts_with_any(p.current, FOG_CANYON_ENTRY_SCENES) && p.current != p.old),
