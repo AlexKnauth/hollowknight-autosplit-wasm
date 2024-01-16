@@ -396,6 +396,10 @@ struct PlayerDataPointers {
     // Lemm
     met_relic_dealer_shop: UnityPointer<3>,
     toll_bench_city: UnityPointer<3>,
+    /// Killed Soul Twister
+    killed_mage: UnityPointer<3>,
+    /// Killed Soul Warrior
+    killed_mage_knight: UnityPointer<3>,
     // Soul Master
     mage_lord_encountered: UnityPointer<3>,
     mage_lord_encountered_2: UnityPointer<3>,
@@ -678,6 +682,8 @@ impl PlayerDataPointers {
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
             met_relic_dealer_shop: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metRelicDealerShop"]),
             toll_bench_city: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "tollBenchCity"]),
+            killed_mage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMage"]),
+            killed_mage_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMageKnight"]),
             mage_lord_encountered: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordEncountered"]),
             mage_lord_encountered_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordEncountered_2"]),
             killed_mage_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMageLord"]),
@@ -1652,6 +1658,16 @@ impl GameManagerFinder {
 
     pub fn toll_bench_city(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.toll_bench_city.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// Killed Soul Twister
+    pub fn killed_mage(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_mage.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// Killed Soul Warrior
+    pub fn killed_mage_knight(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.killed_mage_knight.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn mage_lord_encountered(&self, process: &Process) -> Option<bool> {

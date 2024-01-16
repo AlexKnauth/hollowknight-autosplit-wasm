@@ -1789,6 +1789,11 @@ pub enum Split {
     /// 
     /// Splits when buying City/Sanctum toll bench by Cornifer's location
     TollBenchCity,
+    /// Soul Twister (Killed)
+    /// 
+    /// Splits on first Soul Twister kill
+    #[serde(rename = "killedSoulTwister", alias = "KilledSoulTwister")]
+    KilledSoulTwister,
     /// Soul Sanctum (Transition)
     /// 
     /// Splits when entering Soul Sanctum
@@ -1797,6 +1802,11 @@ pub enum Split {
     /// 
     /// Splits when entering Soul Sanctum after obtaining Shade Soul
     EnterSanctumWithShadeSoul,
+    /// Soul Warrior (Killed)
+    /// 
+    /// Splits on first Soul Warrior kill
+    #[serde(rename = "killedSanctumWarrior", alias = "KilledSanctumWarrior")]
+    KilledSanctumWarrior,
     /// Enter Soul Master (Transition)
     /// 
     /// Splits when entering Soul Master boss arena transition
@@ -3265,6 +3275,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MenuGorgeousHusk => { pds.killed_gorgeous_husk(p, g); should_split(false) },
         Split::Lemm2 => should_split(g.met_relic_dealer_shop(p).is_some_and(|m| m)),
         Split::TollBenchCity => should_split(g.toll_bench_city(p).is_some_and(|b| b)),
+        Split::KilledSoulTwister => should_split(g.killed_mage(p).is_some_and(|k| k)),
+        Split::KilledSanctumWarrior => should_split(g.killed_mage_knight(p).is_some_and(|k| k)),
         Split::SoulMasterEncountered => should_split(g.mage_lord_encountered(p).is_some_and(|b| b)),
         Split::SoulMasterPhase1 => should_split(g.mage_lord_encountered_2(p).is_some_and(|b| b)),
         Split::SoulMaster => should_split(g.killed_mage_lord(p).is_some_and(|k| k)),
