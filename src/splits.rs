@@ -1,4 +1,3 @@
-use std::str::FromStr;
 
 use asr::Process;
 use asr::settings::Gui;
@@ -2560,22 +2559,9 @@ impl StoreWidget for Split {
     }
 }
 
-impl ToString for Split {
-    fn to_string(&self) -> String {
-        serde_json::to_value(self).unwrap_or_default().as_str().unwrap_or_default().to_string()
-    }
-}
-
-impl FromStr for Split {
-    type Err = serde_json::Error;
-    fn from_str(s: &str) -> Result<Split, serde_json::Error> {
-        serde_json::value::from_value(serde_json::Value::String(s.to_string()))
-    }
-}
-
 impl Split {
     pub fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
-        Split::from_str(&s.as_string()?).ok()
+        serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
     }
     pub fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
         Split::from_settings_str(s.dict_get("Split").unwrap_or(s))
