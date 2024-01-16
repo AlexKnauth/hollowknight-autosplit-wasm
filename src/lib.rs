@@ -59,9 +59,10 @@ async fn main() {
                     auto_reset = splits::auto_reset_safe(&splits);
                 }
 
+                let mut last_timer_state = TimerState::Unknown;
                 let mut i = 0;
                 loop {
-                    tick_action(&process, &splits, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut load_remover).await;
+                    tick_action(&process, &splits, &mut last_timer_state, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut load_remover).await;
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
@@ -86,6 +87,7 @@ async fn main() {
 async fn tick_action(
     process: &Process,
     splits: &[splits::Split],
+    last_timer_state: &mut TimerState,
     i: &mut usize,
     auto_reset: bool,
     game_manager_finder: &GameManagerFinder,
@@ -101,7 +103,7 @@ async fn tick_action(
             asr::print_message("Detected a manual reset.");
         }
         // detect manual starts
-        TimerState::Running if *i == 0 => {
+        TimerState::Running if *i == 0 && is_timer_state_between_runs(*last_timer_state) => {
             *i = 1;
             asr::print_message("Detected a manual start.");
         }
@@ -111,7 +113,9 @@ async fn tick_action(
             load_remover.reset();
             asr::print_message("Detected a manual end-split.");
         }
-        _ => ()
+        s => {
+            *last_timer_state = s;
+        }
     }
 
     let n = splits.len();
@@ -153,6 +157,10 @@ async fn tick_action(
     if trans_now && scene_store.pair().old == MENU_TITLE {
         player_data_store.reset();
     }
+}
+
+fn is_timer_state_between_runs(s: TimerState) -> bool {
+    s == TimerState::NotRunning || s == TimerState::Ended
 }
 
 fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
