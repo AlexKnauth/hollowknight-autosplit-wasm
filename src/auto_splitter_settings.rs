@@ -30,18 +30,17 @@ pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::
     asr_settings_from_xml_nodes(xml_nodes)
 }
 
-pub fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
+fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
     let xml_nodes = Element::parse_all(xml_string.as_bytes()).ok()?;
     asr_settings_from_xml_nodes(xml_nodes)
-    
 }
 
-pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
+fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
     let splits = legacy_xml::splits_from_xml_nodes(xml_nodes)?;
     Some(asr_settings_from_splits(&splits))
 }
 
-pub fn asr_settings_from_splits(splits: &[Split]) -> asr::settings::Map {
+fn asr_settings_from_splits(splits: &[Split]) -> asr::settings::Map {
     // new empty map, which will only include the new splits
     let settings_map = asr::settings::Map::new();
     let l = asr::settings::List::new();
@@ -52,7 +51,7 @@ pub fn asr_settings_from_splits(splits: &[Split]) -> asr::settings::Map {
     settings_map
 }
 
-pub fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNode>> {
+fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNode>> {
     let bs = file_read_all_bytes(path).ok()?;
     let es = Element::parse_all(bs.as_slice()).ok()?;
     let auto_splitter_settings = es.iter().find_map(xml_find_auto_splitter_settings)?;
@@ -79,11 +78,11 @@ fn component_is_asr(e: &Element) -> bool {
 
 // --------------------------------------------------------
 
-pub async fn wait_asr_settings_load_merge_store(new: &asr::settings::Map) -> asr::settings::Map {
+async fn wait_asr_settings_load_merge_store(new: &asr::settings::Map) -> asr::settings::Map {
     retry(|| asr_settings_load_merge_store(new)).await
 }
 
-pub fn asr_settings_load_merge_store(new: &asr::settings::Map) -> Option<asr::settings::Map> {
+fn asr_settings_load_merge_store(new: &asr::settings::Map) -> Option<asr::settings::Map> {
     let old = asr::settings::Map::load();
     let merged = maybe_asr_settings_map_merge(Some(old.clone()), new);
     if merged.store_if_unchanged(&old) {
