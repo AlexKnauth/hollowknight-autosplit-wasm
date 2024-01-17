@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 use ugly_widget::radio_button::{RadioButtonOptions, options_str};
 use ugly_widget::store::StoreWidget;
 
-use super::auto_splitter_settings::Settings;
 use super::hollow_knight_memory::*;
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
@@ -2556,15 +2555,6 @@ impl StoreWidget for Split {
         }
         settings_map.insert(key, new_s);
         true
-    }
-}
-
-impl Split {
-    pub fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
-        serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
-    }
-    pub fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
-        Split::from_settings_str(s.dict_get("Split").unwrap_or(s))
     }
 }
 

@@ -12,7 +12,7 @@ pub fn splits_from_settings<S: Settings>(s: &S) -> Vec<Split> {
     let maybe_splits = s.dict_get("Splits");
     if maybe_ordered.is_some() || maybe_start.is_some() || maybe_end.is_some() {
         // Splits files from up through version 3 of ShootMe/LiveSplit.HollowKnight
-        let start = maybe_start.and_then(Split::from_settings_str).unwrap_or(Split::StartNewGame);
+        let start = maybe_start.and_then(split_from_settings_str).unwrap_or(Split::StartNewGame);
         let end = maybe_end.and_then(|s| s.as_bool()).unwrap_or_default();
         let mut result = vec![start];
         if let Some(splits) = maybe_splits {
@@ -31,5 +31,13 @@ pub fn splits_from_settings<S: Settings>(s: &S) -> Vec<Split> {
 }
 
 fn splits_from_settings_split_list<S: Settings>(s: &S) -> Vec<Split> {
-    s.as_list().unwrap_or_default().into_iter().filter_map(Split::from_settings_split).collect()
+    s.as_list().unwrap_or_default().into_iter().filter_map(split_from_settings_split).collect()
+}
+
+fn split_from_settings_split<S: Settings>(s: S) -> Option<Split> {
+    split_from_settings_str(s.dict_get("Split").unwrap_or(s))
+}
+
+fn split_from_settings_str<S: Settings>(s: S) -> Option<Split> {
+    serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
 }
