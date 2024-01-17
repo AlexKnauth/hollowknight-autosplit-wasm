@@ -27,22 +27,18 @@ pub async fn wait_asr_settings_init() -> asr::settings::Map {
 
 pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
     let xml_nodes = file_find_auto_splitter_settings(path)?;
-    let splits = splits_from_xml_nodes(xml_nodes)?;
-    Some(asr_settings_from_splits(&splits))
+    asr_settings_from_xml_nodes(xml_nodes)
 }
 
 pub fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
-    let splits = splits_from_xml_string(xml_string)?;
+    let xml_nodes = Element::parse_all(xml_string.as_bytes()).ok()?;
+    asr_settings_from_xml_nodes(xml_nodes)
+    
+}
+
+pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
+    let splits = legacy_xml::splits_from_xml_nodes(xml_nodes)?;
     Some(asr_settings_from_splits(&splits))
-}
-
-fn splits_from_xml_string(xml_string: &str) -> Option<Vec<Split>> {
-    splits_from_xml_nodes(Element::parse_all(xml_string.as_bytes()).ok()?)
-}
-
-fn splits_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<Vec<Split>> {
-    let xml_settings = legacy_xml::XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
-    legacy_xml::splits_from_settings(&xml_settings)
 }
 
 pub fn asr_settings_from_splits(splits: &[Split]) -> asr::settings::Map {

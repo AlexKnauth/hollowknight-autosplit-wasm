@@ -79,6 +79,11 @@ impl XMLSettings {
     }
 }
 
+pub fn splits_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<Vec<Split>> {
+    let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
+    splits_from_settings(&xml_settings)
+}
+
 pub fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
