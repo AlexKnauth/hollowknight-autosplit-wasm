@@ -1,11 +1,11 @@
 
 use crate::{
-    auto_splitter_settings::Settings,
+    auto_splitter_settings::{Settings, XMLSettings},
     splits,
     splits::Split,
 };
 
-pub fn splits_from_settings<S: Settings>(s: &S) -> Vec<Split> {
+pub fn splits_from_settings(s: &XMLSettings) -> Vec<Split> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
     let maybe_end = s.dict_get("AutosplitEndRuns");
@@ -30,14 +30,14 @@ pub fn splits_from_settings<S: Settings>(s: &S) -> Vec<Split> {
     }
 }
 
-fn splits_from_settings_split_list<S: Settings>(s: &S) -> Vec<Split> {
+fn splits_from_settings_split_list(s: &XMLSettings) -> Vec<Split> {
     s.as_list().unwrap_or_default().into_iter().filter_map(split_from_settings_split).collect()
 }
 
-fn split_from_settings_split<S: Settings>(s: S) -> Option<Split> {
+fn split_from_settings_split(s: XMLSettings) -> Option<Split> {
     split_from_settings_str(s.dict_get("Split").unwrap_or(s))
 }
 
-fn split_from_settings_str<S: Settings>(s: S) -> Option<Split> {
+fn split_from_settings_str(s: XMLSettings) -> Option<Split> {
     serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
 }
