@@ -4,11 +4,10 @@ use ugly_widget::{
     ugly_list::{UglyList, UglyListArgs},
     store::{StoreWidget, StoreGui},
     args::SetHeadingLevel,
-    radio_button::options_str,
 };
 
 use crate::{
-    auto_splitter_settings::{wait_asr_settings_load_merge_store, asr_settings_from_file},
+    auto_splitter_settings::{wait_asr_settings_load_merge_store, asr_settings_from_file, asr_settings_from_splits},
     legacy_xml::{splits_from_settings, XMLSettings},
     splits::Split,
 };
@@ -59,12 +58,7 @@ impl SettingsGui {
             asr::print_message("settings1: from asr::settings::Map::load");
         } else {
             asr::print_message("settings2: from AutoSplitterSettings.txt");
-            let settings3 = asr::settings::Map::new();
-            let l = asr::settings::List::new();
-            for split in splits2.iter() {
-                l.push(options_str(split));
-            }
-            settings3.insert("splits", &l);
+            let settings3 = asr_settings_from_splits(&splits2);
             wait_asr_settings_load_merge_store(&settings3).await;
         }
         let mut gui = SettingsGui::register();
