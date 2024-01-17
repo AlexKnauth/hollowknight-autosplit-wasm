@@ -1,5 +1,5 @@
 
-use xmltree::{Element, XMLNode};
+use xmltree::XMLNode;
 
 use crate::splits::Split;
 
@@ -15,15 +15,11 @@ impl Default for XMLSettings {
 }
 
 impl XMLSettings {
-    pub fn from_xml_nodes(children: Vec<XMLNode>, list_items: &[(&str, &str)]) -> Option<Self> {
+    pub fn from_xml_nodes(children: Vec<XMLNode>, list_items: &[(&str, &str)]) -> Self {
         let list_items = list_items.into_iter().map(|(l, i)| (l.to_string(), i.to_string())).collect();
-        Some(XMLSettings { name: None, children, list_items })
+        XMLSettings { name: None, children, list_items }
     }
-    
-    pub fn from_xml_string(s: &str, list_items: &[(&str, &str)]) -> Result<Self, xmltree::ParseError> {
-        let list_items = list_items.into_iter().map(|(l, i)| (l.to_string(), i.to_string())).collect();
-        Ok(XMLSettings { name: None, children: Element::parse_all(s.as_bytes())?, list_items })
-    }
+
     fn is_list_get_item_name(&self) -> Option<&str> {
         let n = self.name.as_deref()?;
         for (l, i) in self.list_items.iter() {
