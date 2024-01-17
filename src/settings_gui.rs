@@ -8,7 +8,7 @@ use ugly_widget::{
 };
 
 use crate::{
-    auto_splitter_settings::{wait_asr_settings_load_merge_store, file_find_auto_splitter_settings},
+    auto_splitter_settings::{wait_asr_settings_load_merge_store, asr_settings_from_file},
     legacy_xml::{splits_from_settings, XMLSettings},
     splits::Split,
 };
@@ -29,24 +29,12 @@ impl StoreGui for SettingsGui {
     fn post_update(&mut self) {
         if self.import.changed() {
             asr::print_message(&format!("import {}", self.import.current.path));
-            if let Some(xml_settings) = file_find_auto_splitter_settings(&self.import.current.path).and_then(|nodes| XMLSettings::from_xml_nodes(nodes, &[("Splits", "Split")])) {
-                let new_splits = splits_from_settings(&xml_settings);
-                // new empty map, which will only include the new splits
-                let settings_map = asr::settings::Map::new();
-                let l = asr::settings::List::new();
-                for split in new_splits.iter() {
-                    l.push(options_str(split));
-                }
-                settings_map.insert("splits", l);
+            if let Some(settings_map) = asr_settings_from_file(&self.import.current.path) {
                 let mut splits_args = UglyListArgs::default();
                 splits_args.set_heading_level(1);
                 self.splits.update_from(&settings_map, "splits", splits_args);
                 let new_splits2 = self.splits.get_list();
-                if new_splits.iter().collect::<Vec<&Split>>() != new_splits2 {
-                    asr::print_message("BAD");
-                } else {
-                    asr::print_message(&format!("splits: {:?}", new_splits));
-                }
+                asr::print_message(&format!("splits: {:?}", new_splits2));
             }
         }
     }

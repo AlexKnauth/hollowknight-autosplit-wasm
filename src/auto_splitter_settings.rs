@@ -4,6 +4,24 @@ use asr::future::retry;
 use std::{path::Path, fs::File, io::{self, Read}};
 use xmltree::{Element, XMLNode};
 
+use ugly_widget::radio_button::options_str;
+
+use crate::legacy_xml;
+
+pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
+    let xml_nodes = file_find_auto_splitter_settings(path)?;
+    let xml_settings = legacy_xml::XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")])?;
+    let new_splits = legacy_xml::splits_from_settings(&xml_settings);
+    // new empty map, which will only include the new splits
+    let settings_map = asr::settings::Map::new();
+    let l = asr::settings::List::new();
+    for split in new_splits.iter() {
+        l.push(options_str(split));
+    }
+    settings_map.insert("splits", l);
+    Some(settings_map)
+}
+
 pub fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNode>> {
     let bs = file_read_all_bytes(path).ok()?;
     let es = Element::parse_all(bs.as_slice()).ok()?;
