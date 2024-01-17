@@ -1,10 +1,7 @@
 
 use xmltree::{Element, XMLNode};
 
-use crate::{
-    splits,
-    splits::Split,
-};
+use crate::splits::Split;
 
 #[derive(Clone, Debug)]
 pub struct XMLSettings {
@@ -86,7 +83,7 @@ impl XMLSettings {
     }
 }
 
-pub fn splits_from_settings(s: &XMLSettings) -> Vec<Split> {
+pub fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
     let maybe_end = s.dict_get("AutosplitEndRuns");
@@ -102,12 +99,12 @@ pub fn splits_from_settings(s: &XMLSettings) -> Vec<Split> {
         if !end {
             result.push(Split::EndingSplit);
         }
-        result
+        Some(result)
     } else if let Some(splits) = maybe_splits {
         // Splits files from after version 4 of mayonnaisical/LiveSplit.HollowKnight
-        splits_from_settings_split_list(&splits)
+        Some(splits_from_settings_split_list(&splits))
     } else {
-        splits::default_splits()
+        None
     }
 }
 

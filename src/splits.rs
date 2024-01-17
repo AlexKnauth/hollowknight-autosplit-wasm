@@ -3396,11 +3396,6 @@ fn starting_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> 
     })
 }
 
-pub fn default_splits() -> Vec<Split> {
-    vec![Split::StartNewGame,
-         Split::EndingSplit]
-}
-
 pub fn auto_reset_safe(s: &[Split]) -> bool {
     s.first() == Some(&Split::StartNewGame)
     && !s[1..].contains(&Split::StartNewGame)

@@ -11,13 +11,13 @@ use crate::{legacy_xml, splits::Split};
 pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
     let xml_nodes = file_find_auto_splitter_settings(path)?;
     let xml_settings = legacy_xml::XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")])?;
-    let new_splits = legacy_xml::splits_from_settings(&xml_settings);
+    let new_splits = legacy_xml::splits_from_settings(&xml_settings)?;
     Some(asr_settings_from_splits(&new_splits))
 }
 
 pub fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
     let xml_settings = legacy_xml::XMLSettings::from_xml_string(xml_string, &[("Splits", "Split")]).ok()?;
-    let splits = legacy_xml::splits_from_settings(&xml_settings);
+    let splits = legacy_xml::splits_from_settings(&xml_settings)?;
     Some(asr_settings_from_splits(&splits))
 }
 
