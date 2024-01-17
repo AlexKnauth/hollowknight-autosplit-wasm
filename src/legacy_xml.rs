@@ -4,7 +4,7 @@ use xmltree::XMLNode;
 use crate::splits::Split;
 
 #[derive(Clone, Debug)]
-pub struct XMLSettings {
+struct XMLSettings {
     name: Option<String>,
     children: Vec<XMLNode>,
     list_items: Vec<(String, String)>,
@@ -15,7 +15,7 @@ impl Default for XMLSettings {
 }
 
 impl XMLSettings {
-    pub fn from_xml_nodes(children: Vec<XMLNode>, list_items: &[(&str, &str)]) -> Self {
+    fn from_xml_nodes(children: Vec<XMLNode>, list_items: &[(&str, &str)]) -> Self {
         let list_items = list_items.into_iter().map(|(l, i)| (l.to_string(), i.to_string())).collect();
         XMLSettings { name: None, children, list_items }
     }
@@ -30,7 +30,7 @@ impl XMLSettings {
         None
     }
 
-    pub fn as_string(&self) -> Option<String> {
+    fn as_string(&self) -> Option<String> {
         match &self.children[..] {
             [] => Some("".to_string()),
             [XMLNode::Text(s)] => Some(s.to_string()),
@@ -38,7 +38,7 @@ impl XMLSettings {
         }
     }
 
-    pub fn as_bool(&self) -> Option<bool> {
+    fn as_bool(&self) -> Option<bool> {
         match self.as_string()?.trim() {
             "True" => Some(true),
             "False" => Some(false),
@@ -46,7 +46,7 @@ impl XMLSettings {
         }
     }
 
-    pub fn as_list(&self) -> Option<Vec<Self>> {
+    fn as_list(&self) -> Option<Vec<Self>> {
         let i = self.is_list_get_item_name()?;
         Some(self.children.iter().filter_map(|c| {
             match c.as_element() {
@@ -62,7 +62,7 @@ impl XMLSettings {
         }).collect())
     }
 
-    pub fn dict_get(&self, key: &str) -> Option<Self> {
+    fn dict_get(&self, key: &str) -> Option<Self> {
         for c in self.children.iter() {
             match c.as_element() {
                 Some(e) if e.name == key => {
@@ -84,7 +84,7 @@ pub fn splits_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<Vec<Split>> {
     splits_from_settings(&xml_settings)
 }
 
-pub fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
+fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
     let maybe_end = s.dict_get("AutosplitEndRuns");
