@@ -7,8 +7,7 @@ use ugly_widget::{
 };
 
 use crate::{
-    auto_splitter_settings::{wait_asr_settings_load_merge_store, asr_settings_from_file, asr_settings_from_splits},
-    legacy_xml::{splits_from_settings, XMLSettings},
+    auto_splitter_settings::{wait_asr_settings_load_merge_store, asr_settings_from_file, asr_settings_from_xml_string},
     splits::Split,
 };
 
@@ -52,22 +51,15 @@ impl SettingsGui {
     pub async fn wait_load_merge_register() -> SettingsGui {
         let settings1 = asr::settings::Map::load();
         let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
-        let settings2 = XMLSettings::from_xml_string(auto_splitter_settings, &[("Splits", "Split")]).unwrap_or_default();
-        let splits2 = splits_from_settings(&settings2);
+        let settings2 = asr_settings_from_xml_string(auto_splitter_settings);
         if settings1.get("splits").is_some_and(|v| v.get_list().is_some_and(|l| !l.is_empty())) {
             asr::print_message("settings1: from asr::settings::Map::load");
-        } else {
+        } else if let Some(settings3) = settings2 {
             asr::print_message("settings2: from AutoSplitterSettings.txt");
-            let settings3 = asr_settings_from_splits(&splits2);
             wait_asr_settings_load_merge_store(&settings3).await;
         }
         let mut gui = SettingsGui::register();
         gui.loop_load_update_store();
-        let splits1 = gui.get_splits();
-        if splits2 != splits1 {
-            asr::print_message("WARNING: splits from asr::settings::Map::load differ from AutoSplitterSettings.txt");
-                asr::print_message("assuming AutoSplitterSettings.txt is out of date, using asr::settings::Map::load");
-        }
         gui
     }
 }

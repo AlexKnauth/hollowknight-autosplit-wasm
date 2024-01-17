@@ -15,6 +15,12 @@ pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::
     Some(asr_settings_from_splits(&new_splits))
 }
 
+pub fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
+    let xml_settings = legacy_xml::XMLSettings::from_xml_string(xml_string, &[("Splits", "Split")]).ok()?;
+    let splits = legacy_xml::splits_from_settings(&xml_settings);
+    Some(asr_settings_from_splits(&splits))
+}
+
 pub fn asr_settings_from_splits(splits: &[Split]) -> asr::settings::Map {
     // new empty map, which will only include the new splits
     let settings_map = asr::settings::Map::new();
