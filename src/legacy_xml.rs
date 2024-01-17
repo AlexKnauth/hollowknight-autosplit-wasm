@@ -1,9 +1,90 @@
 
+use xmltree::{Element, XMLNode};
+
 use crate::{
-    auto_splitter_settings::XMLSettings,
     splits,
     splits::Split,
 };
+
+#[derive(Clone, Debug)]
+pub struct XMLSettings {
+    name: Option<String>,
+    children: Vec<XMLNode>,
+    list_items: Vec<(String, String)>,
+}
+
+impl Default for XMLSettings {
+    fn default() -> Self { XMLSettings { name: None, children: vec![], list_items: Vec::new() } }
+}
+
+impl XMLSettings {
+    pub fn from_xml_nodes(children: Vec<XMLNode>, list_items: &[(&str, &str)]) -> Option<Self> {
+        let list_items = list_items.into_iter().map(|(l, i)| (l.to_string(), i.to_string())).collect();
+        Some(XMLSettings { name: None, children, list_items })
+    }
+    
+    pub fn from_xml_string(s: &str, list_items: &[(&str, &str)]) -> Result<Self, xmltree::ParseError> {
+        let list_items = list_items.into_iter().map(|(l, i)| (l.to_string(), i.to_string())).collect();
+        Ok(XMLSettings { name: None, children: Element::parse_all(s.as_bytes())?, list_items })
+    }
+    fn is_list_get_item_name(&self) -> Option<&str> {
+        let n = self.name.as_deref()?;
+        for (l, i) in self.list_items.iter() {
+            if n == l {
+                return Some(i);
+            }
+        }
+        None
+    }
+
+    pub fn as_string(&self) -> Option<String> {
+        match &self.children[..] {
+            [] => Some("".to_string()),
+            [XMLNode::Text(s)] => Some(s.to_string()),
+            _ => None,
+        }
+    }
+
+    pub fn as_bool(&self) -> Option<bool> {
+        match self.as_string()?.trim() {
+            "True" => Some(true),
+            "False" => Some(false),
+            _ => None,
+        }
+    }
+
+    pub fn as_list(&self) -> Option<Vec<Self>> {
+        let i = self.is_list_get_item_name()?;
+        Some(self.children.iter().filter_map(|c| {
+            match c.as_element() {
+                Some(e) if e.name == i => {
+                    Some(XMLSettings {
+                        name: Some(e.name.clone()),
+                        children: e.children.clone(),
+                        list_items: self.list_items.clone(),
+                    })
+                },
+                _ => None,
+            }
+        }).collect())
+    }
+
+    pub fn dict_get(&self, key: &str) -> Option<Self> {
+        for c in self.children.iter() {
+            match c.as_element() {
+                Some(e) if e.name == key => {
+                    return Some(XMLSettings {
+                        name: Some(e.name.clone()),
+                        children: e.children.clone(),
+                        list_items: self.list_items.clone(),
+                    });
+                },
+                _ => (),
+            }
+        }
+        None
+    }
+}
 
 pub fn splits_from_settings(s: &XMLSettings) -> Vec<Split> {
     let maybe_ordered = s.dict_get("Ordered");

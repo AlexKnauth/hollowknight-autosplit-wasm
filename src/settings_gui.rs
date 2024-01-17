@@ -8,8 +8,8 @@ use ugly_widget::{
 };
 
 use crate::{
-    auto_splitter_settings::{XMLSettings, wait_asr_settings_load_merge_store},
-    legacy_xml::splits_from_settings,
+    auto_splitter_settings::{wait_asr_settings_load_merge_store, file_find_auto_splitter_settings},
+    legacy_xml::{splits_from_settings, XMLSettings},
     splits::Split,
 };
 
@@ -29,7 +29,7 @@ impl StoreGui for SettingsGui {
     fn post_update(&mut self) {
         if self.import.changed() {
             asr::print_message(&format!("import {}", self.import.current.path));
-            if let Some(xml_settings) = XMLSettings::from_file(&self.import.current.path, &[("Splits", "Split")]) {
+            if let Some(xml_settings) = file_find_auto_splitter_settings(&self.import.current.path).and_then(|nodes| XMLSettings::from_xml_nodes(nodes, &[("Splits", "Split")])) {
                 let new_splits = splits_from_settings(&xml_settings);
                 // new empty map, which will only include the new splits
                 let settings_map = asr::settings::Map::new();
