@@ -4,6 +4,7 @@ use ugly_widget::{
     ugly_list::{UglyList, UglyListArgs},
     store::{StoreWidget, StoreGui},
     args::SetHeadingLevel,
+    radio_button::options_str,
 };
 
 use crate::{splits::{Split, self}, auto_splitter_settings::{Settings, SettingsObject, XMLSettings}};
@@ -30,7 +31,7 @@ impl StoreGui for SettingsGui {
                 let settings_map = asr::settings::Map::new();
                 let l = asr::settings::List::new();
                 for split in new_splits.iter() {
-                    l.push(Split::to_string(split).as_str());
+                    l.push(options_str(split));
                 }
                 settings_map.insert("splits", l);
                 let mut splits_args = UglyListArgs::default();
@@ -69,7 +70,7 @@ impl SettingsGui {
             let settings3 = asr::settings::Map::new();
             let l = asr::settings::List::new();
             for split in splits2.iter() {
-                l.push(split.to_string().as_str());
+                l.push(options_str(split));
             }
             settings3.insert("splits", &l);
             SettingsObject::wait_load_merge_store(&SettingsObject::Map(settings3)).await;
