@@ -8,6 +8,23 @@ use ugly_widget::radio_button::options_str;
 
 use crate::{legacy_xml, splits::Split};
 
+pub async fn wait_asr_settings_init() -> asr::settings::Map {
+    let settings1 = asr::settings::Map::load();
+    let auto_splitter_settings = include_str!("AutoSplitterSettings.txt");
+    let settings2 = asr_settings_from_xml_string(auto_splitter_settings);
+    if settings1.get("splits").is_some_and(|v| v.get_list().is_some_and(|l| !l.is_empty())) {
+        asr::print_message("settings1: from asr::settings::Map::load");
+        settings1
+    } else if let Some(settings3) = settings2 {
+        asr::print_message("settings2: from AutoSplitterSettings.txt");
+        wait_asr_settings_load_merge_store(&settings3).await
+    } else {
+        settings1
+    }
+}
+
+// --------------------------------------------------------
+
 pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
     let xml_nodes = file_find_auto_splitter_settings(path)?;
     let xml_settings = legacy_xml::XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")])?;
