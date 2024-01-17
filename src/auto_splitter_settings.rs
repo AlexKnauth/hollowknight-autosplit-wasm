@@ -12,63 +12,6 @@ pub trait Settings: Sized {
     fn dict_get(&self, key: &str) -> Option<Self>;
 }
 
-pub enum SettingsObject {
-    Map(asr::settings::Map),
-    Value(asr::settings::Value),
-}
-
-impl SettingsObject {
-    fn as_value(&self) -> Option<&asr::settings::Value> {
-        match self {
-            SettingsObject::Value(v) => Some(v),
-            _ => None,
-        }
-    }
-    fn as_asr_list(&self) -> Option<asr::settings::List> {
-        self.as_value()?.get_list()
-    }
-    fn as_map(&self) -> Option<asr::settings::Map> {
-        Some(match self {
-            SettingsObject::Map(m) => m.clone(),
-            SettingsObject::Value(v) => v.get_map()?,
-        })
-    }
-    pub fn load_merge_store(new: &SettingsObject) -> Option<SettingsObject> {
-        let old = asr::settings::Map::load();
-        let merged = maybe_asr_settings_map_merge(Some(old.clone()), new);
-        if merged.store_if_unchanged(&old) {
-            Some(SettingsObject::Map(merged))
-        } else {
-            None
-        }
-    }
-    pub async fn wait_load_merge_store(new: &SettingsObject) -> SettingsObject {
-        retry(|| SettingsObject::load_merge_store(new)).await
-    }
-}
-
-impl Settings for SettingsObject {
-    fn as_string(&self) -> Option<String> {
-        self.as_value()?.get_string()
-    }
-
-    fn as_bool(&self) -> Option<bool> {
-        self.as_value()?.get_bool()
-    }
-
-    fn as_list(&self) -> Option<Vec<Self>> {
-        Some(self.as_asr_list()?.iter().map(SettingsObject::Value).collect())
-    }
-
-    fn as_dict(&self) -> Option<BTreeMap<String, Self>> {
-        Some(self.as_map()?.iter().map(|(k, v)| (k, SettingsObject::Value(v))).collect())
-    }
-
-    fn dict_get(&self, key: &str) -> Option<Self> {
-        Some(SettingsObject::Value(self.as_map()?.get(key)?))
-    }
-}
-
 #[derive(Clone, Debug)]
 pub struct XMLSettings {
     name: Option<String>,
@@ -184,50 +127,64 @@ fn component_is_asr(e: &Element) -> bool {
 
 // --------------------------------------------------------
 
-fn maybe_asr_settings_map_merge(old: Option<asr::settings::Map>, new: &SettingsObject) -> asr::settings::Map {
+pub async fn wait_asr_settings_load_merge_store(new: &asr::settings::Map) -> asr::settings::Map {
+    retry(|| asr_settings_load_merge_store(new)).await
+}
+
+pub fn asr_settings_load_merge_store(new: &asr::settings::Map) -> Option<asr::settings::Map> {
+    let old = asr::settings::Map::load();
+    let merged = maybe_asr_settings_map_merge(Some(old.clone()), new);
+    if merged.store_if_unchanged(&old) {
+        Some(merged)
+    } else {
+        None
+    }
+}
+
+fn maybe_asr_settings_map_merge(old: Option<asr::settings::Map>, new: &asr::settings::Map) -> asr::settings::Map {
     let om = if let Some(om) = old { om } else { asr::settings::Map::new() };
     let mut keys: BTreeSet<String> = om.keys().collect();
-    if let Some(nm) = new.as_dict() {
-        keys.extend(nm.into_keys());
-    }
+    keys.extend(new.keys());
     for key in keys {
-        if let Some(new_v) = new.dict_get(&key) {
+        if let Some(new_v) = new.get(&key) {
             om.insert(&key, &maybe_asr_settings_value_merge(om.get(&key), &new_v));
         }
     }
     om
 }
 
-fn maybe_asr_settings_value_merge(old: Option<asr::settings::Value>, new: &SettingsObject) -> asr::settings::Value {
-    if let Some(b) = new.as_bool() {
+fn maybe_asr_settings_value_merge(old: Option<asr::settings::Value>, new: &asr::settings::Value) -> asr::settings::Value {
+    if let Some(b) = new.get_bool() {
         asr::settings::Value::from(b)
-    } else if let Some(s) = new.as_string() {
+    } else if let Some(s) = new.get_string() {
         asr::settings::Value::from(s.as_str())
-    } else if let Some(l) = new.as_list() {
-        asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_list()), l))
+    } else if let Some(l) = new.get_list() {
+        asr::settings::Value::from(&maybe_asr_settings_list_merge(old.and_then(|o| o.get_list()), &l))
+    } else if let Some(m) = new.get_map() {
+        asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), &m))
     } else {
-        asr::settings::Value::from(&maybe_asr_settings_map_merge(old.and_then(|o| o.get_map()), new))
+        new.clone()
     }
 }
 
-fn is_asr_settings_list_length(l: &asr::settings::List, n: usize) -> bool {
-    l.len() == n as u64
+fn is_asr_settings_list_length(l: &asr::settings::List, n: u64) -> bool {
+    l.len() == n
 }
 
-fn maybe_asr_settings_list_merge(old: Option<asr::settings::List>, new: Vec<SettingsObject>) -> asr::settings::List {
+fn maybe_asr_settings_list_merge(old: Option<asr::settings::List>, new: &asr::settings::List) -> asr::settings::List {
     let ol = if let Some(ol) = old { ol } else { asr::settings::List::new() };
     let nn = new.len();
     if is_asr_settings_list_length(&ol, nn) {
         // same length, merge elements
         let ml = asr::settings::List::new();
-        for (i, ne) in new.into_iter().enumerate() {
+        for (i, ne) in new.iter().enumerate() {
             ml.push(&maybe_asr_settings_value_merge(ol.get(i as u64), &ne));
         }
         ml
     } else {
         // different length, replace the whole thing
         let ml = asr::settings::List::new();
-        for ne in new.into_iter() {
+        for ne in new.iter() {
             ml.push(&maybe_asr_settings_value_merge(None, &ne));
         }
         ml

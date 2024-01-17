@@ -8,7 +8,7 @@ use ugly_widget::{
 };
 
 use crate::{
-    auto_splitter_settings::{SettingsObject, XMLSettings},
+    auto_splitter_settings::{XMLSettings, wait_asr_settings_load_merge_store},
     legacy_xml::splits_from_settings,
     splits::Split,
 };
@@ -77,7 +77,7 @@ impl SettingsGui {
                 l.push(options_str(split));
             }
             settings3.insert("splits", &l);
-            SettingsObject::wait_load_merge_store(&SettingsObject::Map(settings3)).await;
+            wait_asr_settings_load_merge_store(&settings3).await;
         }
         let mut gui = SettingsGui::register();
         gui.loop_load_update_store();
