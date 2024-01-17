@@ -33,7 +33,7 @@ impl SettingsObject {
             SettingsObject::Value(v) => v.get_map()?,
         })
     }
-    pub fn load_merge_store<S: Settings>(new: &S) -> Option<SettingsObject> {
+    pub fn load_merge_store(new: &SettingsObject) -> Option<SettingsObject> {
         let old = asr::settings::Map::load();
         let merged = maybe_asr_settings_map_merge(Some(old.clone()), new);
         if merged.store_if_unchanged(&old) {
@@ -42,7 +42,7 @@ impl SettingsObject {
             None
         }
     }
-    pub async fn wait_load_merge_store<S: Settings>(new: &S) -> SettingsObject {
+    pub async fn wait_load_merge_store(new: &SettingsObject) -> SettingsObject {
         retry(|| SettingsObject::load_merge_store(new)).await
     }
 }
@@ -184,7 +184,7 @@ fn component_is_asr(e: &Element) -> bool {
 
 // --------------------------------------------------------
 
-fn maybe_asr_settings_map_merge<S: Settings>(old: Option<asr::settings::Map>, new: &S) -> asr::settings::Map {
+fn maybe_asr_settings_map_merge(old: Option<asr::settings::Map>, new: &SettingsObject) -> asr::settings::Map {
     let om = if let Some(om) = old { om } else { asr::settings::Map::new() };
     let mut keys: BTreeSet<String> = om.keys().collect();
     if let Some(nm) = new.as_dict() {
@@ -198,7 +198,7 @@ fn maybe_asr_settings_map_merge<S: Settings>(old: Option<asr::settings::Map>, ne
     om
 }
 
-fn maybe_asr_settings_value_merge<S: Settings>(old: Option<asr::settings::Value>, new: &S) -> asr::settings::Value {
+fn maybe_asr_settings_value_merge(old: Option<asr::settings::Value>, new: &SettingsObject) -> asr::settings::Value {
     if let Some(b) = new.as_bool() {
         asr::settings::Value::from(b)
     } else if let Some(s) = new.as_string() {
@@ -214,7 +214,7 @@ fn is_asr_settings_list_length(l: &asr::settings::List, n: usize) -> bool {
     l.len() == n as u64
 }
 
-fn maybe_asr_settings_list_merge<S: Settings>(old: Option<asr::settings::List>, new: Vec<S>) -> asr::settings::List {
+fn maybe_asr_settings_list_merge(old: Option<asr::settings::List>, new: Vec<SettingsObject>) -> asr::settings::List {
     let ol = if let Some(ol) = old { ol } else { asr::settings::List::new() };
     let nn = new.len();
     if is_asr_settings_list_length(&ol, nn) {
