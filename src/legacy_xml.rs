@@ -1,6 +1,6 @@
 
 use crate::{
-    auto_splitter_settings::{Settings, XMLSettings},
+    auto_splitter_settings::XMLSettings,
     splits,
     splits::Split,
 };

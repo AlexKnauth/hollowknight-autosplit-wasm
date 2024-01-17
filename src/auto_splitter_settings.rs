@@ -1,16 +1,8 @@
-use alloc::collections::{BTreeMap, BTreeSet};
+use alloc::collections::BTreeSet;
 use alloc::vec::Vec;
 use asr::future::retry;
 use std::{path::Path, fs::File, io::{self, Read}};
 use xmltree::{Element, XMLNode};
-
-pub trait Settings: Sized {
-    fn as_string(&self) -> Option<String>;
-    fn as_bool(&self) -> Option<bool>;
-    fn as_list(&self) -> Option<Vec<Self>>;
-    fn as_dict(&self) -> Option<BTreeMap<String, Self>>;
-    fn dict_get(&self, key: &str) -> Option<Self>;
-}
 
 #[derive(Clone, Debug)]
 pub struct XMLSettings {
@@ -44,10 +36,8 @@ impl XMLSettings {
         }
         None
     }
-}
 
-impl Settings for XMLSettings {
-    fn as_string(&self) -> Option<String> {
+    pub fn as_string(&self) -> Option<String> {
         match &self.children[..] {
             [] => Some("".to_string()),
             [XMLNode::Text(s)] => Some(s.to_string()),
@@ -55,7 +45,7 @@ impl Settings for XMLSettings {
         }
     }
 
-    fn as_bool(&self) -> Option<bool> {
+    pub fn as_bool(&self) -> Option<bool> {
         match self.as_string()?.trim() {
             "True" => Some(true),
             "False" => Some(false),
@@ -63,7 +53,7 @@ impl Settings for XMLSettings {
         }
     }
 
-    fn as_list(&self) -> Option<Vec<Self>> {
+    pub fn as_list(&self) -> Option<Vec<Self>> {
         let i = self.is_list_get_item_name()?;
         Some(self.children.iter().filter_map(|c| {
             match c.as_element() {
@@ -79,18 +69,7 @@ impl Settings for XMLSettings {
         }).collect())
     }
 
-    fn as_dict(&self) -> Option<BTreeMap<String, Self>> {
-        Some(self.children.iter().filter_map(|c| -> Option<(String, Self)> {
-            let e = c.as_element()?;
-            Some((e.name.clone(), XMLSettings {
-                name: Some(e.name.clone()),
-                children: e.children.clone(),
-                list_items: self.list_items.clone(),
-            }))
-        }).collect())
-    }
-
-    fn dict_get(&self, key: &str) -> Option<Self> {
+    pub fn dict_get(&self, key: &str) -> Option<Self> {
         for c in self.children.iter() {
             match c.as_element() {
                 Some(e) if e.name == key => {
