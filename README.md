@@ -111,7 +111,8 @@ When you run either `livesplit-one-desktop` or the `asr-debugger`, it needs to h
 On Mac, that might require running it under `sudo`.
 For example in the `livesplit-one-desktop` repository, you can run
 ```sh
-sudo cargo run --release
+cargo build --release
+sudo ./target/release/livesplit-one
 ```
 
 Finally, do not manually split, skip, or undo splits while running with this autosplitter.
