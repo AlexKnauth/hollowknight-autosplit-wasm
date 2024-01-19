@@ -4,6 +4,7 @@ extern crate alloc;
 
 mod auto_splitter_settings;
 mod hollow_knight_memory;
+mod legacy_xml;
 mod settings_gui;
 mod splits;
 

@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 use ugly_widget::radio_button::{RadioButtonOptions, options_str};
 use ugly_widget::store::StoreWidget;
 
-use super::auto_splitter_settings::Settings;
 use super::hollow_knight_memory::*;
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
@@ -2559,15 +2558,6 @@ impl StoreWidget for Split {
     }
 }
 
-impl Split {
-    pub fn from_settings_str<S: Settings>(s: S) -> Option<Split> {
-        serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
-    }
-    pub fn from_settings_split<S: Settings>(s: S) -> Option<Split> {
-        Split::from_settings_str(s.dict_get("Split").unwrap_or(s))
-    }
-}
-
 pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> SplitterAction {
     match s {
         // region: Start, End, and Menu
@@ -3404,11 +3394,6 @@ fn starting_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> 
     && g.get_game_state(prc).is_some_and(|gs| {
         gs == GAME_STATE_ENTERING_LEVEL
     })
-}
-
-pub fn default_splits() -> Vec<Split> {
-    vec![Split::StartNewGame,
-         Split::EndingSplit]
 }
 
 pub fn auto_reset_safe(s: &[Split]) -> bool {
