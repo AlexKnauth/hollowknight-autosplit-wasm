@@ -2333,6 +2333,10 @@ impl PlayerDataStore {
         self.get_bool(p, g, "has_lantern", &g.player_data_pointers.has_lantern).unwrap_or(false)
     }
 
+    pub fn sly_shop_finished(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        todo!("all Sly shop charms, shards, and fragments")
+    }
+
     pub fn cornifer_at_home(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "cornifer_at_home", &g.player_data_pointers.cornifer_at_home).unwrap_or(false)
     }

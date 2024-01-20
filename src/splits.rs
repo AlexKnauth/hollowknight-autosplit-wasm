@@ -1565,6 +1565,10 @@ pub enum Split {
     /// Splits when entering Dirtmouth text first appears
     Dirtmouth,
     SlyShopExit,
+    /// 1xx% Sly Final Shop (Transition)
+    /// 
+    /// Splits on leaving Sly's shop with all Sly shop charms, shards, and fragments
+    SlyShopFinished,
     /// Elderbug Flower Quest (NPC)
     /// 
     /// Splits when giving the flower to the Elderbug
@@ -2689,6 +2693,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterDirtmouth => should_split(p.current == "Town" && p.current != p.old),
         Split::SlyShopExit => should_split(p.old == "Room_shop" && p.current != p.old),
         Split::LumaflyLanternTransition => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
+        Split::SlyShopFinished => should_split(pds.sly_shop_finished(prc, g) && !p.current.starts_with("Room_shop")),
         // TODO: should EnterTMG check that Grimmchild is actually equipped?
         Split::EnterTMG => should_split(p.current.starts_with("Grimm_Main_Tent")
                                         && p.current != p.old
@@ -3296,6 +3301,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
 
         // region: Dirtmouth
         Split::Dirtmouth => should_split(g.visited_dirtmouth(p).is_some_and(|v| v)),
+        Split::SlyShopFinished => { pds.sly_shop_finished(p, g); should_split(false) },
         Split::ElderbugFlower => should_split(g.elderbug_gave_flower(p).is_some_and(|g| g)),
         Split::TroupeMasterGrimm => should_split(g.killed_grimm(p).is_some_and(|k| k)),
         Split::NightmareKingGrimm => should_split(g.killed_nightmare_grimm(p).is_some_and(|k| k)),
