@@ -1929,6 +1929,10 @@ pub enum Split {
     /// 
     /// Splits when talking to Lemm in the shop for the first time
     Lemm2,
+    /// Lemm - ACN (Event)
+    /// 
+    /// Splits on having sold at least 6100 geo worth of relics to Lemm
+    AllCharmNotchesLemm2CP,
     /// Sanctum Bench (Toll)
     /// 
     /// Splits when buying City/Sanctum toll bench by Cornifer's location
@@ -3461,6 +3465,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::TransGorgeousHusk => { pds.killed_gorgeous_husk(p, g); should_split(false) },
         Split::MenuGorgeousHusk => { pds.killed_gorgeous_husk(p, g); should_split(false) },
         Split::Lemm2 => should_split(g.met_relic_dealer_shop(p).is_some_and(|m| m)),
+        Split::AllCharmNotchesLemm2CP => todo!("sold at least 6100 geo worth of relics"),
         Split::TollBenchCity => should_split(g.toll_bench_city(p).is_some_and(|b| b)),
         Split::KilledSoulTwister => should_split(g.killed_mage(p).is_some_and(|k| k)),
         Split::KilledSanctumWarrior => should_split(g.killed_mage_knight(p).is_some_and(|k| k)),
