@@ -1474,6 +1474,83 @@ pub enum Split {
     // TODO: resolve possible confounding essence sources for Cloth, Vespa, and Revek
     // endregion: Essence, Trees, and Ghosts
 
+    // region: Maps and Cornifer
+    /// Map Dirtmouth (Item)
+    /// 
+    /// Splits when acquiring the Dirtmouth map
+    #[serde(rename = "mapDirtmouth", alias = "MapDirtmouth")]
+    MapDirtmouth,
+    /// Map Crossroads (Item)
+    /// 
+    /// Splits when acquiring the Crossroads map
+    #[serde(rename = "mapCrossroads", alias = "MapCrossroads")]
+    MapCrossroads,
+    /// Map Greenpath (Item)
+    /// 
+    /// Splits when acquiring the Greenpath map
+    #[serde(rename = "mapGreenpath", alias = "MapGreenpath")]
+    MapGreenpath,
+    /// Map Fog Canyon (Item)
+    /// 
+    /// Splits when acquiring the Fog Canyon map
+    #[serde(rename = "mapFogCanyon", alias = "MapFogCanyon")]
+    MapFogCanyon,
+    /// Map Queen's Gardens (Item)
+    /// 
+    /// Splits when acquiring the QG map
+    #[serde(rename = "mapRoyalGardens", alias = "MapRoyalGardens")]
+    MapRoyalGardens,
+    /// Map Fungal Wastes (Item)
+    /// 
+    /// Splits when acquiring the Fungal Wastes map
+    #[serde(rename = "mapFungalWastes", alias = "MapFungalWastes")]
+    MapFungalWastes,
+    /// Map City of Tears (Item)
+    /// 
+    /// Splits when acquiring the City map
+    #[serde(rename = "mapCity", alias = "MapCity")]
+    MapCity,
+    /// Map Waterways (Item)
+    /// 
+    /// Splits when acquiring the Waterways map
+    #[serde(rename = "mapWaterways", alias = "MapWaterways")]
+    MapWaterways,
+    /// Map Crystal Peak (Item)
+    /// 
+    /// Splits when acquiring the Crystal Peak map
+    #[serde(rename = "mapMines", alias = "MapMines")]
+    MapMines,
+    /// Map Deepnest (Item)
+    /// 
+    /// Splits when acquiring the Deepnest map
+    #[serde(rename = "mapDeepnest", alias = "MapDeepnest")]
+    MapDeepnest,
+    /// Map Howling Cliffs (Item)
+    /// 
+    /// Splits when acquiring the Howling Cliffs map
+    #[serde(rename = "mapCliffs", alias = "MapCliffs")]
+    MapCliffs,
+    /// Map Kingdom's Edge (Item)
+    /// 
+    /// Splits when acquiring the KE map
+    #[serde(rename = "mapOutskirts", alias = "MapOutskirts")]
+    MapOutskirts,
+    /// Map Resting Grounds (Item)
+    /// 
+    /// Splits when acquiring the Resting Grounds map
+    #[serde(rename = "mapRestingGrounds", alias = "MapRestingGrounds")]
+    MapRestingGrounds,
+    /// Map Ancient Basin (Item)
+    /// 
+    /// Splits when acquiring the Abyss map
+    #[serde(rename = "mapAbyss", alias = "MapAbyss")]
+    MapAbyss,
+    /// Cornifer at Home (Transition)
+    /// 
+    /// Splits when entering Iselda's hut while Cornifer is sleeping
+    CorniferAtHome,
+    // region: Maps and Cornifer
+
     // region: Dirtmouth
     /// King's Pass (Transition)
     /// 
@@ -1492,10 +1569,6 @@ pub enum Split {
     /// 
     /// Splits when giving the flower to the Elderbug
     ElderbugFlower,
-    /// Cornifer at Home (Transition)
-    /// 
-    /// Splits when entering Iselda's hut while Cornifer is sleeping
-    CorniferAtHome,
     /// Enter Troupe Master Grimm (Transition)
     /// 
     /// Splits when entering Grimm tent with requirements to trigger Troupe Master Grimm boss
@@ -2587,12 +2660,15 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuDreamer3 => should_split(3 <= pds.guardians_defeated(prc, g) && is_menu(p.current)),
         // endregion: Dreamers
 
+        // region: Maps and Cornifer
+        Split::CorniferAtHome => should_split(pds.cornifer_at_home(prc, g) && p.old.starts_with("Town") && p.current.starts_with("Room_mapper")),
+        // endregion: Maps and Cornifer
+
         // region: Dirtmouth
         Split::KingsPass => should_split(p.old == "Tutorial_01" && p.current == "Town"),
         Split::EnterDirtmouth => should_split(p.current == "Town" && p.current != p.old),
         Split::SlyShopExit => should_split(p.old == "Room_shop" && p.current != p.old),
         Split::LumaflyLanternTransition => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
-        Split::CorniferAtHome => should_split(pds.cornifer_at_home(prc, g) && p.old.starts_with("Town") && p.current.starts_with("Room_mapper")),
         // TODO: should EnterTMG check that Grimmchild is actually equipped?
         Split::EnterTMG => should_split(p.current.starts_with("Grimm_Main_Tent")
                                         && p.current != p.old
@@ -3179,6 +3255,25 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainGhostJoni => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Cliffs_05")),
         // TODO: resolve possible confounding essence sources for Cloth, Vespa, and Revek
         // endregion: Essence, Trees, and Ghosts
+
+        // region: Maps and Cornifer
+        Split::MapDirtmouth => should_split(g.map_dirtmouth(p).is_some_and(|m| m)),
+        Split::MapCrossroads => should_split(g.map_crossroads(p).is_some_and(|m| m)),
+        Split::MapGreenpath => should_split(g.map_greenpath(p).is_some_and(|m| m)),
+        Split::MapFogCanyon => should_split(g.map_fog_canyon(p).is_some_and(|m| m)),
+        Split::MapRoyalGardens => should_split(g.map_royal_gardens(p).is_some_and(|m| m)),
+        Split::MapFungalWastes => should_split(g.map_fungal_wastes(p).is_some_and(|m| m)),
+        Split::MapCity => should_split(g.map_city(p).is_some_and(|m| m)),
+        Split::MapWaterways => should_split(g.map_waterways(p).is_some_and(|m| m)),
+        Split::MapMines => should_split(g.map_mines(p).is_some_and(|m| m)),
+        Split::MapDeepnest => should_split(g.map_deepnest(p).is_some_and(|m| m)),
+        Split::MapCliffs => should_split(g.map_cliffs(p).is_some_and(|m| m)),
+        Split::MapOutskirts => should_split(g.map_outskirts(p).is_some_and(|m| m)),
+        Split::MapRestingGrounds => should_split(g.map_resting_grounds(p).is_some_and(|m| m)),
+        Split::MapAbyss => should_split(g.map_abyss(p).is_some_and(|m| m)),
+        Split::CorniferAtHome => { pds.cornifer_at_home(p, g); should_split(false) },
+        // endregion: Maps and Cornifer
+
         // region: Dirtmouth
         Split::Dirtmouth => should_split(g.visited_dirtmouth(p).is_some_and(|v| v)),
         Split::ElderbugFlower => should_split(g.elderbug_gave_flower(p).is_some_and(|g| g)),

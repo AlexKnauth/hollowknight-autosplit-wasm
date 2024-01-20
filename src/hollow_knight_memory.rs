@@ -342,6 +342,20 @@ struct PlayerDataPointers {
     grubs_collected: UnityPointer<3>,
     kills_grub_mimic: UnityPointer<3>,
     dream_orbs: UnityPointer<3>,
+    map_dirtmouth: UnityPointer<3>,
+    map_crossroads: UnityPointer<3>,
+    map_greenpath: UnityPointer<3>,
+    map_fog_canyon: UnityPointer<3>,
+    map_royal_gardens: UnityPointer<3>,
+    map_fungal_wastes: UnityPointer<3>,
+    map_city: UnityPointer<3>,
+    map_waterways: UnityPointer<3>,
+    map_mines: UnityPointer<3>,
+    map_deepnest: UnityPointer<3>,
+    map_cliffs: UnityPointer<3>,
+    map_outskirts: UnityPointer<3>,
+    map_resting_grounds: UnityPointer<3>,
+    map_abyss: UnityPointer<3>,
     visited_dirtmouth: UnityPointer<3>,
     elderbug_gave_flower: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
@@ -632,6 +646,20 @@ impl PlayerDataPointers {
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
             kills_grub_mimic: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGrubMimic"]),
             dream_orbs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamOrbs"]),
+            map_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapDirtmouth"]),
+            map_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapCrossroads"]),
+            map_greenpath: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapGreenpath"]),
+            map_fog_canyon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapFogCanyon"]),
+            map_royal_gardens: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapRoyalGardens"]),
+            map_fungal_wastes: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapFungalWastes"]),
+            map_city: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapCity"]),
+            map_waterways: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapWaterways"]),
+            map_mines: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapMines"]),
+            map_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapDeepnest"]),
+            map_cliffs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapCliffs"]),
+            map_outskirts: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapOutskirts"]),
+            map_resting_grounds: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapRestingGrounds"]),
+            map_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapAbyss"]),
             visited_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDirtmouth"]),
             elderbug_gave_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderbugGaveFlower"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
@@ -1464,6 +1492,49 @@ impl GameManagerFinder {
 
     pub fn dream_orbs(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.dream_orbs.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn map_dirtmouth(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_dirtmouth.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_crossroads(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_crossroads.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_greenpath(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_greenpath.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_fog_canyon(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_fog_canyon.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_royal_gardens(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_royal_gardens.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_fungal_wastes(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_fungal_wastes.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_city(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_city.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_waterways(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_waterways.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_mines(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_mines.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_deepnest(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_deepnest.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_cliffs(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_cliffs.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_outskirts(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_outskirts.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_resting_grounds(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_resting_grounds.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn map_abyss(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.map_abyss.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn visited_dirtmouth(&self, process: &Process) -> Option<bool> {
