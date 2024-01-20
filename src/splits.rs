@@ -15,6 +15,7 @@ pub enum SplitterAction {
     Split,
     Skip,
     Reset,
+    ManualSplit,
 }
 
 impl SplitterAction {
@@ -53,6 +54,11 @@ fn should_split_skip(mb: Option<bool>) -> SplitterAction {
 #[derive(Clone, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
 pub enum Split {
     // region: Start, End, and Menu
+    /// Manual Split (Misc)
+    /// 
+    /// Never splits. Use this when you need to manually split while using ordered splits
+    #[default]
+    ManualSplit,
     /// Start New Game (Start)
     /// 
     /// Splits when starting a new save file, including Normal, Steel Soul, and Godseeker mode
@@ -72,7 +78,6 @@ pub enum Split {
     /// Credits Roll (Event)
     /// 
     /// Splits on any credits rolling
-    #[default]
     EndingSplit,
     /// The Hollow Knight (Ending)
     /// 
@@ -3329,6 +3334,7 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
 
 pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> SplitterAction {
     match s {
+        Split::ManualSplit => SplitterAction::ManualSplit,
         Split::RandoWake => should_split(g.disable_pause(p).is_some_and(|d| !d)
                                          && g.get_game_state(p).is_some_and(|s| s == GAME_STATE_PLAYING)
                                          && g.get_scene_name(p).is_some_and(|s| !is_menu(&s))),

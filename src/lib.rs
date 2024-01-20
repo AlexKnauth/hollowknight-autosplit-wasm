@@ -152,6 +152,11 @@ async fn tick_action(
                 splitter_action(SplitterAction::Reset, i, n);
                 break;
             }
+            SplitterAction::ManualSplit => {
+                splitter_action(SplitterAction::ManualSplit, i, n);
+                next_tick().await;
+                break;
+            }
             SplitterAction::Pass => {
                 if auto_reset {
                     match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
@@ -200,6 +205,11 @@ fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
         SplitterAction::Split => {
             asr::timer::split();
             *i += 1;
+        }
+        SplitterAction::ManualSplit => {
+            if 0 < *i {
+                *i += 1;
+            }
         }
     }
     if n <= *i {
