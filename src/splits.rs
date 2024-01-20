@@ -2004,6 +2004,11 @@ pub enum Split {
     /// 
     /// Splits when talking to Emilitia for the first time
     MetEmilitia,
+    /// Emilitia Flower (NPC)
+    /// 
+    /// Splits when giving Emilita a flower
+    #[serde(rename = "givenEmilitiaFlower", alias = "GivenEmilitiaFlower")]
+    GivenEmilitiaFlower,
     /// Flukemarm (Boss)
     /// 
     /// Splits when killing Flukemarm
@@ -2183,6 +2188,11 @@ pub enum Split {
     /// 
     /// Splits when killing a Great Hopper
     GreatHopper,
+    /// Oro Flower (NPC)
+    /// 
+    /// Splits when giving Oro a flower
+    #[serde(rename = "givenOroFlower", alias = "GivenOroFlower")]
+    GivenOroFlower,
     /// Enter Hornet 2 (Transition)
     /// 
     /// Splits when entering Hornet boss arena transition in Kingdom's Edge
@@ -2329,6 +2339,11 @@ pub enum Split {
     /// 
     /// Splits when killing Traitor Lord
     TraitorLord,
+    /// White Lady Flower (NPC)
+    /// 
+    /// Splits when giving White Lady a flower
+    #[serde(rename = "givenWhiteLadyFlower", alias = "GivenWhiteLadyFlower")]
+    GivenWhiteLadyFlower,
     // endregion: Queen's Gardens
     // region: Deepnest
     /// Deepnest (Transition)
@@ -2377,6 +2392,11 @@ pub enum Split {
     /// 
     /// Splits when obtaining the God Tuner
     GodTuner,
+    /// Godseeker Flower (NPC)
+    /// 
+    /// Splits when giving Godseeker a flower
+    #[serde(rename = "givenGodseekerFlower", alias = "GivenGodseekerFlower")]
+    GivenGodseekerFlower,
     /// Godhome (Transition)
     /// 
     /// Splits on transition to Godhome
@@ -3377,6 +3397,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::WhiteDefender => should_split(g.killed_white_defender(p).is_some_and(|k| k)),
         Split::WhiteDefenderEssence => should_split(g.white_defender_orbs_collected(p).is_some_and(|o| o)),
         Split::MetEmilitia => should_split(g.met_emilitia(p).is_some_and(|m| m)),
+        Split::GivenEmilitiaFlower => should_split(g.given_emilitia_flower(p).is_some_and(|g| g)),
         Split::Flukemarm => should_split(g.killed_fluke_mother(p).is_some_and(|k| k)),
         // endregion: Waterways
         // region: Basin
@@ -3402,6 +3423,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Hive => should_split(g.visited_hive(p).is_some_and(|v| v)),
         Split::HiveKnight => should_split(g.killed_hive_knight(p).is_some_and(|k| k)),
         Split::GreatHopper => should_split(g.killed_giant_hopper(p).is_some_and(|k| k)),
+        Split::GivenOroFlower => should_split(g.given_oro_flower(p).is_some_and(|g| g)),
         Split::Hornet2 => should_split(g.hornet_outskirts_defeated(p).is_some_and(|k| k)),
         Split::Markoth => should_split(g.killed_ghost_markoth(p).is_some_and(|k| k)),
         Split::MarkothEssence => should_split(g.markoth_defeated(p).is_some_and(|d| d == 2)),
@@ -3434,6 +3456,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Marmu => should_split(g.killed_ghost_marmu(p).is_some_and(|k| k)),
         Split::MarmuEssence => should_split(g.mum_caterpillar_defeated(p).is_some_and(|d| d == 2)),
         Split::TraitorLord => should_split(g.killed_traitor_lord(p).is_some_and(|k| k)),
+        Split::GivenWhiteLadyFlower => should_split(g.given_white_lady_flower(p).is_some_and(|g| g)),
         // endregion: Queen's Gardens
         // region: Deepnest
         Split::Deepnest => should_split(g.visited_deepnest(p).is_some_and(|v| v)),
@@ -3447,6 +3470,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Deepnest
         // region: Godhome
         Split::GodTuner => should_split(g.has_godfinder(p).is_some_and(|g| g)),
+        Split::GivenGodseekerFlower => should_split(g.given_godseeker_flower(p).is_some_and(|g| g)),
         Split::Godhome => should_split(g.visited_godhome(p).is_some_and(|v| v)),
         Split::EternalOrdealUnlocked => should_split(g.zote_statue_wall_broken(p).is_some_and(|b| b)),
         Split::EternalOrdealAchieved => should_split(g.ordeal_achieved(p).is_some_and(|a| a)),

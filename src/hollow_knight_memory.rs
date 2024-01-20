@@ -437,6 +437,7 @@ struct PlayerDataPointers {
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
     met_emilitia: UnityPointer<3>,
+    given_emilitia_flower: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
     /// Visited Ancient Basin
     visited_abyss: UnityPointer<3>,
@@ -458,6 +459,7 @@ struct PlayerDataPointers {
     visited_hive: UnityPointer<3>,
     killed_hive_knight: UnityPointer<3>,
     killed_giant_hopper: UnityPointer<3>,
+    given_oro_flower: UnityPointer<3>,
     hornet_outskirts_defeated: UnityPointer<3>,
     killed_ghost_markoth: UnityPointer<3>,
     markoth_defeated: UnityPointer<3>,
@@ -483,6 +485,7 @@ struct PlayerDataPointers {
     killed_ghost_marmu: UnityPointer<3>,
     mum_caterpillar_defeated: UnityPointer<3>,
     killed_traitor_lord: UnityPointer<3>,
+    given_white_lady_flower: UnityPointer<3>,
     visited_deepnest: UnityPointer<3>,
     visited_deepnest_spa: UnityPointer<3>,
     zote_rescued_deepnest: UnityPointer<3>,
@@ -493,6 +496,7 @@ struct PlayerDataPointers {
     galien_defeated: UnityPointer<3>,
     spider_capture: UnityPointer<3>,
     has_godfinder: UnityPointer<3>,
+    given_godseeker_flower: UnityPointer<3>,
     visited_godhome: UnityPointer<3>,
     zote_statue_wall_broken: UnityPointer<3>,
     ordeal_achieved: UnityPointer<3>,
@@ -733,6 +737,7 @@ impl PlayerDataPointers {
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
             met_emilitia: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metEmilitia"]),
+            given_emilitia_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenEmilitiaFlower"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
             visited_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedAbyss"]),
             saved_cloth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "savedCloth"]),
@@ -750,6 +755,7 @@ impl PlayerDataPointers {
             visited_hive: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedHive"]),
             killed_hive_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHiveKnight"]),
             killed_giant_hopper: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGiantHopper"]),
+            given_oro_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenOroFlower"]),
             hornet_outskirts_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hornetOutskirtsDefeated"]),
             killed_ghost_markoth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarkoth"]),
             markoth_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "markothDefeated"]),
@@ -773,6 +779,7 @@ impl PlayerDataPointers {
             killed_ghost_marmu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostMarmu"]),
             mum_caterpillar_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mumCaterpillarDefeated"]),
             killed_traitor_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedTraitorLord"]),
+            given_white_lady_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenWhiteLadyFlower"]),
             visited_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDeepnest"]),
             visited_deepnest_spa: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDeepnestSpa"]),
             zote_rescued_deepnest: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteRescuedDeepnest"]),
@@ -782,6 +789,7 @@ impl PlayerDataPointers {
             galien_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "galienDefeated"]),
             spider_capture: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "spiderCapture"]),
             has_godfinder: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasGodfinder"]),
+            given_godseeker_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenGodseekerFlower"]),
             visited_godhome: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedGodhome"]),
             zote_statue_wall_broken: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "zoteStatueWallBroken"]),
             ordeal_achieved: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "ordealAchieved"]),
@@ -1822,6 +1830,10 @@ impl GameManagerFinder {
         self.player_data_pointers.met_emilitia.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn given_emilitia_flower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.given_emilitia_flower.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn killed_fluke_mother(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_fluke_mother.deref(process, &self.module, &self.image).ok()
     }
@@ -1889,6 +1901,10 @@ impl GameManagerFinder {
 
     pub fn killed_giant_hopper(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_giant_hopper.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn given_oro_flower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.given_oro_flower.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn hornet_outskirts_defeated(&self, process: &Process) -> Option<bool> {
@@ -1982,6 +1998,10 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_traitor_lord.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn given_white_lady_flower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.given_white_lady_flower.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn visited_deepnest(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.visited_deepnest.deref(process, &self.module, &self.image).ok()
     }
@@ -2015,6 +2035,10 @@ impl GameManagerFinder {
 
     pub fn has_godfinder(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_godfinder.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn given_godseeker_flower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.given_godseeker_flower.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn visited_godhome(&self, process: &Process) -> Option<bool> {
