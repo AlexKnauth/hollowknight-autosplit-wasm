@@ -1567,7 +1567,7 @@ pub enum Split {
     SlyShopExit,
     /// 1xx% Sly Final Shop (Transition)
     /// 
-    /// Splits on leaving Sly's shop with all Sly shop charms, shards, and fragments
+    /// Splits on leaving Sly's shop with all Sly shop charms, shards, fragments, and Lantern
     SlyShopFinished,
     /// Elderbug Flower Quest (NPC)
     /// 
