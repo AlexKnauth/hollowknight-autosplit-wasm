@@ -1510,6 +1510,10 @@ impl GameManagerFinder {
         read_string_list_object::<SCENE_PATH_SIZE>(process, l)
     }
 
+    pub fn grub_waterways_isma(&self, process: &Process) -> Option<bool> {
+        Some(self.scenes_grub_rescued(process)?.contains(&"Waterways_13".to_string()))
+    }
+
     pub fn kills_grub_mimic(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.kills_grub_mimic.deref(process, &self.module, &self.image).ok()
     }
@@ -2390,6 +2394,17 @@ impl PlayerDataStore {
 
     pub fn incremented_grubs_collected(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "grubs_collected", &game_manager_finder.player_data_pointers.grubs_collected)
+    }
+
+    pub fn grub_waterways_isma(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        if !g.is_game_state_non_menu(p) {
+            return self.map_bool.get("grub_waterways_isma").unwrap_or(&false).clone();
+        };
+        let Some(b) = g.grub_waterways_isma(p) else {
+            return self.map_bool.get("grub_waterways_isma").unwrap_or(&false).clone();
+        };
+        self.map_bool.insert("grub_waterways_isma", b);
+        b
     }
 
     pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {

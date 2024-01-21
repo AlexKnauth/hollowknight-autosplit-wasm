@@ -268,6 +268,10 @@ pub enum Split {
     /// 
     /// Splits on transition after Isma's Tear acquired
     TransTear,
+    /// Isma's Tear with Grub (Transition)
+    /// 
+    /// Splits on transition after collecting Isma's Tear and saving the grub in Isma's Grove
+    TransTearWithGrub,
     /// Main Menu w/ Isma's Tear (Menu)
     /// 
     /// Splits on transition to the main menu after Isma's Tear acquired
@@ -2772,6 +2776,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::WaterwaysEntry => should_split(starts_with_any(p.current, WATERWAYS_ENTRY_SCENES) && p.current != p.old),
         Split::DungDefenderExit => should_split(p.old == "Waterways_05" && p.current == "Abyss_01"),
         Split::TransTear => should_split(pds.has_acid_armour(prc, g) && p.current != p.old),
+        Split::TransTearWithGrub => should_split(pds.has_acid_armour(prc, g) && pds.grub_waterways_isma(prc, g) && p.current != p.old),
         Split::MenuIsmasTear => should_split(pds.has_acid_armour(prc, g) && is_menu(p.current)),
         Split::EnterJunkPit => should_split(p.current == "GG_Waterways" && p.current != p.old),
         // endregion: Waterways
