@@ -2522,6 +2522,36 @@ impl PlayerDataStore {
         self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
     }
 
+    /// Produces Some(true) when d of the enemy have been killed in a row,
+    /// produces Some(false) when the journal kills have reached 0 without that,
+    /// or produces None when neither has happened yet.
+    fn kills_decreased_by<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>, d: i32) -> Option<bool> {
+        if !gmf.is_game_state_non_transition(prc) {
+            self.map_i32.remove(key);
+            return None;
+        }
+        let kills_now = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
+        match self.map_i32.get(key) {
+            None => {
+                if kills_now == 0 {
+                    Some(false)
+                } else {
+                    self.map_i32.insert(key, kills_now);
+                    None
+                }
+            }
+            Some(kills_on_entry) => {
+                if kills_now + d <= *kills_on_entry {
+                    Some(true)
+                } else if kills_now == 0 {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+        }
+    }
+
     pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         todo!("Bronze1a")
     }
@@ -2629,30 +2659,7 @@ impl PlayerDataStore {
     /// produces Some(false) when the journal kills have reached 0 without that,
     /// or produces None when neither has happened yet.
     pub fn killed_oblobbles(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        if !gmf.is_game_state_non_transition(prc) {
-            self.map_i32.remove("kills_oblobble_on_entry");
-            return None;
-        }
-        let k = gmf.player_data_pointers.kills_oblobble.deref(prc, &gmf.module, &gmf.image).ok()?;
-        match self.map_i32.get("kills_oblobble_on_entry") {
-            None => {
-                if k == 0 {
-                    Some(false)
-                } else {
-                    self.map_i32.insert("kills_oblobble_on_entry", k);
-                    None
-                }
-            }
-            Some(kills_oblobble_on_entry) => {
-                if k + 2 == *kills_oblobble_on_entry {
-                    Some(true)
-                } else if k == 0 {
-                    Some(false)
-                } else {
-                    None
-                }
-            }
-        }
+        self.kills_decreased_by(prc, gmf, "kills_oblobble_on_entry", &gmf.player_data_pointers.kills_oblobble, 2)
     }
 
     pub fn gold1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
