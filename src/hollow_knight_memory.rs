@@ -345,6 +345,7 @@ struct PlayerDataPointers {
     royal_charm_state: UnityPointer<3>,
     got_shade_charm: UnityPointer<3>,
     grubs_collected: UnityPointer<3>,
+    scenes_grub_rescued: UnityPointer<3>,
     kills_grub_mimic: UnityPointer<3>,
     dream_orbs: UnityPointer<3>,
     map_dirtmouth: UnityPointer<3>,
@@ -655,6 +656,7 @@ impl PlayerDataPointers {
             royal_charm_state: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "royalCharmState"]),
             got_shade_charm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotShadeCharm"]),
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
+            scenes_grub_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "scenesGrubRescued"]),
             kills_grub_mimic: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGrubMimic"]),
             dream_orbs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamOrbs"]),
             map_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapDirtmouth"]),
@@ -1501,6 +1503,11 @@ impl GameManagerFinder {
 
     pub fn grubs_collected(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn scenes_grub_rescued(&self, process: &Process) -> Option<Vec<String>> {
+        let l = self.player_data_pointers.scenes_grub_rescued.deref(process, &self.module, &self.image).ok()?;
+        read_string_list_object::<SCENE_PATH_SIZE>(process, l)
     }
 
     pub fn kills_grub_mimic(&self, process: &Process) -> Option<i32> {
