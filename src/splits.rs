@@ -1459,6 +1459,67 @@ pub enum Split {
     /// 
     /// Splits upon obtaining 2400 Essence
     Essence2400,
+    /// Whispering Root (Ancestral Mound)
+    /// 
+    /// Splits upon completing the whispering root in the Ancestral Mound
+    TreeMound,
+    /// Whispering Root (City of Tears)
+    /// 
+    /// Splits upon completing the whispering root in the City of Tears
+    TreeCity,
+    /// Whispering Root (Crystal Peak)
+    /// 
+    /// Splits upon completing the whispering root in Crystal Peak
+    TreePeak,
+    /// Whispering Root (Deepnest)
+    /// 
+    /// Splits upon completing the whispering root in Deepnest
+    TreeDeepnest,
+    /// Whispering Root (Forgotten Crossroads)
+    /// 
+    /// Splits upon completing the whispering root in the Forgotten Crossroads
+    TreeCrossroads,
+    /// Whispering Root (Leg Eater)
+    /// 
+    /// Splits upon completing the whispering root left from Leg Eater
+    TreeLegEater,
+    /// Whispering Root (Mantis Village)
+    /// 
+    /// Splits upon completing the whispering root above the Mantis Village
+    TreeMantisVillage,
+    /// Whispering Root (Greenpath)
+    /// 
+    /// Splits upon completing the whispering root in Greenpath
+    TreeGreenpath,
+    /// Whispering Root (Hive)
+    /// 
+    /// Splits upon completing the whispering root in the Hive
+    TreeHive,
+    /// Whispering Root (Howling Cliffs)
+    /// 
+    /// Splits upon completing the whispering root in the Howling Cliifs
+    TreeCliffs,
+    /// Whispering Root (Kingdom's Edge)
+    /// 
+    /// Splits upon completing the whispering root in the Kingdom's Edge
+    TreeKingdomsEdge,
+    /// Whispering Root (Queen's Gardens)
+    /// 
+    /// Splits upon completing the whispering root in the Queen's Gardens
+    TreeQueensGardens,
+    /// Whispering Root (Resting Grounds)
+    /// 
+    /// Splits upon completing the whispering root in the Resting Grounds
+    TreeRestingGrounds,
+    /// Whispering Root (Royal Waterways)
+    /// 
+    /// Splits upon completing the whispering root in the Royal Waterways
+    TreeWaterways,
+    /// Whispering Root (Spirits' Glade)
+    /// 
+    /// Splits upon completing the whispering root in the Spirits' Glade
+    TreeGlade,
+
     /// Dream Nail Marissa (Obtain)
     /// 
     /// Splits when obtaining the essence from Marissa
@@ -3287,6 +3348,21 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Essence2200 => should_split(g.dream_orbs(p).is_some_and(|o| 2200 <= o)),
         Split::Essence2300 => should_split(g.dream_orbs(p).is_some_and(|o| 2300 <= o)),
         Split::Essence2400 => should_split(g.dream_orbs(p).is_some_and(|o| 2400 <= o)),
+        Split::TreeCity => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Ruins1_17".to_string()))),
+        Split::TreeCliffs => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Cliffs_01".to_string()))),
+        Split::TreeCrossroads => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Crossroads_07".to_string()))),
+        Split::TreeDeepnest => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Deepnest_39".to_string()))),
+        Split::TreeGlade => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"RestingGrounds_08".to_string()))),
+        Split::TreeGreenpath => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus1_13".to_string()))),
+        Split::TreeHive => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Hive_02".to_string()))),
+        Split::TreeKingdomsEdge => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Deepnest_East_07".to_string()))),
+        Split::TreeLegEater => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus2_33".to_string()))),
+        Split::TreeMantisVillage => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus2_17".to_string()))),
+        Split::TreeMound => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Crossroads_ShamanTemple".to_string()))),
+        Split::TreePeak => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Mines_23".to_string()))),
+        Split::TreeQueensGardens => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus3_11".to_string()))),
+        Split::TreeRestingGrounds => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"RestingGrounds_05".to_string()))),
+        Split::TreeWaterways => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Abyss_01".to_string()))),
         Split::OnObtainGhostMarissa => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Bathhouse")),
         Split::OnObtainGhostCaelifFera => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_24")),
         Split::OnObtainGhostPoggy => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Elevator")),

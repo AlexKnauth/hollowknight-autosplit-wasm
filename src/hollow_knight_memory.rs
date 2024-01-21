@@ -348,6 +348,7 @@ struct PlayerDataPointers {
     scenes_grub_rescued: UnityPointer<3>,
     kills_grub_mimic: UnityPointer<3>,
     dream_orbs: UnityPointer<3>,
+    scenes_encountered_dream_plant_c: UnityPointer<3>,
     map_dirtmouth: UnityPointer<3>,
     map_crossroads: UnityPointer<3>,
     map_greenpath: UnityPointer<3>,
@@ -659,6 +660,7 @@ impl PlayerDataPointers {
             scenes_grub_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "scenesGrubRescued"]),
             kills_grub_mimic: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGrubMimic"]),
             dream_orbs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamOrbs"]),
+            scenes_encountered_dream_plant_c: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "scenesEncounteredDreamPlantC"]),
             map_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapDirtmouth"]),
             map_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapCrossroads"]),
             map_greenpath: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapGreenpath"]),
@@ -1520,6 +1522,11 @@ impl GameManagerFinder {
 
     pub fn dream_orbs(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.dream_orbs.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn scenes_encountered_dream_plant_c(&self, process: &Process) -> Option<Vec<String>> {
+        let l = self.player_data_pointers.scenes_encountered_dream_plant_c.deref(process, &self.module, &self.image).ok()?;
+        read_string_list_object::<SCENE_PATH_SIZE>(process, l)
     }
 
     pub fn map_dirtmouth(&self, process: &Process) -> Option<bool> {
