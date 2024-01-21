@@ -2540,7 +2540,10 @@ fn read_string_list_object<const SN: usize>(process: &Process, a: Address64) -> 
     for i in 0..(vn as u64) {
         let item_offset = ARRAY_CONTENTS_OFFSET + POINTER_SIZE * i;
         let item_ptr: Address64 = process.read_pointer_path64(array_ptr, &[item_offset]).ok()?;
-        let s = read_string_object::<SN>(process, item_ptr).unwrap_or_default();
+        if item_ptr.is_null() {
+            continue;
+        }
+        let s = read_string_object::<SN>(process, item_ptr)?;
         v.push(s);
     }
     Some(v)
