@@ -91,7 +91,7 @@ fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
     let maybe_splits = s.dict_get("Splits");
     if maybe_ordered.is_some() || maybe_start.is_some() || maybe_end.is_some() {
         // Splits files from up through version 3 of ShootMe/LiveSplit.HollowKnight
-        let start = maybe_start.and_then(split_from_settings_str).unwrap_or(Split::StartNewGame);
+        let start = maybe_start.and_then(split_from_settings_str).unwrap_or(Split::LegacyStart);
         let end = maybe_end.and_then(|s| s.as_bool()).unwrap_or_default();
         let mut result = vec![start];
         if let Some(splits) = maybe_splits {
