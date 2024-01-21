@@ -1176,6 +1176,10 @@ pub enum Split {
     /// 
     /// Splits when rescuing the grub in Ruins1_05
     GrubCityBelowSanctum,
+    /// Rescued Grub City Collector All (Grub)
+    /// 
+    /// Splits when rescuing all three grubs in Ruins2_11. (On 1221, splits for right grub)
+    GrubCityCollectorAll,
     /// Rescued Grub City Guard House (Grub)
     /// 
     /// Splits when rescuing the grub in Ruins_House_01
@@ -3203,6 +3207,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::GrubBasinWings => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Abyss_19")),
         Split::GrubCityBelowLoveTower => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_07")),
         Split::GrubCityBelowSanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_05")),
+        Split::GrubCityCollectorAll => should_split(g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins2_11".to_string()))),
         Split::GrubCityGuardHouse => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_House_01")),
         Split::GrubCitySanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_32")),
         Split::GrubCitySpire => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_03")),
