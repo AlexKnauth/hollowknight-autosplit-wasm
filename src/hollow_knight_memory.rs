@@ -2522,6 +2522,109 @@ impl PlayerDataStore {
         self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
     }
 
+    pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze1a")
+    }
+    pub fn bronze1b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze1b")
+    }
+    pub fn bronze1c(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze1c")
+    }
+    pub fn bronze2(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze2")
+    }
+    pub fn bronze3a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze3a")
+    }
+    pub fn bronze3b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze3b")
+    }
+    pub fn bronze4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze4")
+    }
+    pub fn bronze5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze5")
+    }
+    pub fn bronze6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze6")
+    }
+    pub fn bronze7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze7")
+    }
+    pub fn bronze8a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze8a")
+    }
+    pub fn bronze8b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze8b")
+    }
+    pub fn bronze9(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze9")
+    }
+    pub fn bronze10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze10")
+    }
+    pub fn bronze11a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze11a")
+    }
+    pub fn bronze11b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Bronze11b")
+    }
+    pub fn bronze_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("BronzeEnd")
+    }
+    pub fn silver1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver1")
+    }
+    pub fn silver2(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver2")
+    }
+    pub fn silver3(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver3")
+    }
+    pub fn silver4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver4")
+    }
+    pub fn silver5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver5")
+    }
+    pub fn silver6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver6")
+    }
+    pub fn silver7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver7")
+    }
+    pub fn silver8(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver8")
+    }
+    pub fn silver9(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver9")
+    }
+    pub fn silver10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver10")
+    }
+    pub fn silver11(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver11")
+    }
+    pub fn silver12(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver12")
+    }
+    pub fn silver13(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver13")
+    }
+    pub fn silver14(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver14")
+    }
+    pub fn silver15(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver15")
+    }
+    pub fn silver16(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Silver16")
+    }
+    pub fn silver_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("SilverEnd")
+    }
+
     /// Produces Some(true) when 2 Oblobbles have been killed in a row,
     /// produces Some(false) when the journal kills have reached 0 without that,
     /// or produces None when neither has happened yet.
@@ -2550,6 +2653,75 @@ impl PlayerDataStore {
                 }
             }
         }
+    }
+
+    pub fn gold1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold1")
+    }
+    // Wave 2 splits inconsistently since the enemies are killed by the spikes on the floor automatically
+    pub fn gold3(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold3")
+    }
+    pub fn gold4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold4")
+    }
+    pub fn gold5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold5")
+    }
+    pub fn gold6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold6")
+    }
+    pub fn gold7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold7")
+    }
+    pub fn gold8a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold8a")
+    }
+    pub fn gold8(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold8")
+    }
+    pub fn gold9a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold9a")
+    }
+    pub fn gold9b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold9b")
+    }
+    pub fn gold10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold10")
+    }
+    pub fn gold11(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold11")
+    }
+    pub fn gold12a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold12a")
+    }
+    pub fn gold12b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold12b")
+    }
+    // Wave 13 doesn't really exist, it's just vertical Garpedes so there's nothing to Split on
+    pub fn gold14a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold14a")
+    }
+    pub fn gold14b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold14b")
+    }
+    pub fn gold15(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold15")
+    }
+    pub fn gold16(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold16")
+    }
+    pub fn gold17a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold17a")
+    }
+    pub fn gold17b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold17b")
+    }
+    pub fn gold17c(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("Gold17c")
+    }
+    pub fn gold_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        todo!("GoldEnd")
     }
 }
 
