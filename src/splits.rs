@@ -1910,6 +1910,10 @@ pub enum Split {
     /// 
     /// Splits when getting Soul Tyrant essence
     SoulTyrantEssence,
+    /// Soul Tyrant w/ Sanctum Grub (Essence)
+    /// 
+    /// Splits when getting Soul Tyrant essence and Sanctum fakedive grub
+    SoulTyrantEssenceWithSanctumGrub,
     MenuStoreroomsSimpleKey,
     EnterBlackKnight,
     /// Chandelier - Watcher Knights (Event)
@@ -3384,6 +3388,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SoulMaster => should_split(g.killed_mage_lord(p).is_some_and(|k| k)),
         Split::SoulTyrant => should_split(g.mage_lord_dream_defeated(p).is_some_and(|k| k)),
         Split::SoulTyrantEssence => should_split(g.mage_lord_orbs_collected(p).is_some_and(|o| o)),
+        Split::SoulTyrantEssenceWithSanctumGrub => should_split(g.mage_lord_orbs_collected(p).is_some_and(|o| o)
+                                                                && g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins1_32".to_string()))),
         Split::WatcherChandelier => should_split(g.watcher_chandelier(p).is_some_and(|c| c)),
         Split::BlackKnight => should_split(g.killed_black_knight(p).is_some_and(|k| k)),
         Split::BlackKnightTrans => { pds.killed_black_knight(p, g); should_split(false) },
