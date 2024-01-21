@@ -357,6 +357,8 @@ struct PlayerDataPointers {
     map_resting_grounds: UnityPointer<3>,
     map_abyss: UnityPointer<3>,
     visited_dirtmouth: UnityPointer<3>,
+    sly_shell_frag4: UnityPointer<3>,
+    sly_vessel_frag2: UnityPointer<3>,
     elderbug_gave_flower: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
     killed_nightmare_grimm: UnityPointer<3>,
@@ -665,6 +667,8 @@ impl PlayerDataPointers {
             map_resting_grounds: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapRestingGrounds"]),
             map_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapAbyss"]),
             visited_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDirtmouth"]),
+            sly_shell_frag4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyShellFrag4"]),
+            sly_vessel_frag2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyVesselFrag2"]),
             elderbug_gave_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderbugGaveFlower"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
@@ -1549,6 +1553,22 @@ impl GameManagerFinder {
         self.player_data_pointers.visited_dirtmouth.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn sly_shell_frag4(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.sly_shell_frag4.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn sly_vessel_frag2(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.sly_vessel_frag2.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn sly_shop_finished(&self, p: &Process) -> Option<bool> {
+        Some(self.has_lantern(p)?
+             && self.got_charm_1(p)?
+             && self.got_charm_4(p)?
+             && self.got_charm_15(p)?
+             && self.got_charm_37(p)?
+             && self.sly_shell_frag4(p)?
+             && self.sly_vessel_frag2(p)?)
+    }
+
     pub fn elderbug_gave_flower(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.elderbug_gave_flower.deref(process, &self.module, &self.image).ok()
     }
@@ -2331,6 +2351,17 @@ impl PlayerDataStore {
 
     pub fn has_lantern(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "has_lantern", &g.player_data_pointers.has_lantern).unwrap_or(false)
+    }
+
+    pub fn sly_shop_finished(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        if !g.is_game_state_non_menu(p) {
+            return self.map_bool.get("sly_shop_finished").unwrap_or(&false).clone();
+        };
+        let Some(b) = g.sly_shop_finished(p) else {
+            return self.map_bool.get("sly_shop_finished").unwrap_or(&false).clone();
+        };
+        self.map_bool.insert("sly_shop_finished", b);
+        b
     }
 
     pub fn cornifer_at_home(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
