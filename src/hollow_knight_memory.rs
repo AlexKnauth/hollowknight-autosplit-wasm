@@ -26,6 +26,11 @@ pub const SCENE_PATH_SIZE: usize = 64;
 const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
 
+const LIST_ARRAY_OFFSET: u64 = 0x10;
+const ARRAY_LEN_OFFSET: u64 = 0x18;
+const ARRAY_CONTENTS_OFFSET: u64 = 0x20;
+const POINTER_SIZE: u64 = 8;
+
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
 pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
@@ -2518,6 +2523,20 @@ fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option
     let w: ArrayWString<N> = process.read_pointer_path64(a, &[STRING_CONTENTS_OFFSET]).ok()?;
     if !(w.len() == min(n as usize, N)) { return None; }
     String::from_utf16(&w.to_vec()).ok()
+}
+
+fn read_string_list_object<const SN: usize>(process: &Process, a: Address64) -> Option<Vec<String>> {
+    let array_ptr: Address64 = process.read_pointer_path64(a, &[LIST_ARRAY_OFFSET]).ok()?;
+    let vn: u32 = process.read_pointer_path64(array_ptr, &[ARRAY_LEN_OFFSET]).ok()?;
+
+    let mut v = Vec::with_capacity(vn as usize);
+    for i in 0..(vn as u64) {
+        let item_offset = ARRAY_CONTENTS_OFFSET + POINTER_SIZE * i;
+        let item_ptr: Address64 = process.read_pointer_path64(array_ptr, &[item_offset]).ok()?;
+        let s = read_string_object::<SN>(process, item_ptr).unwrap_or_default();
+        v.push(s);
+    }
+    Some(v)
 }
 
 // --------------------------------------------------------
