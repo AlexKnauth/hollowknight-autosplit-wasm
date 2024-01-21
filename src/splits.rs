@@ -65,6 +65,10 @@ pub enum Split {
     /// 
     /// Splits when gaining control after waking up in Rando
     RandoWake,
+    /// [DEPRECATED] Start Run (Start)
+    /// 
+    /// Splits when autosplitter version 3 would have automatically started runs
+    LegacyStart,
     /// Credits Roll (Event)
     /// 
     /// Splits on any credits rolling
@@ -2971,6 +2975,12 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
             should_split(starting_kings_pass(p, prc, g)
                          || (is_menu(p.old) && (p.current == GG_ENTRANCE_CUTSCENE || is_play_scene(p.current))))
         }
+        Split::LegacyStart => {
+            should_split(entering_kings_pass(p, prc, g)
+                         || p.current == GG_ENTRANCE_CUTSCENE
+                         || p.current == "GG_Boss_Door_Entrance"
+                         || p.current == "GG_Vengefly_V")
+        }
         // endregion: Start
         // else
         _ => should_split(false)
@@ -3612,14 +3622,26 @@ pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, 
 
 fn starting_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> bool {
     OPENING_SCENES.contains(&p.old)
-    && p.current == "Tutorial_01"
+    && entering_kings_pass(p, prc, g)
+}
+
+fn entering_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> bool {
+    p.current == "Tutorial_01"
     && g.get_game_state(prc).is_some_and(|gs| {
         gs == GAME_STATE_ENTERING_LEVEL
     })
 }
 
 pub fn auto_reset_safe(s: &[Split]) -> bool {
-    s.first() == Some(&Split::StartNewGame)
+    let s_first = s.first();
+    (s_first == Some(&Split::StartNewGame) || s_first == Some(&Split::LegacyStart))
     && !s[1..].contains(&Split::StartNewGame)
+    && !s[1..].contains(&Split::LegacyStart)
     && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
+    && !s[0..(s.len()-1)].contains(&Split::EndingA)
+    && !s[0..(s.len()-1)].contains(&Split::EndingB)
+    && !s[0..(s.len()-1)].contains(&Split::EndingC)
+    && !s[0..(s.len()-1)].contains(&Split::EndingD)
+    && !s[0..(s.len()-1)].contains(&Split::EndingE)
+    && !s[0..(s.len()-1)].contains(&Split::RadianceP)
 }
