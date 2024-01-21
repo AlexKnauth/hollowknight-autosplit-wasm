@@ -274,7 +274,9 @@ struct PlayerDataPointers {
     trinket2: UnityPointer<3>,
     trinket3: UnityPointer<3>,
     trinket4: UnityPointer<3>,
+    sold_trinket1: UnityPointer<3>,
     sold_trinket2: UnityPointer<3>,
+    sold_trinket3: UnityPointer<3>,
     sold_trinket4: UnityPointer<3>,
     rancid_eggs: UnityPointer<3>,
     // Charm Notches
@@ -587,7 +589,9 @@ impl PlayerDataPointers {
             trinket2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "trinket2"]),
             trinket3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "trinket3"]),
             trinket4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "trinket4"]),
+            sold_trinket1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket1"]),
             sold_trinket2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket2"]),
+            sold_trinket3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket3"]),
             sold_trinket4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket4"]),
             rancid_eggs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "rancidEggs"]),
             // Charm Notches
@@ -1248,11 +1252,23 @@ impl GameManagerFinder {
         self.player_data_pointers.trinket4.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn sold_trinket1(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.sold_trinket1.deref(process, &self.module, &self.image).ok()
+    }
     pub fn sold_trinket2(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.sold_trinket2.deref(process, &self.module, &self.image).ok()
     }
+    pub fn sold_trinket3(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.sold_trinket3.deref(process, &self.module, &self.image).ok()
+    }
     pub fn sold_trinket4(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.sold_trinket4.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn sold_trinkets_geo(&self, p: &Process) -> Option<i32> {
+        Some(200 * self.sold_trinket1(p)?
+             + 450 * self.sold_trinket2(p)?
+             + 800 * self.sold_trinket3(p)?
+             + 1200 * self.sold_trinket4(p)?)
     }
 
     #[allow(unused)]
