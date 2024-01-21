@@ -268,6 +268,10 @@ pub enum Split {
     /// 
     /// Splits on transition after Isma's Tear acquired
     TransTear,
+    /// Isma's Tear with Grub (Transition)
+    /// 
+    /// Splits on transition after collecting Isma's Tear and saving the grub in Isma's Grove
+    TransTearWithGrub,
     /// Main Menu w/ Isma's Tear (Menu)
     /// 
     /// Splits on transition to the main menu after Isma's Tear acquired
@@ -1176,6 +1180,10 @@ pub enum Split {
     /// 
     /// Splits when rescuing the grub in Ruins1_05
     GrubCityBelowSanctum,
+    /// Rescued Grub City Collector All (Grub)
+    /// 
+    /// Splits when rescuing all three grubs in Ruins2_11. (On 1221, splits for right grub)
+    GrubCityCollectorAll,
     /// Rescued Grub City Guard House (Grub)
     /// 
     /// Splits when rescuing the grub in Ruins_House_01
@@ -1451,6 +1459,67 @@ pub enum Split {
     /// 
     /// Splits upon obtaining 2400 Essence
     Essence2400,
+    /// Whispering Root (Ancestral Mound)
+    /// 
+    /// Splits upon completing the whispering root in the Ancestral Mound
+    TreeMound,
+    /// Whispering Root (City of Tears)
+    /// 
+    /// Splits upon completing the whispering root in the City of Tears
+    TreeCity,
+    /// Whispering Root (Crystal Peak)
+    /// 
+    /// Splits upon completing the whispering root in Crystal Peak
+    TreePeak,
+    /// Whispering Root (Deepnest)
+    /// 
+    /// Splits upon completing the whispering root in Deepnest
+    TreeDeepnest,
+    /// Whispering Root (Forgotten Crossroads)
+    /// 
+    /// Splits upon completing the whispering root in the Forgotten Crossroads
+    TreeCrossroads,
+    /// Whispering Root (Leg Eater)
+    /// 
+    /// Splits upon completing the whispering root left from Leg Eater
+    TreeLegEater,
+    /// Whispering Root (Mantis Village)
+    /// 
+    /// Splits upon completing the whispering root above the Mantis Village
+    TreeMantisVillage,
+    /// Whispering Root (Greenpath)
+    /// 
+    /// Splits upon completing the whispering root in Greenpath
+    TreeGreenpath,
+    /// Whispering Root (Hive)
+    /// 
+    /// Splits upon completing the whispering root in the Hive
+    TreeHive,
+    /// Whispering Root (Howling Cliffs)
+    /// 
+    /// Splits upon completing the whispering root in the Howling Cliifs
+    TreeCliffs,
+    /// Whispering Root (Kingdom's Edge)
+    /// 
+    /// Splits upon completing the whispering root in the Kingdom's Edge
+    TreeKingdomsEdge,
+    /// Whispering Root (Queen's Gardens)
+    /// 
+    /// Splits upon completing the whispering root in the Queen's Gardens
+    TreeQueensGardens,
+    /// Whispering Root (Resting Grounds)
+    /// 
+    /// Splits upon completing the whispering root in the Resting Grounds
+    TreeRestingGrounds,
+    /// Whispering Root (Royal Waterways)
+    /// 
+    /// Splits upon completing the whispering root in the Royal Waterways
+    TreeWaterways,
+    /// Whispering Root (Spirits' Glade)
+    /// 
+    /// Splits upon completing the whispering root in the Spirits' Glade
+    TreeGlade,
+
     /// Dream Nail Marissa (Obtain)
     /// 
     /// Splits when obtaining the essence from Marissa
@@ -1906,6 +1975,10 @@ pub enum Split {
     /// 
     /// Splits when getting Soul Tyrant essence
     SoulTyrantEssence,
+    /// Soul Tyrant w/ Sanctum Grub (Essence)
+    /// 
+    /// Splits when getting Soul Tyrant essence and Sanctum fakedive grub
+    SoulTyrantEssenceWithSanctumGrub,
     MenuStoreroomsSimpleKey,
     EnterBlackKnight,
     /// Chandelier - Watcher Knights (Event)
@@ -2764,6 +2837,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::WaterwaysEntry => should_split(starts_with_any(p.current, WATERWAYS_ENTRY_SCENES) && p.current != p.old),
         Split::DungDefenderExit => should_split(p.old == "Waterways_05" && p.current == "Abyss_01"),
         Split::TransTear => should_split(pds.has_acid_armour(prc, g) && p.current != p.old),
+        Split::TransTearWithGrub => should_split(pds.has_acid_armour(prc, g) && pds.grub_waterways_isma(prc, g) && p.current != p.old),
         Split::MenuIsmasTear => should_split(pds.has_acid_armour(prc, g) && is_menu(p.current)),
         Split::EnterJunkPit => should_split(p.current == "GG_Waterways" && p.current != p.old),
         // endregion: Waterways
@@ -3203,6 +3277,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::GrubBasinWings => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Abyss_19")),
         Split::GrubCityBelowLoveTower => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_07")),
         Split::GrubCityBelowSanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_05")),
+        Split::GrubCityCollectorAll => should_split(g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins2_11".to_string()))),
         Split::GrubCityGuardHouse => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_House_01")),
         Split::GrubCitySanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_32")),
         Split::GrubCitySpire => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_03")),
@@ -3273,6 +3348,21 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Essence2200 => should_split(g.dream_orbs(p).is_some_and(|o| 2200 <= o)),
         Split::Essence2300 => should_split(g.dream_orbs(p).is_some_and(|o| 2300 <= o)),
         Split::Essence2400 => should_split(g.dream_orbs(p).is_some_and(|o| 2400 <= o)),
+        Split::TreeCity => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Ruins1_17".to_string()))),
+        Split::TreeCliffs => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Cliffs_01".to_string()))),
+        Split::TreeCrossroads => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Crossroads_07".to_string()))),
+        Split::TreeDeepnest => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Deepnest_39".to_string()))),
+        Split::TreeGlade => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"RestingGrounds_08".to_string()))),
+        Split::TreeGreenpath => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus1_13".to_string()))),
+        Split::TreeHive => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Hive_02".to_string()))),
+        Split::TreeKingdomsEdge => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Deepnest_East_07".to_string()))),
+        Split::TreeLegEater => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus2_33".to_string()))),
+        Split::TreeMantisVillage => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus2_17".to_string()))),
+        Split::TreeMound => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Crossroads_ShamanTemple".to_string()))),
+        Split::TreePeak => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Mines_23".to_string()))),
+        Split::TreeQueensGardens => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Fungus3_11".to_string()))),
+        Split::TreeRestingGrounds => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"RestingGrounds_05".to_string()))),
+        Split::TreeWaterways => should_split(g.scenes_encountered_dream_plant_c(p).is_some_and(|s| s.contains(&"Abyss_01".to_string()))),
         Split::OnObtainGhostMarissa => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Bathhouse")),
         Split::OnObtainGhostCaelifFera => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_24")),
         Split::OnObtainGhostPoggy => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_Elevator")),
@@ -3379,6 +3469,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SoulMaster => should_split(g.killed_mage_lord(p).is_some_and(|k| k)),
         Split::SoulTyrant => should_split(g.mage_lord_dream_defeated(p).is_some_and(|k| k)),
         Split::SoulTyrantEssence => should_split(g.mage_lord_orbs_collected(p).is_some_and(|o| o)),
+        Split::SoulTyrantEssenceWithSanctumGrub => should_split(g.mage_lord_orbs_collected(p).is_some_and(|o| o)
+                                                                && g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins1_32".to_string()))),
         Split::WatcherChandelier => should_split(g.watcher_chandelier(p).is_some_and(|c| c)),
         Split::BlackKnight => should_split(g.killed_black_knight(p).is_some_and(|k| k)),
         Split::BlackKnightTrans => { pds.killed_black_knight(p, g); should_split(false) },

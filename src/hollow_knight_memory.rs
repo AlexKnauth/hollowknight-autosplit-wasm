@@ -26,6 +26,11 @@ pub const SCENE_PATH_SIZE: usize = 64;
 const STRING_LEN_OFFSET: u64 = 0x10;
 const STRING_CONTENTS_OFFSET: u64 = 0x14;
 
+const LIST_ARRAY_OFFSET: u64 = 0x10;
+const ARRAY_LEN_OFFSET: u64 = 0x18;
+const ARRAY_CONTENTS_OFFSET: u64 = 0x20;
+const POINTER_SIZE: u64 = 8;
+
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
 pub const QUIT_TO_MENU: &str = "Quit_To_Menu";
@@ -340,8 +345,10 @@ struct PlayerDataPointers {
     royal_charm_state: UnityPointer<3>,
     got_shade_charm: UnityPointer<3>,
     grubs_collected: UnityPointer<3>,
+    scenes_grub_rescued: UnityPointer<3>,
     kills_grub_mimic: UnityPointer<3>,
     dream_orbs: UnityPointer<3>,
+    scenes_encountered_dream_plant_c: UnityPointer<3>,
     map_dirtmouth: UnityPointer<3>,
     map_crossroads: UnityPointer<3>,
     map_greenpath: UnityPointer<3>,
@@ -650,8 +657,10 @@ impl PlayerDataPointers {
             royal_charm_state: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "royalCharmState"]),
             got_shade_charm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotShadeCharm"]),
             grubs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grubsCollected"]),
+            scenes_grub_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "scenesGrubRescued"]),
             kills_grub_mimic: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGrubMimic"]),
             dream_orbs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamOrbs"]),
+            scenes_encountered_dream_plant_c: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "scenesEncounteredDreamPlantC"]),
             map_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapDirtmouth"]),
             map_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapCrossroads"]),
             map_greenpath: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapGreenpath"]),
@@ -1498,12 +1507,26 @@ impl GameManagerFinder {
         self.player_data_pointers.grubs_collected.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn scenes_grub_rescued(&self, process: &Process) -> Option<Vec<String>> {
+        let l = self.player_data_pointers.scenes_grub_rescued.deref(process, &self.module, &self.image).ok()?;
+        read_string_list_object::<SCENE_PATH_SIZE>(process, l)
+    }
+
+    pub fn grub_waterways_isma(&self, process: &Process) -> Option<bool> {
+        Some(self.scenes_grub_rescued(process)?.contains(&"Waterways_13".to_string()))
+    }
+
     pub fn kills_grub_mimic(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.kills_grub_mimic.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn dream_orbs(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.dream_orbs.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn scenes_encountered_dream_plant_c(&self, process: &Process) -> Option<Vec<String>> {
+        let l = self.player_data_pointers.scenes_encountered_dream_plant_c.deref(process, &self.module, &self.image).ok()?;
+        read_string_list_object::<SCENE_PATH_SIZE>(process, l)
     }
 
     pub fn map_dirtmouth(&self, process: &Process) -> Option<bool> {
@@ -2380,6 +2403,17 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "grubs_collected", &game_manager_finder.player_data_pointers.grubs_collected)
     }
 
+    pub fn grub_waterways_isma(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        if !g.is_game_state_non_menu(p) {
+            return self.map_bool.get("grub_waterways_isma").unwrap_or(&false).clone();
+        };
+        let Some(b) = g.grub_waterways_isma(p) else {
+            return self.map_bool.get("grub_waterways_isma").unwrap_or(&false).clone();
+        };
+        self.map_bool.insert("grub_waterways_isma", b);
+        b
+    }
+
     pub fn incremented_ore(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "ore", &game_manager_finder.player_data_pointers.ore)
     }
@@ -2518,6 +2552,23 @@ fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option
     let w: ArrayWString<N> = process.read_pointer_path64(a, &[STRING_CONTENTS_OFFSET]).ok()?;
     if !(w.len() == min(n as usize, N)) { return None; }
     String::from_utf16(&w.to_vec()).ok()
+}
+
+fn read_string_list_object<const SN: usize>(process: &Process, a: Address64) -> Option<Vec<String>> {
+    let array_ptr: Address64 = process.read_pointer_path64(a, &[LIST_ARRAY_OFFSET]).ok()?;
+    let vn: u32 = process.read_pointer_path64(array_ptr, &[ARRAY_LEN_OFFSET]).ok()?;
+
+    let mut v = Vec::with_capacity(vn as usize);
+    for i in 0..(vn as u64) {
+        let item_offset = ARRAY_CONTENTS_OFFSET + POINTER_SIZE * i;
+        let item_ptr: Address64 = process.read_pointer_path64(array_ptr, &[item_offset]).ok()?;
+        if item_ptr.is_null() {
+            continue;
+        }
+        let s = read_string_object::<SN>(process, item_ptr)?;
+        v.push(s);
+    }
+    Some(v)
 }
 
 // --------------------------------------------------------

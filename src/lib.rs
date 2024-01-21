@@ -60,12 +60,25 @@ async fn main() {
                     auto_reset = splits::auto_reset_safe(&splits);
                 }
 
+                #[cfg(debug_assertions)]
+                let mut scenes_grub_rescued = game_manager_finder.scenes_grub_rescued(&process);
+                #[cfg(debug_assertions)]
+                asr::print_message(&format!("scenes_grub_rescued: {:?}", scenes_grub_rescued));
+
                 let mut last_timer_state = TimerState::Unknown;
                 let mut i = 0;
                 loop {
                     tick_action(&process, &splits, &mut last_timer_state, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut load_remover).await;
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
+
+                    #[cfg(debug_assertions)]
+                    let new_scenes_grub_rescued = game_manager_finder.scenes_grub_rescued(&process);
+                    #[cfg(debug_assertions)]
+                    if new_scenes_grub_rescued != scenes_grub_rescued {
+                        scenes_grub_rescued = new_scenes_grub_rescued;
+                        asr::print_message(&format!("scenes_grub_rescued: {:?}", scenes_grub_rescued));
+                    }
 
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
