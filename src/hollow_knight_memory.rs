@@ -2601,106 +2601,170 @@ impl PlayerDataStore {
     }
 
     pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze1a")
+        // Shielded Fool: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 1)
     }
     pub fn bronze1b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze1b")
+        // Shielded Fool: {1} +2 {3}
+        self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 3)
     }
     pub fn bronze1c(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze1c")
+        // Baldur: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 2)
     }
     pub fn bronze2(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze2")
+        // Baldur: {2} +5 {7}
+        self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 7)
     }
     pub fn bronze3a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze3a")
+        // Sturdy Fool: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 1)
     }
     pub fn bronze3b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze3b")
+        // Sturdy Fool: {1} +2 {3}
+        self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 3)
     }
     pub fn bronze4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze4")
+        // Aspid: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 2)
     }
     pub fn bronze5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze5")
+        // Aspid: {2} +2 {4}
+        self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 4)
     }
     pub fn bronze6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze6")
+        // Sturdy Fool: {3} +3 {6}
+        self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 6)
     }
     pub fn bronze7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze7")
+        // Aspid: {4} +2 {6}
+        // Baldur: {7} +2 {9}
+        Some(self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 9)?)
     }
     pub fn bronze8a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze8a")
+        // Vengefly: {0} +4 {4}
+        self.kills_decreased_by(prc, gmf, "kills_buzzer_on_entry", &gmf.player_data_pointers.kills_buzzer, 4)
     }
     pub fn bronze8b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze8b")
+        // Vengefly King: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_big_buzzer_on_entry", &gmf.player_data_pointers.kills_big_buzzer, 1)
     }
     pub fn bronze9(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze9")
+        // Sturdy Fool: {6} +3 {9}
+        // Shielded Fool: {3} +2 {5}
+        // Aspid: {6} +2 {8}
+        // Baldur: {9} +1 {10}
+        Some(self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 8)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 10)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 9)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 5)?)
     }
     pub fn bronze10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze10")
+        // Baldur: {10} +3 {13}
+        self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 13)
     }
     pub fn bronze11a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze11a")
+        // Infected Gruzzer: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 2)
     }
     pub fn bronze11b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Bronze11b")
+        // Infected Gruzzer: {2} +3 {5}
+        self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 5)
     }
     pub fn bronze_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("BronzeEnd")
+        // Gruz Mom: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_big_fly_on_entry", &gmf.player_data_pointers.kills_big_fly, 2)
     }
     pub fn silver1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver1")
+        // Heavy Fool: {0} +2 {2}
+        // Winged Fool: {0} +3 {3}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 2)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 3)?)
     }
     pub fn silver2(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver2")
+        // Squit: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 2)
     }
     pub fn silver3(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver3")
+        // Squit: {2} +2 {4}
+        self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 4)
     }
     pub fn silver4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver4")
+        // Squit: {4} +1 {5}
+        // Winged Fool: {3} +1 {4}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 4)?)
     }
     pub fn silver5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver5")
+        // Squit: {5} +2 {7}
+        // Infected Gruzzer: {0} +5 {5}
+        // not checking for aspid kills here because i think something weird is going on with their journal data stuff
+        Some(self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 7)?)
     }
     pub fn silver6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver6")
+        // Heavy Fool: {2} +1 {3}
+        // Belfly: {0} +3 {3}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper, 3)?)
     }
     pub fn silver7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver7")
+        // Belfly: {3} +1 {4}
+        self.kills_decreased_by(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper, 4)
     }
     pub fn silver8(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver8")
+        // Great Hopper: {0} +1 {1}
+        // only checking great hopper, not the 8 little hoppers
+        self.kills_decreased_by(prc, gmf, "kills_giant_hopper_on_entry", &gmf.player_data_pointers.kills_giant_hopper, 1)
     }
     pub fn silver9(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver9")
+        // Great Hopper: {1} +1 {2}
+        self.kills_decreased_by(prc, gmf, "kills_giant_hopper_on_entry", &gmf.player_data_pointers.kills_giant_hopper, 2)
     }
     pub fn silver10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver10")
+        // Mimic: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_grub_mimic_on_entry", &gmf.player_data_pointers.kills_grub_mimic, 1)
     }
     pub fn silver11(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver11")
+        // Winged Fool: {4} +2 {6}
+        // Heavy Fool: {3} +1 {4}
+        // Squit: {7} +2 {9}
+        // not checking for Shielded Fool kills here
+        // TODO: investigate why, and test what happens when Shielded Fool is added back in here
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 9)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 4)?)
     }
     pub fn silver12(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver12")
+        // Heavy Fool: {4} +1 {5}
+        // Winged Fool: {6} +1 {7}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 7)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 5)?)
     }
     pub fn silver13(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver13")
+        // Winged Fool: {7} +1 {8}
+        // Squit: {9} +3 {12}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 12)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 8)?)
     }
     pub fn silver14(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver14")
+        // Winged Fool: {8} +3 {11}
+        // Squit: {12} +2 {14}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 14)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 11)?)
     }
     pub fn silver15(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver15")
+        // Obbles: {0} +9 {9}
+        self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 9)
     }
     pub fn silver16(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("Silver16")
+        // Obbles: {9} +4 {13}
+        self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 13)
     }
     pub fn silver_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("SilverEnd")
+        // Oblobbles: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_oblobble_on_entry", &gmf.player_data_pointers.kills_oblobble, 2)
     }
 
     /// Produces Some(true) when 2 Oblobbles have been killed in a row,
@@ -2776,7 +2840,8 @@ impl PlayerDataStore {
         todo!("Gold17c")
     }
     pub fn gold_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        todo!("GoldEnd")
+        // God Tamer: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_lobster_lancer_on_entry", &gmf.player_data_pointers.kills_lobster_lancer, 1)
     }
 }
 
