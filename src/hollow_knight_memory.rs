@@ -2903,7 +2903,7 @@ impl PlayerDataStore {
     }
     // Wave 13 doesn't really exist, it's just vertical Garpedes so there's nothing to Split on
     pub fn gold14a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        // Squit: {???} +1 {10} TODO: Squit mismatch?
+        // Squit: {6} +4 {10}
         // Aspid: {6} +1 {7}
         // Mantis Petra: {4} +1 {5}
         Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 10)?
