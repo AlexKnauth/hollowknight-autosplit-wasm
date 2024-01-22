@@ -2317,6 +2317,10 @@ impl PlayerDataStore {
         self.map_i32.clear();
         self.map_bool.clear();
     }
+    pub fn clean_on_entry(&mut self) {
+        self.map_i32.retain(|k, _| !k.ends_with("_on_entry"));
+        self.map_bool.retain(|k, _| !k.ends_with("_on_entry"));
+    }
 
     fn get_bool<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<bool> {
         if !g.is_game_state_non_menu(p) {
