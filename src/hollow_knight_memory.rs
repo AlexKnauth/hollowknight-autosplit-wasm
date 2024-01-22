@@ -2906,12 +2906,14 @@ impl PlayerDataStore {
         // Squit: {6} +4 {10}
         // Aspid: {6} +1 {7}
         // Mantis Petra: {4} +1 {5}
+        // Winged Fool: {7} +1 {8}
+        // not checking for Winged Fool kills here
         Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 10)?
              && self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 7)?
              && self.kills_decreased_by(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer, 5)?)
     }
     pub fn gold14b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        // Winged Fool: {???} +2 {10} TODO: Winged Fool mismatch?
+        // Winged Fool: {8} +2 {10}
         // Obble: {3} +4 {7}
         Some(self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 10)?
              && self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 7)?)
