@@ -481,6 +481,7 @@ struct PlayerDataPointers {
     kills_col_roller: UnityPointer<3>,
     kills_col_miner: UnityPointer<3>,
     kills_spitter: UnityPointer<3>,
+    kills_super_spitter: UnityPointer<3>,
     kills_buzzer: UnityPointer<3>,
     kills_big_buzzer: UnityPointer<3>,
     kills_bursting_bouncer: UnityPointer<3>,
@@ -807,6 +808,7 @@ impl PlayerDataPointers {
             kills_col_roller: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColRoller"]),
             kills_col_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColMiner"]),
             kills_spitter: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsSpitter"]),
+            kills_super_spitter: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsSuperSpitter"]),
             kills_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBuzzer"]),
             kills_big_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBigBuzzer"]),
             kills_bursting_bouncer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBurstingBouncer"]),
@@ -2707,16 +2709,15 @@ impl PlayerDataStore {
              && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 4)?)
     }
     pub fn silver5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_super_spitter_on_entry", &gmf.player_data_pointers.kills_super_spitter);
         // Squit: {5} +2 {7}
         // Infected Gruzzer: {0} +5 {5}
-        // not checking for aspid kills here because i think something weird is going on with their journal data stuff
+        // Aspid: {0} +2 {2}
         // In Colo 1 and Colo 3, the game uses killsSpitter when you kill a Primal Aspid,
         // but in Colo 2, the game uses killsSuperSpitter when you kill a Primal Aspid.
-        // TODO: Check for aspid kills using killsSuperSpitter.
-        //       If you leave 1 Primal Aspid alive but kill everything else in Colo 2 Wave 5,
-        //       this will wrongly split Silver5 too early, before you kill the Aspid.
         Some(self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 5)?
-             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 7)?)
+             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 7)?
+             && self.kills_decreased_by(prc, gmf, "kills_super_spitter_on_entry", &gmf.player_data_pointers.kills_super_spitter, 2)?)
     }
     pub fn silver6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         self.kills_on_entry(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper);
