@@ -2710,6 +2710,8 @@ impl PlayerDataStore {
         // Squit: {5} +2 {7}
         // Infected Gruzzer: {0} +5 {5}
         // not checking for aspid kills here because i think something weird is going on with their journal data stuff
+        // In Colo 1 and Colo 3, the game uses killsSpitter when you kill a Primal Aspid,
+        // but in Colo 2, the game uses killsSuperSpitter when you kill a Primal Aspid.
         Some(self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 5)?
              && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 7)?)
     }
