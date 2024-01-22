@@ -2570,26 +2570,30 @@ impl PlayerDataStore {
         self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
     }
 
-    /// Produces Some(true) when d of the enemy have been killed in a row,
-    /// produces Some(false) when the journal kills have reached 0 without that,
-    /// or produces None when neither has happened yet.
-    fn kills_decreased_by<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>, d: i32) -> Option<bool> {
+    fn kills_on_entry<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
         if !gmf.is_game_state_non_transition(prc) {
             self.map_i32.remove(key);
             return None;
         }
-        let kills_now = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
         match self.map_i32.get(key) {
             None => {
+                let kills_now = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
                 self.map_i32.insert(key, kills_now);
-                if kills_now == 0 {
-                    Some(false)
-                } else {
-                    None
-                }
+                Some(kills_now)
             }
+            Some(k) => Some(*k)
+        }
+    }
+
+    /// Produces Some(true) when d of the enemy have been killed in a row,
+    /// produces Some(false) when the journal kills have reached 0 without that,
+    /// or produces None when neither has happened yet.
+    fn kills_decreased_by<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>, d: i32) -> Option<bool> {
+        match self.kills_on_entry(prc, gmf, key, pointer) {
+            None => None,
             Some(kills_on_entry) => {
-                if kills_now + d <= *kills_on_entry {
+                let kills_now: i32 = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
+                if kills_now + d <= kills_on_entry {
                     Some(true)
                 } else if kills_now == 0 {
                     Some(false)
