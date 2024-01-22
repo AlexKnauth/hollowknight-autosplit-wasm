@@ -2681,6 +2681,8 @@ impl PlayerDataStore {
         self.kills_decreased_by(prc, gmf, "kills_big_fly_on_entry", &gmf.player_data_pointers.kills_big_fly, 2)
     }
     pub fn silver1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm);
+        self.kills_on_entry(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry);
         // Heavy Fool: {0} +2 {2}
         // Winged Fool: {0} +3 {3}
         Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 2)?
@@ -2708,6 +2710,7 @@ impl PlayerDataStore {
              && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 7)?)
     }
     pub fn silver6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper);
         // Heavy Fool: {2} +1 {3}
         // Belfly: {0} +3 {3}
         Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 3)?
@@ -2779,6 +2782,13 @@ impl PlayerDataStore {
     }
 
     pub fn gold1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm);
+        self.kills_on_entry(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner);
+        self.kills_on_entry(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito);
+        self.kills_on_entry(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield);
+        self.kills_on_entry(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter);
+        self.kills_on_entry(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry);
+        self.kills_on_entry(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller);
         // Heavy Fool: {0} +1 {1}
         // Sturdy Fool: {0} +1 {1}
         // Squit: {0} +2 {2}
@@ -2798,6 +2808,8 @@ impl PlayerDataStore {
     // Sturdy Fool: {1} +2 {3}
     // Aspid: {1} +1 {2}
     pub fn gold3(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble);
+        self.kills_on_entry(prc, gmf, "kills_angry_buzzer_on_entry", &gmf.player_data_pointers.kills_angry_buzzer);
         // Obble: {0} +3 {3}
         // Winged Fool: {2} +1 {3}
         // Infected Vengefly: {0} +2 {2}
@@ -2806,6 +2818,7 @@ impl PlayerDataStore {
              && self.kills_decreased_by(prc, gmf, "kills_angry_buzzer_on_entry", &gmf.player_data_pointers.kills_angry_buzzer, 2)?)
     }
     pub fn gold4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper);
         // Heavy Fool: {1} +2 {3}
         // Belflies: {0} +6 {6}
         Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 3)?
@@ -2838,6 +2851,8 @@ impl PlayerDataStore {
              && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 5)?)
     }
     pub fn gold9a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_heavy_mantis_on_entry", &gmf.player_data_pointers.kills_heavy_mantis);
+        self.kills_on_entry(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer);
         // Shielded Fool: {2} +1 {3}
         // Heavy Fool: {3} +2 {5}
         // Aspid: {5} +1 {6}
@@ -2856,6 +2871,8 @@ impl PlayerDataStore {
         self.kills_decreased_by(prc, gmf, "kills_mage_knight_on_entry", &gmf.player_data_pointers.kills_mage_knight, 1)
     }
     pub fn gold10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_electric_mage_on_entry", &gmf.player_data_pointers.kills_electric_mage);
+        self.kills_on_entry(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage);
         // Volt Twister: {0} +3 {3}
         // Soul Twister: {2} +2 {4}
         Some(self.kills_decreased_by(prc, gmf, "kills_electric_mage_on_entry", &gmf.player_data_pointers.kills_electric_mage, 3)?
@@ -2868,6 +2885,7 @@ impl PlayerDataStore {
              && self.kills_decreased_by(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage, 5)?)
     }
     pub fn gold12a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_lesser_mawlek_on_entry", &gmf.player_data_pointers.kills_lesser_mawlek);
         // Winged Fool: {5} +2 {7}
         // Sturdy Fool: {3} +1 {4}
         // Lesser Mawlek: {0} +4 {4}
