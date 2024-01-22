@@ -2581,10 +2581,10 @@ impl PlayerDataStore {
         let kills_now = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
         match self.map_i32.get(key) {
             None => {
+                self.map_i32.insert(key, kills_now);
                 if kills_now == 0 {
                     Some(false)
                 } else {
-                    self.map_i32.insert(key, kills_now);
                     None
                 }
             }
