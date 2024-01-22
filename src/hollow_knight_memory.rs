@@ -2712,6 +2712,9 @@ impl PlayerDataStore {
         // not checking for aspid kills here because i think something weird is going on with their journal data stuff
         // In Colo 1 and Colo 3, the game uses killsSpitter when you kill a Primal Aspid,
         // but in Colo 2, the game uses killsSuperSpitter when you kill a Primal Aspid.
+        // TODO: Check for aspid kills using killsSuperSpitter.
+        //       If you leave 1 Primal Aspid alive but kill everything else in Colo 2 Wave 5,
+        //       this will wrongly split Silver5 too early, before you kill the Aspid.
         Some(self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 5)?
              && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 7)?)
     }
@@ -2728,7 +2731,7 @@ impl PlayerDataStore {
     }
     pub fn silver8(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // Great Hopper: {0} +1 {1}
-        // only checking great hopper, not the 8 little hoppers
+        // only checking great hopper, not the 8 little hoppers: fine because the game doesn't let you leave one alive
         self.kills_decreased_by(prc, gmf, "kills_giant_hopper_on_entry", &gmf.player_data_pointers.kills_giant_hopper, 1)
     }
     pub fn silver9(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
@@ -2743,8 +2746,7 @@ impl PlayerDataStore {
         // Winged Fool: {4} +2 {6}
         // Heavy Fool: {3} +1 {4}
         // Squit: {7} +2 {9}
-        // not checking for Shielded Fool kills here
-        // TODO: investigate why, and test what happens when Shielded Fool is added back in here
+        // not checking for Shielded Fool kills here: fine because the game doesn't let you leave one alive
         Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 9)?
              && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 6)?
              && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 4)?)
@@ -2873,7 +2875,7 @@ impl PlayerDataStore {
     pub fn gold9b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // Soul Twister: {0} +2 {2}
         // Soul Warrior: {0} +1 {1}
-        // not checking for Soul Twister kills here
+        // not checking for Soul Twister kills here: fine because the game doesn't let you leave one alive
         self.kills_decreased_by(prc, gmf, "kills_mage_knight_on_entry", &gmf.player_data_pointers.kills_mage_knight, 1)
     }
     pub fn gold10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
@@ -2909,7 +2911,7 @@ impl PlayerDataStore {
         // Aspid: {6} +1 {7}
         // Mantis Petra: {4} +1 {5}
         // Winged Fool: {7} +1 {8}
-        // not checking for Winged Fool kills here
+        // not checking for Winged Fool kills here: fine because the game doesn't let you leave one alive
         Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 10)?
              && self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 7)?
              && self.kills_decreased_by(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer, 5)?)
