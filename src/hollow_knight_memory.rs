@@ -2806,9 +2806,10 @@ impl PlayerDataStore {
         // Aspid: {0} +1 {1}
         // Winged Fool: {0} +2 {2}
         // Baldurs: {0} +2 {2}
+        // not checking for Squit kills here: TODO: make sure the game doesn't let you leave one alive
+        // but kills_on_entry is still necessary for Squit here!
         Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 1)?
              && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 1)?
-             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 2)?
              && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 2)?
              && self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 1)?
              && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 2)?
