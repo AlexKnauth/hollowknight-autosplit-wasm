@@ -2312,6 +2312,108 @@ pub enum Split {
     /// 
     /// Splits when entering Colosseum text first appears
     Colosseum,
+    /// Colo 1 Wave 1a
+    /// 
+    /// Splits upon killing the first Sheilded Fool in wave 1
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze1a,
+    /// Colo 1 Wave 1b
+    /// 
+    /// Splits upon killing the pair of Sheilded fools in wave 1
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze1b,
+    /// Colo 1 Wave 1c
+    /// 
+    /// Splits upon killing the pair of Sharp Baldurs at the end of wave 1
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze1c,
+    /// Colo 1 Wave 2
+    /// 
+    /// Splits upon killing all five Sharp Baldurs in wave 2
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze2,
+    /// Colo 1 Wave 3a
+    /// 
+    /// Splits upon killing the first Sturdy Fool in wave 3
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze3a,
+    /// Colo 1 Wave 3b
+    /// 
+    /// Splits upon killing the pair of Sturdy Fools at the end of wave 3
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze3b,
+    /// Colo 1 Wave 4
+    /// 
+    /// Splits upon killing the pair of Primal Aspids in wave 4
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze4,
+    /// Colo 1 Wave 5
+    /// 
+    /// Splits upon killing the pair of Primal Aspids in wave 5
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze5,
+    /// Colo 1 Wave 6
+    /// 
+    /// Splits upon killing all three Sturdy Fools on the raised platforms in wave 6
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze6,
+    /// Colo 1 Wave 7
+    /// 
+    /// Splits upon killing both Primal Aspids and Sharp Baldurs in wave 7
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze7,
+    /// Colo 1 Wave 8a
+    /// 
+    /// Splits upon killing all four Vengeflies in wave 8
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze8a,
+    /// Colo 1 Wave 8b
+    /// 
+    /// Splits upon killing the Vengefly King in wave 8
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze8b,
+    /// Colo 1 Wave 9
+    /// 
+    /// Splits upon killing the Sharp Baldur after the Primal Aspid at the end of wave 9
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze9,
+    /// Colo 1 Wave 10
+    /// 
+    /// Splits upon killing the third Sharp Baldur in the low ceiling section in wave 10
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze10,
+    /// Colo 1 Wave 11a
+    /// 
+    /// Splits upon killing the first pair of Volatile Gruzzers in wave 11
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze11a,
+    /// Colo 1 Wave 11b
+    /// 
+    /// Splits upon killing the final group of Volatile Gruzzers at the end of wave 11
+    /// 
+    /// Recommended for use with a pre-set save file
+    Bronze11b,
+    /// Colo 1 End
+    /// 
+    /// Splits upon killing the pair Gruz Mothers at the end of Trial of the Warrior
+    /// 
+    /// Recommended for use with a pre-set save file
+    BronzeEnd,
     /// Zote Defeated - Colosseum (Mini Boss)
     /// 
     /// Splits when defeating Zote in the Colosseum
@@ -2332,6 +2434,108 @@ pub enum Split {
     /// 
     /// Splits on the transition into the Trial of the Conqueror
     ColosseumSilverEntry,
+    /// Colo 2 Wave 1
+    /// 
+    /// Splits upon completing wave 1
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver1,
+    /// Colo 2 Wave 2
+    /// 
+    /// Splits upon completing wave 2
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver2,
+    /// Colo 2 Wave 3
+    /// 
+    /// Splits upon completing wave 3
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver3,
+    /// Colo 2 Wave 4
+    /// 
+    /// Splits upon completing wave 4
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver4,
+    /// Colo 2 Wave 5
+    /// 
+    /// Splits upon completing wave 5
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver5,
+    /// Colo 2 Wave 6
+    /// 
+    /// Splits upon the death of the 3 Belflies after the Heavy Fool
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver6,
+    /// Colo 2 Wave 7
+    /// 
+    /// Splits on the death of the single Belfly
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver7,
+    /// Colo 2 Wave 8
+    /// 
+    /// Splits upon killing the first Great Hopper
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver8,
+    /// Colo 2 Wave 9
+    /// 
+    /// Splits upon killing the second Great Hopper
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver9,
+    /// Colo 2 Wave 10
+    /// 
+    /// Splits upon killing the Mimic
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver10,
+    /// Colo 2 Wave 11
+    /// 
+    /// Splits upon completing wave 11
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver11,
+    /// Colo 2 Wave 12
+    /// 
+    /// Splits upon completing wave 12
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver12,
+    /// Colo 2 Wave 13
+    /// 
+    /// Splits upon completing wave 13
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver13,
+    /// Colo 2 Wave 14
+    /// 
+    /// Splits upon completing wave 14
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver14,
+    /// Colo 2 Wave 15
+    /// 
+    /// Splits upon completing wave 15
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver15,
+    /// Colo 2 Wave 16
+    /// 
+    /// Splits upon completing wave 16
+    /// 
+    /// Recommended for use with a pre-set save file
+    Silver16,
+    /// Colo 2 End
+    /// 
+    /// Splits upon killing both Oblobbles at the end of Trial of the Conqueror
+    /// 
+    /// Recommended for use with a pre-set save file
+    SilverEnd,
     /// Oblobbles (Boss)
     /// 
     /// Splits when 2 Oblobbles are deafeated (ideally the first pair you encounter in Colo 2)
@@ -2352,6 +2556,138 @@ pub enum Split {
     /// 
     /// Splits on the transition into the Trial of the Warrior
     ColosseumGoldEntry,
+    /// Colo 3 Wave 1
+    /// 
+    /// Splits upon completing wave 1
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold1,
+    /// Colo 3 Wave 3
+    /// 
+    /// Splits upon completing waves 2 and 3
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold3,
+    /// Colo 3 Wave 4
+    /// 
+    /// Splits upon completing wave 4
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold4,
+    /// Colo 3 Wave 5
+    /// 
+    /// Splits upon killing the first wave of 3 Loodles
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold5,
+    /// Colo 3 Wave 6
+    /// 
+    /// Splits upon killing the set of 5 Loodles
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold6,
+    /// Colo 3 Wave 7
+    /// 
+    /// Splits upon killing the second wave of 3 Loodles
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold7,
+    /// Colo 3 Wave 8a
+    /// 
+    /// Splits upon completing the first half of wave 8, before the garpedes
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold8a,
+    /// Colo 3 Wave 8b
+    /// 
+    /// Splits upon completing wave 8
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold8,
+    /// Colo 3 Wave 9a
+    /// 
+    /// Splits upon killing the fools and mantises in wave 9
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold9a,
+    /// Colo 3 Wave 9b
+    /// 
+    /// Splits upon killing the Soul Warrior in wave 9
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold9b,
+    /// Colo 3 Wave 10
+    /// 
+    /// Splits upon completing wave 10
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold10,
+    /// Colo 3 Wave 11
+    /// 
+    /// Splits upon completing wave 11
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold11,
+    /// Colo 3 Wave 12a
+    /// 
+    /// Splits upon killing second set of 2 Lesser Mawleks and Winged Fool
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold12a,
+    /// Colo 3 Wave 12b
+    /// 
+    /// Splits upon killing the Brooding Mawlek
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold12b,
+    /// Colo 3 Wave 14a
+    /// 
+    /// Splits upon killing the Squits, Petras and Primal Aspids in wave 14
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold14a,
+    /// Colo 3 Wave 14b
+    /// 
+    /// Splits upon killing the Winged Fools and Battle Obbles in wave 14
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold14b,
+    /// Colo 3 Wave 15
+    /// 
+    /// Splits upon killing both Squits in wave 15
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold15,
+    /// Colo 3 Wave 16
+    /// 
+    /// Splits upon the death of all 14 Death Loodles in wave 16
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold16,
+    /// Colo 3 Wave 17a
+    /// 
+    /// Splits upon killing the first two phases of fools and mantises in wave 17
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold17a,
+    /// Colo 3 Wave 17b
+    /// 
+    /// Splits upon killing the fools, Volt Twister and Soul Twister in wave 17
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold17b,
+    /// Colo 3 Wave 17c
+    /// 
+    /// Splits upon killing all the regular enemies in wave 17
+    /// 
+    /// Recommended for use with a pre-set save file
+    Gold17c,
+    /// Colo 3 End
+    /// 
+    /// Splits upon killing God Tamer
+    /// 
+    /// Recommended for use with a pre-set save file
+    GoldEnd,
     /// God Tamer (Boss)
     /// 
     /// Splits when killing the God Tamer
@@ -3545,14 +3881,72 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::LittleFool => should_split(g.little_fool_met(p).is_some_and(|m| m)),
         Split::ColosseumBronzeUnlocked => should_split(g.colosseum_bronze_opened(p).is_some_and(|o| o)),
         Split::Colosseum => should_split(g.seen_colosseum_title(p).is_some_and(|s| s)),
+        Split::Bronze1a => should_split_skip(pds.bronze1a(p, g)),
+        Split::Bronze1b => should_split_skip(pds.bronze1b(p, g)),
+        Split::Bronze1c => should_split_skip(pds.bronze1c(p, g)),
+        Split::Bronze2 => should_split_skip(pds.bronze2(p, g)),
+        Split::Bronze3a => should_split_skip(pds.bronze3a(p, g)),
+        Split::Bronze3b => should_split_skip(pds.bronze3b(p, g)),
+        Split::Bronze4 => should_split_skip(pds.bronze4(p, g)),
+        Split::Bronze5 => should_split_skip(pds.bronze5(p, g)),
+        Split::Bronze6 => should_split_skip(pds.bronze6(p, g)),
+        Split::Bronze7 => should_split_skip(pds.bronze7(p, g)),
+        Split::Bronze8a => should_split_skip(pds.bronze8a(p, g)),
+        Split::Bronze8b => should_split_skip(pds.bronze8b(p, g)),
+        Split::Bronze9 => should_split_skip(pds.bronze9(p, g)),
+        Split::Bronze10 => should_split_skip(pds.bronze10(p, g)),
+        Split::Bronze11a => should_split_skip(pds.bronze11a(p, g)),
+        Split::Bronze11b => should_split_skip(pds.bronze11b(p, g)),
+        Split::BronzeEnd => should_split_skip(pds.bronze_end(p, g)),
         Split::ZoteKilled => should_split(g.killed_zote(p).is_some_and(|k| k)),
         Split::ColosseumBronze => should_split(g.colosseum_bronze_completed(p).is_some_and(|c| c)),
         Split::ColosseumBronzeExit => { pds.colosseum_bronze_completed(p, g); should_split(false) },
         Split::ColosseumSilverUnlocked => should_split(g.colosseum_silver_opened(p).is_some_and(|o| o)),
+        Split::Silver1 => should_split_skip(pds.silver1(p, g)),
+        Split::Silver2 => should_split_skip(pds.silver2(p, g)),
+        Split::Silver3 => should_split_skip(pds.silver3(p, g)),
+        Split::Silver4 => should_split_skip(pds.silver4(p, g)),
+        Split::Silver5 => should_split_skip(pds.silver5(p, g)),
+        Split::Silver6 => should_split_skip(pds.silver6(p, g)),
+        Split::Silver7 => should_split_skip(pds.silver7(p, g)),
+        Split::Silver8 => should_split_skip(pds.silver8(p, g)),
+        Split::Silver9 => should_split_skip(pds.silver9(p, g)),
+        Split::Silver10 => should_split_skip(pds.silver10(p, g)),
+        Split::Silver11 => should_split_skip(pds.silver11(p, g)),
+        Split::Silver12 => should_split_skip(pds.silver12(p, g)),
+        Split::Silver13 => should_split_skip(pds.silver13(p, g)),
+        Split::Silver14 => should_split_skip(pds.silver14(p, g)),
+        Split::Silver15 => should_split_skip(pds.silver15(p, g)),
+        Split::Silver16 => should_split_skip(pds.silver16(p, g)),
+        Split::SilverEnd => should_split_skip(pds.silver_end(p, g)),
         Split::KilledOblobbles => should_split_skip(pds.killed_oblobbles(p, g)),
         Split::ColosseumSilver => should_split(g.colosseum_silver_completed(p).is_some_and(|c| c)),
         Split::ColosseumSilverExit => { pds.colosseum_silver_completed(p, g); should_split(false) },
         Split::ColosseumGoldUnlocked => should_split(g.colosseum_gold_opened(p).is_some_and(|o| o)),
+        Split::Gold1 => should_split_skip(pds.gold1(p, g)),
+        // Wave 2 splits inconsistently since the enemies are killed by the spikes on the floor automatically
+        Split::Gold3 => should_split_skip(pds.gold3(p, g)),
+        Split::Gold4 => should_split_skip(pds.gold4(p, g)),
+        Split::Gold5 => should_split_skip(pds.gold5(p, g)),
+        Split::Gold6 => should_split_skip(pds.gold6(p, g)),
+        Split::Gold7 => should_split_skip(pds.gold7(p, g)),
+        Split::Gold8a => should_split_skip(pds.gold8a(p, g)),
+        Split::Gold8 => should_split_skip(pds.gold8(p, g)),
+        Split::Gold9a => should_split_skip(pds.gold9a(p, g)),
+        Split::Gold9b => should_split_skip(pds.gold9b(p, g)),
+        Split::Gold10 => should_split_skip(pds.gold10(p, g)),
+        Split::Gold11 => should_split_skip(pds.gold11(p, g)),
+        Split::Gold12a => should_split_skip(pds.gold12a(p, g)),
+        Split::Gold12b => should_split_skip(pds.gold12b(p, g)),
+        // Wave 13 doesn't really exist, it's just vertical Garpedes so there's nothing to Split on
+        Split::Gold14a => should_split_skip(pds.gold14a(p, g)),
+        Split::Gold14b => should_split_skip(pds.gold14b(p, g)),
+        Split::Gold15 => should_split_skip(pds.gold15(p, g)),
+        Split::Gold16 => should_split_skip(pds.gold16(p, g)),
+        Split::Gold17a => should_split_skip(pds.gold17a(p, g)),
+        Split::Gold17b => should_split_skip(pds.gold17b(p, g)),
+        Split::Gold17c => should_split_skip(pds.gold17c(p, g)),
+        Split::GoldEnd => should_split_skip(pds.gold_end(p, g)),
         Split::GodTamer => should_split(g.killed_lobster_lancer(p).is_some_and(|k| k)),
         Split::ColosseumGold => should_split(g.colosseum_gold_completed(p).is_some_and(|c| c)),
         Split::ColosseumGoldExit => { pds.colosseum_gold_completed(p, g); should_split(false) },

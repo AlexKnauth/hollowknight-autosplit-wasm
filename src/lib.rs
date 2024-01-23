@@ -168,8 +168,12 @@ async fn tick_action(
         }
     }
 
-    if trans_now && scene_store.pair().old == MENU_TITLE {
-        player_data_store.reset();
+    if trans_now {
+        if scene_store.pair().old == MENU_TITLE {
+            player_data_store.reset();
+        } else {
+            player_data_store.clean_on_entry();
+        }
     }
 }
 

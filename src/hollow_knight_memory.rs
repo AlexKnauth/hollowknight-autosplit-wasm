@@ -136,7 +136,7 @@ pub const GAME_STATE_MAIN_MENU: i32 = 1;
 pub const GAME_STATE_LOADING: i32 = 2;
 pub const GAME_STATE_ENTERING_LEVEL: i32 = 3;
 pub const GAME_STATE_PLAYING: i32 = 4;
-pub const GAME_STATE_PAUSED: i32 = 5;
+// pub const GAME_STATE_PAUSED: i32 = 5;
 pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
 pub const GAME_STATE_CUTSCENE: i32 = 7;
 
@@ -144,10 +144,11 @@ pub static NON_MENU_GAME_STATES: [i32; 2] = [
     GAME_STATE_PLAYING,
     GAME_STATE_CUTSCENE,
 ];
-pub static NON_TRANSITION_GAME_STATES: [i32; 3] = [
-    GAME_STATE_PLAYING,
-    GAME_STATE_CUTSCENE,
-    GAME_STATE_PAUSED,
+pub static NON_CONTINUOUS_GAME_STATES: [i32; 4] = [
+    GAME_STATE_MAIN_MENU,
+    GAME_STATE_LOADING,
+    GAME_STATE_ENTERING_LEVEL,
+    GAME_STATE_EXITING_LEVEL,
 ];
 
 pub const UI_STATE_PLAYING: i32 = 6;
@@ -477,14 +478,39 @@ struct PlayerDataPointers {
     little_fool_met: UnityPointer<3>,
     colosseum_bronze_opened: UnityPointer<3>,
     seen_colosseum_title: UnityPointer<3>,
+    kills_col_shield: UnityPointer<3>,
+    kills_col_roller: UnityPointer<3>,
+    kills_col_miner: UnityPointer<3>,
+    kills_spitter: UnityPointer<3>,
+    kills_super_spitter: UnityPointer<3>,
+    kills_buzzer: UnityPointer<3>,
+    kills_big_buzzer: UnityPointer<3>,
+    kills_bursting_bouncer: UnityPointer<3>,
+    kills_big_fly: UnityPointer<3>,
     killed_zote: UnityPointer<3>,
     colosseum_bronze_completed: UnityPointer<3>,
     colosseum_silver_opened: UnityPointer<3>,
+    kills_col_worm: UnityPointer<3>,
+    kills_col_flying_sentry: UnityPointer<3>,
+    kills_col_mosquito: UnityPointer<3>,
+    kills_ceiling_dropper: UnityPointer<3>,
+    kills_giant_hopper: UnityPointer<3>,
+    kills_blobble: UnityPointer<3>,
     kills_oblobble: UnityPointer<3>,
     colosseum_silver_completed: UnityPointer<3>,
     colosseum_gold_opened: UnityPointer<3>,
+    kills_angry_buzzer: UnityPointer<3>,
+    kills_col_hopper: UnityPointer<3>,
+    kills_heavy_mantis: UnityPointer<3>,
+    kills_mantis_heavy_flyer: UnityPointer<3>,
+    kills_mage_knight: UnityPointer<3>,
+    kills_electric_mage: UnityPointer<3>,
+    kills_mage: UnityPointer<3>,
+    kills_lesser_mawlek: UnityPointer<3>,
+    kills_mawlek: UnityPointer<3>,
     // God Tamer
     killed_lobster_lancer: UnityPointer<3>,
+    kills_lobster_lancer: UnityPointer<3>,
     colosseum_gold_completed: UnityPointer<3>,
     visited_fog_canyon: UnityPointer<3>,
     // Uumuu
@@ -779,13 +805,38 @@ impl PlayerDataPointers {
             little_fool_met: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "littleFoolMet"]),
             colosseum_bronze_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumBronzeOpened"]),
             seen_colosseum_title: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "seenColosseumTitle"]),
+            kills_col_shield: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColShield"]),
+            kills_col_roller: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColRoller"]),
+            kills_col_miner: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColMiner"]),
+            kills_spitter: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsSpitter"]),
+            kills_super_spitter: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsSuperSpitter"]),
+            kills_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBuzzer"]),
+            kills_big_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBigBuzzer"]),
+            kills_bursting_bouncer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBurstingBouncer"]),
+            kills_big_fly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBigFly"]),
             killed_zote: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedZote"]),
             colosseum_bronze_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumBronzeCompleted"]),
             colosseum_silver_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumSilverOpened"]),
+            kills_col_worm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColWorm"]),
+            kills_col_flying_sentry: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColFlyingSentry"]),
+            kills_col_mosquito: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColMosquito"]),
+            kills_ceiling_dropper: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsCeilingDropper"]),
+            kills_giant_hopper: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGiantHopper"]),
+            kills_blobble: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsBlobble"]),
             kills_oblobble: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsOblobble"]),
             colosseum_silver_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumSilverCompleted"]),
             colosseum_gold_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumGoldOpened"]),
+            kills_angry_buzzer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsAngryBuzzer"]),
+            kills_col_hopper: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsColHopper"]),
+            kills_heavy_mantis: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsHeavyMantis"]),
+            kills_mantis_heavy_flyer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMantisHeavyFlyer"]),
+            kills_mage_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMageKnight"]),
+            kills_electric_mage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsElectricMage"]),
+            kills_mage: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMage"]),
+            kills_lesser_mawlek: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsLesserMawlek"]),
+            kills_mawlek: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMawlek"]),
             killed_lobster_lancer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedLobsterLancer"]),
+            kills_lobster_lancer: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsLobsterLancer"]),
             colosseum_gold_completed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "colosseumGoldCompleted"]),
             visited_fog_canyon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedFogCanyon"]),
             encountered_mega_jelly: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "encounteredMegaJelly"]),
@@ -923,8 +974,8 @@ impl GameManagerFinder {
         self.get_game_state(process).is_some_and(|gs| NON_MENU_GAME_STATES.contains(&gs))
     }
 
-    fn is_game_state_non_transition(&self, process: &Process) -> bool {
-        self.get_game_state(process).is_some_and(|gs| NON_TRANSITION_GAME_STATES.contains(&gs))
+    fn is_game_state_non_continuous(&self, process: &Process) -> bool {
+        self.get_game_state(process).is_some_and(|gs| NON_CONTINUOUS_GAME_STATES.contains(&gs))
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
@@ -2269,6 +2320,10 @@ impl PlayerDataStore {
         self.map_i32.clear();
         self.map_bool.clear();
     }
+    pub fn clean_on_entry(&mut self) {
+        self.map_i32.retain(|k, _| !k.ends_with("_on_entry"));
+        self.map_bool.retain(|k, _| !k.ends_with("_on_entry"));
+    }
 
     fn get_bool<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<bool> {
         if !g.is_game_state_non_menu(p) {
@@ -2522,34 +2577,404 @@ impl PlayerDataStore {
         self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
     }
 
+    fn kills_on_entry<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
+        if gmf.is_game_state_non_continuous(prc) {
+            self.map_i32.remove(key);
+            return None;
+        }
+        match self.map_i32.get(key) {
+            None => {
+                let kills_now = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
+                self.map_i32.insert(key, kills_now);
+                Some(kills_now)
+            }
+            Some(k) => Some(*k)
+        }
+    }
+
+    /// Produces Some(true) when d of the enemy have been killed in a row,
+    /// produces Some(false) when the journal kills have reached 0 without that,
+    /// or produces None when neither has happened yet.
+    fn kills_decreased_by<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>, d: i32) -> Option<bool> {
+        match self.kills_on_entry(prc, gmf, key, pointer) {
+            None => None,
+            Some(kills_on_entry) => {
+                let kills_now: i32 = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
+                if kills_now + d <= kills_on_entry {
+                    Some(true)
+                } else if kills_now == 0 {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+        }
+    }
+
+    pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Shielded Fool: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 1)
+    }
+    pub fn bronze1b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Shielded Fool: {1} +2 {3}
+        self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 3)
+    }
+    pub fn bronze1c(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Baldur: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 2)
+    }
+    pub fn bronze2(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Baldur: {2} +5 {7}
+        self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 7)
+    }
+    pub fn bronze3a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Sturdy Fool: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 1)
+    }
+    pub fn bronze3b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Sturdy Fool: {1} +2 {3}
+        self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 3)
+    }
+    pub fn bronze4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Aspid: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 2)
+    }
+    pub fn bronze5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Aspid: {2} +2 {4}
+        self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 4)
+    }
+    pub fn bronze6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Sturdy Fool: {3} +3 {6}
+        self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 6)
+    }
+    pub fn bronze7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Aspid: {4} +2 {6}
+        // Baldur: {7} +2 {9}
+        Some(self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 9)?)
+    }
+    pub fn bronze8a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Vengefly: {0} +4 {4}
+        self.kills_decreased_by(prc, gmf, "kills_buzzer_on_entry", &gmf.player_data_pointers.kills_buzzer, 4)
+    }
+    pub fn bronze8b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Vengefly King: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_big_buzzer_on_entry", &gmf.player_data_pointers.kills_big_buzzer, 1)
+    }
+    pub fn bronze9(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Sturdy Fool: {6} +3 {9}
+        // Shielded Fool: {3} +2 {5}
+        // Aspid: {6} +2 {8}
+        // Baldur: {9} +1 {10}
+        Some(self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 8)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 10)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 9)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 5)?)
+    }
+    pub fn bronze10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Baldur: {10} +3 {13}
+        self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 13)
+    }
+    pub fn bronze11a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Infected Gruzzer: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 2)
+    }
+    pub fn bronze11b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Infected Gruzzer: {2} +3 {5}
+        self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 5)
+    }
+    pub fn bronze_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Gruz Mom: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_big_fly_on_entry", &gmf.player_data_pointers.kills_big_fly, 2)
+    }
+    pub fn silver1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm);
+        self.kills_on_entry(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry);
+        // Heavy Fool: {0} +2 {2}
+        // Winged Fool: {0} +3 {3}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 2)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 3)?)
+    }
+    pub fn silver2(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Squit: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 2)
+    }
+    pub fn silver3(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Squit: {2} +2 {4}
+        self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 4)
+    }
+    pub fn silver4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Squit: {4} +1 {5}
+        // Winged Fool: {3} +1 {4}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 4)?)
+    }
+    pub fn silver5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_super_spitter_on_entry", &gmf.player_data_pointers.kills_super_spitter);
+        // Squit: {5} +2 {7}
+        // Infected Gruzzer: {0} +5 {5}
+        // Aspid: {0} +2 {2}
+        // In Colo 1 and Colo 3, the game uses killsSpitter when you kill a Primal Aspid,
+        // but in Colo 2, the game uses killsSuperSpitter when you kill a Primal Aspid.
+        Some(self.kills_decreased_by(prc, gmf, "kills_bursting_bouncer_on_entry", &gmf.player_data_pointers.kills_bursting_bouncer, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 7)?
+             && self.kills_decreased_by(prc, gmf, "kills_super_spitter_on_entry", &gmf.player_data_pointers.kills_super_spitter, 2)?)
+    }
+    pub fn silver6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper);
+        // Heavy Fool: {2} +1 {3}
+        // Belfly: {0} +3 {3}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper, 3)?)
+    }
+    pub fn silver7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Belfly: {3} +1 {4}
+        self.kills_decreased_by(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper, 4)
+    }
+    pub fn silver8(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Great Hopper: {0} +1 {1}
+        // only checking great hopper, not the 8 little hoppers: fine because the game doesn't let you leave one alive
+        self.kills_decreased_by(prc, gmf, "kills_giant_hopper_on_entry", &gmf.player_data_pointers.kills_giant_hopper, 1)
+    }
+    pub fn silver9(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Great Hopper: {1} +1 {2}
+        self.kills_decreased_by(prc, gmf, "kills_giant_hopper_on_entry", &gmf.player_data_pointers.kills_giant_hopper, 2)
+    }
+    pub fn silver10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Mimic: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_grub_mimic_on_entry", &gmf.player_data_pointers.kills_grub_mimic, 1)
+    }
+    pub fn silver11(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Winged Fool: {4} +2 {6}
+        // Heavy Fool: {3} +1 {4}
+        // Squit: {7} +2 {9}
+        // not checking for Shielded Fool kills here: fine because the game doesn't let you leave one alive
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 9)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 4)?)
+    }
+    pub fn silver12(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Heavy Fool: {4} +1 {5}
+        // Winged Fool: {6} +1 {7}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 7)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 5)?)
+    }
+    pub fn silver13(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Winged Fool: {7} +1 {8}
+        // Squit: {9} +3 {12}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 12)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 8)?)
+    }
+    pub fn silver14(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Winged Fool: {8} +3 {11}
+        // Squit: {12} +2 {14}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 14)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 11)?)
+    }
+    pub fn silver15(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Obbles: {0} +9 {9}
+        self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 9)
+    }
+    pub fn silver16(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Obbles: {9} +4 {13}
+        self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 13)
+    }
+    pub fn silver_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Oblobbles: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_oblobble_on_entry", &gmf.player_data_pointers.kills_oblobble, 2)
+    }
+
     /// Produces Some(true) when 2 Oblobbles have been killed in a row,
     /// produces Some(false) when the journal kills have reached 0 without that,
     /// or produces None when neither has happened yet.
     pub fn killed_oblobbles(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
-        if !gmf.is_game_state_non_transition(prc) {
-            self.map_i32.remove("kills_oblobble_on_entry");
-            return None;
-        }
-        let k = gmf.player_data_pointers.kills_oblobble.deref(prc, &gmf.module, &gmf.image).ok()?;
-        match self.map_i32.get("kills_oblobble_on_entry") {
-            None => {
-                if k == 0 {
-                    Some(false)
-                } else {
-                    self.map_i32.insert("kills_oblobble_on_entry", k);
-                    None
-                }
-            }
-            Some(kills_oblobble_on_entry) => {
-                if k + 2 == *kills_oblobble_on_entry {
-                    Some(true)
-                } else if k == 0 {
-                    Some(false)
-                } else {
-                    None
-                }
-            }
-        }
+        self.kills_decreased_by(prc, gmf, "kills_oblobble_on_entry", &gmf.player_data_pointers.kills_oblobble, 2)
+    }
+
+    pub fn gold1(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm);
+        self.kills_on_entry(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner);
+        self.kills_on_entry(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito);
+        self.kills_on_entry(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield);
+        self.kills_on_entry(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter);
+        self.kills_on_entry(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry);
+        self.kills_on_entry(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller);
+        // Heavy Fool: {0} +1 {1}
+        // Sturdy Fool: {0} +1 {1}
+        // Squit: {0} +2 {2}
+        // Shielded Fool: {0} +2 {2}
+        // Aspid: {0} +1 {1}
+        // Winged Fool: {0} +2 {2}
+        // Baldurs: {0} +2 {2}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 1)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 1)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 2)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 2)?
+             && self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 1)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 2)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 2)?)
+    }
+    // Wave 2 splits inconsistently since the enemies are killed by the spikes on the floor automatically
+    // Sturdy Fool: {1} +2 {3}
+    // Aspid: {1} +1 {2}
+    pub fn gold3(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble);
+        self.kills_on_entry(prc, gmf, "kills_angry_buzzer_on_entry", &gmf.player_data_pointers.kills_angry_buzzer);
+        // Obble: {0} +3 {3}
+        // Winged Fool: {2} +1 {3}
+        // Infected Vengefly: {0} +2 {2}
+        Some(self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_angry_buzzer_on_entry", &gmf.player_data_pointers.kills_angry_buzzer, 2)?)
+    }
+    pub fn gold4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper);
+        // Heavy Fool: {1} +2 {3}
+        // Belflies: {0} +6 {6}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_ceiling_dropper_on_entry", &gmf.player_data_pointers.kills_ceiling_dropper, 6)?)
+    }
+    pub fn gold5(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Loodle: {0} +3 {3}
+        self.kills_decreased_by(prc, gmf, "kills_col_hopper_on_entry", &gmf.player_data_pointers.kills_col_hopper, 3)
+    }
+    pub fn gold6(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Loodle: {3} +5 {8}
+        self.kills_decreased_by(prc, gmf, "kills_col_hopper_on_entry", &gmf.player_data_pointers.kills_col_hopper, 8)
+    }
+    pub fn gold7(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Loodle: {8} +3 {11}
+        self.kills_decreased_by(prc, gmf, "kills_col_hopper_on_entry", &gmf.player_data_pointers.kills_col_hopper, 11)
+    }
+    pub fn gold8a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Squit: {2} +2 {4}
+        // Aspid: {2} +3 {5}
+        // Winged Fool: {3} +1 {4}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 4)?
+             && self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 4)?)
+    }
+    pub fn gold8(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Squit: {4} +2 {6}
+        // Winged Fool: {4} +1 {5}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 5)?)
+    }
+    pub fn gold9a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_heavy_mantis_on_entry", &gmf.player_data_pointers.kills_heavy_mantis);
+        self.kills_on_entry(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer);
+        // Shielded Fool: {2} +1 {3}
+        // Heavy Fool: {3} +2 {5}
+        // Aspid: {5} +1 {6}
+        // Mantis Traitor: {0} +2 {2}
+        // Mantis Petra: {0} +4 {4}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_heavy_mantis_on_entry", &gmf.player_data_pointers.kills_heavy_mantis, 2)?
+             && self.kills_decreased_by(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer, 4)?)
+    }
+    pub fn gold9b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage);
+        // Soul Twister: {0} +2 {2}
+        // Soul Warrior: {0} +1 {1}
+        // not checking for Soul Twister kills here: fine because the game doesn't let you leave one alive
+        // but kills_on_entry is still necessary for Soul Twister here!
+        self.kills_decreased_by(prc, gmf, "kills_mage_knight_on_entry", &gmf.player_data_pointers.kills_mage_knight, 1)
+    }
+    pub fn gold10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_electric_mage_on_entry", &gmf.player_data_pointers.kills_electric_mage);
+        self.kills_on_entry(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage);
+        // Volt Twister: {0} +3 {3}
+        // Soul Twister: {2} +2 {4}
+        Some(self.kills_decreased_by(prc, gmf, "kills_electric_mage_on_entry", &gmf.player_data_pointers.kills_electric_mage, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage, 4)?)
+    }
+    pub fn gold11(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Soul Warrior: {1} +1 {2}
+        // Soul Twister: {4} +1 {5}
+        Some(self.kills_decreased_by(prc, gmf, "kills_mage_knight_on_entry", &gmf.player_data_pointers.kills_mage_knight, 2)?
+             && self.kills_decreased_by(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage, 5)?)
+    }
+    pub fn gold12a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_lesser_mawlek_on_entry", &gmf.player_data_pointers.kills_lesser_mawlek);
+        // Winged Fool: {5} +2 {7}
+        // Sturdy Fool: {3} +1 {4}
+        // Lesser Mawlek: {0} +4 {4}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 7)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 4)?
+             && self.kills_decreased_by(prc, gmf, "kills_lesser_mawlek_on_entry", &gmf.player_data_pointers.kills_lesser_mawlek, 4)?)
+    }
+    pub fn gold12b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Brooding Mawlek: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_mawlek_on_entry", &gmf.player_data_pointers.kills_mawlek, 1)
+    }
+    // Wave 13 doesn't really exist, it's just vertical Garpedes so there's nothing to Split on
+    pub fn gold14a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Squit: {6} +4 {10}
+        // Aspid: {6} +1 {7}
+        // Mantis Petra: {4} +1 {5}
+        // Winged Fool: {7} +1 {8}
+        // not checking for Winged Fool kills here: fine because the game doesn't let you leave one alive
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 10)?
+             && self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 7)?
+             && self.kills_decreased_by(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer, 5)?)
+    }
+    pub fn gold14b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Winged Fool: {8} +2 {10}
+        // Obble: {3} +4 {7}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 10)?
+             && self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 7)?)
+    }
+    pub fn gold15(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Squit: {10} +2 {12}
+        self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 12)
+    }
+    pub fn gold16(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Loodle: {11} +14 {25}
+        self.kills_decreased_by(prc, gmf, "kills_col_hopper_on_entry", &gmf.player_data_pointers.kills_col_hopper, 25)
+    }
+    pub fn gold17a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Heavy Fool: {5} +1 {6}
+        // Sturdy Fool: {4} +1 {5}
+        // Shielded Fool: {3} +1 {4}
+        // Mantis Petra: {5} +1 {6}
+        // Mantis Traitor: {2} +1 {3}
+        // Winged Fool: {10} +1 {11}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 4)?
+             && self.kills_decreased_by(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_heavy_mantis_on_entry", &gmf.player_data_pointers.kills_heavy_mantis, 3)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 11)?)
+    }
+    pub fn gold17b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Heavy Fool: {6} +1 {7}
+        // Shielded Fool: {4} +1 {5}
+        // Soul Twister: {5} +1 {6}
+        // Volt Twister: {3} +1 {4}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 7)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 5)?
+             && self.kills_decreased_by(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_electric_mage_on_entry", &gmf.player_data_pointers.kills_electric_mage, 4)?)
+    }
+    pub fn gold17c(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Baldur: {2} +2 {4}
+        // Squit: {12} +2 {14}
+        // Heavy Fool: {7} +1 {8}
+        // Shielded Fool: {5} +1 {6}
+        // Sturdy Fool: {5} +1 {6}
+        // Winged Fool: {11} +1 {12}
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 4)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 14)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 8)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 6)?
+             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 12)?)
+    }
+    pub fn gold_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // God Tamer: {0} +1 {1}
+        self.kills_decreased_by(prc, gmf, "kills_lobster_lancer_on_entry", &gmf.player_data_pointers.kills_lobster_lancer, 1)
     }
 }
 
