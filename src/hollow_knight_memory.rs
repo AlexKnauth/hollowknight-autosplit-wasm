@@ -2824,8 +2824,9 @@ impl PlayerDataStore {
         // Obble: {0} +3 {3}
         // Winged Fool: {2} +1 {3}
         // Infected Vengefly: {0} +2 {2}
-        Some(self.kills_decreased_by(prc, gmf, "kills_blobble_on_entry", &gmf.player_data_pointers.kills_blobble, 3)?
-             && self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 3)?
+        // not checking for Obble kills here: TODO: make sure the game doesn't let you leave one alive
+        // but kills_on_entry is still necessary for Obble here!
+        Some(self.kills_decreased_by(prc, gmf, "kills_col_flying_sentry_on_entry", &gmf.player_data_pointers.kills_col_flying_sentry, 3)?
              && self.kills_decreased_by(prc, gmf, "kills_angry_buzzer_on_entry", &gmf.player_data_pointers.kills_angry_buzzer, 2)?)
     }
     pub fn gold4(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
