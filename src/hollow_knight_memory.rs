@@ -136,7 +136,7 @@ pub const GAME_STATE_MAIN_MENU: i32 = 1;
 pub const GAME_STATE_LOADING: i32 = 2;
 pub const GAME_STATE_ENTERING_LEVEL: i32 = 3;
 pub const GAME_STATE_PLAYING: i32 = 4;
-pub const GAME_STATE_PAUSED: i32 = 5;
+// pub const GAME_STATE_PAUSED: i32 = 5;
 pub const GAME_STATE_EXITING_LEVEL: i32 = 6;
 pub const GAME_STATE_CUTSCENE: i32 = 7;
 
@@ -144,10 +144,11 @@ pub static NON_MENU_GAME_STATES: [i32; 2] = [
     GAME_STATE_PLAYING,
     GAME_STATE_CUTSCENE,
 ];
-pub static NON_TRANSITION_GAME_STATES: [i32; 3] = [
-    GAME_STATE_PLAYING,
-    GAME_STATE_CUTSCENE,
-    GAME_STATE_PAUSED,
+pub static NON_CONTINUOUS_GAME_STATES: [i32; 4] = [
+    GAME_STATE_MAIN_MENU,
+    GAME_STATE_LOADING,
+    GAME_STATE_ENTERING_LEVEL,
+    GAME_STATE_EXITING_LEVEL,
 ];
 
 pub const UI_STATE_PLAYING: i32 = 6;
@@ -973,8 +974,8 @@ impl GameManagerFinder {
         self.get_game_state(process).is_some_and(|gs| NON_MENU_GAME_STATES.contains(&gs))
     }
 
-    fn is_game_state_non_transition(&self, process: &Process) -> bool {
-        self.get_game_state(process).is_some_and(|gs| NON_TRANSITION_GAME_STATES.contains(&gs))
+    fn is_game_state_non_continuous(&self, process: &Process) -> bool {
+        self.get_game_state(process).is_some_and(|gs| NON_CONTINUOUS_GAME_STATES.contains(&gs))
     }
 
     pub fn get_ui_state(&self, process: &Process) -> Option<i32> {
@@ -2577,7 +2578,7 @@ impl PlayerDataStore {
     }
 
     fn kills_on_entry<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
-        if !gmf.is_game_state_non_transition(prc) {
+        if gmf.is_game_state_non_continuous(prc) {
             self.map_i32.remove(key);
             return None;
         }
