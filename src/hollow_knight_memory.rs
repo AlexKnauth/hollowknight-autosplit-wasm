@@ -2875,9 +2875,11 @@ impl PlayerDataStore {
              && self.kills_decreased_by(prc, gmf, "kills_mantis_heavy_flyer_on_entry", &gmf.player_data_pointers.kills_mantis_heavy_flyer, 4)?)
     }
     pub fn gold9b(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        self.kills_on_entry(prc, gmf, "kills_mage_on_entry", &gmf.player_data_pointers.kills_mage);
         // Soul Twister: {0} +2 {2}
         // Soul Warrior: {0} +1 {1}
         // not checking for Soul Twister kills here: fine because the game doesn't let you leave one alive
+        // but kills_on_entry is still necessary for Soul Twister here!
         self.kills_decreased_by(prc, gmf, "kills_mage_knight_on_entry", &gmf.player_data_pointers.kills_mage_knight, 1)
     }
     pub fn gold10(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
