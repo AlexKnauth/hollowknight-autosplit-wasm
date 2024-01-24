@@ -1724,6 +1724,10 @@ pub enum Split {
     /// 
     /// Splits on the transition out of Salubra's Hut
     SalubraExit,
+    /// Shape of Unn Synergies / Pure Snail (Event)
+    /// 
+    /// Splits when focusing with Spore Shroom, Quick Focus, Baldur Shell, and Shape of Unn equipped
+    PureSnail,
     EnterHollowKnight,
     /// Chains Broken - Hollow Knight (Event)
     /// 
@@ -3759,6 +3763,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::FailedKnight => should_split(g.false_knight_dream_defeated(p).is_some_and(|k| k)),
         Split::FailedChampionEssence => should_split(g.false_knight_orbs_collected(p).is_some_and(|o| o)),
         Split::SalubrasBlessing => should_split(g.salubra_blessing(p).is_some_and(|b| b)),
+        // the award for the most miscellaneous split goes to this one probably
+        Split::PureSnail => should_split(pds.pure_snail(p, g)),
         Split::UnchainedHollowKnight => should_split(g.unchained_hollow_knight(p).is_some_and(|u| u)),
         Split::HollowKnightBoss => should_split(g.killed_hollow_knight(p).is_some_and(|k| k)),
         Split::RadianceBoss => should_split(g.killed_final_boss(p).is_some_and(|k| k)),
