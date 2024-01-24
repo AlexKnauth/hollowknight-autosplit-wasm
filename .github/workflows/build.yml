@@ -33,10 +33,10 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v1
         with:
+          generate_release_notes: true
+          tag_name: release-${{ github.sha }}
+          name: Release ${{ github.sha }}
           files: target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm
-          name: Latest
-          tag_name: latest
-          body: This contains the latest version of the auto splitter.
 
   clippy:
     name: Check clippy lints
