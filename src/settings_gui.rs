@@ -18,6 +18,8 @@ pub struct SettingsGui {
     import: Pair<FileSelect>,
     /// General Settings
     _general_settings: Title,
+    /// Timing Method
+    timing_method: TimingMethod,
     /// Splits
     #[heading_level = 1]
     splits: UglyList<Split>,
@@ -54,4 +56,15 @@ impl SettingsGui {
         gui.loop_load_update_store();
         gui
     }
+}
+
+#[derive(Default, Gui)]
+enum TimingMethod {
+    /// Load Removed Time
+    #[default]
+    LoadRemovedTime,
+    /// Hits / dream falls
+    HitsDreamFalls,
+    /// Hits / damage
+    HitsDamage,
 }
