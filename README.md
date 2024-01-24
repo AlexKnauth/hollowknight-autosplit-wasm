@@ -1,6 +1,6 @@
 # wasm-hollowknight-autosplit
 
-An auto splitter for Hollow knight.
+An auto splitter for Hollow Knight.
 
 ## Compilation
 
