@@ -1,4 +1,4 @@
-# wasm-hollowknight-autosplit
+# hollowknight-autosplit-wasm
 
 An auto splitter for Hollow Knight.
 
@@ -19,7 +19,7 @@ cargo release
 
 The auto splitter is then available at:
 ```
-target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm
+target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm
 ```
 
 Make sure too look into the [API documentation](https://livesplit.org/asr/asr/) for the `asr` crate.
@@ -59,7 +59,7 @@ add one using the `+` Plus button -> `Control` -> `Auto Splitting Runtime`.
 Once that's there, click `Layout Settings` -> `Auto Splitting Runtime`,
 and next to `Script Path`, click `Browse...`,
 then navigate to the compiled `wasm` file found at
-`target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+`target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm`
 of this repository.
 Then click `Import Splits` and select your splits file.
 Click `Ok` and and save the layout with `Save Layout As...`,
@@ -109,12 +109,12 @@ Modify the `config.yml` file so that it contains
 splits:
   current: <path-to-splits.lss>
 general:
-  auto-splitter: <path-to-wasm_hollowknight_autosplit.wasm>
+  auto-splitter: <path-to-hollowknight_autosplit_wasm.wasm>
 ```
 where you replace `<path-to-splits.lss>` with the path to your splits file,
-and you replace `<path-to-wasm_hollowknight_autosplit.wasm>`
+and you replace `<path-to-hollowknight_autosplit_wasm.wasm>`
 with a path to the compiled `wasm` file found at
-`target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+`target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm`
 of this repository.
 
 Note: if you want to configure it with a layout file,
@@ -154,12 +154,12 @@ In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that
 ```yaml
 general:
   splits: <path-to-splits.lss>
-  auto-splitter: <path-to-wasm_hollowknight_autosplit.wasm>
+  auto-splitter: <path-to-hollowknight_autosplit_wasm.wasm>
 ```
 where you replace `<path-to-splits.lss>` with the path to your splits file,
-and you replace `<path-to-wasm_hollowknight_autosplit.wasm>`
+and you replace `<path-to-hollowknight_autosplit_wasm.wasm>`
 with a path to the compiled `wasm` file found at
-`target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+`target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm`
 of this repository.
 
 When you run `livesplit-one-desktop`,

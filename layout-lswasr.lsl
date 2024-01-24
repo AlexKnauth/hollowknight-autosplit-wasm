@@ -184,7 +184,7 @@
       <Path>LiveSplit.AutoSplittingRuntime.dll</Path>
       <Settings>
         <Version>1.0</Version>
-        <ScriptPath>C:\Users\Owner\Documents\git\LiveSplit\wasm-hollowknight-autosplit-prototype\target\wasm32-wasi\debug\wasm_hollowknight_autosplit.wasm</ScriptPath>
+        <ScriptPath>C:\Users\Owner\Documents\git\LiveSplit\hollowknight-autosplit-wasm\target\wasm32-wasi\debug\hollowknight_autosplit_wasm.wasm</ScriptPath>
         <CustomSettings>
           <Setting id="splits" type="list">
             <Setting type="string" value="StartNewGame" />

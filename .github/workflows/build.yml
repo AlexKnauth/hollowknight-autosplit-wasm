@@ -33,7 +33,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v1
         with:
-          files: target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm
+          files: target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm
           name: Latest
           tag_name: latest
           body: This contains the latest version of the auto splitter.
