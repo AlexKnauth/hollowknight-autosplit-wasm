@@ -171,6 +171,7 @@ struct GameManagerPointers {
     hazard_respawning: UnityPointer<4>,
     hero_recoiling: UnityPointer<4>,
     hero_transition_state: UnityPointer<3>,
+    focusing: UnityPointer<4>,
 }
 
 impl GameManagerPointers {
@@ -190,6 +191,7 @@ impl GameManagerPointers {
             hazard_respawning: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
             hero_recoiling: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "recoiling"]),
             hero_transition_state: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
+            focusing: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "focusing"]),
         }
     }
 }
@@ -200,6 +202,8 @@ struct PlayerDataPointers {
     version: UnityPointer<4>,
     disable_pause: UnityPointer<3>,
     health: UnityPointer<3>,
+    max_health: UnityPointer<3>,
+    mpcharge: UnityPointer<3>,
     fireball_level: UnityPointer<3>,
     quake_level: UnityPointer<3>,
     scream_level: UnityPointer<3>,
@@ -295,8 +299,10 @@ struct PlayerDataPointers {
     got_charm_3: UnityPointer<3>,
     got_charm_4: UnityPointer<3>,
     got_charm_5: UnityPointer<3>,
+    equipped_charm_5: UnityPointer<3>,
     got_charm_6: UnityPointer<3>,
     got_charm_7: UnityPointer<3>,
+    equipped_charm_7: UnityPointer<3>,
     got_charm_8: UnityPointer<3>,
     got_charm_9: UnityPointer<3>,
     got_charm_10: UnityPointer<3>,
@@ -307,6 +313,7 @@ struct PlayerDataPointers {
     got_charm_15: UnityPointer<3>,
     got_charm_16: UnityPointer<3>,
     got_charm_17: UnityPointer<3>,
+    equipped_charm_17: UnityPointer<3>,
     got_charm_18: UnityPointer<3>,
     got_charm_19: UnityPointer<3>,
     got_charm_20: UnityPointer<3>,
@@ -315,6 +322,7 @@ struct PlayerDataPointers {
     got_charm_26: UnityPointer<3>,
     got_charm_27: UnityPointer<3>,
     got_charm_28: UnityPointer<3>,
+    equipped_charm_28: UnityPointer<3>,
     got_charm_29: UnityPointer<3>,
     got_charm_30: UnityPointer<3>,
     // Dashmaster
@@ -551,6 +559,8 @@ impl PlayerDataPointers {
             version: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "version"]),
             disable_pause: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "disablePause"]),
             health: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "health"]),
+            max_health: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealth"]),
+            mpcharge: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "MPCharge"]),
             fireball_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fireballLevel"]),
             quake_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "quakeLevel"]),
             scream_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "screamLevel"]),
@@ -635,8 +645,10 @@ impl PlayerDataPointers {
             got_charm_3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_3"]),
             got_charm_4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_4"]),
             got_charm_5: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_5"]),
+            equipped_charm_5: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "equippedCharm_5"]),
             got_charm_6: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_6"]),
             got_charm_7: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_7"]),
+            equipped_charm_7: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "equippedCharm_7"]),
             got_charm_8: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_8"]),
             got_charm_9: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_9"]),
             got_charm_10: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_10"]),
@@ -647,6 +659,7 @@ impl PlayerDataPointers {
             got_charm_15: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_15"]),
             got_charm_16: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_16"]),
             got_charm_17: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_17"]),
+            equipped_charm_17: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "equippedCharm_17"]),
             got_charm_18: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_18"]),
             got_charm_19: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_19"]),
             got_charm_20: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_20"]),
@@ -655,6 +668,7 @@ impl PlayerDataPointers {
             got_charm_26: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_26"]),
             got_charm_27: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_27"]),
             got_charm_28: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_28"]),
+            equipped_charm_28: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "equippedCharm_28"]),
             got_charm_29: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_29"]),
             got_charm_30: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_30"]),
             got_charm_31: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_31"]),
@@ -1017,6 +1031,10 @@ impl GameManagerFinder {
         self.pointers.hero_transition_state.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn focusing(&self, process: &Process) -> Option<bool> {
+        self.pointers.focusing.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn tile_map_dirty(&self, process: &Process) -> Option<bool> {
         self.pointers.tile_map_dirty.deref(process, &self.module, &self.image).ok()
     }
@@ -1062,6 +1080,14 @@ impl GameManagerFinder {
 
     pub fn get_health(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.health.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn get_max_health(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.max_health.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn get_mpcharge(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.mpcharge.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
@@ -1372,12 +1398,20 @@ impl GameManagerFinder {
         self.player_data_pointers.got_charm_5.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn equipped_charm_5(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.equipped_charm_5.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn got_charm_6(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_6.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn got_charm_7(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_7.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn equipped_charm_7(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.equipped_charm_7.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn got_charm_8(&self, process: &Process) -> Option<bool> {
@@ -1420,6 +1454,10 @@ impl GameManagerFinder {
         self.player_data_pointers.got_charm_17.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn equipped_charm_17(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.equipped_charm_17.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn got_charm_18(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_18.deref(process, &self.module, &self.image).ok()
     }
@@ -1450,6 +1488,10 @@ impl GameManagerFinder {
 
     pub fn got_charm_28(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_28.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn equipped_charm_28(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.equipped_charm_28.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn got_charm_29(&self, process: &Process) -> Option<bool> {
@@ -2460,6 +2502,57 @@ impl PlayerDataStore {
 
     pub fn cornifer_at_home(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "cornifer_at_home", &g.player_data_pointers.cornifer_at_home).unwrap_or(false)
+    }
+
+    pub fn pure_snail(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        match g.focusing(p) {
+            None => false,
+            Some(false) => {
+                if let Some(health) = g.get_health(p) {
+                    self.map_i32.insert("health_before_focus", health);
+                }
+                if let Some(mpcharge) = g.get_mpcharge(p) {
+                    self.map_i32.insert("mpcharge_before_focus", mpcharge);
+                }
+                false
+            }
+            Some(true) => {
+                if !g.equipped_charm_5(p).is_some_and(|e| e) {
+                    return false;
+                }
+                if !g.equipped_charm_7(p).is_some_and(|e| e) {
+                    return false;
+                }
+                if !g.equipped_charm_17(p).is_some_and(|e| e) {
+                    return false;
+                }
+                if !g.equipped_charm_28(p).is_some_and(|e| e) {
+                    return false;
+                }
+                let Some(&health_before_focus) = self.map_i32.get("health_before_focus") else {
+                    return false;
+                };
+                let Some(health) = g.get_health(p) else {
+                    return false;
+                };
+                if health_before_focus < health {
+                    return true;
+                }
+                let Some(max_health) = g.get_max_health(p) else {
+                    return false;
+                };
+                if health != max_health {
+                    return false;
+                }
+                let Some(&mpcharge_before_focus) = self.map_i32.get("mpcharge_before_focus") else {
+                    return false;
+                };
+                let Some(mpcharge) = g.get_mpcharge(p) else {
+                    return false;
+                };
+                mpcharge + 33 <= mpcharge_before_focus
+            }
+        }
     }
 
     pub fn got_charm_31(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
