@@ -2967,8 +2967,8 @@ impl PlayerDataStore {
         // Shielded Fool: {5} +1 {6}
         // Sturdy Fool: {5} +1 {6}
         // Winged Fool: {11} +1 {12}
+        // not checking for Squit kills here: TODO: make sure the game doesn't let you leave one alive
         Some(self.kills_decreased_by(prc, gmf, "kills_col_roller_on_entry", &gmf.player_data_pointers.kills_col_roller, 4)?
-             && self.kills_decreased_by(prc, gmf, "kills_col_mosquito_on_entry", &gmf.player_data_pointers.kills_col_mosquito, 14)?
              && self.kills_decreased_by(prc, gmf, "kills_col_worm_on_entry", &gmf.player_data_pointers.kills_col_worm, 8)?
              && self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 6)?
              && self.kills_decreased_by(prc, gmf, "kills_col_miner_on_entry", &gmf.player_data_pointers.kills_col_miner, 6)?
