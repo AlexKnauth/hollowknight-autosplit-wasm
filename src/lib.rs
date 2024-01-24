@@ -83,6 +83,14 @@ async fn main() {
 
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
+                        if i == 0 && [TimerState::NotRunning, TimerState::Ended].contains(&asr::timer::state()) {
+                            let new_timing_method = gui.get_timing_method();
+                            if new_timing_method != timing_method {
+                                timing_method = new_timing_method;
+                                load_remover = TimingMethodLoadRemover::new(timing_method);
+                                asr::print_message(&format!("timing_method: {:?}", timing_method));
+                            }
+                        }
                         let gui_splits = gui.get_splits();
                         if gui_splits != splits {
                             splits = gui_splits;
@@ -90,15 +98,6 @@ async fn main() {
                             auto_reset = splits::auto_reset_safe(&splits);
                         }
                         ticks_since_gui = 0;
-                    }
-
-                    if i == 0 && [TimerState::NotRunning, TimerState::Ended].contains(&asr::timer::state()) {
-                        let new_timing_method = gui.get_timing_method();
-                        if new_timing_method != timing_method {
-                            timing_method = new_timing_method;
-                            load_remover = TimingMethodLoadRemover::new(timing_method);
-                            asr::print_message(&format!("timing_method: {:?}", timing_method));
-                        }
                     }
 
                     next_tick().await;
