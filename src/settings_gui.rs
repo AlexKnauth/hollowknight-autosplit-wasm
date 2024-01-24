@@ -18,6 +18,8 @@ pub struct SettingsGui {
     import: Pair<FileSelect>,
     /// General Settings
     _general_settings: Title,
+    /// Timing Method
+    timing_method: TimingMethod,
     /// Splits
     #[heading_level = 1]
     splits: UglyList<Split>,
@@ -44,6 +46,9 @@ impl StoreGui for SettingsGui {
 
 
 impl SettingsGui {
+    pub fn get_timing_method(&self) -> TimingMethod {
+        self.timing_method
+    }
     pub fn get_splits(&self) -> Vec<Split> {
         self.splits.get_list().into_iter().map(|rb| rb.clone()).collect()
     }
@@ -54,4 +59,15 @@ impl SettingsGui {
         gui.loop_load_update_store();
         gui
     }
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, Gui, PartialEq)]
+pub enum TimingMethod {
+    /// Load Removed Time
+    #[default]
+    LoadRemovedTime,
+    /// Hits / dream falls
+    HitsDreamFalls,
+    /// Hits / damage
+    HitsDamage,
 }
