@@ -76,7 +76,9 @@ check the `Use Layout` checkbox, click `Browse` next to that,
 and navigate to the Layout file from before.
 Select it and click `Ok`.
 
-Finally, do not manually split, skip, or undo splits while running with this autosplitter.
+Finally, do not manually split or skip while running with this autosplitter,
+unless either it's explicitly marked as `ManualSplit` or it's the end-split.
+Don't manually split, skip, or undo splits in any other situation.
 The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with LiveSplit's state.
 
 ## Instructions for livesplit-one-druid
@@ -131,7 +133,9 @@ cargo build --release
 sudo ./target/release/livesplit-one
 ```
 
-Finally, do not manually split, skip, or undo splits while running with this autosplitter.
+Finally, do not manually split or skip while running with this autosplitter,
+unless either it's explicitly marked as `ManualSplit` or it's the end-split.
+Don't manually split, skip, or undo splits in any other situation.
 The autosplitter will not know that you did that,
 and the autosplitter's state will be out of sync with `livesplit-one-druid`'s state.
 
@@ -171,7 +175,9 @@ cargo build --release
 sudo ./target/release/livesplit-one
 ```
 
-Finally, do not manually split, skip, or undo splits while running with this autosplitter.
+Finally, do not manually split or skip while running with this autosplitter,
+unless either it's explicitly marked as `ManualSplit` or it's the end-split.
+Don't manually split, skip, or undo splits in any other situation.
 The autosplitter will not know that you did that,
 and the autosplitter's state will be out of sync with `livesplit-one-desktop`'s state.
 
