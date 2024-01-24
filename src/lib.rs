@@ -207,7 +207,7 @@ fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
             *i += 1;
         }
         SplitterAction::ManualSplit => {
-            if 0 < *i {
+            if 0 < *i && *i + 1 < n {
                 *i += 1;
             }
         }
