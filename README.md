@@ -79,6 +79,62 @@ Select it and click `Ok`.
 Finally, do not manually split, skip, or undo splits while running with this autosplitter.
 The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with LiveSplit's state.
 
+## Instructions for livesplit-one-druid
+
+Note: The main `livesplit-one-druid` repository might not
+be up-to-date enough to run this autosplitter.
+- If https://github.com/CryZe/livesplit-one-druid has a commit from December 2023 or later,
+  then that's probably going to be up-to-date enough for this.
+- However, if the most recent commit is still from April 2023,
+  then you'll need to use a more up-to-date version,
+  such as my fork https://github.com/AlexKnauth/livesplit-one-druid.
+
+You can clone my fork with
+```sh
+git clone https://github.com/AlexKnauth/livesplit-one-druid.git
+```
+
+Create a config file if it's not there already. On Mac, you can do this with
+```sh
+cd "$HOME/Library/Application Support/"
+mkdir -p org.LiveSplit.LiveSplit-One
+cd org.LiveSplit.LiveSplit-One
+touch config.yml
+```
+
+On Windows, I'm not sure, but it's like AppData/LiveSplitOne (roughly) or so.
+
+Modify the `config.yml` file so that it contains
+```yaml
+splits:
+  current: <path-to-splits.lss>
+general:
+  auto-splitter: <path-to-wasm_hollowknight_autosplit.wasm>
+```
+where you replace `<path-to-splits.lss>` with the path to your splits file,
+and you replace `<path-to-wasm_hollowknight_autosplit.wasm>`
+with a path to the compiled `wasm` file found at
+`target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+of this repository.
+
+Note: if you want to configure it with a layout file,
+I recommend you use `.ls1l` layout file, not a `.lsl` layout file.
+You can make a `.ls1l` file in the LiveSplit One Web version at https://one.livesplit.org/,
+or you can use the `layout-web.ls1l` file included in this repository as a starting point.
+
+When you run `livesplit-one-druid`,
+it needs to have permission to read memory of other processes.
+On Mac, that might require running it under `sudo`.
+For example in the `livesplit-one-druid` repository, you can run
+```sh
+cargo build --release
+sudo ./target/release/livesplit-one
+```
+
+Finally, do not manually split, skip, or undo splits while running with this autosplitter.
+The autosplitter will not know that you did that,
+and the autosplitter's state will be out of sync with `livesplit-one-druid`'s state.
+
 ## Instructions for livesplit-one-desktop
 
 Note: The main `livesplit-one-desktop` repository might not
@@ -87,16 +143,11 @@ be up-to-date enough to run this autosplitter.
   then that's probably going to be up-to-date enough for this.
 - However, if the most recent commit is still from July 2023,
   then you'll need to use a more up-to-date version,
-  such as my fork https://github.com/AlexKnauth/livesplit-one-desktop,
-  on branch `deps-3`.
-- Or if another repository, such as https://github.com/CryZe/livesplit-one-druid,
-  has a commit from December of 2023 or later, you may be able to try that out,
-  but I don't have specific instructions for how to use that yet.
+  such as my fork https://github.com/AlexKnauth/livesplit-one-desktop.
 
-Clone `livesplit-one-desktop` from https://github.com/CryZe/livesplit-one-desktop,
-or, if you want to clone my fork on branch `deps-3` directly, you can do so with
+You can clone my fork with
 ```sh
-git clone -b deps-3 https://github.com/AlexKnauth/livesplit-one-desktop.git
+git clone https://github.com/AlexKnauth/livesplit-one-desktop.git
 ```
 
 In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that it contains
@@ -105,9 +156,14 @@ general:
   splits: <path-to-splits.lss>
   auto-splitter: <path-to-wasm_hollowknight_autosplit.wasm>
 ```
-where you replace `<path-to-splits.lss>` with the path to your splits file, and you replace `<path-to-wasm_hollowknight_autosplit.wasm>` with a path to the compiled `wasm` file found at `target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm` of this repository.
+where you replace `<path-to-splits.lss>` with the path to your splits file,
+and you replace `<path-to-wasm_hollowknight_autosplit.wasm>`
+with a path to the compiled `wasm` file found at
+`target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+of this repository.
 
-When you run either `livesplit-one-desktop` or the `asr-debugger`, it needs to have permission to read memory of other processes.
+When you run `livesplit-one-desktop`,
+it needs to have permission to read memory of other processes.
 On Mac, that might require running it under `sudo`.
 For example in the `livesplit-one-desktop` repository, you can run
 ```sh
@@ -116,7 +172,8 @@ sudo ./target/release/livesplit-one
 ```
 
 Finally, do not manually split, skip, or undo splits while running with this autosplitter.
-The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with `livesplit-one-desktop`'s state.
+The autosplitter will not know that you did that,
+and the autosplitter's state will be out of sync with `livesplit-one-desktop`'s state.
 
 The keyboard shortcuts of `livesplit-one-desktop` assume the Qwerty keyboard layout,
 so you may need to press where the key would be if you were using Qwerty.
