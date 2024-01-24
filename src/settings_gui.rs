@@ -46,6 +46,9 @@ impl StoreGui for SettingsGui {
 
 
 impl SettingsGui {
+    pub fn get_timing_method(&self) -> TimingMethod {
+        self.timing_method
+    }
     pub fn get_splits(&self) -> Vec<Split> {
         self.splits.get_list().into_iter().map(|rb| rb.clone()).collect()
     }
@@ -58,8 +61,8 @@ impl SettingsGui {
     }
 }
 
-#[derive(Default, Gui)]
-enum TimingMethod {
+#[derive(Clone, Copy, Debug, Default, Eq, Gui, PartialEq)]
+pub enum TimingMethod {
     /// Load Removed Time
     #[default]
     LoadRemovedTime,

@@ -11,7 +11,7 @@ mod splits;
 use asr::{future::next_tick, Process};
 use asr::time::Duration;
 use asr::timer::TimerState;
-use settings_gui::SettingsGui;
+use settings_gui::{SettingsGui, TimingMethod};
 use hollow_knight_memory::*;
 use splits::SplitterAction;
 use ugly_widget::store::StoreGui;
@@ -44,7 +44,8 @@ async fn main() {
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = SceneStore::new();
-                let mut load_remover = LoadRemover::new();
+                let mut timing_method = gui.get_timing_method();
+                let mut load_remover = TimingMethodLoadRemover::new(timing_method);
 
                 next_tick().await;
                 let game_manager_finder = GameManagerFinder::wait_attach(&process).await;
@@ -91,6 +92,15 @@ async fn main() {
                         ticks_since_gui = 0;
                     }
 
+                    if i == 0 && [TimerState::NotRunning, TimerState::Ended].contains(&asr::timer::state()) {
+                        let new_timing_method = gui.get_timing_method();
+                        if new_timing_method != timing_method {
+                            timing_method = new_timing_method;
+                            load_remover = TimingMethodLoadRemover::new(timing_method);
+                            asr::print_message(&format!("timing_method: {:?}", timing_method));
+                        }
+                    }
+
                     next_tick().await;
                 }
             })
@@ -107,7 +117,7 @@ async fn tick_action(
     game_manager_finder: &GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
-    load_remover: &mut LoadRemover,
+    load_remover: &mut TimingMethodLoadRemover,
 ) {
     match asr::timer::state() {
         // detect manual resets
@@ -217,6 +227,35 @@ fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
     }
 }
 
+enum TimingMethodLoadRemover {
+    LoadRemover(LoadRemover),
+    HitCounter(HitCounter),
+}
+
+impl TimingMethodLoadRemover {
+    fn new(timing_method: TimingMethod) -> TimingMethodLoadRemover {
+        match timing_method {
+            TimingMethod::LoadRemovedTime => TimingMethodLoadRemover::LoadRemover(LoadRemover::new()),
+            TimingMethod::HitsDreamFalls => TimingMethodLoadRemover::HitCounter(HitCounter::new(true)),
+            TimingMethod::HitsDamage => TimingMethodLoadRemover::HitCounter(HitCounter::new(false)),
+        }
+    }
+
+    fn reset(&mut self) {
+        match self {
+            TimingMethodLoadRemover::LoadRemover(lr) => lr.reset(),
+            TimingMethodLoadRemover::HitCounter(hc) => hc.reset(),
+        }
+    }
+
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, i: usize) -> Option<()> {
+        match self {
+            TimingMethodLoadRemover::LoadRemover(lr) => lr.load_removal(process, game_manager_finder, i),
+            TimingMethodLoadRemover::HitCounter(hc) => hc.load_removal(process, game_manager_finder, i),
+        }
+    }
+}
+
 struct LoadRemover {
     look_for_teleporting: bool,
     last_game_state: i32,
@@ -310,6 +349,7 @@ impl LoadRemover {
 }
 
 struct HitCounter {
+    count_dream_falling: bool,
     hits: u64,
     last_recoiling: bool,
     last_hazard: bool,
@@ -320,9 +360,10 @@ struct HitCounter {
 
 #[allow(unused)]
 impl HitCounter {
-    fn new() -> HitCounter {
+    fn new(count_dream_falling: bool) -> HitCounter {
         asr::timer::set_variable_int("hits", 0);
         HitCounter {
+            count_dream_falling,
             hits: 0,
             last_recoiling: false,
             last_hazard: false,
@@ -391,20 +432,21 @@ impl HitCounter {
             self.last_dead_or_0 = d;
         }
 
-        // TODO: make a togglable setting for whether dream falling counts as a hit or not
-        if let Some(s) = maybe_scene_name {
-            if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && s.starts_with("Dream_") {
-                self.hits += 1;
-                asr::timer::set_game_time(Duration::seconds(self.hits as i64));
-                asr::timer::set_variable_int("hits", self.hits);
-                asr::print_message(&format!("hit: {}, from dream falling", self.hits));
-            }
-            if maybe_game_state == Some(GAME_STATE_EXITING_LEVEL) {
-                if self.last_exiting_level.is_none() {
-                    self.last_exiting_level = Some(s);
+        if self.count_dream_falling {
+            if let Some(s) = maybe_scene_name {
+                if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && s.starts_with("Dream_") {
+                    self.hits += 1;
+                    asr::timer::set_game_time(Duration::seconds(self.hits as i64));
+                    asr::timer::set_variable_int("hits", self.hits);
+                    asr::print_message(&format!("hit: {}, from dream falling", self.hits));
                 }
-            } else {
-                self.last_exiting_level = None;
+                if maybe_game_state == Some(GAME_STATE_EXITING_LEVEL) {
+                    if self.last_exiting_level.is_none() {
+                        self.last_exiting_level = Some(s);
+                    }
+                } else {
+                    self.last_exiting_level = None;
+                }
             }
         }
 
