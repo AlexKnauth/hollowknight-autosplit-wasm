@@ -1697,6 +1697,10 @@ pub enum Split {
     /// 
     /// Splits when killing Brooding Mawlek
     BroodingMawlek,
+    /// Crossroads Stag (Bench)
+    /// 
+    /// Splits when sitting on the bench at Crossroads Stag
+    BenchCrossroadsStag,
     /// Gruz Mother (Boss)
     /// 
     /// Splits when killing Gruz Mother
@@ -1774,6 +1778,10 @@ pub enum Split {
     /// 
     /// Splits on transition after Vengefly King in Greenpath killed
     VengeflyKingTrans,
+    /// Greenpath Stag (Bench)
+    /// 
+    /// Splits when sitting on the bench at Greenpath Stag
+    BenchGreenpathStag,
     /// Enter Hornet 1 (Transition)
     /// 
     /// Splits when entering Hornet boss arena transition in Greenpath
@@ -1822,6 +1830,10 @@ pub enum Split {
     /// 
     /// Splits when entering Fungal Wastes text first appears
     FungalWastes,
+    /// Queen's Station (Bench)
+    /// 
+    /// Splits when sitting on the bench in Queen's Station
+    BenchQueensStation,
     /// Elder Hu (Boss)
     /// 
     /// Splits when killing Elder Hu
@@ -1997,6 +2009,22 @@ pub enum Split {
     /// Splits when getting Soul Tyrant essence and Sanctum fakedive grub
     SoulTyrantEssenceWithSanctumGrub,
     MenuStoreroomsSimpleKey,
+    /// Storerooms (Bench)
+    /// 
+    /// Splits when sitting on the bench in City Storerooms
+    BenchStorerooms,
+    /// King's Station (Bench)
+    /// 
+    /// Splits when sitting on the bench in King's Station
+    BenchKingsStation,
+    /// Watcher's Spire (Bench)
+    /// 
+    /// Splits when sitting on the bench in Watcher's Spire
+    BenchSpire,
+    /// Watcher's Spire + Killed Great Husk Sentry (Bench)
+    /// 
+    /// Splits when sitting on the bench in Watcher's Spire after killing a Great Husk Sentry
+    BenchSpireGHS,
     EnterBlackKnight,
     /// Chandelier - Watcher Knights (Event)
     /// 
@@ -2146,6 +2174,10 @@ pub enum Split {
     /// 
     /// Splits when getting Lost Kin essence
     LostKinEssence,
+    /// Hidden Station (Bench)
+    /// 
+    /// Splits when sitting on the bench in Hidden Station
+    BenchHiddenStation,
     // endregion: Basin
     // region: White Palace
     /// White Palace Entry (Transition)
@@ -2765,6 +2797,10 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Marmu
     MarmuEssence,
+    /// Queen's Gardens Stag (Bench)
+    /// 
+    /// Splits when sitting on the bench at Queen's Gardens Stag
+    BenchQGStag,
     /// Traitor Lord (Boss)
     /// 
     /// Splits when killing Traitor Lord
@@ -3763,6 +3799,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::InfectedCrossroads => should_split(g.crossroads_infected(p).is_some_and(|i| i) && g.visited_crossroads(p).is_some_and(|v| v)),
         Split::MenderBug => should_split(g.killed_mender_bug(p).is_some_and(|k| k)),
         Split::BroodingMawlek => should_split(g.killed_mawlek(p).is_some_and(|k| k)),
+        Split::BenchCrossroadsStag => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_47")),
         Split::GruzMother => should_split(g.killed_big_fly(p).is_some_and(|f| f)),
         Split::SlyRescued => should_split(g.sly_rescued(p).is_some_and(|s| s)),
         Split::FalseKnight => should_split(g.killed_false_knight(p).is_some_and(|k| k)),
@@ -3780,6 +3817,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MossKnight => should_split(g.killed_moss_knight(p).is_some_and(|k| k)),
         Split::Zote1 => should_split(g.zote_rescued_buzzer(p).is_some_and(|z| z)),
         Split::VengeflyKingTrans => { pds.zote_rescued_buzzer(p, g); should_split(false) },
+        Split::BenchGreenpathStag => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_16_alt")),
         Split::Hornet1 => should_split(g.killed_hornet(p).is_some_and(|k| k)),
         Split::Aluba => should_split(g.killed_lazy_flyer(p).is_some_and(|k| k)),
         Split::HuntersMark => should_split(g.killed_hunter_mark(p).is_some_and(|k| k)),
@@ -3791,6 +3829,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Greenpath
         // region: Fungal
         Split::FungalWastes => should_split(g.visited_fungus(p).is_some_and(|v| v)),
+        Split::BenchQueensStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Fungus2_02")),
         Split::ElderHu => should_split(g.killed_ghost_hu(p).is_some_and(|k| k)),
         Split::ElderHuEssence => should_split(g.elder_hu_defeated(p).is_some_and(|d| d == 2)),
         Split::ElderHuTrans => { pds.killed_ghost_hu(p, g); should_split(false) },
@@ -3834,6 +3873,12 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SoulTyrantEssence => should_split(g.mage_lord_orbs_collected(p).is_some_and(|o| o)),
         Split::SoulTyrantEssenceWithSanctumGrub => should_split(g.mage_lord_orbs_collected(p).is_some_and(|o| o)
                                                                 && g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins1_32".to_string()))),
+        Split::BenchStorerooms => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_29")),
+        Split::BenchKingsStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_08")),
+        Split::BenchSpire => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_18")),
+        Split::BenchSpireGHS => should_split(g.at_bench(p).is_some_and(|b| b)
+                                             && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_18")
+                                             && g.kills_great_shield_zombie(p).is_some_and(|k| k < 10)),
         Split::WatcherChandelier => should_split(g.watcher_chandelier(p).is_some_and(|c| c)),
         Split::BlackKnight => should_split(g.killed_black_knight(p).is_some_and(|k| k)),
         Split::BlackKnightTrans => { pds.killed_black_knight(p, g); should_split(false) },
@@ -3869,6 +3914,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::BrokenVesselTrans => { pds.killed_infected_knight(p, g); should_split(false) },
         Split::LostKin => should_split(g.infected_knight_dream_defeated(p).is_some_and(|k| k)),
         Split::LostKinEssence => should_split(g.infected_knight_orbs_collected(p).is_some_and(|o| o)),
+        Split::BenchHiddenStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Abyss_22")),
         // TODO: should there be a split for the actual Abyss Area Text?
         // endregion: Basin
         // region: White Palace
@@ -3974,6 +4020,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::FlowerQuest => should_split(g.xun_flower_given(p).is_some_and(|g| g)),
         Split::Marmu => should_split(g.killed_ghost_marmu(p).is_some_and(|k| k)),
         Split::MarmuEssence => should_split(g.mum_caterpillar_defeated(p).is_some_and(|d| d == 2)),
+        Split::BenchQGStag => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_40")),
         Split::TraitorLord => should_split(g.killed_traitor_lord(p).is_some_and(|k| k)),
         Split::GivenWhiteLadyFlower => should_split(g.given_white_lady_flower(p).is_some_and(|g| g)),
         // endregion: Queen's Gardens

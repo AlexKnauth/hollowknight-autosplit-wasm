@@ -440,6 +440,7 @@ struct PlayerDataPointers {
     killed_mage_lord: UnityPointer<3>,
     mage_lord_dream_defeated: UnityPointer<3>,
     mage_lord_orbs_collected: UnityPointer<3>,
+    kills_great_shield_zombie: UnityPointer<3>,
     watcher_chandelier: UnityPointer<3>,
     killed_black_knight: UnityPointer<3>,
     collector_defeated: UnityPointer<3>,
@@ -778,6 +779,7 @@ impl PlayerDataPointers {
             killed_mage_lord: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMageLord"]),
             mage_lord_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordDreamDefeated"]),
             mage_lord_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mageLordOrbsCollected"]),
+            kills_great_shield_zombie: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGreatShieldZombie"]),
             watcher_chandelier: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "watcherChandelier"]),
             killed_black_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedBlackKnight"]),
             collector_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "collectorDefeated"]),
@@ -1919,6 +1921,10 @@ impl GameManagerFinder {
 
     pub fn mage_lord_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.mage_lord_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn kills_great_shield_zombie(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.kills_great_shield_zombie.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn watcher_chandelier(&self, process: &Process) -> Option<bool> {
