@@ -346,6 +346,7 @@ struct PlayerDataPointers {
     fragile_strength_unbreakable: UnityPointer<3>,
     // Grimmchild / Carefree Melody
     got_charm_40: UnityPointer<3>,
+    equipped_charm_40: UnityPointer<3>,
     grimm_child_level: UnityPointer<3>,
     flames_collected: UnityPointer<3>,
     got_brumms_flame: UnityPointer<3>,
@@ -692,6 +693,7 @@ impl PlayerDataPointers {
             fragile_strength_unbreakable: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "fragileStrength_unbreakable"]),
             // Grimmchild / Carefree Melody
             got_charm_40: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_40"]),
+            equipped_charm_40: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "equippedCharm_40"]),
             grimm_child_level: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "grimmChildLevel"]),
             flames_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "flamesCollected"]),
             got_brumms_flame: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotBrummsFlame"]),
@@ -1579,6 +1581,10 @@ impl GameManagerFinder {
 
     pub fn got_charm_40(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_charm_40.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn equipped_charm_40(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.equipped_charm_40.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn grimm_child_level(&self, process: &Process) -> Option<i32> {

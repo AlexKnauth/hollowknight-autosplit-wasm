@@ -3156,9 +3156,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::SlyShopExit => should_split(p.old == "Room_shop" && p.current != p.old),
         Split::LumaflyLanternTransition => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
         Split::SlyShopFinished => should_split(pds.sly_shop_finished(prc, g) && !p.current.starts_with("Room_shop")),
-        // TODO: should EnterTMG check that Grimmchild is actually equipped?
         Split::EnterTMG => should_split(p.current.starts_with("Grimm_Main_Tent")
                                         && p.current != p.old
+                                        && g.equipped_charm_40(prc).is_some_and(|e| e)
                                         && g.grimm_child_level(prc).is_some_and(|l| l == 2)
                                         && g.flames_collected(prc).is_some_and(|f| 3 <= f)),
         Split::EnterNKG => should_split(p.old.starts_with("Grimm_Main_Tent") && p.current.starts_with("Grimm_Nightmare")),
