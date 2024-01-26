@@ -5,7 +5,7 @@ use std::mem;
 use std::collections::BTreeMap;
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
-use asr::{Process, Address64};
+use asr::{Process, Address64, PointerSize};
 use asr::game_engine::unity::mono::{self, UnityPointer};
 use asr::string::ArrayWString;
 use ugly_widget::store::StoreGui;
@@ -3095,21 +3095,21 @@ pub async fn wait_attach_hollow_knight<G: StoreGui>(gui: &mut G) -> Process {
 }
 
 fn read_string_object<const N: usize>(process: &Process, a: Address64) -> Option<String> {
-    let n: u32 = process.read_pointer_path64(a, &[STRING_LEN_OFFSET]).ok()?;
+    let n: u32 = process.read_pointer_path(a, PointerSize::Bit64, &[STRING_LEN_OFFSET]).ok()?;
     if !(n < 2048) { return None; }
-    let w: ArrayWString<N> = process.read_pointer_path64(a, &[STRING_CONTENTS_OFFSET]).ok()?;
+    let w: ArrayWString<N> = process.read_pointer_path(a, PointerSize::Bit64, &[STRING_CONTENTS_OFFSET]).ok()?;
     if !(w.len() == min(n as usize, N)) { return None; }
     String::from_utf16(&w.to_vec()).ok()
 }
 
 fn read_string_list_object<const SN: usize>(process: &Process, a: Address64) -> Option<Vec<String>> {
-    let array_ptr: Address64 = process.read_pointer_path64(a, &[LIST_ARRAY_OFFSET]).ok()?;
-    let vn: u32 = process.read_pointer_path64(array_ptr, &[ARRAY_LEN_OFFSET]).ok()?;
+    let array_ptr: Address64 = process.read_pointer_path(a, PointerSize::Bit64, &[LIST_ARRAY_OFFSET]).ok()?;
+    let vn: u32 = process.read_pointer_path(array_ptr, PointerSize::Bit64, &[ARRAY_LEN_OFFSET]).ok()?;
 
     let mut v = Vec::with_capacity(vn as usize);
     for i in 0..(vn as u64) {
         let item_offset = ARRAY_CONTENTS_OFFSET + POINTER_SIZE * i;
-        let item_ptr: Address64 = process.read_pointer_path64(array_ptr, &[item_offset]).ok()?;
+        let item_ptr: Address64 = process.read_pointer_path(array_ptr, PointerSize::Bit64, &[item_offset]).ok()?;
         if item_ptr.is_null() {
             continue;
         }
