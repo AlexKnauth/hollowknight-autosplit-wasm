@@ -120,16 +120,38 @@ Modify the `config.yml` file so that it contains
 splits:
   current: <path-to-splits.lss>
 general:
+  timing-method: GameTime
   auto-splitter: <path-to-hollowknight_autosplit_wasm.wasm>
 ```
 where you replace `<path-to-splits.lss>` with the path to your splits file,
 and you replace `<path-to-hollowknight_autosplit_wasm.wasm>`
 with a path to the `hollowknight_autosplit_wasm.wasm` file.
 
-Note: if you want to configure it with a layout file,
-I recommend you use `.ls1l` layout file, not a `.lsl` layout file.
+To configure it with a layout file, modify the `config.yml` file so that it contains
+```yaml
+general:
+  layout: <path-to-layout.ls1l>
+```
+where you replace `<path-to-layout.ls1l>` with a path to your layout file.
+I recommend you use `.ls1l` layout file for `livesplit-one-druid`, not a `.lsl` layout file.
 You can make a `.ls1l` file in the LiveSplit One Web version at https://one.livesplit.org/,
 or you can use the `layout-web.ls1l` file included in this repository as a starting point.
+
+To configure hotkeys, modify the `config.yml` file so that it contains
+```yaml
+hotkeys:
+  split: Numpad1
+  reset: Numpad3
+  undo: Numpad8
+  skip: Numpad2
+  pause: null
+  undo_all_pauses: null
+  previous_comparison: Numpad4
+  next_comparison: Numpad6
+  toggle_timing_method: null
+```
+Where you can replace those hotkey values with variants from
+[`livesplit_hotkey::KeyCode`](https://docs.rs/livesplit-hotkey/latest/livesplit_hotkey/enum.KeyCode.html).
 
 When you run `livesplit-one-druid`,
 it needs to have permission to read memory of other processes.
@@ -165,11 +187,36 @@ In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that
 ```yaml
 general:
   splits: <path-to-splits.lss>
+  timing-method: GameTime
   auto-splitter: <path-to-hollowknight_autosplit_wasm.wasm>
 ```
 where you replace `<path-to-splits.lss>` with the path to your splits file,
 and you replace `<path-to-hollowknight_autosplit_wasm.wasm>`
 with a path to the `hollowknight_autosplit_wasm.wasm` file.
+
+To configure it with a layout file, modify the `config.yaml` file so that it contains
+```yaml
+general:
+  layout: <path-to-layout.lsl>
+```
+where you replace `<path-to-layout.lsl>` with a path to your layout file.
+You can use either a `.lsl` or a `.ls1l` layout with `livesplit-one-desktop`.
+
+To configure hotkeys, modify the `config.yaml` file so that it contains
+```yaml
+hotkeys:
+  split: Numpad1
+  reset: Numpad3
+  undo: Numpad8
+  skip: Numpad2
+  pause: null
+  undo_all_pauses: null
+  previous_comparison: Numpad4
+  next_comparison: Numpad6
+  toggle_timing_method: null
+```
+Where you can replace those hotkey values with variants from
+[`livesplit_hotkey::KeyCode`](https://docs.rs/livesplit-hotkey/latest/livesplit_hotkey/enum.KeyCode.html).
 
 When you run `livesplit-one-desktop`,
 it needs to have permission to read memory of other processes.
