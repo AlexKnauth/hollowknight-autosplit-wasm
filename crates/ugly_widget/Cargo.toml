@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-asr = { git = "https://github.com/AlexKnauth/asr", branch = "mono-3", features = [
+asr = { path = "../../../asr", features = [
     "alloc", # Working with allocations.
     "std",
     "derive", # Defining your own settings structs, converting endianness, and binding to .NET classes.
