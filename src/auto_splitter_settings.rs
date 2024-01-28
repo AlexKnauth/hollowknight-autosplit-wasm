@@ -1,12 +1,12 @@
 use alloc::collections::BTreeSet;
 use alloc::vec::Vec;
 use asr::future::retry;
-use std::{path::Path, fs::File, io::{self, Read}};
+use std::path::Path;
 use xmltree::{Element, XMLNode};
 
 use ugly_widget::radio_button::options_str;
 
-use crate::{legacy_xml, splits::Split};
+use crate::{file, legacy_xml, splits::Split};
 
 pub async fn wait_asr_settings_init() -> asr::settings::Map {
     let settings1 = asr::settings::Map::load();
@@ -58,7 +58,7 @@ fn asr_settings_from_splits(splits: &[Split]) -> asr::settings::Map {
 }
 
 fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNode>> {
-    let bs = file_read_all_bytes(path).ok()?;
+    let bs = file::file_read_all_bytes(path).ok()?;
     let es = Element::parse_all(bs.as_slice()).ok()?;
     let auto_splitter_settings = es.iter().find_map(xml_find_auto_splitter_settings)?;
     Some(auto_splitter_settings)
@@ -150,9 +150,3 @@ fn maybe_asr_settings_list_merge(old: Option<asr::settings::List>, new: &asr::se
 
 // --------------------------------------------------------
 
-fn file_read_all_bytes<P: AsRef<Path>>(path: P) -> io::Result<Vec<u8>> {
-    let mut f = File::open(path)?;
-    let mut buffer: Vec<u8> = Vec::new();
-    f.read_to_end(&mut buffer)?;
-    Ok(buffer)
-}
