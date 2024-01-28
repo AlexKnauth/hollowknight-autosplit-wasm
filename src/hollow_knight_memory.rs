@@ -26,19 +26,38 @@ static HOLLOW_KNIGHT_NAMES: [&str; 3] = [
 
 pub const SCENE_PATH_SIZE: usize = 64;
 
-const STRING_LEN_OFFSET_64: u64 = 0x10;
-const STRING_LEN_OFFSET_32: u64 = 0x8;
-const STRING_CONTENTS_OFFSET_64: u64 = 0x14;
-const STRING_CONTENTS_OFFSET_32: u64 = 0xc;
+struct StringListOffsets {
+    pointer_size: PointerSize,
+    string_len: u64,
+    string_contents: u64,
+    list_array: u64,
+    array_len: u64,
+    array_contents: u64,
+}
 
-const LIST_ARRAY_OFFSET_64: u64 = 0x10;
-const LIST_ARRAY_OFFSET_32: u64 = 0x8;
-const ARRAY_LEN_OFFSET_64: u64 = 0x18;
-const ARRAY_LEN_OFFSET_32: u64 = 0xc;
-const ARRAY_CONTENTS_OFFSET_64: u64 = 0x20;
-const ARRAY_CONTENTS_OFFSET_32: u64 = 0x10;
-const POINTER_SIZE_64: u64 = 8;
-const POINTER_SIZE_32: u64 = 4;
+impl StringListOffsets {
+    fn new(pointer_size: PointerSize) -> StringListOffsets {
+        match pointer_size {
+            PointerSize::Bit64 => StringListOffsets {
+                pointer_size,
+                string_len: 0x10,
+                string_contents: 0x14,
+                list_array: 0x10,
+                array_len: 0x18,
+                array_contents: 0x20,
+            },
+            PointerSize::Bit32 => StringListOffsets {
+                pointer_size,
+                string_len: 0x8,
+                string_contents: 0xc,
+                list_array: 0x8,
+                array_len: 0xc,
+                array_contents: 0x10,
+            },
+            PointerSize::Bit16 => panic!("16-bit is not supported"),
+        }
+    }
+}
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
@@ -935,7 +954,7 @@ pub struct BossSequenceDoorCompletion {
 // --------------------------------------------------------
 
 pub struct GameManagerFinder {
-    pointer_size: PointerSize,
+    string_list_offests: StringListOffsets,
     module: mono::Module,
     image: mono::Image,
     pointers: Box<GameManagerPointers>,
@@ -947,7 +966,7 @@ pub struct GameManagerFinder {
 impl GameManagerFinder {
     fn new(pointer_size: PointerSize, module: mono::Module, image: mono::Image) -> GameManagerFinder {
         GameManagerFinder {
-            pointer_size,
+            string_list_offests: StringListOffsets::new(pointer_size),
             module,
             image,
             pointers: Box::new(GameManagerPointers::new()),
@@ -959,6 +978,7 @@ impl GameManagerFinder {
 
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
         let pointer_size = process_pointer_size(process).unwrap_or(PointerSize::Bit64);
+        asr::print_message(&format!("GameManagerFinder wait_attach: pointer_size = {:?}", pointer_size));
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
         let mut found_module = false;
@@ -987,21 +1007,21 @@ impl GameManagerFinder {
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s: Address = match self.pointer_size {
+        let s: Address = match self.string_list_offests.pointer_size {
             PointerSize::Bit64 => self.pointers.scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
             PointerSize::Bit32 => self.pointers.scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
             _ => { return None; }
         };
-        read_string_object::<SCENE_PATH_SIZE>(process, self.pointer_size, s)
+        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s: Address = match self.pointer_size {
+        let s: Address = match self.string_list_offests.pointer_size {
             PointerSize::Bit64 => self.pointers.next_scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
             PointerSize::Bit32 => self.pointers.next_scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
             _ => { return None; }
         };
-        read_string_object::<SCENE_PATH_SIZE>(process, self.pointer_size, s)
+        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
 
     pub fn get_game_state(&self, process: &Process) -> Option<i32> {
@@ -1087,13 +1107,13 @@ impl GameManagerFinder {
 
     pub fn get_version_string(&self, process: &Process) -> Option<String> {
         let s: Address = [&self.pointers.version_number, &self.player_data_pointers.version].into_iter().find_map(|ptr| {
-            match self.pointer_size {
+            match self.string_list_offests.pointer_size {
                 PointerSize::Bit64 => Some(ptr.deref::<Address64>(process, &self.module, &self.image).ok()?.into()),
                 PointerSize::Bit32 => Some(ptr.deref::<Address32>(process, &self.module, &self.image).ok()?.into()),
                 _ => { return None; }
             }
         })?;
-        read_string_object::<SCENE_PATH_SIZE>(process, self.pointer_size, s)
+        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
 
     pub fn get_version_vec(&self, process: &Process) -> Option<Vec<i32>> {
@@ -1649,12 +1669,12 @@ impl GameManagerFinder {
     }
 
     pub fn scenes_grub_rescued(&self, process: &Process) -> Option<Vec<String>> {
-        let l: Address = match self.pointer_size {
+        let l: Address = match self.string_list_offests.pointer_size {
             PointerSize::Bit64 => self.player_data_pointers.scenes_grub_rescued.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
             PointerSize::Bit32 => self.player_data_pointers.scenes_grub_rescued.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
             _ => { return None; }
         };
-        read_string_list_object::<SCENE_PATH_SIZE>(process, self.pointer_size, l)
+        read_string_list_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, l)
     }
 
     pub fn grub_waterways_isma(&self, process: &Process) -> Option<bool> {
@@ -1670,12 +1690,12 @@ impl GameManagerFinder {
     }
 
     pub fn scenes_encountered_dream_plant_c(&self, process: &Process) -> Option<Vec<String>> {
-        let l: Address = match self.pointer_size {
+        let l: Address = match self.string_list_offests.pointer_size {
             PointerSize::Bit64 => self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
             PointerSize::Bit32 => self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
             _ => { return None; }
         };
-        read_string_list_object::<SCENE_PATH_SIZE>(process, self.pointer_size, l)
+        read_string_list_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, l)
     }
 
     pub fn map_dirtmouth(&self, process: &Process) -> Option<bool> {
@@ -3151,51 +3171,26 @@ fn process_pointer_size(process: &Process) -> Option<PointerSize> {
     }
 }
 
-fn read_string_object<const N: usize>(process: &Process, pointer_size: PointerSize, a: Address) -> Option<String> {
-    let n: u32 = match pointer_size {
-        PointerSize::Bit64 => process.read_pointer_path(a, pointer_size, &[STRING_LEN_OFFSET_64]).ok()?,
-        PointerSize::Bit32 => process.read_pointer_path(a, pointer_size, &[STRING_LEN_OFFSET_32]).ok()?,
-        _ => { return None; }
-    };
+fn read_string_object<const N: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<String> {
+    let n: u32 = process.read(a + offsets.string_len).ok()?;
     if !(n < 2048) { return None; }
-    let w: ArrayWString<N> = match pointer_size {
-        PointerSize::Bit64 => process.read_pointer_path(a, pointer_size, &[STRING_CONTENTS_OFFSET_64]).ok()?,
-        PointerSize::Bit32 => process.read_pointer_path(a, pointer_size, &[STRING_CONTENTS_OFFSET_32]).ok()?,
-        _ => { return None; }
-    };
+    let w: ArrayWString<N> = process.read(a + offsets.string_contents).ok()?;
     if !(w.len() == min(n as usize, N)) { return None; }
     String::from_utf16(&w.to_vec()).ok()
 }
 
-fn read_string_list_object<const SN: usize>(process: &Process, pointer_size: PointerSize, a: Address) -> Option<Vec<String>> {
-    let array_ptr: Address = match pointer_size {
-        PointerSize::Bit64 => process.read_pointer_path::<Address64>(a, pointer_size, &[LIST_ARRAY_OFFSET_64]).ok()?.into(),
-        PointerSize::Bit32 => process.read_pointer_path::<Address32>(a, pointer_size, &[LIST_ARRAY_OFFSET_32]).ok()?.into(),
-        _ => { return None; }
-    };
-    let vn: u32 = match pointer_size {
-        PointerSize::Bit64 => process.read_pointer_path(array_ptr, pointer_size, &[ARRAY_LEN_OFFSET_64]).ok()?,
-        PointerSize::Bit32 => process.read_pointer_path(array_ptr, pointer_size, &[ARRAY_LEN_OFFSET_32]).ok()?,
-        _ => { return None; }
-    };
+fn read_string_list_object<const SN: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<Vec<String>> {
+    let array_ptr: Address = process.read_pointer(a + offsets.list_array, offsets.pointer_size).ok()?;
+    let vn: u32 = process.read(array_ptr + offsets.array_len).ok()?;
 
     let mut v = Vec::with_capacity(vn as usize);
     for i in 0..(vn as u64) {
-        let item_ptr: Address = match pointer_size {
-            PointerSize::Bit64 => {
-                let item_offset = ARRAY_CONTENTS_OFFSET_64 + POINTER_SIZE_64 * i;
-                process.read_pointer_path::<Address64>(array_ptr, pointer_size, &[item_offset]).ok()?.into()
-            }
-            PointerSize::Bit32 => {
-                let item_offset = ARRAY_CONTENTS_OFFSET_32 + POINTER_SIZE_32 * i;
-                process.read_pointer_path::<Address32>(array_ptr, pointer_size, &[item_offset]).ok()?.into()
-            }
-            _ => { return None; }
-        };
+        let item_offset = offsets.array_contents + (offsets.pointer_size as u64) * i;
+        let item_ptr: Address = process.read_pointer(array_ptr + item_offset, offsets.pointer_size).ok()?;
         if item_ptr.is_null() {
             continue;
         }
-        let s = read_string_object::<SN>(process, pointer_size, item_ptr)?;
+        let s = read_string_object::<SN>(process, offsets, item_ptr)?;
         v.push(s);
     }
     Some(v)
