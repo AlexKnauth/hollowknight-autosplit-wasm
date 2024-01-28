@@ -3134,11 +3134,7 @@ fn process_pointer_size(process: &Process) -> Option<PointerSize> {
         let mono_addr = ["mono.dll", "mono-2.0-bdwgc.dll"].into_iter().find_map(|mono_name| {
             process.get_module_address(mono_name).ok()
         })?;
-        if pe::MachineType::read(process, mono_addr)? == pe::MachineType::X86_64 {
-            Some(PointerSize::Bit64)
-        } else {
-            Some(PointerSize::Bit32)
-        }
+        pe::MachineType::read(process, mono_addr)?.pointer_size()
     } else if bytes.starts_with(&[0x7F, 0x45, 0x4C, 0x46]) {
         // ELF
         None
