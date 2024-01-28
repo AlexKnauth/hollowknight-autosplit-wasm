@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use asr::file_format::pe;
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
-use asr::{Address, Address32, Address64, Process};
+use asr::{Address, Address32, Address64, PointerSize, Process};
 use asr::game_engine::unity::mono::{self, UnityPointer};
 use asr::string::ArrayWString;
 use ugly_widget::store::StoreGui;
@@ -27,18 +27,18 @@ static HOLLOW_KNIGHT_NAMES: [&str; 3] = [
 pub const SCENE_PATH_SIZE: usize = 64;
 
 const STRING_LEN_OFFSET_64: u64 = 0x10;
-const STRING_LEN_OFFSET_32: u32 = 0x8;
+const STRING_LEN_OFFSET_32: u64 = 0x8;
 const STRING_CONTENTS_OFFSET_64: u64 = 0x14;
-const STRING_CONTENTS_OFFSET_32: u32 = 0xc;
+const STRING_CONTENTS_OFFSET_32: u64 = 0xc;
 
 const LIST_ARRAY_OFFSET_64: u64 = 0x10;
-const LIST_ARRAY_OFFSET_32: u32 = 0x8;
+const LIST_ARRAY_OFFSET_32: u64 = 0x8;
 const ARRAY_LEN_OFFSET_64: u64 = 0x18;
-const ARRAY_LEN_OFFSET_32: u32 = 0xc;
+const ARRAY_LEN_OFFSET_32: u64 = 0xc;
 const ARRAY_CONTENTS_OFFSET_64: u64 = 0x20;
-const ARRAY_CONTENTS_OFFSET_32: u32 = 0x10;
+const ARRAY_CONTENTS_OFFSET_32: u64 = 0x10;
 const POINTER_SIZE_64: u64 = 8;
-const POINTER_SIZE_32: u32 = 4;
+const POINTER_SIZE_32: u64 = 4;
 
 const PRE_MENU_INTRO: &str = "Pre_Menu_Intro";
 pub const MENU_TITLE: &str = "Menu_Title";
@@ -935,7 +935,7 @@ pub struct BossSequenceDoorCompletion {
 // --------------------------------------------------------
 
 pub struct GameManagerFinder {
-    is_64_bit: bool,
+    pointer_size: PointerSize,
     module: mono::Module,
     image: mono::Image,
     pointers: Box<GameManagerPointers>,
@@ -945,9 +945,9 @@ pub struct GameManagerFinder {
 }
 
 impl GameManagerFinder {
-    fn new(is_64_bit: bool, module: mono::Module, image: mono::Image) -> GameManagerFinder {
+    fn new(pointer_size: PointerSize, module: mono::Module, image: mono::Image) -> GameManagerFinder {
         GameManagerFinder {
-            is_64_bit,
+            pointer_size,
             module,
             image,
             pointers: Box::new(GameManagerPointers::new()),
@@ -958,7 +958,7 @@ impl GameManagerFinder {
     }
 
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
-        let is_64_bit = process_is_64_bit(process).unwrap_or(true);
+        let pointer_size = process_pointer_size(process).unwrap_or(PointerSize::Bit64);
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
         let mut found_module = false;
@@ -974,7 +974,7 @@ impl GameManagerFinder {
                 if let Some(image) = module.get_default_image(process) {
                     asr::print_message("GameManagerFinder wait_attach: got module and image");
                     next_tick().await;
-                    return GameManagerFinder::new(is_64_bit, module, image);
+                    return GameManagerFinder::new(pointer_size, module, image);
                 }
                 next_tick().await;
             }
@@ -987,21 +987,21 @@ impl GameManagerFinder {
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s: Address = if self.is_64_bit {
-            self.pointers.scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into()
-        } else {
-            self.pointers.scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into()
+        let s: Address = match self.pointer_size {
+            PointerSize::Bit64 => self.pointers.scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
+            PointerSize::Bit32 => self.pointers.scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
+            _ => { return None; }
         };
-        read_string_object::<SCENE_PATH_SIZE>(process, self.is_64_bit, s)
+        read_string_object::<SCENE_PATH_SIZE>(process, self.pointer_size, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s: Address = if self.is_64_bit {
-            self.pointers.next_scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into()
-        } else {
-            self.pointers.next_scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into()
+        let s: Address = match self.pointer_size {
+            PointerSize::Bit64 => self.pointers.next_scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
+            PointerSize::Bit32 => self.pointers.next_scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
+            _ => { return None; }
         };
-        read_string_object::<SCENE_PATH_SIZE>(process, self.is_64_bit, s)
+        read_string_object::<SCENE_PATH_SIZE>(process, self.pointer_size, s)
     }
 
     pub fn get_game_state(&self, process: &Process) -> Option<i32> {
@@ -1087,13 +1087,13 @@ impl GameManagerFinder {
 
     pub fn get_version_string(&self, process: &Process) -> Option<String> {
         let s: Address = [&self.pointers.version_number, &self.player_data_pointers.version].into_iter().find_map(|ptr| {
-            if self.is_64_bit {
-                Some(ptr.deref::<Address64>(process, &self.module, &self.image).ok()?.into())
-            } else {
-                Some(ptr.deref::<Address32>(process, &self.module, &self.image).ok()?.into())
+            match self.pointer_size {
+                PointerSize::Bit64 => Some(ptr.deref::<Address64>(process, &self.module, &self.image).ok()?.into()),
+                PointerSize::Bit32 => Some(ptr.deref::<Address32>(process, &self.module, &self.image).ok()?.into()),
+                _ => { return None; }
             }
         })?;
-        read_string_object::<SCENE_PATH_SIZE>(process, self.is_64_bit, s)
+        read_string_object::<SCENE_PATH_SIZE>(process, self.pointer_size, s)
     }
 
     pub fn get_version_vec(&self, process: &Process) -> Option<Vec<i32>> {
@@ -1649,12 +1649,12 @@ impl GameManagerFinder {
     }
 
     pub fn scenes_grub_rescued(&self, process: &Process) -> Option<Vec<String>> {
-        let l: Address = if self.is_64_bit {
-            self.player_data_pointers.scenes_grub_rescued.deref::<Address64>(process, &self.module, &self.image).ok()?.into()
-        } else {
-            self.player_data_pointers.scenes_grub_rescued.deref::<Address32>(process, &self.module, &self.image).ok()?.into()
+        let l: Address = match self.pointer_size {
+            PointerSize::Bit64 => self.player_data_pointers.scenes_grub_rescued.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
+            PointerSize::Bit32 => self.player_data_pointers.scenes_grub_rescued.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
+            _ => { return None; }
         };
-        read_string_list_object::<SCENE_PATH_SIZE>(process, self.is_64_bit, l)
+        read_string_list_object::<SCENE_PATH_SIZE>(process, self.pointer_size, l)
     }
 
     pub fn grub_waterways_isma(&self, process: &Process) -> Option<bool> {
@@ -1670,12 +1670,12 @@ impl GameManagerFinder {
     }
 
     pub fn scenes_encountered_dream_plant_c(&self, process: &Process) -> Option<Vec<String>> {
-        let l: Address = if self.is_64_bit {
-            self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address64>(process, &self.module, &self.image).ok()?.into()
-        } else {
-            self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address32>(process, &self.module, &self.image).ok()?.into()
+        let l: Address = match self.pointer_size {
+            PointerSize::Bit64 => self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
+            PointerSize::Bit32 => self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
+            _ => { return None; }
         };
-        read_string_list_object::<SCENE_PATH_SIZE>(process, self.is_64_bit, l)
+        read_string_list_object::<SCENE_PATH_SIZE>(process, self.pointer_size, l)
     }
 
     pub fn map_dirtmouth(&self, process: &Process) -> Option<bool> {
@@ -3126,7 +3126,7 @@ pub async fn wait_attach_hollow_knight<G: StoreGui>(gui: &mut G) -> Process {
     }).await
 }
 
-fn process_is_64_bit(process: &Process) -> Option<bool> {
+fn process_pointer_size(process: &Process) -> Option<PointerSize> {
     let path = process.get_path().ok()?;
     let bytes = file::file_read_all_bytes(path).ok()?;
     if bytes.starts_with(&[0x4D, 0x5A]) {
@@ -3134,64 +3134,72 @@ fn process_is_64_bit(process: &Process) -> Option<bool> {
         let mono_addr = ["mono.dll", "mono-2.0-bdwgc.dll"].into_iter().find_map(|mono_name| {
             process.get_module_address(mono_name).ok()
         })?;
-        Some(pe::MachineType::read(process, mono_addr)? == pe::MachineType::X86_64)
+        if pe::MachineType::read(process, mono_addr)? == pe::MachineType::X86_64 {
+            Some(PointerSize::Bit64)
+        } else {
+            Some(PointerSize::Bit32)
+        }
     } else if bytes.starts_with(&[0x7F, 0x45, 0x4C, 0x46]) {
         // ELF
         None
     } else if bytes.starts_with(&[0xFE, 0xED, 0xFA, 0xCE])
             | bytes.starts_with(&[0xCE, 0xFA, 0xED, 0xFE]) {
         // MachO 32-bit
-        Some(false)
+        Some(PointerSize::Bit32)
     } else if bytes.starts_with(&[0xFE, 0xED, 0xFA, 0xCF])
             | bytes.starts_with(&[0xCF, 0xFA, 0xED, 0xFE]) {
         // MachO 64-bit
-        Some(true)
+        Some(PointerSize::Bit64)
     } else {
         None
     }
 }
 
-fn read_string_object<const N: usize>(process: &Process, is_64_bit: bool, a: Address) -> Option<String> {
-    let n: u32 = if is_64_bit {
-        process.read_pointer_path64(a, &[STRING_LEN_OFFSET_64]).ok()?
-    } else {
-        process.read_pointer_path32(a, &[STRING_LEN_OFFSET_32]).ok()?
+fn read_string_object<const N: usize>(process: &Process, pointer_size: PointerSize, a: Address) -> Option<String> {
+    let n: u32 = match pointer_size {
+        PointerSize::Bit64 => process.read_pointer_path(a, pointer_size, &[STRING_LEN_OFFSET_64]).ok()?,
+        PointerSize::Bit32 => process.read_pointer_path(a, pointer_size, &[STRING_LEN_OFFSET_32]).ok()?,
+        _ => { return None; }
     };
     if !(n < 2048) { return None; }
-    let w: ArrayWString<N> = if is_64_bit {
-        process.read_pointer_path64(a, &[STRING_CONTENTS_OFFSET_64]).ok()?
-    } else {
-        process.read_pointer_path32(a, &[STRING_CONTENTS_OFFSET_32]).ok()?
+    let w: ArrayWString<N> = match pointer_size {
+        PointerSize::Bit64 => process.read_pointer_path(a, pointer_size, &[STRING_CONTENTS_OFFSET_64]).ok()?,
+        PointerSize::Bit32 => process.read_pointer_path(a, pointer_size, &[STRING_CONTENTS_OFFSET_32]).ok()?,
+        _ => { return None; }
     };
     if !(w.len() == min(n as usize, N)) { return None; }
     String::from_utf16(&w.to_vec()).ok()
 }
 
-fn read_string_list_object<const SN: usize>(process: &Process, is_64_bit: bool, a: Address) -> Option<Vec<String>> {
-    let array_ptr: Address = if is_64_bit {
-        process.read_pointer_path64::<Address64>(a, &[LIST_ARRAY_OFFSET_64]).ok()?.into()
-    } else {
-        process.read_pointer_path32::<Address32>(a, &[LIST_ARRAY_OFFSET_32]).ok()?.into()
+fn read_string_list_object<const SN: usize>(process: &Process, pointer_size: PointerSize, a: Address) -> Option<Vec<String>> {
+    let array_ptr: Address = match pointer_size {
+        PointerSize::Bit64 => process.read_pointer_path::<Address64>(a, pointer_size, &[LIST_ARRAY_OFFSET_64]).ok()?.into(),
+        PointerSize::Bit32 => process.read_pointer_path::<Address32>(a, pointer_size, &[LIST_ARRAY_OFFSET_32]).ok()?.into(),
+        _ => { return None; }
     };
-    let vn: u32 = if is_64_bit {
-        process.read_pointer_path64(array_ptr, &[ARRAY_LEN_OFFSET_64]).ok()?
-    } else {
-        process.read_pointer_path32(array_ptr, &[ARRAY_LEN_OFFSET_32]).ok()?
+    let vn: u32 = match pointer_size {
+        PointerSize::Bit64 => process.read_pointer_path(array_ptr, pointer_size, &[ARRAY_LEN_OFFSET_64]).ok()?,
+        PointerSize::Bit32 => process.read_pointer_path(array_ptr, pointer_size, &[ARRAY_LEN_OFFSET_32]).ok()?,
+        _ => { return None; }
     };
 
     let mut v = Vec::with_capacity(vn as usize);
-    for i in 0..vn {
-        let item_ptr: Address = if is_64_bit {
-            let item_offset = ARRAY_CONTENTS_OFFSET_64 + POINTER_SIZE_64 * (i as u64);
-            process.read_pointer_path64::<Address64>(array_ptr, &[item_offset]).ok()?.into()
-        } else {
-            let item_offset: u32 = ARRAY_CONTENTS_OFFSET_32 + POINTER_SIZE_32 * i;
-            process.read_pointer_path32::<Address32>(array_ptr, &[item_offset]).ok()?.into()
+    for i in 0..(vn as u64) {
+        let item_ptr: Address = match pointer_size {
+            PointerSize::Bit64 => {
+                let item_offset = ARRAY_CONTENTS_OFFSET_64 + POINTER_SIZE_64 * i;
+                process.read_pointer_path::<Address64>(array_ptr, pointer_size, &[item_offset]).ok()?.into()
+            }
+            PointerSize::Bit32 => {
+                let item_offset = ARRAY_CONTENTS_OFFSET_32 + POINTER_SIZE_32 * i;
+                process.read_pointer_path::<Address32>(array_ptr, pointer_size, &[item_offset]).ok()?.into()
+            }
+            _ => { return None; }
         };
         if item_ptr.is_null() {
             continue;
         }
-        let s = read_string_object::<SN>(process, is_64_bit, item_ptr)?;
+        let s = read_string_object::<SN>(process, pointer_size, item_ptr)?;
         v.push(s);
     }
     Some(v)
