@@ -978,6 +978,7 @@ impl GameManagerFinder {
 
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
         let pointer_size = process_pointer_size(process).unwrap_or(PointerSize::Bit64);
+        asr::print_message(&format!("GameManagerFinder wait_attach: pointer_size = {:?}", pointer_size));
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
         let mut found_module = false;
