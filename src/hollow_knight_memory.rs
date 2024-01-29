@@ -3,7 +3,7 @@ use core::cell::OnceCell;
 use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
-use asr::file_format::pe;
+use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
 use asr::{Address, Address32, Address64, PointerSize, Process};
@@ -18,8 +18,9 @@ use crate::file;
 
 // --------------------------------------------------------
 
-static HOLLOW_KNIGHT_NAMES: [&str; 3] = [
+static HOLLOW_KNIGHT_NAMES: [&str; 4] = [
     "hollow_knight.exe", // Windows
+    "hollow_knight.x86_64", // Linux
     "Hollow Knight", // Mac
     "hollow_knight", // Mac
 ];
@@ -3157,7 +3158,10 @@ fn process_pointer_size(process: &Process) -> Option<PointerSize> {
         pe::MachineType::read(process, mono_addr)?.pointer_size()
     } else if bytes.starts_with(&[0x7F, 0x45, 0x4C, 0x46]) {
         // ELF
-        None
+        let mono_range = ["libmono.so"].into_iter().find_map(|mono_name| {
+            process.get_module_range(mono_name).ok()
+        })?;
+        elf::pointer_size(process, elf::scan_elf_page(process, mono_range)?)
     } else if bytes.starts_with(&[0xFE, 0xED, 0xFA, 0xCE])
             | bytes.starts_with(&[0xCE, 0xFA, 0xED, 0xFE]) {
         // MachO 32-bit
