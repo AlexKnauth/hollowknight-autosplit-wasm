@@ -6,9 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-asr = { git = "https://github.com/AlexKnauth/asr", branch = "cattrs-mono-3-linux", features = [
+asr = { git = "https://github.com/AlexKnauth/asr", branch = "mono-4", features = [
     "alloc", # Working with allocations.
-    "std",
     "derive", # Defining your own settings structs, converting endianness, and binding to .NET classes.
     # "flags", # Working with bit flags.
     # "float-vars", # Setting floating point variables.

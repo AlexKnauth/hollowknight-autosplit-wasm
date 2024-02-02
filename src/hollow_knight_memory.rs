@@ -3158,10 +3158,10 @@ fn process_pointer_size(process: &Process) -> Option<PointerSize> {
         pe::MachineType::read(process, mono_addr)?.pointer_size()
     } else if bytes.starts_with(&[0x7F, 0x45, 0x4C, 0x46]) {
         // ELF
-        let mono_range = ["libmono.so"].into_iter().find_map(|mono_name| {
-            process.get_module_range(mono_name).ok()
+        let mono_addr = ["libmono.so", "libmonobdwgc-2.0.so"].into_iter().find_map(|mono_name| {
+            process.get_module_address(mono_name).ok()
         })?;
-        elf::pointer_size(process, elf::scan_elf_page(process, mono_range)?)
+        elf::pointer_size(process, mono_addr)
     } else if bytes.starts_with(&[0xFE, 0xED, 0xFA, 0xCE])
             | bytes.starts_with(&[0xCE, 0xFA, 0xED, 0xFE]) {
         // MachO 32-bit
