@@ -105,15 +105,22 @@ You can clone my fork with
 git clone https://github.com/AlexKnauth/livesplit-one-druid.git
 ```
 
-Create a config file if it's not there already. On Mac, you can do this with
-```sh
-cd "$HOME/Library/Application Support/"
-mkdir -p org.LiveSplit.LiveSplit-One
-cd org.LiveSplit.LiveSplit-One
-touch config.yml
-```
+Create a config file if it's not there already.
 
-On Windows, I'm not sure, but it's like AppData/LiveSplitOne (roughly) or so.
+On Windows, the config file should be at
+```
+C:\Users\<name>\AppData\Local\LiveSplit\LiveSplit One\data\config.yml
+```
+When running `livesplit-one-druid` for the first time,
+you should be able to get it to initialize the config file itself,
+possibly after changing one of the settings, opening a file, etc.
+
+On Mac, the config file should be at
+```
+/Users/<name>/Library/Application Support/org.LiveSplit.LiveSplit-One/config.yml
+```
+In my experience, you have to create a file here yourself,
+running `livesplit-one-druid` doesn't initialize it on Mac.
 
 Modify the `config.yml` file so that it contains
 ```yaml
