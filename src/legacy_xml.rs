@@ -6,18 +6,18 @@ use crate::splits::Split;
 
 pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
     let splits = splits_from_xml_nodes(xml_nodes)?;
-    Some(asr_settings_from_splits(&splits))
-}
-
-fn asr_settings_from_splits(splits: &[Split]) -> asr::settings::Map {
     // new empty map, which will only include the new splits
     let settings_map = asr::settings::Map::new();
+    settings_map.insert("splits", asr_list_from_splits(&splits));
+    Some(settings_map)
+}
+
+fn asr_list_from_splits(splits: &[Split]) -> asr::settings::List {
     let l = asr::settings::List::new();
     for split in splits.iter() {
         l.push(options_str(split));
     }
-    settings_map.insert("splits", l);
-    settings_map
+    l
 }
 
 #[derive(Clone, Debug)]
