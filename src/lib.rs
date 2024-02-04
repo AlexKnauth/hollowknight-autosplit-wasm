@@ -375,7 +375,7 @@ impl HitCounter {
 
     fn reset(&mut self) {
         self.hits = 0;
-        asr::timer::set_game_time(Duration::seconds(0));
+        asr::timer::set_game_time(duration_sec_nano(0));
         asr::timer::set_variable_int("hits", 0);
     }
 
@@ -403,7 +403,7 @@ impl HitCounter {
         if let Some(r) = maybe_recoiling {
             if !self.last_recoiling && r {
                 self.hits += 1;
-                asr::timer::set_game_time(Duration::seconds(self.hits));
+                asr::timer::set_game_time(duration_sec_nano(self.hits));
                 asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from recoiling", self.hits));
             }
@@ -413,7 +413,7 @@ impl HitCounter {
         if let Some(h) = maybe_hazard {
             if !self.last_hazard && h {
                 self.hits += 1;
-                asr::timer::set_game_time(Duration::seconds(self.hits));
+                asr::timer::set_game_time(duration_sec_nano(self.hits));
                 asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from hazard", self.hits));
             }
@@ -425,7 +425,7 @@ impl HitCounter {
             let d = maybe_dead == Some(true) || (maybe_health == Some(0) && maybe_game_state == Some(GAME_STATE_PLAYING));
             if !self.last_dead_or_0 && d {
                 self.hits += 1;
-                asr::timer::set_game_time(Duration::seconds(self.hits));
+                asr::timer::set_game_time(duration_sec_nano(self.hits));
                 asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
@@ -436,7 +436,7 @@ impl HitCounter {
             if let Some(s) = maybe_scene_name {
                 if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && s.starts_with("Dream_") {
                     self.hits += 1;
-                    asr::timer::set_game_time(Duration::seconds(self.hits));
+                    asr::timer::set_game_time(duration_sec_nano(self.hits));
                     asr::timer::set_variable_int("hits", self.hits);
                     asr::print_message(&format!("hit: {}, from dream falling", self.hits));
                 }
@@ -452,4 +452,8 @@ impl HitCounter {
 
         Some(())
     }
+}
+
+fn duration_sec_nano(s: i64) -> Duration {
+    Duration::new(s, s.clamp(-499999, 499999) as i32)
 }
