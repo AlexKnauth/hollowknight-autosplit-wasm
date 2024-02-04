@@ -1,9 +1,11 @@
 use asr::{settings::gui::{FileSelect, Gui, Title, Widget}, watcher::Pair};
 
+use serde::{Deserialize, Serialize};
 use ugly_widget::{
-    ugly_list::{UglyList, UglyListArgs},
-    store::{StoreWidget, StoreGui},
     args::SetHeadingLevel,
+    radio_button::RadioButtonOptions,
+    store::{StoreWidget, StoreGui},
+    ugly_list::{UglyList, UglyListArgs}
 };
 
 use crate::{
@@ -61,7 +63,7 @@ impl SettingsGui {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Eq, Gui, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
 pub enum TimingMethod {
     /// Load Removed Time
     #[default]
