@@ -1,7 +1,29 @@
 
+use ugly_widget::radio_button::options_str;
 use xmltree::XMLNode;
 
-use crate::splits::Split;
+use crate::{settings_gui::TimingMethod, splits::Split};
+
+pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
+    let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
+    let splits = splits_from_settings(&xml_settings)?;
+    // new empty map, which will only include the new splits
+    let settings_map = asr::settings::Map::new();
+    settings_map.insert("splits", asr_list_from_splits(&splits));
+    if let Some(timing_method) = xml_settings.dict_get("TimingMethod") {
+        let tm = timing_method_from_settings_str(timing_method).unwrap_or_default();
+        settings_map.insert("timing_method", options_str(&tm));
+    }
+    Some(settings_map)
+}
+
+fn asr_list_from_splits(splits: &[Split]) -> asr::settings::List {
+    let l = asr::settings::List::new();
+    for split in splits.iter() {
+        l.push(options_str(split));
+    }
+    l
+}
 
 #[derive(Clone, Debug)]
 struct XMLSettings {
@@ -79,11 +101,6 @@ impl XMLSettings {
     }
 }
 
-pub fn splits_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<Vec<Split>> {
-    let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
-    splits_from_settings(&xml_settings)
-}
-
 fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
@@ -118,5 +135,9 @@ fn split_from_settings_split(s: XMLSettings) -> Option<Split> {
 }
 
 fn split_from_settings_str(s: XMLSettings) -> Option<Split> {
+    serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
+}
+
+fn timing_method_from_settings_str(s: XMLSettings) -> Option<TimingMethod> {
     serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
 }
