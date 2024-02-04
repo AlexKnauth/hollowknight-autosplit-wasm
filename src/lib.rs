@@ -455,5 +455,5 @@ impl HitCounter {
 }
 
 fn duration_sec_nano(s: i64) -> Duration {
-    Duration::new(s, s.clamp(-499999, 499999) as i32)
+    Duration::new(s, 0)
 }
