@@ -5,7 +5,8 @@ use xmltree::XMLNode;
 use crate::splits::Split;
 
 pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
-    let splits = splits_from_xml_nodes(xml_nodes)?;
+    let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
+    let splits = splits_from_settings(&xml_settings)?;
     // new empty map, which will only include the new splits
     let settings_map = asr::settings::Map::new();
     settings_map.insert("splits", asr_list_from_splits(&splits));
@@ -94,11 +95,6 @@ impl XMLSettings {
         }
         None
     }
-}
-
-pub fn splits_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<Vec<Split>> {
-    let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
-    splits_from_settings(&xml_settings)
 }
 
 fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
