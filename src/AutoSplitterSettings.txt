@@ -16,3 +16,4 @@
       <Split>MaskFragment3</Split>
       <Split>Mask1</Split>
     </Splits>
+    <TimingMethod>LoadRemovedTime</TimingMethod>
