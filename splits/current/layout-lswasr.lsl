@@ -231,7 +231,7 @@
           <Setting id="splits_11_action" type="string" value="None" />
           <Setting id="splits_12_action" type="string" value="None" />
           <Setting id="splits_13_action" type="string" value="None" />
-          <Setting id="import" type="string" value="/mnt/c/Users/Owner/Documents/git/LiveSplit/hollowknight-autosplit-wasm/splits-control.lss" />
+          <Setting id="import" type="string" value="/mnt/c/Users/Owner/Documents/git/LiveSplit/hollowknight-autosplit-wasm/splits/current/splits-control.lss" />
         </CustomSettings>
       </Settings>
     </Component>
