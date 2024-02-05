@@ -158,8 +158,8 @@ async fn tick_action(
             }
             SplitterAction::Reset => {
                 *i = 0;
-                load_remover.reset();
                 splitter_action(SplitterAction::Reset, i, n);
+                load_remover.reset();
                 break;
             }
             SplitterAction::ManualSplit => {
@@ -172,8 +172,8 @@ async fn tick_action(
                     match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
                         SplitterAction::Split | SplitterAction::Reset => {
                             *i = 0;
-                            load_remover.reset();
                             splitter_action(SplitterAction::Split, i, n);
+                            load_remover.reset();
                         }
                         _ => (),
                     }
@@ -375,6 +375,7 @@ impl HitCounter {
 
     fn reset(&mut self) {
         self.hits = 0;
+        asr::timer::pause_game_time();
         asr::timer::set_game_time(Duration::seconds(0));
         asr::timer::set_variable_int("hits", 0);
     }
