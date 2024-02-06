@@ -2769,6 +2769,11 @@ impl PlayerDataStore {
         }
     }
 
+    pub fn aspid_hunter_arena(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Aspid: {0} +3 {3}
+        self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 3)
+    }
+
     pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // Shielded Fool: {0} +1 {1}
         self.kills_decreased_by(prc, gmf, "kills_col_shield_on_entry", &gmf.player_data_pointers.kills_col_shield, 1)
