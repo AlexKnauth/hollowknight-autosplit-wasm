@@ -162,7 +162,6 @@ async fn tick_action(
                 // no break, allow other actions after a skip
             }
             SplitterAction::Reset => {
-                *i = 0;
                 splitter_action(SplitterAction::Reset, i, n, load_remover);
                 break;
             }
