@@ -187,7 +187,7 @@
         <ScriptPath>C:\Users\Owner\Documents\git\LiveSplit\hollowknight-autosplit-wasm\target\wasm32-wasi\debug\hollowknight_autosplit_wasm.wasm</ScriptPath>
         <CustomSettings>
           <Setting id="splits" type="list">
-            <Setting type="string" value="LegacyStart" />
+            <Setting type="string" value="StartNewGame" />
             <Setting type="string" value="KingsPass" />
             <Setting type="string" value="Grub1" />
             <Setting type="string" value="EnterBroodingMawlek" />
@@ -202,7 +202,7 @@
             <Setting type="string" value="MaskFragment3" />
             <Setting type="string" value="Mask1" />
           </Setting>
-          <Setting id="splits_0_item" type="string" value="LegacyStart" />
+          <Setting id="splits_0_item" type="string" value="StartNewGame" />
           <Setting id="splits_1_item" type="string" value="KingsPass" />
           <Setting id="splits_2_item" type="string" value="Grub1" />
           <Setting id="splits_3_item" type="string" value="EnterBroodingMawlek" />
