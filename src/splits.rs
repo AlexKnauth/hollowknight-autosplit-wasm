@@ -4092,7 +4092,7 @@ fn entering_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> 
 
 pub fn auto_reset_safe(s: &[Split]) -> bool {
     let s_first = s.first();
-    (s_first == Some(&Split::StartNewGame) || s_first == Some(&Split::LegacyStart))
+    (s_first == Some(&Split::StartNewGame))
     && !s[1..].contains(&Split::StartNewGame)
     && !s[1..].contains(&Split::LegacyStart)
     && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
