@@ -63,6 +63,11 @@ via a LiveSplit Layout (`.lsl`) file.
 Make sure to use a different copy of your Layout for every
 different splits file you run with this autosplitter.
 
+For hit-counter mode, best to use a layout that formats
+times and deltas without the decimals, such as the
+[splits/hits/layout-direct.lsl](splits/hits/layout-direct.lsl)
+file included in this repository.
+
 Right-click -> `Edit Layout...` and you should see a Layout
 Editor with components like `Title`, `Splits`, `Timer`, etc.
 If it does not have a component named `Auto Splitting Runtime`,
@@ -71,6 +76,10 @@ Once that's there, click `Layout Settings` -> `Auto Splitting Runtime`,
 and next to `Script Path`, click `Browse...`,
 then navigate to the `hollowknight_autosplit_wasm.wasm` file.
 Then click `Import Splits` and select your splits file.
+
+For hit-counter mode, change the `Timing Method` setting to
+either `Hits / dream falls` or `Hits / damage`.
+
 Click `Ok` and and save the layout with `Save Layout As...`,
 with a name specific to the splits you're running with.
 
@@ -169,6 +178,11 @@ cargo build --release
 sudo ./target/release/livesplit-one
 ```
 
+For hit-counter mode, modify your splits file,
+near the end after `</Splits>` but before `</AutoSplitterSettings>`,
+so that it contains `<TimingMethod>HitsDreamFalls</TimingMethod>`
+or `<TimingMethod>HitsDamage</TimingMethod>`.
+
 Finally, do not manually split or skip while running with this autosplitter,
 unless either it's explicitly marked as `ManualSplit` or it's the end-split.
 Don't manually split, skip, or undo splits in any other situation.
@@ -233,6 +247,11 @@ For example in the `livesplit-one-desktop` repository, you can run
 cargo build --release
 sudo ./target/release/livesplit-one
 ```
+
+For hit-counter mode, modify your splits file,
+near the end after `</Splits>` but before `</AutoSplitterSettings>`,
+so that it contains `<TimingMethod>HitsDreamFalls</TimingMethod>`
+or `<TimingMethod>HitsDamage</TimingMethod>`.
 
 Finally, do not manually split or skip while running with this autosplitter,
 unless either it's explicitly marked as `ManualSplit` or it's the end-split.
