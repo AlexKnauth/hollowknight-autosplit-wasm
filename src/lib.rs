@@ -129,6 +129,7 @@ async fn tick_action(
         // detect manual starts
         TimerState::Running if *i == 0 && is_timer_state_between_runs(*last_timer_state) => {
             *i = 1;
+            load_remover.reset();
             asr::print_message("Detected a manual start.");
         }
         // detect manual end-splits
