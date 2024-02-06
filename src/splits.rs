@@ -1697,6 +1697,10 @@ pub enum Split {
     /// 
     /// Splits when killing Brooding Mawlek
     BroodingMawlek,
+    /// Aspid Hunter (Mini Boss)
+    /// 
+    /// Splits when killing 3 Aspid Hunters in a row (ideally Aspid Arena)
+    AspidHunter,
     /// Crossroads Stag (Bench)
     /// 
     /// Splits when sitting on the bench at Crossroads Stag
@@ -3799,6 +3803,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::InfectedCrossroads => should_split(g.crossroads_infected(p).is_some_and(|i| i) && g.visited_crossroads(p).is_some_and(|v| v)),
         Split::MenderBug => should_split(g.killed_mender_bug(p).is_some_and(|k| k)),
         Split::BroodingMawlek => should_split(g.killed_mawlek(p).is_some_and(|k| k)),
+        Split::AspidHunter => should_split_skip(pds.aspid_hunter_arena(p, g)),
         Split::BenchCrossroadsStag => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_47")),
         Split::GruzMother => should_split(g.killed_big_fly(p).is_some_and(|f| f)),
         Split::SlyRescued => should_split(g.sly_rescued(p).is_some_and(|s| s)),
