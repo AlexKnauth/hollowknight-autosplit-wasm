@@ -145,38 +145,25 @@ async fn tick_action(
     let n = splits.len();
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
     loop {
-        match splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
-            SplitterAction::Split if *i == 0 => {
-                splitter_action(SplitterAction::Split, i, n, load_remover);
+        let a = splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store);
+        match a {
+            SplitterAction::Split | SplitterAction::ManualSplit => {
+                splitter_action(a, i, n, load_remover);
                 next_tick().await;
                 break;
             }
-            SplitterAction::Split => {
-                splitter_action(SplitterAction::Split, i, n, load_remover);
+            SplitterAction::Skip | SplitterAction::Reset => {
+                splitter_action(a, i, n, load_remover);
                 next_tick().await;
-                break;
-            }
-            SplitterAction::Skip => {
-                splitter_action(SplitterAction::Skip, i, n, load_remover);
-                next_tick().await;
-                // no break, allow other actions after a skip
-            }
-            SplitterAction::Reset => {
-                splitter_action(SplitterAction::Reset, i, n, load_remover);
-                next_tick().await;
-                // no break, allow other actions after a reset
-            }
-            SplitterAction::ManualSplit => {
-                splitter_action(SplitterAction::ManualSplit, i, n, load_remover);
-                next_tick().await;
-                break;
+                // no break, allow other actions after a skip or reset
             }
             SplitterAction::Pass => {
                 if auto_reset {
-                    match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+                    let a0 = splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store);
+                    match a0 {
                         SplitterAction::Split | SplitterAction::Reset => {
                             *i = 0;
-                            splitter_action(SplitterAction::Split, i, n, load_remover);
+                            splitter_action(a0, i, n, load_remover);
                         }
                         _ => (),
                     }
