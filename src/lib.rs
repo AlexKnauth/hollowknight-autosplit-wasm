@@ -146,6 +146,12 @@ async fn tick_action(
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
     loop {
         match splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+            SplitterAction::Split if *i == 0 => {
+                splitter_action(SplitterAction::Split, i, n);
+                load_remover.reset();
+                next_tick().await;
+                break;
+            }
             SplitterAction::Split => {
                 splitter_action(SplitterAction::Split, i, n);
                 next_tick().await;
