@@ -129,6 +129,7 @@ async fn tick_action(
         // detect manual starts
         TimerState::Running if *i == 0 && is_timer_state_between_runs(*last_timer_state) => {
             *i = 1;
+            load_remover.reset();
             asr::print_message("Detected a manual start.");
         }
         // detect manual end-splits
@@ -145,35 +146,25 @@ async fn tick_action(
     let n = splits.len();
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
     loop {
-        match splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
-            SplitterAction::Split => {
-                splitter_action(SplitterAction::Split, i, n);
+        let a = splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store);
+        match a {
+            SplitterAction::Split | SplitterAction::ManualSplit => {
+                splitter_action(a, i, n, load_remover);
                 next_tick().await;
                 break;
             }
-            SplitterAction::Skip => {
-                splitter_action(SplitterAction::Skip, i, n);
+            SplitterAction::Skip | SplitterAction::Reset => {
+                splitter_action(a, i, n, load_remover);
                 next_tick().await;
-                // no break, allow other actions after a skip
-            }
-            SplitterAction::Reset => {
-                *i = 0;
-                splitter_action(SplitterAction::Reset, i, n);
-                load_remover.reset();
-                break;
-            }
-            SplitterAction::ManualSplit => {
-                splitter_action(SplitterAction::ManualSplit, i, n);
-                next_tick().await;
-                break;
+                // no break, allow other actions after a skip or reset
             }
             SplitterAction::Pass => {
                 if auto_reset {
-                    match splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store) {
+                    let a0 = splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store);
+                    match a0 {
                         SplitterAction::Split | SplitterAction::Reset => {
                             *i = 0;
-                            splitter_action(SplitterAction::Split, i, n);
-                            load_remover.reset();
+                            splitter_action(a0, i, n, load_remover);
                         }
                         _ => (),
                     }
@@ -196,11 +187,12 @@ fn is_timer_state_between_runs(s: TimerState) -> bool {
     s == TimerState::NotRunning || s == TimerState::Ended
 }
 
-fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
+fn splitter_action(a: SplitterAction, i: &mut usize, n: usize, load_remover: &mut TimingMethodLoadRemover) {
     match a {
         SplitterAction::Pass => (),
         SplitterAction::Reset => {
             asr::timer::reset();
+            load_remover.reset();
             *i = 0;
         }
         SplitterAction::Skip => {
@@ -210,6 +202,7 @@ fn splitter_action(a: SplitterAction, i: &mut usize, n: usize) {
         SplitterAction::Split if *i == 0 => {
             asr::timer::reset();
             asr::timer::start();
+            load_remover.reset();
             *i += 1;
         }
         SplitterAction::Split => {

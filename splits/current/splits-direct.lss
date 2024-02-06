@@ -162,7 +162,7 @@
   <AutoSplitterSettings>
     <Ordered>True</Ordered>
     <AutosplitEndRuns>True</AutosplitEndRuns>
-    <AutosplitStartRuns></AutosplitStartRuns>
+    <AutosplitStartRuns>StartNewGame</AutosplitStartRuns>
     <Splits>
       <Split>KingsPass</Split>
       <Split>Grub1</Split>
