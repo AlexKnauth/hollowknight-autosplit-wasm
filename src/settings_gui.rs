@@ -3,8 +3,8 @@ use asr::{settings::gui::{FileSelect, Gui, Title, Widget}, watcher::Pair};
 use serde::{Deserialize, Serialize};
 use ugly_widget::{
     args::SetHeadingLevel,
-    radio_button::RadioButtonOptions,
-    store::{StoreWidget, StoreGui},
+    radio_button::{options_str, RadioButtonOptions},
+    store::{StoreGui, StoreWidget},
     ugly_list::{UglyList, UglyListArgs}
 };
 
@@ -32,6 +32,8 @@ impl StoreGui for SettingsGui {
         if self.import.changed() {
             asr::print_message(&format!("import {}", self.import.current.path));
             if let Some(settings_map) = asr_settings_from_file(&self.import.current.path) {
+                let timing_method_args = <TimingMethod as Widget>::Args::default();
+                self.timing_method.update_from(&settings_map, "timing_method", timing_method_args);
                 let mut splits_args = UglyListArgs::default();
                 splits_args.set_heading_level(1);
                 self.splits.update_from(&settings_map, "splits", splits_args);
@@ -42,7 +44,9 @@ impl StoreGui for SettingsGui {
     }
 
     fn insert_into(&self, settings_map: &asr::settings::Map) -> bool {
-        self.splits.insert_into(settings_map, "splits")
+        let a = self.timing_method.insert_into(settings_map, "timing_method");
+        let b = self.splits.insert_into(settings_map, "splits");
+        a || b
     }
 }
 
@@ -72,4 +76,15 @@ pub enum TimingMethod {
     HitsDreamFalls,
     /// Hits / damage
     HitsDamage,
+}
+
+impl StoreWidget for TimingMethod {
+    fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
+        let new_s = options_str(self);
+        if settings_map.get(key).is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s)) {
+            return false;
+        }
+        settings_map.insert(key, new_s);
+        true
+    }
 }
