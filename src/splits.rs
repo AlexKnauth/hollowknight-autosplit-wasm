@@ -111,6 +111,10 @@ pub enum Split {
     /// 
     /// Splits when player HP is 0
     PlayerDeath,
+    /// Shade Killed (Event)
+    /// 
+    /// Splits when the Shade is killed
+    ShadeKilled,
     /// Any Transition (Transition)
     /// 
     /// Splits when the knight enters a transition (only one will split per transition)
@@ -3389,6 +3393,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
                                          && g.get_scene_name(p).is_some_and(|s| !is_menu(&s))),
         Split::BenchAny => should_split(g.at_bench(p).is_some_and(|b| b)),
         Split::PlayerDeath => should_split(g.get_health(p).is_some_and(|h| h == 0)),
+        Split::ShadeKilled => should_split(pds.shade_killed(p, g)),
         // region: Dreamers
         Split::Lurien => should_split(g.mask_broken_lurien(p).is_some_and(|b| b)),
         Split::Monomon => should_split(g.mask_broken_monomon(p).is_some_and(|b| b)),

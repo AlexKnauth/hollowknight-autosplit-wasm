@@ -261,6 +261,7 @@ struct PlayerDataPointers {
     //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
     // and I'm not sure which one
     heart_pieces: UnityPointer<3>,
+    soul_limited: UnityPointer<3>,
     /// Magic Power Reserve Max: amount of soul that can be held by soul vessels, 33 each
     mp_reserve_max: UnityPointer<3>,
     vessel_fragments: UnityPointer<3>,
@@ -611,6 +612,7 @@ impl PlayerDataPointers {
             dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
             max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            soul_limited: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soulLimited"]),
             mp_reserve_max: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "MPReserveMax"]),
             vessel_fragments: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "vesselFragments"]),
             at_bench: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "atBench"]),
@@ -2524,6 +2526,10 @@ impl PlayerDataStore {
         self.incremented_i32(p, g, "max_health_base", &g.player_data_pointers.max_health_base)
         || (self.incremented_i32(p, g, "heart_pieces", &g.player_data_pointers.heart_pieces)
             && self.map_i32.get("heart_pieces").is_some_and(|&s| s < 4))
+    }
+
+    pub fn shade_killed(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.changed_bool(p, g, "soul_limited", &g.player_data_pointers.soul_limited).is_some_and(|l| !l)
     }
 
     pub fn obtained_vessel_fragment(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
