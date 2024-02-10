@@ -344,7 +344,7 @@ impl LoadRemover {
 struct HitCounter {
     count_dream_falling: bool,
     hits: i64,
-    last_recoiling: bool,
+    last_recoil: bool,
     last_hazard: bool,
     last_dead_or_0: bool,
     last_exiting_level: Option<String>,
@@ -358,7 +358,7 @@ impl HitCounter {
         HitCounter {
             count_dream_falling,
             hits: 0,
-            last_recoiling: false,
+            last_recoil: false,
             last_hazard: false,
             last_dead_or_0: false,
             last_exiting_level: None,
@@ -387,21 +387,21 @@ impl HitCounter {
         if asr::timer::state() != TimerState::Running { return Some(()); }
 
         // new state
-        let maybe_recoiling = game_manager_finder.hero_recoiling(process);
+        let maybe_recoil = game_manager_finder.hero_recoil(process);
         let maybe_hazard = game_manager_finder.hazard_death(process);
         let maybe_dead = game_manager_finder.hero_dead(process);
         let maybe_health = game_manager_finder.get_health(process);
         let maybe_scene_name = game_manager_finder.get_scene_name(process);
         let maybe_game_state = game_manager_finder.get_game_state(process);
 
-        if let Some(r) = maybe_recoiling {
-            if !self.last_recoiling && r {
+        if let Some(r) = maybe_recoil {
+            if !self.last_recoil && r {
                 self.hits += 1;
                 asr::timer::set_game_time(Duration::seconds(self.hits));
                 asr::timer::set_variable_int("hits", self.hits);
-                asr::print_message(&format!("hit: {}, from recoiling", self.hits));
+                asr::print_message(&format!("hit: {}, from recoil", self.hits));
             }
-            self.last_recoiling = r;
+            self.last_recoil = r;
         }
 
         if let Some(h) = maybe_hazard {
