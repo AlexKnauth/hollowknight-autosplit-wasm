@@ -199,6 +199,7 @@ struct GameManagerPointers {
     hazard_death: UnityPointer<4>,
     hazard_respawning: UnityPointer<4>,
     hero_recoiling: UnityPointer<4>,
+    hero_recoil_frozen: UnityPointer<4>,
     hero_transition_state: UnityPointer<3>,
     focusing: UnityPointer<4>,
 }
@@ -219,6 +220,7 @@ impl GameManagerPointers {
             hazard_death: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardDeath"]),
             hazard_respawning: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
             hero_recoiling: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "recoiling"]),
+            hero_recoil_frozen: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "recoilFrozen"]),
             hero_transition_state: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
             focusing: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "focusing"]),
         }
@@ -1102,8 +1104,24 @@ impl GameManagerFinder {
         self.pointers.hazard_death.deref(process, &self.module, &self.image).ok()
     }
 
-    pub fn hero_recoiling(&self, process: &Process) -> Option<bool> {
+    fn hero_recoiling(&self, process: &Process) -> Option<bool> {
         self.pointers.hero_recoiling.deref(process, &self.module, &self.image).ok()
+    }
+
+    fn hero_recoil_frozen(&self, process: &Process) -> Option<bool> {
+        self.pointers.hero_recoil_frozen.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn hero_recoil(&self, process: &Process) -> Option<bool> {
+        let maybe_recoil_frozen = self.hero_recoil_frozen(process);
+        if maybe_recoil_frozen.is_some_and(|f| f) {
+            return Some(true);
+        }
+        let maybe_recoiling = self.hero_recoiling(process);
+        if maybe_recoiling.is_some_and(|r| r) {
+            return Some(true);
+        }
+        Some(maybe_recoil_frozen? || maybe_recoiling?)
     }
 
     pub fn get_version_string(&self, process: &Process) -> Option<String> {
