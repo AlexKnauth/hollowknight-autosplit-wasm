@@ -1850,7 +1850,6 @@ pub enum Split {
     /// 
     /// Splits on the transition after killing Elder Hu
     ElderHuTrans,
-    MenuMantisJournal,
     /// Bretta Rescued (NPC)
     /// 
     /// Splits when saving Bretta
@@ -2012,7 +2011,6 @@ pub enum Split {
     /// 
     /// Splits when getting Soul Tyrant essence and Sanctum fakedive grub
     SoulTyrantEssenceWithSanctumGrub,
-    MenuStoreroomsSimpleKey,
     /// Storerooms (Bench)
     /// 
     /// Splits when sitting on the bench in City Storerooms
@@ -2078,7 +2076,6 @@ pub enum Split {
     /// 
     /// Splits when killing a Husk Miner
     HuskMiner,
-    MenuSlyKey,
     /// Crystal Guardian (Boss)
     /// 
     /// Splits when killing the Crystal Guardian
@@ -2117,7 +2114,6 @@ pub enum Split {
     /// 
     /// Splits when killing Dung Defender
     DungDefender,
-    DungDefenderExit,
     /// White Defender (Boss)
     /// 
     /// Splits when killing White Defender
@@ -3190,7 +3186,6 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::MenuDashmaster => should_split(pds.got_charm_31(prc, g) && is_menu(p.current)),
         Split::TransClaw => should_split(pds.has_wall_jump(prc, g) && p.current != p.old),
         Split::MenuClaw => should_split(pds.has_wall_jump(prc, g) && is_menu(p.current)),
-        Split::MenuMantisJournal => should_split(is_menu(p.current) && p.old == "Fungus2_17"),
         // endregion: Fungal
         // TODO: should there be a HowlingCliffsEntry or EnterHowlingCliffs transition split?
         //       and what scenes should it be based on?
@@ -3211,7 +3206,6 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterSanctum => should_split(p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSanctumWithShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSoulMaster => should_split(p.current.starts_with("Ruins1_24") && p.current != p.old),
-        Split::MenuStoreroomsSimpleKey => should_split(is_menu(p.current) && p.old == "Ruins1_17"),
         Split::TransShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current != p.old),
         Split::MenuShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && is_menu(p.current)),
         Split::EnterBlackKnight => should_split(p.current == "Ruins2_03" && p.current != p.old),
@@ -3221,14 +3215,12 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: City
         // region: Peak
         Split::CrystalPeakEntry => should_split(starts_with_any(p.current, CRYSTAL_PEAK_ENTRY_SCENES) && p.current != p.old),
-        Split::MenuSlyKey => should_split(is_menu(p.current) && p.old == "Mines_11"),
         Split::EnterCrown => should_split(p.current == "Mines_23" && p.current != p.old),
         Split::TransDescendingDark => should_split(2 <= pds.get_quake_level(prc, g) && p.current != p.old),
         Split::CrystalMoundExit => should_split(p.old.starts_with("Mines_35") && p.current != p.old),
         // endregion: Peak
         // region: Waterways
         Split::WaterwaysEntry => should_split(starts_with_any(p.current, WATERWAYS_ENTRY_SCENES) && p.current != p.old),
-        Split::DungDefenderExit => should_split(p.old == "Waterways_05" && p.current == "Abyss_01"),
         Split::TransTear => should_split(pds.has_acid_armour(prc, g) && p.current != p.old),
         Split::TransTearWithGrub => should_split(pds.has_acid_armour(prc, g) && pds.grub_waterways_isma(prc, g) && p.current != p.old),
         Split::MenuIsmasTear => should_split(pds.has_acid_armour(prc, g) && is_menu(p.current)),
