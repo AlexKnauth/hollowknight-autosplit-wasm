@@ -3126,7 +3126,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EndingC => should_split(p.current == "Cinematic_Ending_C"),
         Split::EndingD => should_split(p.current == "Cinematic_Ending_D"),
         Split::EndingE => should_split(p.current == "Cinematic_Ending_E"),
-        Split::Menu => should_split(is_menu(p.current)),
+        Split::Menu => should_split(p.current == MENU_TITLE),
         Split::AnyTransition => should_split(p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old))),
         Split::TransitionAfterSaveState => should_split(p.current != p.old
                                                         && !(p.old.is_empty()
@@ -3143,7 +3143,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::Monomon => should_split(p.old == "Dream_Guardian_Monomon" && p.current == "Cutscene_Boss_Door"),
         Split::Hegemol => should_split(p.old == "Dream_Guardian_Hegemol" && p.current == "Cutscene_Boss_Door"),
         */
-        Split::MenuDreamer3 => should_split(3 <= pds.guardians_defeated(prc, g) && is_menu(p.current)),
+        Split::MenuDreamer3 => should_split(3 <= pds.guardians_defeated(prc, g) && p.current == MENU_TITLE),
         // endregion: Dreamers
 
         // region: Maps and Cornifer
@@ -3177,15 +3177,15 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterGreenpath => should_split(p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01")),
         Split::VengeflyKingTrans => should_split(pds.zote_rescued_buzzer(prc, g) && p.current != p.old),
         Split::EnterHornet1 => should_split(p.current.starts_with("Fungus1_04") && p.current != p.old),
-        Split::MenuCloak => should_split(pds.has_dash(prc, g) && is_menu(p.current)),
+        Split::MenuCloak => should_split(pds.has_dash(prc, g) && p.current == MENU_TITLE),
         Split::MegaMossChargerTrans => should_split(pds.mega_moss_charger_defeated(prc, g) && p.current != p.old),
         // endregion: Greenpath
         // region: Fungal
         Split::FungalWastesEntry => should_split(starts_with_any(p.current, FUNGAL_WASTES_ENTRY_SCENES) && p.current != p.old),
         Split::ElderHuTrans => should_split(pds.killed_ghost_hu(prc, g) && p.current != p.old),
-        Split::MenuDashmaster => should_split(pds.got_charm_31(prc, g) && is_menu(p.current)),
+        Split::MenuDashmaster => should_split(pds.got_charm_31(prc, g) && p.current == MENU_TITLE),
         Split::TransClaw => should_split(pds.has_wall_jump(prc, g) && p.current != p.old),
-        Split::MenuClaw => should_split(pds.has_wall_jump(prc, g) && is_menu(p.current)),
+        Split::MenuClaw => should_split(pds.has_wall_jump(prc, g) && p.current == MENU_TITLE),
         // endregion: Fungal
         // TODO: should there be a HowlingCliffsEntry or EnterHowlingCliffs transition split?
         //       and what scenes should it be based on?
@@ -3195,19 +3195,19 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::BlueLake => should_split(p.current.starts_with("Crossroads_50") && !p.old.starts_with("Crossroads_50")), // blue lake is Crossroads_50
         Split::EnterAnyDream => should_split(p.current.starts_with("Dream_") && p.current != p.old),
         Split::DreamNailExit => should_split(p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07"),
-        Split::MenuDreamNail => should_split(pds.has_dream_nail(prc, g) && is_menu(p.current)),
-        Split::MenuDreamGate => should_split(pds.has_dream_gate(prc, g) && is_menu(p.current)),
+        Split::MenuDreamNail => should_split(pds.has_dream_nail(prc, g) && p.current == MENU_TITLE),
+        Split::MenuDreamGate => should_split(pds.has_dream_gate(prc, g) && p.current == MENU_TITLE),
         Split::CatacombsEntry => should_split(p.current.starts_with("RestingGrounds_10") && !p.old.starts_with("RestingGrounds_10")),
         // endregion: Resting Grounds
         // region: City
         Split::TransGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && p.current != p.old),
-        Split::MenuGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && is_menu(p.current)),
+        Split::MenuGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && p.current == MENU_TITLE),
         Split::EnterRafters => should_split(p.current == "Ruins1_03" && p.current != p.old),
         Split::EnterSanctum => should_split(p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSanctumWithShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSoulMaster => should_split(p.current.starts_with("Ruins1_24") && p.current != p.old),
         Split::TransShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current != p.old),
-        Split::MenuShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && is_menu(p.current)),
+        Split::MenuShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current == MENU_TITLE),
         Split::EnterBlackKnight => should_split(p.current == "Ruins2_03" && p.current != p.old),
         Split::BlackKnightTrans => should_split(pds.killed_black_knight(prc, g) && p.current != p.old),
         Split::EnterLoveTower => should_split(p.current.starts_with("Ruins2_11") && p.current != p.old),
@@ -3223,15 +3223,15 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::WaterwaysEntry => should_split(starts_with_any(p.current, WATERWAYS_ENTRY_SCENES) && p.current != p.old),
         Split::TransTear => should_split(pds.has_acid_armour(prc, g) && p.current != p.old),
         Split::TransTearWithGrub => should_split(pds.has_acid_armour(prc, g) && pds.grub_waterways_isma(prc, g) && p.current != p.old),
-        Split::MenuIsmasTear => should_split(pds.has_acid_armour(prc, g) && is_menu(p.current)),
+        Split::MenuIsmasTear => should_split(pds.has_acid_armour(prc, g) && p.current == MENU_TITLE),
         Split::EnterJunkPit => should_split(p.current == "GG_Waterways" && p.current != p.old),
         // endregion: Waterways
         // region: Basin
         Split::BasinEntry => should_split(p.current.starts_with("Abyss_04") && p.current != p.old),
         Split::Abyss19from18 => should_split(p.old == "Abyss_18" && p.current == "Abyss_19"),
         Split::BrokenVesselTrans => should_split(pds.killed_infected_knight(prc, g) && g.get_health(prc).is_some_and(|h| 0 < h)),
-        Split::MenuWings => should_split(pds.has_double_jump(prc, g) && is_menu(p.current)),
-        Split::MenuVoidHeart => should_split(pds.got_shade_charm(prc, g) && is_menu(p.current)),
+        Split::MenuWings => should_split(pds.has_double_jump(prc, g) && p.current == MENU_TITLE),
+        Split::MenuVoidHeart => should_split(pds.got_shade_charm(prc, g) && p.current == MENU_TITLE),
         // endregion: Basin
         // region: White Palace
         Split::WhitePalaceEntry => should_split(p.current.starts_with("White_Palace_11") && p.current != p.old),
