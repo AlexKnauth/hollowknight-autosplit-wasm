@@ -346,6 +346,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining a Simple Key
     OnObtainSimpleKey,
+    /// Use Simple Key (Obtain)
+    /// 
+    /// Splits when using a Simple Key
+    OnUseSimpleKey,
     /// Shopkeeper's Key (Item)
     /// 
     /// Splits when obtaining the Shopkeeper's Key
@@ -405,6 +409,10 @@ pub enum Split {
     /// 
     /// Splits after obtaining the sixth pale ore.
     Ore6,
+    /// Pale Ore - Any (Item)
+    /// 
+    /// Splits if you've obtained any Pale Ore
+    PaleOre,
     /// Nail 1 (Upgrade)
     /// 
     /// Splits upon upgrading to the Sharpened Nail
@@ -1193,6 +1201,10 @@ pub enum Split {
     /// 
     /// Splits when rescuing all three grubs in Ruins2_11. (On 1221, splits for right grub)
     GrubCityCollectorAll,
+    /// Rescued Grub City Collector (Grub)
+    /// 
+    /// Splits when rescuing any grub in Ruins2_11
+    GrubCityCollector,
     /// Rescued Grub City Guard House (Grub)
     /// 
     /// Splits when rescuing the grub in Ruins_House_01
@@ -1638,6 +1650,10 @@ pub enum Split {
     /// 
     /// Splits on any transition into Dirtmouth Town
     EnterDirtmouth,
+    /// King's Pass from Town (Transition)
+    /// 
+    /// Splits when entering King's Pass from Dirtmouth
+    KingsPassEnterFromTown,
     /// Dirtmouth (Area)
     /// 
     /// Splits when entering Dirtmouth text first appears
@@ -3153,6 +3169,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Dirtmouth
         Split::KingsPass => should_split(p.old == "Tutorial_01" && p.current == "Town"),
         Split::EnterDirtmouth => should_split(p.current == "Town" && p.current != p.old),
+        Split::KingsPassEnterFromTown => should_split(p.old == "Town" && p.current == "Tutorial_01"),
         Split::SlyShopExit => should_split(p.old == "Room_shop" && p.current != p.old),
         Split::LumaflyLanternTransition => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
         Split::SlyShopFinished => should_split(pds.sly_shop_finished(prc, g) && !p.current.starts_with("Room_shop")),
@@ -3440,6 +3457,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::LumaflyLanternTransition => { pds.has_lantern(p, g); should_split(false) },
         Split::SimpleKey => should_split(g.simple_keys(p).is_some_and(|k| 1 <= k)),
         Split::OnObtainSimpleKey => should_split(pds.incremented_simple_keys(p, g)),
+        Split::OnUseSimpleKey => should_split(pds.decremented_simple_keys(p, g)),
         Split::SlyKey => should_split(g.has_sly_key(p).is_some_and(|k| k)),
         Split::ElegantKey => should_split(g.has_white_key(p).is_some_and(|k| k)),
         Split::LoveKey => should_split(g.has_love_key(p).is_some_and(|k| k)),
@@ -3460,6 +3478,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Ore4 => should_split(g.ore_gross(p).is_some_and(|o| 4 <= o)),
         Split::Ore5 => should_split(g.ore_gross(p).is_some_and(|o| 5 <= o)),
         Split::Ore6 => should_split(g.ore_gross(p).is_some_and(|o| 6 <= o)),
+        Split::PaleOre => should_split(g.ore(p).is_some_and(|o| 0 < o)),
         // endregion: Nail and Pale Ore
         // region: Masks and Mask Shards
         Split::OnObtainMaskShard => should_split(pds.obtained_mask_shard(p, g)),
@@ -3670,6 +3689,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::GrubCityBelowLoveTower => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_07")),
         Split::GrubCityBelowSanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_05")),
         Split::GrubCityCollectorAll => should_split(g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins2_11".to_string()))),
+        Split::GrubCityCollector => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_11")),
         Split::GrubCityGuardHouse => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_House_01")),
         Split::GrubCitySanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_32")),
         Split::GrubCitySpire => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_03")),

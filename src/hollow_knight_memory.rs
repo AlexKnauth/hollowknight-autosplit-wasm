@@ -2677,6 +2677,10 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "simple_keys", &game_manager_finder.player_data_pointers.simple_keys)
     }
 
+    pub fn decremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.decremented_i32(process, game_manager_finder, "simple_keys", &game_manager_finder.player_data_pointers.simple_keys)
+    }
+
     pub fn incremented_trinket1(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "trinket1", &game_manager_finder.player_data_pointers.trinket1)
     }
