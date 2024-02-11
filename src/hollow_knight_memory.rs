@@ -316,6 +316,8 @@ struct PlayerDataPointers {
     sold_trinket3: UnityPointer<3>,
     sold_trinket4: UnityPointer<3>,
     rancid_eggs: UnityPointer<3>,
+    jinn_eggs_sold: UnityPointer<3>,
+    ghost_coins: UnityPointer<3>,
     // Charm Notches
     notch_shroom_ogres: UnityPointer<3>,
     salubra_notch1: UnityPointer<3>,
@@ -666,6 +668,8 @@ impl PlayerDataPointers {
             sold_trinket3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket3"]),
             sold_trinket4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket4"]),
             rancid_eggs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "rancidEggs"]),
+            jinn_eggs_sold: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "jinnEggsSold"]),
+            ghost_coins: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "ghostCoins"]),
             // Charm Notches
             notch_shroom_ogres: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "notchShroomOgres"]),
             salubra_notch1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraNotch1"]),
@@ -1419,9 +1423,12 @@ impl GameManagerFinder {
              + 1200 * self.sold_trinket4(p)?)
     }
 
-    #[allow(unused)]
     pub fn rancid_eggs(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.rancid_eggs.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn jinn_eggs_sold(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.jinn_eggs_sold.deref(process, &self.module, &self.image).ok()
     }
 
     // Charm Notches
@@ -2711,6 +2718,10 @@ impl PlayerDataStore {
 
     pub fn incremented_rancid_eggs(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "rancid_eggs", &game_manager_finder.player_data_pointers.rancid_eggs)
+    }
+
+    pub fn incremented_ghost_coins(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "ghost_coins", &game_manager_finder.player_data_pointers.ghost_coins)
     }
 
     pub fn incremented_charm_slots(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {

@@ -998,6 +998,14 @@ pub enum Split {
     /// 
     /// Splits when obtaining a Rancid Egg
     OnObtainRancidEgg,
+    /// All Eggs (Item)
+    /// 
+    /// Splits when 21 Rancid Eggs have been collected
+    AllEggs,
+    /// Ghost Coins Incremented (Event)
+    /// 
+    /// Splits when the ghostCoins PlayerData is updated. Unused by unmodded game, intended for use with mods.
+    OnGhostCoinsIncremented,
     // endregion: Relics
 
     // region: Grubs and Mimics
@@ -3655,6 +3663,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::ArcaneEgg8 => should_split(8 <= g.trinket4(p).unwrap_or_default() + g.sold_trinket4(p).unwrap_or_default()),
         Split::OnObtainArcaneEgg => should_split(pds.incremented_trinket4(p, g)),
         Split::OnObtainRancidEgg => should_split(pds.incremented_rancid_eggs(p, g)),
+        Split::AllEggs => should_split(21 <= g.rancid_eggs(p).unwrap_or_default() + g.jinn_eggs_sold(p).unwrap_or_default()),
+        Split::OnGhostCoinsIncremented => should_split(pds.incremented_ghost_coins(p, g)),
         // endregion: Relics
         // region: Grubs and Mimics
         Split::Grub1 => should_split(g.grubs_collected(p).is_some_and(|g| g == 1)),
