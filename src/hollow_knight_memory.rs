@@ -445,6 +445,7 @@ struct PlayerDataPointers {
     mega_moss_charger_defeated: UnityPointer<3>,
     nailsmith_convo_art: UnityPointer<3>,
     visited_fungus: UnityPointer<3>,
+    kills_mushroom_brawler: UnityPointer<3>,
     killed_ghost_hu: UnityPointer<3>,
     elder_hu_defeated: UnityPointer<3>,
     bretta_rescued: UnityPointer<3>,
@@ -796,6 +797,7 @@ impl PlayerDataPointers {
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
             nailsmith_convo_art: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nailsmithConvoArt"]),
             visited_fungus: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedFungus"]),
+            kills_mushroom_brawler: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMushroomBrawler"]),
             killed_ghost_hu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostHu"]),
             elder_hu_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderHuDefeated"]),
             bretta_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "brettaRescued"]),
@@ -2833,6 +2835,11 @@ impl PlayerDataStore {
     pub fn aspid_hunter_arena(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // Aspid: {0} +3 {3}
         self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 3)
+    }
+
+    pub fn mushroom_brawler_arena(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Shrumal Ogre: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_mushroom_brawler_on_entry", &gmf.player_data_pointers.kills_mushroom_brawler, 2)
     }
 
     pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {

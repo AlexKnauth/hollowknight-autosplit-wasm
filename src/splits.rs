@@ -1878,6 +1878,10 @@ pub enum Split {
     /// 
     /// Splits when sitting on the bench in Queen's Station
     BenchQueensStation,
+    /// Shrumal Ogres (Mini Boss)
+    /// 
+    /// Splits when killing 2 Shrumal Ogres in a row (ideally Shrumal Ogre Notch arena)
+    MushroomBrawler,
     /// Elder Hu (Boss)
     /// 
     /// Splits when killing Elder Hu
@@ -3887,6 +3891,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Fungal
         Split::FungalWastes => should_split(g.visited_fungus(p).is_some_and(|v| v)),
         Split::BenchQueensStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Fungus2_02")),
+        Split::MushroomBrawler => should_split_skip(pds.mushroom_brawler_arena(p, g)),
         Split::ElderHu => should_split(g.killed_ghost_hu(p).is_some_and(|k| k)),
         Split::ElderHuEssence => should_split(g.elder_hu_defeated(p).is_some_and(|d| d == 2)),
         Split::ElderHuTrans => { pds.killed_ghost_hu(p, g); should_split(false) },
