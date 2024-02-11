@@ -658,6 +658,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining a new Charm Slot
     OnObtainCharmNotch,
+    /// Can Overcharm (Event)
+    /// 
+    /// Splits when overcharming is enabled
+    CanOvercharm,
     // endregion: Charm Notches
 
     // region: Charms
@@ -1786,6 +1790,10 @@ pub enum Split {
     /// 
     /// Splits when entering Greenpath
     EnterGreenpath,
+    /// Greenpath w/ Unlocked Overcharm (Transition)
+    /// 
+    /// Splits when entering Greenpath with overcharming unlocked
+    EnterGreenpathWithOvercharm,
     /// Greenpath (Area)
     /// 
     /// Splits when entering Greenpath text first appears
@@ -2310,6 +2318,10 @@ pub enum Split {
     //           Maybe the room off the side of the RG elevator shouldn't count,
     //           but what about the Tram entrance?
     KingdomsEdgeEntry,
+    /// Kingdom's Edge Overcharmed (Transition)
+    /// 
+    /// Splits on transition to Kingdom's Edge from King's Station while overcharmed
+    KingdomsEdgeOvercharmedEntry,
     /// Kingdom's Edge (Area)
     /// 
     /// Splits when entering Kingdom's Edge text first appears
@@ -3196,6 +3208,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Crossroads
         // region: Greenpath
         Split::EnterGreenpath => should_split(p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01")),
+        Split::EnterGreenpathWithOvercharm => should_split(pds.can_overcharm(prc, g) && p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01")),
         Split::VengeflyKingTrans => should_split(pds.zote_rescued_buzzer(prc, g) && p.current != p.old),
         Split::EnterHornet1 => should_split(p.current.starts_with("Fungus1_04") && p.current != p.old),
         Split::MenuCloak => should_split(pds.has_dash(prc, g) && p.current == MENU_TITLE),
@@ -3279,6 +3292,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // Deepnest_East_03 is the KE room with Cornifer, acid, and raining fools,
         // where the King's Station and Tram entrances meet
         Split::KingdomsEdgeEntry => should_split(p.current.starts_with("Deepnest_East_03") && p.current != p.old),
+        Split::KingdomsEdgeOvercharmedEntry => should_split(pds.can_overcharm(prc, g) && p.current.starts_with("Deepnest_East_03") && p.current != p.old),
         Split::HiveEntry => should_split(p.current.starts_with("Hive_01") && p.current != p.old),
         Split::EnterHiveKnight => should_split(p.current.starts_with("Hive_05") && p.current != p.old),
         Split::EnterHornet2 => should_split(p.current.starts_with("Deepnest_East_Hornet") && p.current != p.old),
@@ -3544,6 +3558,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::NotchFogCanyon => should_split(g.notch_fog_canyon(p).is_some_and(|n| n)),
         Split::NotchGrimm => should_split(g.got_grimm_notch(p).is_some_and(|n| n)),
         Split::OnObtainCharmNotch => should_split(pds.incremented_charm_slots(p, g)),
+        Split::CanOvercharm => should_split(g.can_overcharm(p).is_some_and(|c| c)),
         // endregion: Charm Notches
         // region: Charms
         Split::GatheringSwarm => should_split(g.got_charm_1(p).is_some_and(|c| c)),
@@ -3835,6 +3850,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::RadianceBoss => should_split(g.killed_final_boss(p).is_some_and(|k| k)),
         // endregion: Crossroads
         // region: Greenpath
+        Split::EnterGreenpathWithOvercharm => { pds.can_overcharm(p, g); should_split(false) }
         Split::Greenpath => should_split(g.visited_greenpath(p).is_some_and(|v| v)),
         Split::MossKnight => should_split(g.killed_moss_knight(p).is_some_and(|k| k)),
         Split::Zote1 => should_split(g.zote_rescued_buzzer(p).is_some_and(|z| z)),
@@ -3948,6 +3964,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::WhitePalaceSecretRoom => should_split(g.white_palace_secret_room_visited(p).is_some_and(|v| v)),
         // endregion: White Palace
         // region: Kingdom's Edge
+        Split::KingdomsEdgeOvercharmedEntry => { pds.can_overcharm(p, g); should_split(false) }
         Split::KingdomsEdge => should_split(g.visited_outskirts(p).is_some_and(|v| v)),
         Split::Hive => should_split(g.visited_hive(p).is_some_and(|v| v)),
         Split::HiveKnight => should_split(g.killed_hive_knight(p).is_some_and(|k| k)),

@@ -325,6 +325,7 @@ struct PlayerDataPointers {
     notch_fog_canyon: UnityPointer<3>,
     got_grimm_notch: UnityPointer<3>,
     charm_slots: UnityPointer<3>,
+    can_overcharm: UnityPointer<3>,
     // Charms
     got_charm_1: UnityPointer<3>,
     got_charm_2: UnityPointer<3>,
@@ -674,6 +675,7 @@ impl PlayerDataPointers {
             notch_fog_canyon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "notchFogCanyon"]),
             got_grimm_notch: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotGrimmNotch"]),
             charm_slots: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "charmSlots"]),
+            can_overcharm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "canOvercharm"]),
             // Charms
             got_charm_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_1"]),
             got_charm_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_2"]),
@@ -1443,6 +1445,10 @@ impl GameManagerFinder {
     }
     pub fn got_grimm_notch(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_grimm_notch.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn can_overcharm(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.can_overcharm.deref(process, &self.module, &self.image).ok()
     }
 
     // Charms
@@ -2709,6 +2715,10 @@ impl PlayerDataStore {
 
     pub fn incremented_charm_slots(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "charm_slots", &game_manager_finder.player_data_pointers.charm_slots)
+    }
+
+    pub fn can_overcharm(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "can_overcharm", &g.player_data_pointers.can_overcharm).unwrap_or(false)
     }
 
     pub fn incremented_dream_orbs(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
