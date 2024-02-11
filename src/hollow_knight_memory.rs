@@ -418,6 +418,7 @@ struct PlayerDataPointers {
     killed_nightmare_grimm: UnityPointer<3>,
     killed_grey_prince: UnityPointer<3>,
     grey_prince_orbs_collected: UnityPointer<3>,
+    grey_prince_defeats: UnityPointer<3>,
     visited_crossroads: UnityPointer<3>,
     crossroads_infected: UnityPointer<3>,
     killed_mender_bug: UnityPointer<3>,
@@ -493,6 +494,7 @@ struct PlayerDataPointers {
     killed_dung_defender: UnityPointer<3>,
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
+    white_defender_defeats: UnityPointer<3>,
     met_emilitia: UnityPointer<3>,
     given_emilitia_flower: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
@@ -769,6 +771,7 @@ impl PlayerDataPointers {
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
             killed_grey_prince: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGreyPrince"]),
             grey_prince_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "greyPrinceOrbsCollected"]),
+            grey_prince_defeats: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "greyPrinceDefeats"]),
             visited_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedCrossroads"]),
             crossroads_infected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "crossroadsInfected"]),
             killed_mender_bug: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMenderBug"]),
@@ -836,6 +839,7 @@ impl PlayerDataPointers {
             killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
+            white_defender_defeats: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderDefeats"]),
             met_emilitia: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metEmilitia"]),
             given_emilitia_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenEmilitiaFlower"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
@@ -2734,6 +2738,14 @@ impl PlayerDataStore {
 
     pub fn incremented_dream_orbs(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "dream_orbs", &game_manager_finder.player_data_pointers.dream_orbs)
+    }
+
+    pub fn incremented_grey_prince_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "grey_prince_defeats", &game_manager_finder.player_data_pointers.grey_prince_defeats)
+    }
+
+    pub fn incremented_white_defender_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "white_defender_defeats", &game_manager_finder.player_data_pointers.white_defender_defeats)
     }
 
     pub fn zote_rescued_buzzer(&mut self, p: &Process, g: &GameManagerFinder) -> bool {

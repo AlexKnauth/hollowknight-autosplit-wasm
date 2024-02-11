@@ -1707,6 +1707,10 @@ pub enum Split {
     /// 
     /// Splits when getting Grey Prince Zote essence
     GreyPrinceEssence,
+    /// Grey Prince Zote Level (Boss)
+    /// 
+    /// Splits each time defeating Grey Prince Zote in Bretta's dream
+    OnDefeatGPZ,
     // endregion: Dirtmouth
     // region: Crossroads
     /// Forgotten Crossroads (Area)
@@ -2158,6 +2162,10 @@ pub enum Split {
     /// 
     /// Splits when getting White Defender essence
     WhiteDefenderEssence,
+    /// White Defender Level (Boss)
+    /// 
+    /// Splits each time defeating White Defender in Dung Defender's dream
+    OnDefeatWhiteDefender,
     /// Met Emilitia (Event)
     /// 
     /// Splits when talking to Emilitia for the first time
@@ -3839,6 +3847,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::NightmareKingGrimm => should_split(g.killed_nightmare_grimm(p).is_some_and(|k| k)),
         Split::GreyPrince => should_split(g.killed_grey_prince(p).is_some_and(|k| k)),
         Split::GreyPrinceEssence => should_split(g.grey_prince_orbs_collected(p).is_some_and(|o| o)),
+        Split::OnDefeatGPZ => should_split(pds.incremented_grey_prince_defeats(p, g)),
         // endregion: Dirtmouth
         // region: Crossroads
         Split::ForgottenCrossroads => should_split(g.visited_crossroads(p).is_some_and(|v| v) && g.get_scene_name(p).is_some_and(|s| s.starts_with("Crossroads_"))),
@@ -3950,6 +3959,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DungDefender => should_split(g.killed_dung_defender(p).is_some_and(|k| k)),
         Split::WhiteDefender => should_split(g.killed_white_defender(p).is_some_and(|k| k)),
         Split::WhiteDefenderEssence => should_split(g.white_defender_orbs_collected(p).is_some_and(|o| o)),
+        Split::OnDefeatWhiteDefender => should_split(pds.incremented_white_defender_defeats(p, g)),
         Split::MetEmilitia => should_split(g.met_emilitia(p).is_some_and(|m| m)),
         Split::GivenEmilitiaFlower => should_split(g.given_emilitia_flower(p).is_some_and(|g| g)),
         Split::Flukemarm => should_split(g.killed_fluke_mother(p).is_some_and(|k| k)),
