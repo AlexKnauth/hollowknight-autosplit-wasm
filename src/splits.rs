@@ -1675,6 +1675,20 @@ pub enum Split {
     /// Splits when entering Dirtmouth text first appears
     Dirtmouth,
     SlyShopExit,
+    /// 106% Pre-Grimm Shop (Event)
+    /// 
+    /// Lumafly Lantern Shoptimisation
+    /// 
+    /// Splits when obtaining Lantern + a Sly Mask Shard or Vessel Fragment
+    PreGrimmShop,
+    /// 106% Pre-Grimm Shop (Transition)
+    /// 
+    /// Deprecated: use Shop Lumafly Lantern (Transition) instead
+    PreGrimmShopTrans,
+    /// Elegant Key Shoptimisation (Item)
+    /// 
+    /// Splits when obtaining Elegant Key + a Sly Mask Shard or Vessel Fragment
+    ElegantKeyShoptimised,
     /// 1xx% Sly Final Shop (Transition)
     /// 
     /// Splits on leaving Sly's shop with all Sly shop charms, shards, fragments, and Lantern
@@ -3223,7 +3237,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterDirtmouth => should_split(p.current == "Town" && p.current != p.old),
         Split::KingsPassEnterFromTown => should_split(p.old == "Town" && p.current == "Tutorial_01"),
         Split::SlyShopExit => should_split(p.old == "Room_shop" && p.current != p.old),
-        Split::LumaflyLanternTransition => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
+        Split::LumaflyLanternTransition | Split::PreGrimmShopTrans => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
         Split::SlyShopFinished => should_split(pds.sly_shop_finished(prc, g) && !p.current.starts_with("Room_shop")),
         Split::EnterTMG => should_split(p.current.starts_with("Grimm_Main_Tent")
                                         && p.current != p.old
@@ -3509,7 +3523,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Keys
         Split::CityKey => should_split(g.has_city_key(p).is_some_and(|k| k)),
         Split::LumaflyLantern => should_split(g.has_lantern(p).is_some_and(|l| l)),
-        Split::LumaflyLanternTransition => { pds.has_lantern(p, g); should_split(false) },
+        Split::LumaflyLanternTransition | Split::PreGrimmShopTrans => { pds.has_lantern(p, g); should_split(false) },
         Split::SimpleKey => should_split(g.simple_keys(p).is_some_and(|k| 1 <= k)),
         Split::OnObtainSimpleKey => should_split(pds.incremented_simple_keys(p, g)),
         Split::OnUseSimpleKey => should_split(pds.decremented_simple_keys(p, g)),
@@ -3861,6 +3875,12 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
 
         // region: Dirtmouth
         Split::Dirtmouth => should_split(g.visited_dirtmouth(p).is_some_and(|v| v)),
+        Split::PreGrimmShop => should_split(g.has_lantern(p).is_some_and(|l| l)
+                                            && (g.sly_shell_frag1(p).is_some_and(|s| s)
+                                                || g.sly_vessel_frag1(p).is_some_and(|f| f))),
+        Split::ElegantKeyShoptimised => should_split(g.has_white_key(p).is_some_and(|k| k)
+                                                     && (g.sly_shell_frag1(p).is_some_and(|s| s)
+                                                         || g.sly_vessel_frag1(p).is_some_and(|f| f))),
         Split::SlyShopFinished => { pds.sly_shop_finished(p, g); should_split(false) },
         Split::ElderbugFlower => should_split(g.elderbug_gave_flower(p).is_some_and(|g| g)),
         Split::TroupeMasterGrimm => should_split(g.killed_grimm(p).is_some_and(|k| k)),

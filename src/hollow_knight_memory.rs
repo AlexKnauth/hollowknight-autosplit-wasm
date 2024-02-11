@@ -411,7 +411,9 @@ struct PlayerDataPointers {
     map_resting_grounds: UnityPointer<3>,
     map_abyss: UnityPointer<3>,
     visited_dirtmouth: UnityPointer<3>,
+    sly_shell_frag1: UnityPointer<3>,
     sly_shell_frag4: UnityPointer<3>,
+    sly_vessel_frag1: UnityPointer<3>,
     sly_vessel_frag2: UnityPointer<3>,
     elderbug_gave_flower: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
@@ -769,7 +771,9 @@ impl PlayerDataPointers {
             map_resting_grounds: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapRestingGrounds"]),
             map_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapAbyss"]),
             visited_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDirtmouth"]),
+            sly_shell_frag1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyShellFrag1"]),
             sly_shell_frag4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyShellFrag4"]),
+            sly_vessel_frag1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyVesselFrag1"]),
             sly_vessel_frag2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyVesselFrag2"]),
             elderbug_gave_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderbugGaveFlower"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
@@ -1793,8 +1797,14 @@ impl GameManagerFinder {
         self.player_data_pointers.visited_dirtmouth.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn sly_shell_frag1(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.sly_shell_frag1.deref(process, &self.module, &self.image).ok()
+    }
     pub fn sly_shell_frag4(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_shell_frag4.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn sly_vessel_frag1(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.sly_vessel_frag1.deref(process, &self.module, &self.image).ok()
     }
     pub fn sly_vessel_frag2(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_vessel_frag2.deref(process, &self.module, &self.image).ok()
