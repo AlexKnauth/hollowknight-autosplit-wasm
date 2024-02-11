@@ -3875,8 +3875,12 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
 
         // region: Dirtmouth
         Split::Dirtmouth => should_split(g.visited_dirtmouth(p).is_some_and(|v| v)),
-        Split::PreGrimmShop => todo!("Lumafly Lantern Shoptimisation"),
-        Split::ElegantKeyShoptimised => todo!("Elegant Key Shoptimisation"),
+        Split::PreGrimmShop => should_split(g.has_lantern(p).is_some_and(|l| l)
+                                            && (g.sly_shell_frag1(p).is_some_and(|s| s)
+                                                || g.sly_vessel_frag1(p).is_some_and(|f| f))),
+        Split::ElegantKeyShoptimised => should_split(g.has_white_key(p).is_some_and(|k| k)
+                                                     && (g.sly_shell_frag1(p).is_some_and(|s| s)
+                                                         || g.sly_vessel_frag1(p).is_some_and(|f| f))),
         Split::SlyShopFinished => { pds.sly_shop_finished(p, g); should_split(false) },
         Split::ElderbugFlower => should_split(g.elderbug_gave_flower(p).is_some_and(|g| g)),
         Split::TroupeMasterGrimm => should_split(g.killed_grimm(p).is_some_and(|k| k)),
