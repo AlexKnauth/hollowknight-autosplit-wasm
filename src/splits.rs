@@ -2234,6 +2234,14 @@ pub enum Split {
     /// 
     /// Splits when sitting on the bench in Hidden Station
     BenchHiddenStation,
+    /// Abyss Door (Event)
+    /// 
+    /// Splits on the Abyss door opening
+    AbyssDoor,
+    /// Abyss Lighthouse (Event)
+    /// 
+    /// Splits on the Abyss Lighthouse being lit
+    AbyssLighthouse,
     // endregion: Basin
     // region: White Palace
     /// White Palace Entry (Transition)
@@ -3988,6 +3996,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::LostKin => should_split(g.infected_knight_dream_defeated(p).is_some_and(|k| k)),
         Split::LostKinEssence => should_split(g.infected_knight_orbs_collected(p).is_some_and(|o| o)),
         Split::BenchHiddenStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Abyss_22")),
+        Split::AbyssDoor => should_split(g.abyss_gate_opened(p).is_some_and(|o| o)),
+        Split::AbyssLighthouse => should_split(g.abyss_lighthouse(p).is_some_and(|l| l)),
         // TODO: should there be a split for the actual Abyss Area Text?
         // endregion: Basin
         // region: White Palace

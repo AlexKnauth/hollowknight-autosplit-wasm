@@ -509,6 +509,8 @@ struct PlayerDataPointers {
     killed_infected_knight: UnityPointer<3>,
     infected_knight_dream_defeated: UnityPointer<3>,
     infected_knight_orbs_collected: UnityPointer<3>,
+    abyss_gate_opened: UnityPointer<3>,
+    abyss_lighthouse: UnityPointer<3>,
     visited_white_palace: UnityPointer<3>,
     white_palace_orb_1: UnityPointer<3>,
     white_palace_orb_2: UnityPointer<3>,
@@ -855,6 +857,8 @@ impl PlayerDataPointers {
             killed_infected_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedInfectedKnight"]),
             infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
             infected_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightOrbsCollected"]),
+            abyss_gate_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "abyssGateOpened"]),
+            abyss_lighthouse: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "abyssLighthouse"]),
             visited_white_palace: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedWhitePalace"]),
             white_palace_orb_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whitePalaceOrb_1"]),
             white_palace_orb_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whitePalaceOrb_2"]),
@@ -2130,6 +2134,14 @@ impl GameManagerFinder {
 
     pub fn infected_knight_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.infected_knight_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn abyss_gate_opened(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.abyss_gate_opened.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn abyss_lighthouse(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.abyss_lighthouse.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn visited_white_palace(&self, process: &Process) -> Option<bool> {
