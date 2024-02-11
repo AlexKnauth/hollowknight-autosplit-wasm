@@ -462,6 +462,8 @@ struct PlayerDataPointers {
     moth_departed: UnityPointer<3>,
     /// Met Grey Mourner
     met_xun: UnityPointer<3>,
+    has_xun_flower: UnityPointer<3>,
+    xun_reward_given: UnityPointer<3>,
     opened_city_gate: UnityPointer<3>,
     visited_ruins: UnityPointer<3>,
     killed_gorgeous_husk: UnityPointer<3>,
@@ -813,6 +815,8 @@ impl PlayerDataPointers {
             glade_door_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gladeDoorOpened"]),
             moth_departed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mothDeparted"]),
             met_xun: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metXun"]),
+            has_xun_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasXunFlower"]),
+            xun_reward_given: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "xunRewardGiven"]),
             opened_city_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCityGate"]),
             visited_ruins: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRuins"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
@@ -1968,6 +1972,16 @@ impl GameManagerFinder {
     /// Met Grey Mourner
     pub fn met_xun(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.met_xun.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// Has Delicate Flower
+    pub fn has_xun_flower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_xun_flower.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// Flower Reward Given
+    pub fn xun_reward_given(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.xun_reward_given.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn opened_city_gate(&self, process: &Process) -> Option<bool> {

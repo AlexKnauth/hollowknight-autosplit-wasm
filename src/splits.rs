@@ -1967,6 +1967,14 @@ pub enum Split {
     /// 
     /// Splits when both talked to Grey Mourner and Seer has ascended
     GreyMournerSeerAscended,
+    /// Delicate Flower (Item)
+    /// 
+    /// Splits when flower is in inventory
+    HasDelicateFlower,
+    /// Flower Quest Reward (Event)
+    /// 
+    /// Splits when Grey Mourner gives you the Flower Quest reward
+    FlowerRewardGiven,
     // endregion: Resting Grounds
     // region: City
     /// City Gate (Event)
@@ -3915,6 +3923,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SeerDeparts => should_split(g.moth_departed(p).is_some_and(|d| d)),
         Split::MetGreyMourner => should_split(g.met_xun(p).is_some_and(|m| m)),
         Split::GreyMournerSeerAscended => should_split(g.met_xun(p).is_some_and(|m| m) && g.moth_departed(p).is_some_and(|d| d)),
+        Split::HasDelicateFlower => should_split(g.has_xun_flower(p).is_some_and(|f| f)),
+        Split::FlowerRewardGiven => should_split(g.xun_reward_given(p).is_some_and(|f| f)),
         // endregion: Resting Grounds
         // region: City
         Split::CityGateOpen => should_split(g.opened_city_gate(p).is_some_and(|o| o)),
