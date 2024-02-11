@@ -261,6 +261,7 @@ struct PlayerDataPointers {
     //  - number of heart pieces excluding masks except the final mask:   0-3 0-3 0-3  0-3   4
     // and I'm not sure which one
     heart_pieces: UnityPointer<3>,
+    soul_limited: UnityPointer<3>,
     /// Magic Power Reserve Max: amount of soul that can be held by soul vessels, 33 each
     mp_reserve_max: UnityPointer<3>,
     vessel_fragments: UnityPointer<3>,
@@ -315,6 +316,8 @@ struct PlayerDataPointers {
     sold_trinket3: UnityPointer<3>,
     sold_trinket4: UnityPointer<3>,
     rancid_eggs: UnityPointer<3>,
+    jinn_eggs_sold: UnityPointer<3>,
+    ghost_coins: UnityPointer<3>,
     // Charm Notches
     notch_shroom_ogres: UnityPointer<3>,
     salubra_notch1: UnityPointer<3>,
@@ -324,6 +327,7 @@ struct PlayerDataPointers {
     notch_fog_canyon: UnityPointer<3>,
     got_grimm_notch: UnityPointer<3>,
     charm_slots: UnityPointer<3>,
+    can_overcharm: UnityPointer<3>,
     // Charms
     got_charm_1: UnityPointer<3>,
     got_charm_2: UnityPointer<3>,
@@ -407,13 +411,16 @@ struct PlayerDataPointers {
     map_resting_grounds: UnityPointer<3>,
     map_abyss: UnityPointer<3>,
     visited_dirtmouth: UnityPointer<3>,
+    sly_shell_frag1: UnityPointer<3>,
     sly_shell_frag4: UnityPointer<3>,
+    sly_vessel_frag1: UnityPointer<3>,
     sly_vessel_frag2: UnityPointer<3>,
     elderbug_gave_flower: UnityPointer<3>,
     killed_grimm: UnityPointer<3>,
     killed_nightmare_grimm: UnityPointer<3>,
     killed_grey_prince: UnityPointer<3>,
     grey_prince_orbs_collected: UnityPointer<3>,
+    grey_prince_defeats: UnityPointer<3>,
     visited_crossroads: UnityPointer<3>,
     crossroads_infected: UnityPointer<3>,
     killed_mender_bug: UnityPointer<3>,
@@ -440,6 +447,7 @@ struct PlayerDataPointers {
     mega_moss_charger_defeated: UnityPointer<3>,
     nailsmith_convo_art: UnityPointer<3>,
     visited_fungus: UnityPointer<3>,
+    kills_mushroom_brawler: UnityPointer<3>,
     killed_ghost_hu: UnityPointer<3>,
     elder_hu_defeated: UnityPointer<3>,
     bretta_rescued: UnityPointer<3>,
@@ -456,6 +464,8 @@ struct PlayerDataPointers {
     moth_departed: UnityPointer<3>,
     /// Met Grey Mourner
     met_xun: UnityPointer<3>,
+    has_xun_flower: UnityPointer<3>,
+    xun_reward_given: UnityPointer<3>,
     opened_city_gate: UnityPointer<3>,
     visited_ruins: UnityPointer<3>,
     killed_gorgeous_husk: UnityPointer<3>,
@@ -489,6 +499,7 @@ struct PlayerDataPointers {
     killed_dung_defender: UnityPointer<3>,
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
+    white_defender_defeats: UnityPointer<3>,
     met_emilitia: UnityPointer<3>,
     given_emilitia_flower: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
@@ -500,6 +511,8 @@ struct PlayerDataPointers {
     killed_infected_knight: UnityPointer<3>,
     infected_knight_dream_defeated: UnityPointer<3>,
     infected_knight_orbs_collected: UnityPointer<3>,
+    abyss_gate_opened: UnityPointer<3>,
+    abyss_lighthouse: UnityPointer<3>,
     visited_white_palace: UnityPointer<3>,
     white_palace_orb_1: UnityPointer<3>,
     white_palace_orb_2: UnityPointer<3>,
@@ -611,6 +624,7 @@ impl PlayerDataPointers {
             dream_nail_upgraded: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamNailUpgraded"]),
             max_health_base: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "maxHealthBase"]),
             heart_pieces: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "heartPieces"]),
+            soul_limited: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soulLimited"]),
             mp_reserve_max: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "MPReserveMax"]),
             vessel_fragments: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "vesselFragments"]),
             at_bench: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "atBench"]),
@@ -663,6 +677,8 @@ impl PlayerDataPointers {
             sold_trinket3: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket3"]),
             sold_trinket4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "soldTrinket4"]),
             rancid_eggs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "rancidEggs"]),
+            jinn_eggs_sold: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "jinnEggsSold"]),
+            ghost_coins: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "ghostCoins"]),
             // Charm Notches
             notch_shroom_ogres: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "notchShroomOgres"]),
             salubra_notch1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraNotch1"]),
@@ -672,6 +688,7 @@ impl PlayerDataPointers {
             notch_fog_canyon: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "notchFogCanyon"]),
             got_grimm_notch: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotGrimmNotch"]),
             charm_slots: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "charmSlots"]),
+            can_overcharm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "canOvercharm"]),
             // Charms
             got_charm_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_1"]),
             got_charm_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gotCharm_2"]),
@@ -754,13 +771,16 @@ impl PlayerDataPointers {
             map_resting_grounds: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapRestingGrounds"]),
             map_abyss: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapAbyss"]),
             visited_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedDirtmouth"]),
+            sly_shell_frag1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyShellFrag1"]),
             sly_shell_frag4: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyShellFrag4"]),
+            sly_vessel_frag1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyVesselFrag1"]),
             sly_vessel_frag2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "slyVesselFrag2"]),
             elderbug_gave_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderbugGaveFlower"]),
             killed_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGrimm"]),
             killed_nightmare_grimm: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedNightmareGrimm"]),
             killed_grey_prince: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGreyPrince"]),
             grey_prince_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "greyPrinceOrbsCollected"]),
+            grey_prince_defeats: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "greyPrinceDefeats"]),
             visited_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedCrossroads"]),
             crossroads_infected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "crossroadsInfected"]),
             killed_mender_bug: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedMenderBug"]),
@@ -785,6 +805,7 @@ impl PlayerDataPointers {
             mega_moss_charger_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "megaMossChargerDefeated"]),
             nailsmith_convo_art: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "nailsmithConvoArt"]),
             visited_fungus: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedFungus"]),
+            kills_mushroom_brawler: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsMushroomBrawler"]),
             killed_ghost_hu: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGhostHu"]),
             elder_hu_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "elderHuDefeated"]),
             bretta_rescued: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "brettaRescued"]),
@@ -800,6 +821,8 @@ impl PlayerDataPointers {
             glade_door_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "gladeDoorOpened"]),
             moth_departed: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mothDeparted"]),
             met_xun: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metXun"]),
+            has_xun_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "hasXunFlower"]),
+            xun_reward_given: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "xunRewardGiven"]),
             opened_city_gate: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "openedCityGate"]),
             visited_ruins: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedRuins"]),
             killed_gorgeous_husk: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedGorgeousHusk"]),
@@ -828,6 +851,7 @@ impl PlayerDataPointers {
             killed_dung_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedDungDefender"]),
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
+            white_defender_defeats: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderDefeats"]),
             met_emilitia: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metEmilitia"]),
             given_emilitia_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenEmilitiaFlower"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
@@ -837,6 +861,8 @@ impl PlayerDataPointers {
             killed_infected_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedInfectedKnight"]),
             infected_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightDreamDefeated"]),
             infected_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "infectedKnightOrbsCollected"]),
+            abyss_gate_opened: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "abyssGateOpened"]),
+            abyss_lighthouse: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "abyssLighthouse"]),
             visited_white_palace: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "visitedWhitePalace"]),
             white_palace_orb_1: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whitePalaceOrb_1"]),
             white_palace_orb_2: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whitePalaceOrb_2"]),
@@ -1415,9 +1441,12 @@ impl GameManagerFinder {
              + 1200 * self.sold_trinket4(p)?)
     }
 
-    #[allow(unused)]
     pub fn rancid_eggs(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers.rancid_eggs.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn jinn_eggs_sold(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.jinn_eggs_sold.deref(process, &self.module, &self.image).ok()
     }
 
     // Charm Notches
@@ -1441,6 +1470,10 @@ impl GameManagerFinder {
     }
     pub fn got_grimm_notch(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.got_grimm_notch.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn can_overcharm(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.can_overcharm.deref(process, &self.module, &self.image).ok()
     }
 
     // Charms
@@ -1764,8 +1797,14 @@ impl GameManagerFinder {
         self.player_data_pointers.visited_dirtmouth.deref(process, &self.module, &self.image).ok()
     }
 
+    pub fn sly_shell_frag1(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.sly_shell_frag1.deref(process, &self.module, &self.image).ok()
+    }
     pub fn sly_shell_frag4(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_shell_frag4.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn sly_vessel_frag1(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.sly_vessel_frag1.deref(process, &self.module, &self.image).ok()
     }
     pub fn sly_vessel_frag2(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_vessel_frag2.deref(process, &self.module, &self.image).ok()
@@ -1949,6 +1988,16 @@ impl GameManagerFinder {
         self.player_data_pointers.met_xun.deref(process, &self.module, &self.image).ok()
     }
 
+    /// Has Delicate Flower
+    pub fn has_xun_flower(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.has_xun_flower.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// Flower Reward Given
+    pub fn xun_reward_given(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.xun_reward_given.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn opened_city_gate(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.opened_city_gate.deref(process, &self.module, &self.image).ok()
     }
@@ -2095,6 +2144,14 @@ impl GameManagerFinder {
 
     pub fn infected_knight_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.infected_knight_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn abyss_gate_opened(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.abyss_gate_opened.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn abyss_lighthouse(&self, process: &Process) -> Option<bool> {
+        self.player_data_pointers.abyss_lighthouse.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn visited_white_palace(&self, process: &Process) -> Option<bool> {
@@ -2526,6 +2583,10 @@ impl PlayerDataStore {
             && self.map_i32.get("heart_pieces").is_some_and(|&s| s < 4))
     }
 
+    pub fn shade_killed(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.changed_bool(p, g, "soul_limited", &g.player_data_pointers.soul_limited).is_some_and(|l| !l)
+    }
+
     pub fn obtained_vessel_fragment(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.increased_i32(p, g, "mp_reserve_max", &g.player_data_pointers.mp_reserve_max)
         || (self.incremented_i32(p, g, "vessel_fragments", &g.player_data_pointers.vessel_fragments)
@@ -2677,6 +2738,10 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "simple_keys", &game_manager_finder.player_data_pointers.simple_keys)
     }
 
+    pub fn decremented_simple_keys(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.decremented_i32(process, game_manager_finder, "simple_keys", &game_manager_finder.player_data_pointers.simple_keys)
+    }
+
     pub fn incremented_trinket1(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "trinket1", &game_manager_finder.player_data_pointers.trinket1)
     }
@@ -2697,12 +2762,28 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "rancid_eggs", &game_manager_finder.player_data_pointers.rancid_eggs)
     }
 
+    pub fn incremented_ghost_coins(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "ghost_coins", &game_manager_finder.player_data_pointers.ghost_coins)
+    }
+
     pub fn incremented_charm_slots(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "charm_slots", &game_manager_finder.player_data_pointers.charm_slots)
     }
 
+    pub fn can_overcharm(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "can_overcharm", &g.player_data_pointers.can_overcharm).unwrap_or(false)
+    }
+
     pub fn incremented_dream_orbs(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "dream_orbs", &game_manager_finder.player_data_pointers.dream_orbs)
+    }
+
+    pub fn incremented_grey_prince_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "grey_prince_defeats", &game_manager_finder.player_data_pointers.grey_prince_defeats)
+    }
+
+    pub fn incremented_white_defender_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
+        self.incremented_i32(process, game_manager_finder, "white_defender_defeats", &game_manager_finder.player_data_pointers.white_defender_defeats)
     }
 
     pub fn zote_rescued_buzzer(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
@@ -2790,6 +2871,11 @@ impl PlayerDataStore {
     pub fn aspid_hunter_arena(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // Aspid: {0} +3 {3}
         self.kills_decreased_by(prc, gmf, "kills_spitter_on_entry", &gmf.player_data_pointers.kills_spitter, 3)
+    }
+
+    pub fn mushroom_brawler_arena(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Shrumal Ogre: {0} +2 {2}
+        self.kills_decreased_by(prc, gmf, "kills_mushroom_brawler_on_entry", &gmf.player_data_pointers.kills_mushroom_brawler, 2)
     }
 
     pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {

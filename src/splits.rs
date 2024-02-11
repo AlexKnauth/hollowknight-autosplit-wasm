@@ -111,6 +111,10 @@ pub enum Split {
     /// 
     /// Splits when player HP is 0
     PlayerDeath,
+    /// Shade Killed (Event)
+    /// 
+    /// Splits when the Shade is killed
+    ShadeKilled,
     /// Any Transition (Transition)
     /// 
     /// Splits when the knight enters a transition (only one will split per transition)
@@ -346,6 +350,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining a Simple Key
     OnObtainSimpleKey,
+    /// Use Simple Key (Obtain)
+    /// 
+    /// Splits when using a Simple Key
+    OnUseSimpleKey,
     /// Shopkeeper's Key (Item)
     /// 
     /// Splits when obtaining the Shopkeeper's Key
@@ -405,6 +413,10 @@ pub enum Split {
     /// 
     /// Splits after obtaining the sixth pale ore.
     Ore6,
+    /// Pale Ore - Any (Item)
+    /// 
+    /// Splits if you've obtained any Pale Ore
+    PaleOre,
     /// Nail 1 (Upgrade)
     /// 
     /// Splits upon upgrading to the Sharpened Nail
@@ -646,6 +658,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining a new Charm Slot
     OnObtainCharmNotch,
+    /// Can Overcharm (Event)
+    /// 
+    /// Splits when overcharming is enabled
+    CanOvercharm,
     // endregion: Charm Notches
 
     // region: Charms
@@ -982,6 +998,14 @@ pub enum Split {
     /// 
     /// Splits when obtaining a Rancid Egg
     OnObtainRancidEgg,
+    /// All Eggs (Item)
+    /// 
+    /// Splits when 21 Rancid Eggs have been collected
+    AllEggs,
+    /// Ghost Coins Incremented (Event)
+    /// 
+    /// Splits when the ghostCoins PlayerData is updated. Unused by unmodded game, intended for use with mods.
+    OnGhostCoinsIncremented,
     // endregion: Relics
 
     // region: Grubs and Mimics
@@ -1193,6 +1217,10 @@ pub enum Split {
     /// 
     /// Splits when rescuing all three grubs in Ruins2_11. (On 1221, splits for right grub)
     GrubCityCollectorAll,
+    /// Rescued Grub City Collector (Grub)
+    /// 
+    /// Splits when rescuing any grub in Ruins2_11
+    GrubCityCollector,
     /// Rescued Grub City Guard House (Grub)
     /// 
     /// Splits when rescuing the grub in Ruins_House_01
@@ -1638,11 +1666,29 @@ pub enum Split {
     /// 
     /// Splits on any transition into Dirtmouth Town
     EnterDirtmouth,
+    /// King's Pass from Town (Transition)
+    /// 
+    /// Splits when entering King's Pass from Dirtmouth
+    KingsPassEnterFromTown,
     /// Dirtmouth (Area)
     /// 
     /// Splits when entering Dirtmouth text first appears
     Dirtmouth,
     SlyShopExit,
+    /// 106% Pre-Grimm Shop (Event)
+    /// 
+    /// Lumafly Lantern Shoptimisation
+    /// 
+    /// Splits when obtaining Lantern + a Sly Mask Shard or Vessel Fragment
+    PreGrimmShop,
+    /// 106% Pre-Grimm Shop (Transition)
+    /// 
+    /// Deprecated: use Shop Lumafly Lantern (Transition) instead
+    PreGrimmShopTrans,
+    /// Elegant Key Shoptimisation (Item)
+    /// 
+    /// Splits when obtaining Elegant Key + a Sly Mask Shard or Vessel Fragment
+    ElegantKeyShoptimised,
     /// 1xx% Sly Final Shop (Transition)
     /// 
     /// Splits on leaving Sly's shop with all Sly shop charms, shards, fragments, and Lantern
@@ -1675,6 +1721,10 @@ pub enum Split {
     /// 
     /// Splits when getting Grey Prince Zote essence
     GreyPrinceEssence,
+    /// Grey Prince Zote Level (Boss)
+    /// 
+    /// Splits each time defeating Grey Prince Zote in Bretta's dream
+    OnDefeatGPZ,
     // endregion: Dirtmouth
     // region: Crossroads
     /// Forgotten Crossroads (Area)
@@ -1766,6 +1816,10 @@ pub enum Split {
     /// 
     /// Splits when entering Greenpath
     EnterGreenpath,
+    /// Greenpath w/ Unlocked Overcharm (Transition)
+    /// 
+    /// Splits when entering Greenpath with overcharming unlocked
+    EnterGreenpathWithOvercharm,
     /// Greenpath (Area)
     /// 
     /// Splits when entering Greenpath text first appears
@@ -1838,6 +1892,10 @@ pub enum Split {
     /// 
     /// Splits when sitting on the bench in Queen's Station
     BenchQueensStation,
+    /// Shrumal Ogres (Mini Boss)
+    /// 
+    /// Splits when killing 2 Shrumal Ogres in a row (ideally Shrumal Ogre Notch arena)
+    MushroomBrawler,
     /// Elder Hu (Boss)
     /// 
     /// Splits when killing Elder Hu
@@ -1850,7 +1908,6 @@ pub enum Split {
     /// 
     /// Splits on the transition after killing Elder Hu
     ElderHuTrans,
-    MenuMantisJournal,
     /// Bretta Rescued (NPC)
     /// 
     /// Splits when saving Bretta
@@ -1924,6 +1981,14 @@ pub enum Split {
     /// 
     /// Splits when both talked to Grey Mourner and Seer has ascended
     GreyMournerSeerAscended,
+    /// Delicate Flower (Item)
+    /// 
+    /// Splits when flower is in inventory
+    HasDelicateFlower,
+    /// Flower Quest Reward (Event)
+    /// 
+    /// Splits when Grey Mourner gives you the Flower Quest reward
+    FlowerRewardGiven,
     // endregion: Resting Grounds
     // region: City
     /// City Gate (Event)
@@ -2012,7 +2077,6 @@ pub enum Split {
     /// 
     /// Splits when getting Soul Tyrant essence and Sanctum fakedive grub
     SoulTyrantEssenceWithSanctumGrub,
-    MenuStoreroomsSimpleKey,
     /// Storerooms (Bench)
     /// 
     /// Splits when sitting on the bench in City Storerooms
@@ -2078,7 +2142,6 @@ pub enum Split {
     /// 
     /// Splits when killing a Husk Miner
     HuskMiner,
-    MenuSlyKey,
     /// Crystal Guardian (Boss)
     /// 
     /// Splits when killing the Crystal Guardian
@@ -2117,7 +2180,6 @@ pub enum Split {
     /// 
     /// Splits when killing Dung Defender
     DungDefender,
-    DungDefenderExit,
     /// White Defender (Boss)
     /// 
     /// Splits when killing White Defender
@@ -2126,6 +2188,10 @@ pub enum Split {
     /// 
     /// Splits when getting White Defender essence
     WhiteDefenderEssence,
+    /// White Defender Level (Boss)
+    /// 
+    /// Splits each time defeating White Defender in Dung Defender's dream
+    OnDefeatWhiteDefender,
     /// Met Emilitia (Event)
     /// 
     /// Splits when talking to Emilitia for the first time
@@ -2182,6 +2248,14 @@ pub enum Split {
     /// 
     /// Splits when sitting on the bench in Hidden Station
     BenchHiddenStation,
+    /// Abyss Door (Event)
+    /// 
+    /// Splits on the Abyss door opening
+    AbyssDoor,
+    /// Abyss Lighthouse (Event)
+    /// 
+    /// Splits on the Abyss Lighthouse being lit
+    AbyssLighthouse,
     // endregion: Basin
     // region: White Palace
     /// White Palace Entry (Transition)
@@ -2294,6 +2368,10 @@ pub enum Split {
     //           Maybe the room off the side of the RG elevator shouldn't count,
     //           but what about the Tram entrance?
     KingdomsEdgeEntry,
+    /// Kingdom's Edge Overcharmed (Transition)
+    /// 
+    /// Splits on transition to Kingdom's Edge from King's Station while overcharmed
+    KingdomsEdgeOvercharmedEntry,
     /// Kingdom's Edge (Area)
     /// 
     /// Splits when entering Kingdom's Edge text first appears
@@ -3130,7 +3208,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EndingC => should_split(p.current == "Cinematic_Ending_C"),
         Split::EndingD => should_split(p.current == "Cinematic_Ending_D"),
         Split::EndingE => should_split(p.current == "Cinematic_Ending_E"),
-        Split::Menu => should_split(is_menu(p.current)),
+        Split::Menu => should_split(p.current == MENU_TITLE),
         Split::AnyTransition => should_split(p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old))),
         Split::TransitionAfterSaveState => should_split(p.current != p.old
                                                         && !(p.old.is_empty()
@@ -3147,7 +3225,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::Monomon => should_split(p.old == "Dream_Guardian_Monomon" && p.current == "Cutscene_Boss_Door"),
         Split::Hegemol => should_split(p.old == "Dream_Guardian_Hegemol" && p.current == "Cutscene_Boss_Door"),
         */
-        Split::MenuDreamer3 => should_split(3 <= pds.guardians_defeated(prc, g) && is_menu(p.current)),
+        Split::MenuDreamer3 => should_split(3 <= pds.guardians_defeated(prc, g) && p.current == MENU_TITLE),
         // endregion: Dreamers
 
         // region: Maps and Cornifer
@@ -3157,8 +3235,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Dirtmouth
         Split::KingsPass => should_split(p.old == "Tutorial_01" && p.current == "Town"),
         Split::EnterDirtmouth => should_split(p.current == "Town" && p.current != p.old),
+        Split::KingsPassEnterFromTown => should_split(p.old == "Town" && p.current == "Tutorial_01"),
         Split::SlyShopExit => should_split(p.old == "Room_shop" && p.current != p.old),
-        Split::LumaflyLanternTransition => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
+        Split::LumaflyLanternTransition | Split::PreGrimmShopTrans => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
         Split::SlyShopFinished => should_split(pds.sly_shop_finished(prc, g) && !p.current.starts_with("Room_shop")),
         Split::EnterTMG => should_split(p.current.starts_with("Grimm_Main_Tent")
                                         && p.current != p.old
@@ -3179,18 +3258,18 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Crossroads
         // region: Greenpath
         Split::EnterGreenpath => should_split(p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01")),
+        Split::EnterGreenpathWithOvercharm => should_split(pds.can_overcharm(prc, g) && p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01")),
         Split::VengeflyKingTrans => should_split(pds.zote_rescued_buzzer(prc, g) && p.current != p.old),
         Split::EnterHornet1 => should_split(p.current.starts_with("Fungus1_04") && p.current != p.old),
-        Split::MenuCloak => should_split(pds.has_dash(prc, g) && is_menu(p.current)),
+        Split::MenuCloak => should_split(pds.has_dash(prc, g) && p.current == MENU_TITLE),
         Split::MegaMossChargerTrans => should_split(pds.mega_moss_charger_defeated(prc, g) && p.current != p.old),
         // endregion: Greenpath
         // region: Fungal
         Split::FungalWastesEntry => should_split(starts_with_any(p.current, FUNGAL_WASTES_ENTRY_SCENES) && p.current != p.old),
         Split::ElderHuTrans => should_split(pds.killed_ghost_hu(prc, g) && p.current != p.old),
-        Split::MenuDashmaster => should_split(pds.got_charm_31(prc, g) && is_menu(p.current)),
+        Split::MenuDashmaster => should_split(pds.got_charm_31(prc, g) && p.current == MENU_TITLE),
         Split::TransClaw => should_split(pds.has_wall_jump(prc, g) && p.current != p.old),
-        Split::MenuClaw => should_split(pds.has_wall_jump(prc, g) && is_menu(p.current)),
-        Split::MenuMantisJournal => should_split(is_menu(p.current) && p.old == "Fungus2_17"),
+        Split::MenuClaw => should_split(pds.has_wall_jump(prc, g) && p.current == MENU_TITLE),
         // endregion: Fungal
         // TODO: should there be a HowlingCliffsEntry or EnterHowlingCliffs transition split?
         //       and what scenes should it be based on?
@@ -3200,20 +3279,19 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::BlueLake => should_split(p.current.starts_with("Crossroads_50") && !p.old.starts_with("Crossroads_50")), // blue lake is Crossroads_50
         Split::EnterAnyDream => should_split(p.current.starts_with("Dream_") && p.current != p.old),
         Split::DreamNailExit => should_split(p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07"),
-        Split::MenuDreamNail => should_split(pds.has_dream_nail(prc, g) && is_menu(p.current)),
-        Split::MenuDreamGate => should_split(pds.has_dream_gate(prc, g) && is_menu(p.current)),
+        Split::MenuDreamNail => should_split(pds.has_dream_nail(prc, g) && p.current == MENU_TITLE),
+        Split::MenuDreamGate => should_split(pds.has_dream_gate(prc, g) && p.current == MENU_TITLE),
         Split::CatacombsEntry => should_split(p.current.starts_with("RestingGrounds_10") && !p.old.starts_with("RestingGrounds_10")),
         // endregion: Resting Grounds
         // region: City
         Split::TransGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && p.current != p.old),
-        Split::MenuGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && is_menu(p.current)),
+        Split::MenuGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && p.current == MENU_TITLE),
         Split::EnterRafters => should_split(p.current == "Ruins1_03" && p.current != p.old),
         Split::EnterSanctum => should_split(p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSanctumWithShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSoulMaster => should_split(p.current.starts_with("Ruins1_24") && p.current != p.old),
-        Split::MenuStoreroomsSimpleKey => should_split(is_menu(p.current) && p.old == "Ruins1_17"),
         Split::TransShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current != p.old),
-        Split::MenuShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && is_menu(p.current)),
+        Split::MenuShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current == MENU_TITLE),
         Split::EnterBlackKnight => should_split(p.current == "Ruins2_03" && p.current != p.old),
         Split::BlackKnightTrans => should_split(pds.killed_black_knight(prc, g) && p.current != p.old),
         Split::EnterLoveTower => should_split(p.current.starts_with("Ruins2_11") && p.current != p.old),
@@ -3221,25 +3299,23 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: City
         // region: Peak
         Split::CrystalPeakEntry => should_split(starts_with_any(p.current, CRYSTAL_PEAK_ENTRY_SCENES) && p.current != p.old),
-        Split::MenuSlyKey => should_split(is_menu(p.current) && p.old == "Mines_11"),
         Split::EnterCrown => should_split(p.current == "Mines_23" && p.current != p.old),
         Split::TransDescendingDark => should_split(2 <= pds.get_quake_level(prc, g) && p.current != p.old),
         Split::CrystalMoundExit => should_split(p.old.starts_with("Mines_35") && p.current != p.old),
         // endregion: Peak
         // region: Waterways
         Split::WaterwaysEntry => should_split(starts_with_any(p.current, WATERWAYS_ENTRY_SCENES) && p.current != p.old),
-        Split::DungDefenderExit => should_split(p.old == "Waterways_05" && p.current == "Abyss_01"),
         Split::TransTear => should_split(pds.has_acid_armour(prc, g) && p.current != p.old),
         Split::TransTearWithGrub => should_split(pds.has_acid_armour(prc, g) && pds.grub_waterways_isma(prc, g) && p.current != p.old),
-        Split::MenuIsmasTear => should_split(pds.has_acid_armour(prc, g) && is_menu(p.current)),
+        Split::MenuIsmasTear => should_split(pds.has_acid_armour(prc, g) && p.current == MENU_TITLE),
         Split::EnterJunkPit => should_split(p.current == "GG_Waterways" && p.current != p.old),
         // endregion: Waterways
         // region: Basin
         Split::BasinEntry => should_split(p.current.starts_with("Abyss_04") && p.current != p.old),
         Split::Abyss19from18 => should_split(p.old == "Abyss_18" && p.current == "Abyss_19"),
         Split::BrokenVesselTrans => should_split(pds.killed_infected_knight(prc, g) && g.get_health(prc).is_some_and(|h| 0 < h)),
-        Split::MenuWings => should_split(pds.has_double_jump(prc, g) && is_menu(p.current)),
-        Split::MenuVoidHeart => should_split(pds.got_shade_charm(prc, g) && is_menu(p.current)),
+        Split::MenuWings => should_split(pds.has_double_jump(prc, g) && p.current == MENU_TITLE),
+        Split::MenuVoidHeart => should_split(pds.got_shade_charm(prc, g) && p.current == MENU_TITLE),
         // endregion: Basin
         // region: White Palace
         Split::WhitePalaceEntry => should_split(p.current.starts_with("White_Palace_11") && p.current != p.old),
@@ -3266,6 +3342,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // Deepnest_East_03 is the KE room with Cornifer, acid, and raining fools,
         // where the King's Station and Tram entrances meet
         Split::KingdomsEdgeEntry => should_split(p.current.starts_with("Deepnest_East_03") && p.current != p.old),
+        Split::KingdomsEdgeOvercharmedEntry => should_split(pds.can_overcharm(prc, g) && p.current.starts_with("Deepnest_East_03") && p.current != p.old),
         Split::HiveEntry => should_split(p.current.starts_with("Hive_01") && p.current != p.old),
         Split::EnterHiveKnight => should_split(p.current.starts_with("Hive_05") && p.current != p.old),
         Split::EnterHornet2 => should_split(p.current.starts_with("Deepnest_East_Hornet") && p.current != p.old),
@@ -3380,6 +3457,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
                                          && g.get_scene_name(p).is_some_and(|s| !is_menu(&s))),
         Split::BenchAny => should_split(g.at_bench(p).is_some_and(|b| b)),
         Split::PlayerDeath => should_split(g.get_health(p).is_some_and(|h| h == 0)),
+        Split::ShadeKilled => should_split(pds.shade_killed(p, g)),
         // region: Dreamers
         Split::Lurien => should_split(g.mask_broken_lurien(p).is_some_and(|b| b)),
         Split::Monomon => should_split(g.mask_broken_monomon(p).is_some_and(|b| b)),
@@ -3445,9 +3523,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Keys
         Split::CityKey => should_split(g.has_city_key(p).is_some_and(|k| k)),
         Split::LumaflyLantern => should_split(g.has_lantern(p).is_some_and(|l| l)),
-        Split::LumaflyLanternTransition => { pds.has_lantern(p, g); should_split(false) },
+        Split::LumaflyLanternTransition | Split::PreGrimmShopTrans => { pds.has_lantern(p, g); should_split(false) },
         Split::SimpleKey => should_split(g.simple_keys(p).is_some_and(|k| 1 <= k)),
         Split::OnObtainSimpleKey => should_split(pds.incremented_simple_keys(p, g)),
+        Split::OnUseSimpleKey => should_split(pds.decremented_simple_keys(p, g)),
         Split::SlyKey => should_split(g.has_sly_key(p).is_some_and(|k| k)),
         Split::ElegantKey => should_split(g.has_white_key(p).is_some_and(|k| k)),
         Split::LoveKey => should_split(g.has_love_key(p).is_some_and(|k| k)),
@@ -3468,6 +3547,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Ore4 => should_split(g.ore_gross(p).is_some_and(|o| 4 <= o)),
         Split::Ore5 => should_split(g.ore_gross(p).is_some_and(|o| 5 <= o)),
         Split::Ore6 => should_split(g.ore_gross(p).is_some_and(|o| 6 <= o)),
+        Split::PaleOre => should_split(g.ore(p).is_some_and(|o| 0 < o)),
         // endregion: Nail and Pale Ore
         // region: Masks and Mask Shards
         Split::OnObtainMaskShard => should_split(pds.obtained_mask_shard(p, g)),
@@ -3528,6 +3608,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::NotchFogCanyon => should_split(g.notch_fog_canyon(p).is_some_and(|n| n)),
         Split::NotchGrimm => should_split(g.got_grimm_notch(p).is_some_and(|n| n)),
         Split::OnObtainCharmNotch => should_split(pds.incremented_charm_slots(p, g)),
+        Split::CanOvercharm => should_split(g.can_overcharm(p).is_some_and(|c| c)),
         // endregion: Charm Notches
         // region: Charms
         Split::GatheringSwarm => should_split(g.got_charm_1(p).is_some_and(|c| c)),
@@ -3624,6 +3705,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::ArcaneEgg8 => should_split(8 <= g.trinket4(p).unwrap_or_default() + g.sold_trinket4(p).unwrap_or_default()),
         Split::OnObtainArcaneEgg => should_split(pds.incremented_trinket4(p, g)),
         Split::OnObtainRancidEgg => should_split(pds.incremented_rancid_eggs(p, g)),
+        Split::AllEggs => should_split(21 <= g.rancid_eggs(p).unwrap_or_default() + g.jinn_eggs_sold(p).unwrap_or_default()),
+        Split::OnGhostCoinsIncremented => should_split(pds.incremented_ghost_coins(p, g)),
         // endregion: Relics
         // region: Grubs and Mimics
         Split::Grub1 => should_split(g.grubs_collected(p).is_some_and(|g| g == 1)),
@@ -3678,6 +3761,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::GrubCityBelowLoveTower => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_07")),
         Split::GrubCityBelowSanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_05")),
         Split::GrubCityCollectorAll => should_split(g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins2_11".to_string()))),
+        Split::GrubCityCollector => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_11")),
         Split::GrubCityGuardHouse => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins_House_01")),
         Split::GrubCitySanctum => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_32")),
         Split::GrubCitySpire => should_split(pds.incremented_grubs_collected(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_03")),
@@ -3791,12 +3875,19 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
 
         // region: Dirtmouth
         Split::Dirtmouth => should_split(g.visited_dirtmouth(p).is_some_and(|v| v)),
+        Split::PreGrimmShop => should_split(g.has_lantern(p).is_some_and(|l| l)
+                                            && (g.sly_shell_frag1(p).is_some_and(|s| s)
+                                                || g.sly_vessel_frag1(p).is_some_and(|f| f))),
+        Split::ElegantKeyShoptimised => should_split(g.has_white_key(p).is_some_and(|k| k)
+                                                     && (g.sly_shell_frag1(p).is_some_and(|s| s)
+                                                         || g.sly_vessel_frag1(p).is_some_and(|f| f))),
         Split::SlyShopFinished => { pds.sly_shop_finished(p, g); should_split(false) },
         Split::ElderbugFlower => should_split(g.elderbug_gave_flower(p).is_some_and(|g| g)),
         Split::TroupeMasterGrimm => should_split(g.killed_grimm(p).is_some_and(|k| k)),
         Split::NightmareKingGrimm => should_split(g.killed_nightmare_grimm(p).is_some_and(|k| k)),
         Split::GreyPrince => should_split(g.killed_grey_prince(p).is_some_and(|k| k)),
         Split::GreyPrinceEssence => should_split(g.grey_prince_orbs_collected(p).is_some_and(|o| o)),
+        Split::OnDefeatGPZ => should_split(pds.incremented_grey_prince_defeats(p, g)),
         // endregion: Dirtmouth
         // region: Crossroads
         Split::ForgottenCrossroads => should_split(g.visited_crossroads(p).is_some_and(|v| v) && g.get_scene_name(p).is_some_and(|s| s.starts_with("Crossroads_"))),
@@ -3818,6 +3909,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::RadianceBoss => should_split(g.killed_final_boss(p).is_some_and(|k| k)),
         // endregion: Crossroads
         // region: Greenpath
+        Split::EnterGreenpathWithOvercharm => { pds.can_overcharm(p, g); should_split(false) }
         Split::Greenpath => should_split(g.visited_greenpath(p).is_some_and(|v| v)),
         Split::MossKnight => should_split(g.killed_moss_knight(p).is_some_and(|k| k)),
         Split::Zote1 => should_split(g.zote_rescued_buzzer(p).is_some_and(|z| z)),
@@ -3835,6 +3927,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Fungal
         Split::FungalWastes => should_split(g.visited_fungus(p).is_some_and(|v| v)),
         Split::BenchQueensStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Fungus2_02")),
+        Split::MushroomBrawler => should_split_skip(pds.mushroom_brawler_arena(p, g)),
         Split::ElderHu => should_split(g.killed_ghost_hu(p).is_some_and(|k| k)),
         Split::ElderHuEssence => should_split(g.elder_hu_defeated(p).is_some_and(|d| d == 2)),
         Split::ElderHuTrans => { pds.killed_ghost_hu(p, g); should_split(false) },
@@ -3858,6 +3951,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SeerDeparts => should_split(g.moth_departed(p).is_some_and(|d| d)),
         Split::MetGreyMourner => should_split(g.met_xun(p).is_some_and(|m| m)),
         Split::GreyMournerSeerAscended => should_split(g.met_xun(p).is_some_and(|m| m) && g.moth_departed(p).is_some_and(|d| d)),
+        Split::HasDelicateFlower => should_split(g.has_xun_flower(p).is_some_and(|f| f)),
+        Split::FlowerRewardGiven => should_split(g.xun_reward_given(p).is_some_and(|f| f)),
         // endregion: Resting Grounds
         // region: City
         Split::CityGateOpen => should_split(g.opened_city_gate(p).is_some_and(|o| o)),
@@ -3907,6 +4002,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::DungDefender => should_split(g.killed_dung_defender(p).is_some_and(|k| k)),
         Split::WhiteDefender => should_split(g.killed_white_defender(p).is_some_and(|k| k)),
         Split::WhiteDefenderEssence => should_split(g.white_defender_orbs_collected(p).is_some_and(|o| o)),
+        Split::OnDefeatWhiteDefender => should_split(pds.incremented_white_defender_defeats(p, g)),
         Split::MetEmilitia => should_split(g.met_emilitia(p).is_some_and(|m| m)),
         Split::GivenEmilitiaFlower => should_split(g.given_emilitia_flower(p).is_some_and(|g| g)),
         Split::Flukemarm => should_split(g.killed_fluke_mother(p).is_some_and(|k| k)),
@@ -3920,6 +4016,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::LostKin => should_split(g.infected_knight_dream_defeated(p).is_some_and(|k| k)),
         Split::LostKinEssence => should_split(g.infected_knight_orbs_collected(p).is_some_and(|o| o)),
         Split::BenchHiddenStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Abyss_22")),
+        Split::AbyssDoor => should_split(g.abyss_gate_opened(p).is_some_and(|o| o)),
+        Split::AbyssLighthouse => should_split(g.abyss_lighthouse(p).is_some_and(|l| l)),
         // TODO: should there be a split for the actual Abyss Area Text?
         // endregion: Basin
         // region: White Palace
@@ -3931,6 +4029,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::WhitePalaceSecretRoom => should_split(g.white_palace_secret_room_visited(p).is_some_and(|v| v)),
         // endregion: White Palace
         // region: Kingdom's Edge
+        Split::KingdomsEdgeOvercharmedEntry => { pds.can_overcharm(p, g); should_split(false) }
         Split::KingdomsEdge => should_split(g.visited_outskirts(p).is_some_and(|v| v)),
         Split::Hive => should_split(g.visited_hive(p).is_some_and(|v| v)),
         Split::HiveKnight => should_split(g.killed_hive_knight(p).is_some_and(|k| k)),
