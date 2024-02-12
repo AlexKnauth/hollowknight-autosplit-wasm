@@ -2006,10 +2006,6 @@ impl GameManagerFinder {
         self.player_data_pointers.visited_ruins.deref(process, &self.module, &self.image).ok()
     }
 
-    pub fn killed_gorgeous_husk(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.killed_gorgeous_husk.deref(process, &self.module, &self.image).ok()
-    }
-
     // Lemm
     pub fn met_relic_dealer_shop(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.met_relic_dealer_shop.deref(process, &self.module, &self.image).ok()
@@ -2232,10 +2228,6 @@ impl GameManagerFinder {
 
     pub fn colosseum_silver_opened(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.colosseum_silver_opened.deref(process, &self.module, &self.image).ok()
-    }
-
-    pub fn kills_oblobble(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers.kills_oblobble.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn colosseum_silver_completed(&self, process: &Process) -> Option<bool> {
