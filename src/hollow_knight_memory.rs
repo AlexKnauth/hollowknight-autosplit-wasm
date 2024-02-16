@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
-use asr::{Address, Address32, Address64, PointerSize, Process};
+use asr::{Address, PointerSize, Process};
 use asr::game_engine::unity::mono::{self, UnityPointer};
 use asr::string::ArrayWString;
 use ugly_widget::store::StoreGui;
@@ -1041,21 +1041,18 @@ impl GameManagerFinder {
         }
     }
 
+    fn deref_pointer<const PN: usize>(&self, process: &Process, pointer: &UnityPointer<PN>) -> Result<Address, asr::Error> {
+        let a = pointer.deref_offsets(process, &self.module, &self.image)?;
+        process.read_pointer(a, self.string_list_offests.pointer_size)
+    }
+
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
-        let s: Address = match self.string_list_offests.pointer_size {
-            PointerSize::Bit64 => self.pointers.scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
-            PointerSize::Bit32 => self.pointers.scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
-            _ => { return None; }
-        };
+        let s = self.deref_pointer(process, &self.pointers.scene_name).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
-        let s: Address = match self.string_list_offests.pointer_size {
-            PointerSize::Bit64 => self.pointers.next_scene_name.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
-            PointerSize::Bit32 => self.pointers.next_scene_name.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
-            _ => { return None; }
-        };
+        let s = self.deref_pointer(process, &self.pointers.next_scene_name).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
 
@@ -1158,11 +1155,7 @@ impl GameManagerFinder {
 
     pub fn get_version_string(&self, process: &Process) -> Option<String> {
         let s: Address = [&self.pointers.version_number, &self.player_data_pointers.version].into_iter().find_map(|ptr| {
-            match self.string_list_offests.pointer_size {
-                PointerSize::Bit64 => Some(ptr.deref::<Address64>(process, &self.module, &self.image).ok()?.into()),
-                PointerSize::Bit32 => Some(ptr.deref::<Address32>(process, &self.module, &self.image).ok()?.into()),
-                _ => { return None; }
-            }
+            self.deref_pointer(process, ptr).ok()
         })?;
         read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
@@ -1727,11 +1720,7 @@ impl GameManagerFinder {
     }
 
     pub fn scenes_grub_rescued(&self, process: &Process) -> Option<Vec<String>> {
-        let l: Address = match self.string_list_offests.pointer_size {
-            PointerSize::Bit64 => self.player_data_pointers.scenes_grub_rescued.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
-            PointerSize::Bit32 => self.player_data_pointers.scenes_grub_rescued.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
-            _ => { return None; }
-        };
+        let l = self.deref_pointer(process, &self.player_data_pointers.scenes_grub_rescued).ok()?;
         read_string_list_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, l)
     }
 
@@ -1748,20 +1737,12 @@ impl GameManagerFinder {
     }
 
     pub fn scenes_encountered_dream_plant_c(&self, process: &Process) -> Option<Vec<String>> {
-        let l: Address = match self.string_list_offests.pointer_size {
-            PointerSize::Bit64 => self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
-            PointerSize::Bit32 => self.player_data_pointers.scenes_encountered_dream_plant_c.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
-            _ => { return None; }
-        };
+        let l = self.deref_pointer(process, &self.player_data_pointers.scenes_encountered_dream_plant_c).ok()?;
         read_string_list_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, l)
     }
 
     pub fn dream_gate_scene(&self, process: &Process) -> Option<String> {
-        let s: Address = match self.string_list_offests.pointer_size {
-            PointerSize::Bit64 => self.player_data_pointers.dream_gate_scene.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
-            PointerSize::Bit32 => self.player_data_pointers.dream_gate_scene.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
-            _ => { return None; }
-        };
+        let s = self.deref_pointer(process, &self.player_data_pointers.dream_gate_scene).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
     pub fn dream_gate_x(&self, process: &Process) -> Option<f32> {
