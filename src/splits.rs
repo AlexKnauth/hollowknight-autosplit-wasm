@@ -2417,6 +2417,10 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Markoth
     MarkothEssence,
+    /// Kingdom's Edge Acid (Dreamgate)
+    /// 
+    /// Splits when placing Dreamgate by KE Acid (hopefully)
+    DgateKingdomsEdgeAcid,
     // endregion: Kingdom's Edge
     // region: Colosseum
     /// Little Fool (NPC)
@@ -4038,6 +4042,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Hornet2 => should_split(g.hornet_outskirts_defeated(p).is_some_and(|k| k)),
         Split::Markoth => should_split(g.killed_ghost_markoth(p).is_some_and(|k| k)),
         Split::MarkothEssence => should_split(g.markoth_defeated(p).is_some_and(|d| d == 2)),
+        Split::DgateKingdomsEdgeAcid => should_split(g.dream_gate_scene(p).is_some_and(|s| s.starts_with("Deepnest_East_04"))
+                                                     && g.dream_gate_x(p).is_some_and(|x| 27.0f32 < x && x < 29f32)
+                                                     && g.dream_gate_y(p).is_some_and(|y| 7.0f32 < y && y < 9f32)),
         // endregion: Kingdom's Edge
         // region: Colosseum
         Split::LittleFool => should_split(g.little_fool_met(p).is_some_and(|m| m)),
