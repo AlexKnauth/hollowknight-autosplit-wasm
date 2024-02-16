@@ -396,6 +396,9 @@ struct PlayerDataPointers {
     kills_grub_mimic: UnityPointer<3>,
     dream_orbs: UnityPointer<3>,
     scenes_encountered_dream_plant_c: UnityPointer<3>,
+    dream_gate_scene: UnityPointer<3>,
+    dream_gate_x: UnityPointer<3>,
+    dream_gate_y: UnityPointer<3>,
     map_dirtmouth: UnityPointer<3>,
     map_crossroads: UnityPointer<3>,
     map_greenpath: UnityPointer<3>,
@@ -756,6 +759,9 @@ impl PlayerDataPointers {
             kills_grub_mimic: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsGrubMimic"]),
             dream_orbs: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamOrbs"]),
             scenes_encountered_dream_plant_c: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "scenesEncounteredDreamPlantC"]),
+            dream_gate_scene: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamGateScene"]),
+            dream_gate_x: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamGateX"]),
+            dream_gate_y: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dreamGateY"]),
             map_dirtmouth: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapDirtmouth"]),
             map_crossroads: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapCrossroads"]),
             map_greenpath: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "mapGreenpath"]),
@@ -1748,6 +1754,21 @@ impl GameManagerFinder {
             _ => { return None; }
         };
         read_string_list_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, l)
+    }
+
+    pub fn dream_gate_scene(&self, process: &Process) -> Option<String> {
+        let s: Address = match self.string_list_offests.pointer_size {
+            PointerSize::Bit64 => self.player_data_pointers.dream_gate_scene.deref::<Address64>(process, &self.module, &self.image).ok()?.into(),
+            PointerSize::Bit32 => self.player_data_pointers.dream_gate_scene.deref::<Address32>(process, &self.module, &self.image).ok()?.into(),
+            _ => { return None; }
+        };
+        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
+    }
+    pub fn dream_gate_x(&self, process: &Process) -> Option<f32> {
+        self.player_data_pointers.dream_gate_x.deref(process, &self.module, &self.image).ok()
+    }
+    pub fn dream_gate_y(&self, process: &Process) -> Option<f32> {
+        self.player_data_pointers.dream_gate_y.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn map_dirtmouth(&self, process: &Process) -> Option<bool> {
