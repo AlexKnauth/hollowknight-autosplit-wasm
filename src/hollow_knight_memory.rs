@@ -996,6 +996,7 @@ pub struct GameManagerFinder {
     player_data_pointers: Box<PlayerDataPointers>,
     completion_pointers: Box<CompletionPointers>,
     ui_state_offset: OnceCell<u32>,
+    modded: OnceCell<bool>,
 }
 
 impl GameManagerFinder {
@@ -1008,6 +1009,7 @@ impl GameManagerFinder {
             player_data_pointers: Box::new(PlayerDataPointers::new()),
             completion_pointers: Box::new(CompletionPointers::new()),
             ui_state_offset: OnceCell::new(),
+            modded: OnceCell::new(),
         }
     }
 
@@ -1077,12 +1079,22 @@ impl GameManagerFinder {
             let ui_state_offset = ui_manager_class.get_field_offset(process, &self.module, "uiState")?;
             self.ui_state_offset.get_or_init(|| ui_state_offset)
         };
-        let ui = if let Ok(ui) = self.pointers.ui_state_vanilla.deref(process, &self.module, &self.image) {
-            ui
-        } else if let Ok(ui) =  self.pointers.ui_state_modded.deref(process, &self.module, &self.image) {
-            ui
+        let ui = if let Some(&modded) = self.modded.get() {
+            if modded {
+                self.pointers.ui_state_modded.deref(process, &self.module, &self.image).ok()?
+            } else {
+                self.pointers.ui_state_vanilla.deref(process, &self.module, &self.image).ok()?
+            }
         } else {
-            return None;
+            if let Ok(ui) = self.pointers.ui_state_vanilla.deref(process, &self.module, &self.image) {
+                self.modded.set(false).ok();
+                ui
+            } else if let Ok(ui) =  self.pointers.ui_state_modded.deref(process, &self.module, &self.image) {
+                self.modded.set(true).ok();
+                ui
+            } else {
+                return None;
+            }
         };
         if ui_state_offset != &0x124 && ui >= 2 {
             Some(ui + 2)
