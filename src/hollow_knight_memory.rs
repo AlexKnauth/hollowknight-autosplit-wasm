@@ -7,7 +7,7 @@ use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
 use asr::{Address, PointerSize, Process};
-use asr::game_engine::unity::mono::{self, UnityPointer};
+use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
 use asr::string::ArrayWString;
 use ugly_widget::store::StoreGui;
 
@@ -983,6 +983,39 @@ pub struct BossSequenceDoorCompletion {
     bound_shell: bool, // boundShell
     bound_charms: bool, // boundCharms
     bound_soul: bool, // boundSoul
+}
+
+struct SceneDataPointers {
+    persistent_bool_items: UnityPointer<3>,
+    offsets: OnceCell<SceneDataOffsets>,
+}
+
+struct SceneDataOffsets {
+    persistentbooldata_id: u32,
+    persistentbooldata_scenename: u32,
+    persistentbooldata_activated: u32,
+}
+
+impl SceneDataPointers {
+    fn new() -> SceneDataPointers {
+        SceneDataPointers {
+            persistent_bool_items: UnityPointer::new("GameManager", 0, &["_instance", "sceneData", "persistentBoolItems"]),
+            offsets: OnceCell::new(),
+        }
+    }
+
+    fn offsets(&mut self, process: &Process, module: &Module, image: &Image) -> Option<&SceneDataOffsets> {
+        if let Some(o) = self.offsets.get() {
+            return Some(o);
+        }
+        let c = image.get_class(process, module, "PersistentBoolData")?;
+        let o = SceneDataOffsets {
+            persistentbooldata_id: c.get_field_offset(process, module, "id")?,
+            persistentbooldata_scenename: c.get_field_offset(process, module, "sceneName")?,
+            persistentbooldata_activated: c.get_field_offset(process, module, "activated")?,
+        };
+        Some(self.offsets.get_or_init(|| o))
+    }
 }
 
 // --------------------------------------------------------
