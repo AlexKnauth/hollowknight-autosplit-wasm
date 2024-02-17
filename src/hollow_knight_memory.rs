@@ -2828,6 +2828,26 @@ impl PlayerDataStore {
         self.increased_i32(process, game_manager_finder, "royal_charm_state", &game_manager_finder.player_data_pointers.royal_charm_state)
     }
 
+    fn been_dead_for_a_tick<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> bool {
+        if gmf.is_game_state_non_continuous(prc) {
+            self.map_bool.remove(key);
+            return false;
+        }
+        match self.map_bool.get(key) {
+            None | Some(false) => {
+                if let Ok(dead_now) = pointer.deref(prc, &gmf.module, &gmf.image) {
+                    self.map_bool.insert(key, dead_now);
+                }
+                false
+            }
+            Some(true) => true,
+        }
+    }
+
+    pub fn traitor_lord_been_dead_for_a_tick(&mut self, prc: &Process, gmf: &GameManagerFinder) -> bool {
+        self.been_dead_for_a_tick(prc, gmf, "killed_traitor_lord", &gmf.player_data_pointers.killed_traitor_lord)
+    }
+
     fn kills_on_entry<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
         if gmf.is_game_state_non_continuous(prc) {
             self.map_i32.remove(key);

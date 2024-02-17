@@ -1578,6 +1578,10 @@ pub enum Split {
     /// Splits when obtaining the essence from Blue Child Joni
     OnObtainGhostJoni,
     // TODO: resolve possible confounding essence sources for Cloth, Vespa, and Revek
+    /// Dream Nail Cloth (Obtain)
+    /// 
+    /// Splits when obtaining the essence from Cloth
+    OnObtainGhostCloth,
     // endregion: Essence, Trees, and Ghosts
 
     // region: Maps and Cornifer
@@ -3857,6 +3861,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainGhostGravedigger => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Town")),
         Split::OnObtainGhostJoni => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Cliffs_05")),
         // TODO: resolve possible confounding essence sources for Cloth, Vespa, and Revek
+        Split::OnObtainGhostCloth => should_split(pds.traitor_lord_been_dead_for_a_tick(p, g)
+                                                  && pds.incremented_dream_orbs(p, g)
+                                                  && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_23")),
         // endregion: Essence, Trees, and Ghosts
 
         // region: Maps and Cornifer
