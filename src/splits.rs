@@ -3865,12 +3865,18 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainGhostGravedigger => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Town")),
         Split::OnObtainGhostJoni => should_split(pds.incremented_dream_orbs(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Cliffs_05")),
         // TODO: resolve possible confounding essence sources for Cloth, Vespa, and Revek
-        Split::OnObtainGhostCloth => should_split(pds.traitor_lord_been_dead_for_a_tick(p, g)
-                                                  && pds.incremented_dream_orbs(p, g)
-                                                  && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_23")),
-        Split::OnObtainGhostVespa => should_split(pds.hive_knight_been_dead_for_a_tick(p, g)
-                                                  && pds.incremented_dream_orbs(p, g)
-                                                  && g.get_scene_name(p).is_some_and(|s| s == "Hive_05")),
+        Split::OnObtainGhostCloth => {
+            let d = pds.traitor_lord_been_dead_for_a_tick(p, g);
+            let o = pds.incremented_dream_orbs(p, g);
+            // make sure both PlayerDataStore methods are evaluated before the `&&` so it doesn't short-circuit
+            should_split(d && o && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_23"))
+        }
+        Split::OnObtainGhostVespa => {
+            let d = pds.hive_knight_been_dead_for_a_tick(p, g);
+            let o = pds.incremented_dream_orbs(p, g);
+            // make sure both PlayerDataStore methods are evaluated before the `&&` so it doesn't short-circuit
+            should_split(d && o && g.get_scene_name(p).is_some_and(|s| s == "Hive_05"))
+        }
         // endregion: Essence, Trees, and Ghosts
 
         // region: Maps and Cornifer
