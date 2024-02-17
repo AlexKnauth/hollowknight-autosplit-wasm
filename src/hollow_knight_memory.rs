@@ -989,8 +989,8 @@ pub struct BossSequenceDoorCompletion {
 // --------------------------------------------------------
 
 pub struct GameManagerFinder {
-    string_list_offests: StringListOffsets,
-    module: mono::Module,
+    string_list_offests: Box<StringListOffsets>,
+    module: Box<mono::Module>,
     image: mono::Image,
     pointers: Box<GameManagerPointers>,
     player_data_pointers: Box<PlayerDataPointers>,
@@ -1001,8 +1001,8 @@ pub struct GameManagerFinder {
 impl GameManagerFinder {
     fn new(pointer_size: PointerSize, module: mono::Module, image: mono::Image) -> GameManagerFinder {
         GameManagerFinder {
-            string_list_offests: StringListOffsets::new(pointer_size),
-            module,
+            string_list_offests: Box::new(StringListOffsets::new(pointer_size)),
+            module: Box::new(module),
             image,
             pointers: Box::new(GameManagerPointers::new()),
             player_data_pointers: Box::new(PlayerDataPointers::new()),

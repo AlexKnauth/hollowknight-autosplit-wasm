@@ -31,7 +31,7 @@ async fn main() {
 
     asr::print_message("Hello, World!");
 
-    let mut gui = SettingsGui::wait_load_merge_register().await;
+    let mut gui = Box::new(SettingsGui::wait_load_merge_register().await);
 
     let mut ticks_since_gui = 0;
     let mut splits = gui.get_splits();
@@ -40,17 +40,17 @@ async fn main() {
     let mut auto_reset = splits::auto_reset_safe(&splits);
 
     loop {
-        let process = wait_attach_hollow_knight(&mut gui).await;
+        let process = wait_attach_hollow_knight(&mut *gui).await;
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
-                let mut scene_store = SceneStore::new();
+                let mut scene_store = Box::new(SceneStore::new());
                 let mut timing_method = gui.get_timing_method();
-                let mut load_remover = TimingMethodLoadRemover::new(timing_method);
+                let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
 
                 next_tick().await;
-                let game_manager_finder = GameManagerFinder::wait_attach(&process).await;
-                let mut player_data_store = PlayerDataStore::new();
+                let game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
+                let mut player_data_store = Box::new(PlayerDataStore::new());
 
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
@@ -88,7 +88,7 @@ async fn main() {
                             let new_timing_method = gui.get_timing_method();
                             if new_timing_method != timing_method {
                                 timing_method = new_timing_method;
-                                load_remover = TimingMethodLoadRemover::new(timing_method);
+                                *load_remover = TimingMethodLoadRemover::new(timing_method);
                                 asr::print_message(&format!("timing_method: {:?}", timing_method));
                             }
                         }
