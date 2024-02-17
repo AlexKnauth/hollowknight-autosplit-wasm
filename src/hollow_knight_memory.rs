@@ -155,7 +155,7 @@ pub static GODHOME_LORE_SCENES: &[&str] = &[
 
 // --------------------------------------------------------
 
-// const VERSION_VEC_MAJOR: usize = 0;
+const VERSION_VEC_MAJOR: usize = 0;
 const VERSION_VEC_MINOR: usize = 1;
 // const VERSION_VEC_BUILD: usize = 2;
 // const VERSION_VEC_REVISION: usize = 3;
@@ -2185,6 +2185,11 @@ impl GameManagerFinder {
         self.player_data_pointers.visited_hive.deref(process, &self.module, &self.image).ok()
     }
 
+    fn hive_knight_doesnt_exist(&self, process: &Process) -> Option<bool> {
+        let v = self.get_version_vec(process)?;
+        Some((*v.get(VERSION_VEC_MAJOR)? <= 1) && (*v.get(VERSION_VEC_MINOR)? <= 2))
+    }
+
     pub fn killed_hive_knight(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.killed_hive_knight.deref(process, &self.module, &self.image).ok()
     }
@@ -2846,6 +2851,11 @@ impl PlayerDataStore {
 
     pub fn traitor_lord_been_dead_for_a_tick(&mut self, prc: &Process, gmf: &GameManagerFinder) -> bool {
         self.been_dead_for_a_tick(prc, gmf, "killed_traitor_lord", &gmf.player_data_pointers.killed_traitor_lord)
+    }
+
+    pub fn hive_knight_been_dead_for_a_tick(&mut self, prc: &Process, gmf: &GameManagerFinder) -> bool {
+        gmf.hive_knight_doesnt_exist(prc).is_some_and(|d| d)
+        || self.been_dead_for_a_tick(prc, gmf, "killed_hive_knight", &gmf.player_data_pointers.killed_hive_knight)
     }
 
     fn kills_on_entry<const N: usize>(&mut self, prc: &Process, gmf: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {

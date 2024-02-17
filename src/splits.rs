@@ -1582,6 +1582,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining the essence from Cloth
     OnObtainGhostCloth,
+    /// Dream Nail Vespa (Obtain)
+    /// 
+    /// Splits when obtaining the essence from Hive Queen Vespa
+    OnObtainGhostVespa,
     // endregion: Essence, Trees, and Ghosts
 
     // region: Maps and Cornifer
@@ -3864,6 +3868,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainGhostCloth => should_split(pds.traitor_lord_been_dead_for_a_tick(p, g)
                                                   && pds.incremented_dream_orbs(p, g)
                                                   && g.get_scene_name(p).is_some_and(|s| s == "Fungus3_23")),
+        Split::OnObtainGhostVespa => should_split(pds.hive_knight_been_dead_for_a_tick(p, g)
+                                                  && pds.incremented_dream_orbs(p, g)
+                                                  && g.get_scene_name(p).is_some_and(|s| s == "Hive_05")),
         // endregion: Essence, Trees, and Ghosts
 
         // region: Maps and Cornifer
