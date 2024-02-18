@@ -204,6 +204,12 @@ You can clone my fork with
 git clone https://github.com/AlexKnauth/livesplit-one-desktop.git
 ```
 
+According to the [`rust_minifb` Build Instructions](https://github.com/emoon/rust_minifb#build-instructions),
+on Linux you may need to install these dependencies first:
+```sh
+sudo apt install libxkbcommon-dev libwayland-cursor0 libwayland-dev
+```
+
 In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that it contains
 ```yaml
 general:
