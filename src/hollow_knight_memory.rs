@@ -3352,7 +3352,7 @@ impl SceneDataStore {
             }
             let id_addr = prc.read_pointer(pbi + offsets.persistentbooldata_id, gmf.string_list_offests.pointer_size).ok()?;
             let id_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, id_addr)?;
-            if !id_str.starts_with("Ghost ") {
+            if !(id_str.starts_with("Ghost ") || id_str.contains("karina")) {
                 continue;
             }
             let key = (scene_str, id_str);
