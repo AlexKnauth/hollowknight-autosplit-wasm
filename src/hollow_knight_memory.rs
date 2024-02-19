@@ -3391,6 +3391,9 @@ impl SceneDataStore {
                 self.map_bool_items.insert(key, activated);
             }
         }
+        if killed == 0 {
+            revek_alone = false;
+        }
         if !self.map_bool_derived.get("revek_alone").is_some_and(|&prev_alone| prev_alone == revek_alone) {
             changed = true;
             asr::print_message(&format!("SceneData revek_alone: {}", revek_alone));
