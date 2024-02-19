@@ -1,5 +1,6 @@
 
 use core::cell::OnceCell;
+use core::iter::FusedIterator;
 use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
@@ -3386,14 +3387,22 @@ fn read_string_object<const N: usize>(process: &Process, offsets: &StringListOff
     String::from_utf16(&w.to_vec()).ok()
 }
 
-fn read_string_list_object<const SN: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<Vec<String>> {
+fn list_object_iter<'a>(process: &'a Process, offsets: &'a StringListOffsets, a: Address) -> Option<impl FusedIterator<Item = Address> + 'a> {
     let array_ptr: Address = process.read_pointer(a + offsets.list_array, offsets.pointer_size).ok()?;
     let vn: u32 = process.read(array_ptr + offsets.array_len).ok()?;
 
-    let mut v = Vec::with_capacity(vn as usize);
-    for i in 0..(vn as u64) {
-        let item_offset = offsets.array_contents + (offsets.pointer_size as u64) * i;
-        let item_ptr: Address = process.read_pointer(array_ptr + item_offset, offsets.pointer_size).ok()?;
+    Some(
+        (0..(vn as u64)).filter_map(move |i| {
+            let item_offset = offsets.array_contents + (offsets.pointer_size as u64) * i;
+            process.read_pointer(array_ptr + item_offset, offsets.pointer_size).ok()
+        })
+        .fuse(),
+    )
+}
+
+fn read_string_list_object<const SN: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<Vec<String>> {
+    let mut v = Vec::new();
+    for item_ptr in list_object_iter(process, offsets, a)? {
         if item_ptr.is_null() {
             continue;
         }
