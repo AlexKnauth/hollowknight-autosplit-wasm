@@ -3387,6 +3387,7 @@ impl SceneDataStore {
             let key = (scene_str, id_str);
             if !self.map_bool_items.get(&key).is_some_and(|&prev_activated| prev_activated == activated) {
                 changed = true;
+                #[cfg(debug_assertions)]
                 asr::print_message(&format!("SceneData {:?}: {}", key, activated));
                 self.map_bool_items.insert(key, activated);
             }
@@ -3396,11 +3397,13 @@ impl SceneDataStore {
         }
         if !self.map_bool_derived.get("revek_alone").is_some_and(|&prev_alone| prev_alone == revek_alone) {
             changed = true;
+            #[cfg(debug_assertions)]
             asr::print_message(&format!("SceneData revek_alone: {}", revek_alone));
             self.map_bool_derived.insert("revek_alone", revek_alone);
         }
         if !self.map_i32_derived.get("glade_ghosts_killed").is_some_and(|&prev_killed| prev_killed == killed) {
             changed = true;
+            #[cfg(debug_assertions)]
             asr::print_message(&format!("SceneData glade_ghosts_killed: {}", killed));
             self.map_i32_derived.insert("glade_ghosts_killed", killed);
         }
