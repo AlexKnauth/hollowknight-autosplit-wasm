@@ -3323,12 +3323,14 @@ impl PlayerDataStore {
 
 pub struct SceneDataStore {
     map_bool_items: BTreeMap<(String, String), bool>,
+    map_i32_derived: BTreeMap<&'static str, i32>,
 }
 
 impl SceneDataStore {
     pub fn new() -> SceneDataStore {
         SceneDataStore { 
             map_bool_items: BTreeMap::new(),
+            map_i32_derived: BTreeMap::new(),
         }
     }
     pub fn reset(&mut self) {
@@ -3359,6 +3361,10 @@ impl SceneDataStore {
             if activated {
                 killed += 1;
             }
+        }
+        if !self.map_i32_derived.get("glade_ghosts_killed").is_some_and(|&prev_killed| prev_killed == killed) {
+            asr::print_message(&format!("SceneData glade_ghosts_killed: {}", killed));
+            self.map_i32_derived.insert("glade_ghosts_killed", killed);
         }
         Some(killed)
     }
