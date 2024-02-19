@@ -1586,6 +1586,10 @@ pub enum Split {
     /// 
     /// Splits when obtaining the essence from Hive Queen Vespa
     OnObtainGhostVespa,
+    /// Dream Nail Revek (Obtain)
+    /// 
+    /// Splits when obtaining essence in Spirits' Glade after Revek is obtainable
+    OnObtainGhostRevek,
     // endregion: Essence, Trees, and Ghosts
 
     // region: Maps and Cornifer
@@ -3461,7 +3465,7 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
     }
 }
 
-pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore) -> SplitterAction {
+pub fn continuous_splits(s: &Split, p: &Process, g: &mut GameManagerFinder, pds: &mut PlayerDataStore, sds: &mut SceneDataStore) -> SplitterAction {
     match s {
         Split::ManualSplit => SplitterAction::ManualSplit,
         Split::RandoWake => should_split(g.disable_pause(p).is_some_and(|d| !d)
@@ -3877,6 +3881,12 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
             // make sure both PlayerDataStore methods are evaluated before the `&&` so it doesn't short-circuit
             should_split(d && o && g.get_scene_name(p).is_some_and(|s| s == "Hive_05"))
         }
+        Split::OnObtainGhostRevek => {
+            let d = sds.glade_ghosts_killed(p, g).is_some_and(|k| 18 <= k);
+            let o = pds.incremented_dream_orbs(p, g);
+            // make sure both SceneDataStore and PlayerDataStore methods are evaluated before the `&&` so it doesn't short-circuit
+            should_split(d && o && g.get_scene_name(p).is_some_and(|s| s == "RestingGrounds_08"))
+        }
         // endregion: Essence, Trees, and Ghosts
 
         // region: Maps and Cornifer
@@ -4186,10 +4196,10 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
     }
 }
 
-pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, ss: &mut SceneStore, pds: &mut PlayerDataStore) -> SplitterAction {
+pub fn splits(s: &Split, prc: &Process, g: &mut GameManagerFinder, trans_now: bool, ss: &mut SceneStore, pds: &mut PlayerDataStore, sds: &mut SceneDataStore) -> SplitterAction {
     #[cfg(debug_assertions)]
     pds.get_game_state(prc, g);
-    let a1 = continuous_splits(s, prc, g, pds).or_else(|| {
+    let a1 = continuous_splits(s, prc, g, pds, sds).or_else(|| {
         let pair = ss.pair();
         let a2 = if !ss.split_this_transition {
             transition_once_splits(s, &pair, prc, g, pds)

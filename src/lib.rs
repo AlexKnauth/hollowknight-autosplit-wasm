@@ -49,8 +49,9 @@ async fn main() {
                 let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
 
                 next_tick().await;
-                let game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
+                let mut game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
                 let mut player_data_store = Box::new(PlayerDataStore::new());
+                let mut scene_data_store = Box::new(SceneDataStore::new());
 
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
@@ -70,7 +71,7 @@ async fn main() {
                 let mut last_timer_state = TimerState::Unknown;
                 let mut i = 0;
                 loop {
-                    tick_action(&process, &splits, &mut last_timer_state, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut load_remover).await;
+                    tick_action(&process, &splits, &mut last_timer_state, &mut i, auto_reset, &mut game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store, &mut load_remover).await;
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
@@ -114,9 +115,10 @@ async fn tick_action(
     last_timer_state: &mut TimerState,
     i: &mut usize,
     auto_reset: bool,
-    game_manager_finder: &GameManagerFinder,
+    game_manager_finder: &mut GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
+    scene_data_store: &mut SceneDataStore,
     load_remover: &mut TimingMethodLoadRemover,
 ) {
     match asr::timer::state() {
@@ -146,7 +148,7 @@ async fn tick_action(
     let n = splits.len();
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
     loop {
-        let a = splits::splits(&splits[*i], &process, &game_manager_finder, trans_now, scene_store, player_data_store);
+        let a = splits::splits(&splits[*i], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
         match a {
             SplitterAction::Split | SplitterAction::ManualSplit => {
                 splitter_action(a, i, n, load_remover);
@@ -160,7 +162,7 @@ async fn tick_action(
             }
             SplitterAction::Pass => {
                 if auto_reset {
-                    let a0 = splits::splits(&splits[0], &process, &game_manager_finder, trans_now, scene_store, player_data_store);
+                    let a0 = splits::splits(&splits[0], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
                     match a0 {
                         SplitterAction::Split | SplitterAction::Reset => {
                             *i = 0;
@@ -177,6 +179,7 @@ async fn tick_action(
     if trans_now {
         if scene_store.pair().old == MENU_TITLE {
             player_data_store.reset();
+            scene_data_store.reset();
         } else {
             player_data_store.clean_on_entry();
         }
