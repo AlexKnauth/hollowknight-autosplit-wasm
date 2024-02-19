@@ -49,7 +49,7 @@ async fn main() {
                 let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
 
                 next_tick().await;
-                let mut game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
+                let game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
                 let mut player_data_store = Box::new(PlayerDataStore::new());
                 let mut scene_data_store = Box::new(SceneDataStore::new());
 
@@ -71,7 +71,7 @@ async fn main() {
                 let mut last_timer_state = TimerState::Unknown;
                 let mut i = 0;
                 loop {
-                    tick_action(&process, &splits, &mut last_timer_state, &mut i, auto_reset, &mut game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store, &mut load_remover).await;
+                    tick_action(&process, &splits, &mut last_timer_state, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store, &mut load_remover).await;
 
                     load_remover.load_removal(&process, &game_manager_finder, i);
 
@@ -115,7 +115,7 @@ async fn tick_action(
     last_timer_state: &mut TimerState,
     i: &mut usize,
     auto_reset: &'static [TimerState],
-    game_manager_finder: &mut GameManagerFinder,
+    game_manager_finder: &GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
     scene_data_store: &mut SceneDataStore,

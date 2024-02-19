@@ -1005,7 +1005,7 @@ impl SceneDataPointers {
         }
     }
 
-    fn offsets(&mut self, process: &Process, module: &Module, image: &Image) -> Option<&SceneDataOffsets> {
+    fn offsets(&self, process: &Process, module: &Module, image: &Image) -> Option<&SceneDataOffsets> {
         if let Some(o) = self.offsets.get() {
             return Some(o);
         }
@@ -3358,7 +3358,7 @@ impl SceneDataStore {
         self.map_bool_items.clear();
     }
     
-    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &mut GameManagerFinder) -> Option<(bool, bool, i32)> {
+    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<(bool, bool, i32)> {
         let pbis = gmf.deref_pointer(prc, &gmf.scene_data_pointers.persistent_bool_items).ok()?;
         let offsets = gmf.scene_data_pointers.offsets(prc, &gmf.module, &gmf.image)?;
         let mut changed = false;

@@ -3466,7 +3466,7 @@ pub fn transition_once_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &Game
     }
 }
 
-pub fn continuous_splits(s: &Split, p: &Process, g: &mut GameManagerFinder, pds: &mut PlayerDataStore, sds: &mut SceneDataStore) -> SplitterAction {
+pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mut PlayerDataStore, sds: &mut SceneDataStore) -> SplitterAction {
     match s {
         Split::ManualSplit => SplitterAction::ManualSplit,
         Split::RandoWake => should_split(g.disable_pause(p).is_some_and(|d| !d)
@@ -4197,7 +4197,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &mut GameManagerFinder, pds:
     }
 }
 
-pub fn splits(s: &Split, prc: &Process, g: &mut GameManagerFinder, trans_now: bool, ss: &mut SceneStore, pds: &mut PlayerDataStore, sds: &mut SceneDataStore) -> SplitterAction {
+pub fn splits(s: &Split, prc: &Process, g: &GameManagerFinder, trans_now: bool, ss: &mut SceneStore, pds: &mut PlayerDataStore, sds: &mut SceneDataStore) -> SplitterAction {
     #[cfg(debug_assertions)]
     pds.get_game_state(prc, g);
     let a1 = continuous_splits(s, prc, g, pds, sds).or_else(|| {
