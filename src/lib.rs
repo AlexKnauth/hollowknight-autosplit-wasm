@@ -211,6 +211,7 @@ fn splitter_action(a: SplitterAction, i: &mut usize, n: usize, load_remover: &mu
             *i += 1;
         }
         SplitterAction::Split if *i == 0 => {
+            asr::timer::reset();
             asr::timer::start();
             load_remover.reset();
             *i += 1;
