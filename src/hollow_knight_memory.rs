@@ -3323,6 +3323,7 @@ impl PlayerDataStore {
 
 pub struct SceneDataStore {
     map_bool_items: BTreeMap<(String, String), bool>,
+    map_bool_derived: BTreeMap<&'static str, bool>,
     map_i32_derived: BTreeMap<&'static str, i32>,
 }
 
@@ -3330,6 +3331,7 @@ impl SceneDataStore {
     pub fn new() -> SceneDataStore {
         SceneDataStore { 
             map_bool_items: BTreeMap::new(),
+            map_bool_derived: BTreeMap::new(),
             map_i32_derived: BTreeMap::new(),
         }
     }
@@ -3337,9 +3339,10 @@ impl SceneDataStore {
         self.map_bool_items.clear();
     }
     
-    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &mut GameManagerFinder) -> Option<i32> {
+    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &mut GameManagerFinder) -> Option<(bool, i32)> {
         let pbis = gmf.deref_pointer(prc, &gmf.scene_data_pointers.persistent_bool_items).ok()?;
         let offsets = gmf.scene_data_pointers.offsets(prc, &gmf.module, &gmf.image)?;
+        let mut revek_alone = true;
         let mut killed = 0;
         for pbi in list_object_iter(prc, &gmf.string_list_offests, pbis)? {
             if pbi.is_null() {
@@ -3355,21 +3358,27 @@ impl SceneDataStore {
             if !(id_str.starts_with("Ghost ") || id_str.contains("karina")) {
                 continue;
             }
-            let key = (scene_str, id_str);
             let activated: bool = prc.read(pbi + offsets.persistentbooldata_activated).ok()?;
+            if activated {
+                killed += 1;
+            } else if id_str.starts_with("Ghost ") && !id_str.contains("revek") {
+                revek_alone = false;
+            }
+            let key = (scene_str, id_str);
             if !self.map_bool_items.get(&key).is_some_and(|&prev_activated| prev_activated == activated) {
                 asr::print_message(&format!("SceneData {:?}: {}", key, activated));
                 self.map_bool_items.insert(key, activated);
             }
-            if activated {
-                killed += 1;
-            }
+        }
+        if !self.map_bool_derived.get("revek_alone").is_some_and(|&prev_alone| prev_alone == revek_alone) {
+            asr::print_message(&format!("SceneData revek_alone: {}", revek_alone));
+            self.map_bool_derived.insert("revek_alone", revek_alone);
         }
         if !self.map_i32_derived.get("glade_ghosts_killed").is_some_and(|&prev_killed| prev_killed == killed) {
             asr::print_message(&format!("SceneData glade_ghosts_killed: {}", killed));
             self.map_i32_derived.insert("glade_ghosts_killed", killed);
         }
-        Some(killed)
+        Some((revek_alone, killed))
     }
 }
 
