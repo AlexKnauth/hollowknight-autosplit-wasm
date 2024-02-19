@@ -1,5 +1,6 @@
 
 use core::cell::OnceCell;
+use core::iter::FusedIterator;
 use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
@@ -7,7 +8,7 @@ use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
 use asr::{Address, PointerSize, Process};
-use asr::game_engine::unity::mono::{self, UnityPointer};
+use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
 use asr::string::ArrayWString;
 use ugly_widget::store::StoreGui;
 
@@ -985,6 +986,39 @@ pub struct BossSequenceDoorCompletion {
     bound_soul: bool, // boundSoul
 }
 
+struct SceneDataPointers {
+    persistent_bool_items: UnityPointer<3>,
+    offsets: OnceCell<SceneDataOffsets>,
+}
+
+struct SceneDataOffsets {
+    persistentbooldata_id: u32,
+    persistentbooldata_scenename: u32,
+    persistentbooldata_activated: u32,
+}
+
+impl SceneDataPointers {
+    fn new() -> SceneDataPointers {
+        SceneDataPointers {
+            persistent_bool_items: UnityPointer::new("GameManager", 0, &["_instance", "sceneData", "persistentBoolItems"]),
+            offsets: OnceCell::new(),
+        }
+    }
+
+    fn offsets(&self, process: &Process, module: &Module, image: &Image) -> Option<&SceneDataOffsets> {
+        if let Some(o) = self.offsets.get() {
+            return Some(o);
+        }
+        let c = image.get_class(process, module, "PersistentBoolData")?;
+        let o = SceneDataOffsets {
+            persistentbooldata_id: c.get_field_offset(process, module, "id")?,
+            persistentbooldata_scenename: c.get_field_offset(process, module, "sceneName")?,
+            persistentbooldata_activated: c.get_field_offset(process, module, "activated")?,
+        };
+        Some(self.offsets.get_or_init(|| o))
+    }
+}
+
 // --------------------------------------------------------
 // --------------------------------------------------------
 
@@ -995,6 +1029,7 @@ pub struct GameManagerFinder {
     pointers: Box<GameManagerPointers>,
     player_data_pointers: Box<PlayerDataPointers>,
     completion_pointers: Box<CompletionPointers>,
+    scene_data_pointers: Box<SceneDataPointers>,
     ui_state_offset: OnceCell<u32>,
     modded: OnceCell<bool>,
 }
@@ -1008,6 +1043,7 @@ impl GameManagerFinder {
             pointers: Box::new(GameManagerPointers::new()),
             player_data_pointers: Box::new(PlayerDataPointers::new()),
             completion_pointers: Box::new(CompletionPointers::new()),
+            scene_data_pointers: Box::new(SceneDataPointers::new()),
             ui_state_offset: OnceCell::new(),
             modded: OnceCell::new(),
         }
@@ -2789,6 +2825,25 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "dream_orbs", &game_manager_finder.player_data_pointers.dream_orbs)
     }
 
+    pub fn glade_essence_since_changed(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, changed: bool) -> i32 {
+        let glade_essence_since_changed = if changed {
+            self.map_i32.insert("glade_essence_since_changed", 0);
+            0
+        } else if let Some(&glade_essence_since_changed) = self.map_i32.get("glade_essence_since_changed") {
+            glade_essence_since_changed
+        } else {
+            0
+        };
+        let o = self.incremented_dream_orbs(process, game_manager_finder);
+        if o && game_manager_finder.get_scene_name(process).is_some_and(|s| s.starts_with("RestingGrounds_08")) {
+            let next_glade_essence = glade_essence_since_changed + 1;
+            self.map_i32.insert("glade_essence_since_changed", next_glade_essence);
+            next_glade_essence
+        } else {
+            glade_essence_since_changed
+        }
+    }
+
     pub fn incremented_grey_prince_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "grey_prince_defeats", &game_manager_finder.player_data_pointers.grey_prince_defeats)
     }
@@ -3285,6 +3340,79 @@ impl PlayerDataStore {
 
 // --------------------------------------------------------
 
+pub struct SceneDataStore {
+    map_bool_items: BTreeMap<(String, String), bool>,
+    map_bool_derived: BTreeMap<&'static str, bool>,
+    map_i32_derived: BTreeMap<&'static str, i32>,
+}
+
+impl SceneDataStore {
+    pub fn new() -> SceneDataStore {
+        SceneDataStore { 
+            map_bool_items: BTreeMap::new(),
+            map_bool_derived: BTreeMap::new(),
+            map_i32_derived: BTreeMap::new(),
+        }
+    }
+    pub fn reset(&mut self) {
+        self.map_bool_items.clear();
+    }
+    
+    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<(bool, bool, i32)> {
+        let pbis = gmf.deref_pointer(prc, &gmf.scene_data_pointers.persistent_bool_items).ok()?;
+        let offsets = gmf.scene_data_pointers.offsets(prc, &gmf.module, &gmf.image)?;
+        let mut changed = false;
+        let mut revek_alone = true;
+        let mut killed = 0;
+        for pbi in list_object_iter(prc, &gmf.string_list_offests, pbis)? {
+            if pbi.is_null() {
+                continue;
+            }
+            let scene_addr = prc.read_pointer(pbi + offsets.persistentbooldata_scenename, gmf.string_list_offests.pointer_size).ok()?;
+            let scene_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, scene_addr)?;
+            if !scene_str.starts_with("RestingGrounds_08") {
+                continue;
+            }
+            let id_addr = prc.read_pointer(pbi + offsets.persistentbooldata_id, gmf.string_list_offests.pointer_size).ok()?;
+            let id_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, id_addr)?;
+            if !(id_str.starts_with("Ghost ") || id_str.contains("karina")) {
+                continue;
+            }
+            let activated: bool = prc.read(pbi + offsets.persistentbooldata_activated).ok()?;
+            if activated {
+                killed += 1;
+            } else if id_str.starts_with("Ghost ") && !id_str.contains("revek") {
+                revek_alone = false;
+            }
+            let key = (scene_str, id_str);
+            if !self.map_bool_items.get(&key).is_some_and(|&prev_activated| prev_activated == activated) {
+                changed = true;
+                #[cfg(debug_assertions)]
+                asr::print_message(&format!("SceneData {:?}: {}", key, activated));
+                self.map_bool_items.insert(key, activated);
+            }
+        }
+        if killed == 0 {
+            revek_alone = false;
+        }
+        if !self.map_bool_derived.get("revek_alone").is_some_and(|&prev_alone| prev_alone == revek_alone) {
+            changed = true;
+            #[cfg(debug_assertions)]
+            asr::print_message(&format!("SceneData revek_alone: {}", revek_alone));
+            self.map_bool_derived.insert("revek_alone", revek_alone);
+        }
+        if !self.map_i32_derived.get("glade_ghosts_killed").is_some_and(|&prev_killed| prev_killed == killed) {
+            changed = true;
+            #[cfg(debug_assertions)]
+            asr::print_message(&format!("SceneData glade_ghosts_killed: {}", killed));
+            self.map_i32_derived.insert("glade_ghosts_killed", killed);
+        }
+        Some((changed, revek_alone, killed))
+    }
+}
+
+// --------------------------------------------------------
+
 pub async fn wait_attach_hollow_knight<G: StoreGui>(gui: &mut G) -> Process {
     retry(|| {
         gui.loop_load_update_store();
@@ -3328,14 +3456,22 @@ fn read_string_object<const N: usize>(process: &Process, offsets: &StringListOff
     String::from_utf16(&w.to_vec()).ok()
 }
 
-fn read_string_list_object<const SN: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<Vec<String>> {
+fn list_object_iter<'a>(process: &'a Process, offsets: &'a StringListOffsets, a: Address) -> Option<impl FusedIterator<Item = Address> + 'a> {
     let array_ptr: Address = process.read_pointer(a + offsets.list_array, offsets.pointer_size).ok()?;
     let vn: u32 = process.read(array_ptr + offsets.array_len).ok()?;
 
-    let mut v = Vec::with_capacity(vn as usize);
-    for i in 0..(vn as u64) {
-        let item_offset = offsets.array_contents + (offsets.pointer_size as u64) * i;
-        let item_ptr: Address = process.read_pointer(array_ptr + item_offset, offsets.pointer_size).ok()?;
+    Some(
+        (0..(vn as u64)).filter_map(move |i| {
+            let item_offset = offsets.array_contents + (offsets.pointer_size as u64) * i;
+            process.read_pointer(array_ptr + item_offset, offsets.pointer_size).ok()
+        })
+        .fuse(),
+    )
+}
+
+fn read_string_list_object<const SN: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<Vec<String>> {
+    let mut v = Vec::new();
+    for item_ptr in list_object_iter(process, offsets, a)? {
         if item_ptr.is_null() {
             continue;
         }
