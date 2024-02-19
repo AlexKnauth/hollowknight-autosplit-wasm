@@ -3882,7 +3882,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &mut GameManagerFinder, pds:
             should_split(d && o && g.get_scene_name(p).is_some_and(|s| s == "Hive_05"))
         }
         Split::OnObtainGhostRevek => {
-            let (a, k) = sds.glade_ghosts_killed(p, g).unwrap_or_default();
+            let (_, a, k) = sds.glade_ghosts_killed(p, g).unwrap_or_default();
             let o = pds.incremented_dream_orbs(p, g);
             // make sure both SceneDataStore and PlayerDataStore methods are evaluated before the `&&` so it doesn't short-circuit
             should_split(a && (19 <= k || (18 <= k && o && g.get_scene_name(p).is_some_and(|s| s == "RestingGrounds_08"))))

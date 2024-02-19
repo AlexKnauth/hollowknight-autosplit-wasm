@@ -3339,9 +3339,10 @@ impl SceneDataStore {
         self.map_bool_items.clear();
     }
     
-    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &mut GameManagerFinder) -> Option<(bool, i32)> {
+    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &mut GameManagerFinder) -> Option<(bool, bool, i32)> {
         let pbis = gmf.deref_pointer(prc, &gmf.scene_data_pointers.persistent_bool_items).ok()?;
         let offsets = gmf.scene_data_pointers.offsets(prc, &gmf.module, &gmf.image)?;
+        let mut changed = false;
         let mut revek_alone = true;
         let mut killed = 0;
         for pbi in list_object_iter(prc, &gmf.string_list_offests, pbis)? {
@@ -3366,19 +3367,22 @@ impl SceneDataStore {
             }
             let key = (scene_str, id_str);
             if !self.map_bool_items.get(&key).is_some_and(|&prev_activated| prev_activated == activated) {
+                changed = true;
                 asr::print_message(&format!("SceneData {:?}: {}", key, activated));
                 self.map_bool_items.insert(key, activated);
             }
         }
         if !self.map_bool_derived.get("revek_alone").is_some_and(|&prev_alone| prev_alone == revek_alone) {
+            changed = true;
             asr::print_message(&format!("SceneData revek_alone: {}", revek_alone));
             self.map_bool_derived.insert("revek_alone", revek_alone);
         }
         if !self.map_i32_derived.get("glade_ghosts_killed").is_some_and(|&prev_killed| prev_killed == killed) {
+            changed = true;
             asr::print_message(&format!("SceneData glade_ghosts_killed: {}", killed));
             self.map_i32_derived.insert("glade_ghosts_killed", killed);
         }
-        Some((revek_alone, killed))
+        Some((changed, revek_alone, killed))
     }
 }
 
