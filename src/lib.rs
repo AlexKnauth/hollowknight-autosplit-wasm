@@ -37,7 +37,7 @@ async fn main() {
     let mut splits = gui.get_splits();
     asr::print_message(&format!("splits: {:?}", splits));
 
-    let mut auto_reset = splits::auto_reset_safe(&splits);
+    let mut auto_reset: &'static [TimerState] = splits::auto_reset_safe(&splits);
 
     loop {
         let process = wait_attach_hollow_knight(&mut *gui).await;
@@ -114,14 +114,15 @@ async fn tick_action(
     splits: &[splits::Split],
     last_timer_state: &mut TimerState,
     i: &mut usize,
-    auto_reset: bool,
+    auto_reset: &'static [TimerState],
     game_manager_finder: &mut GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
     scene_data_store: &mut SceneDataStore,
     load_remover: &mut TimingMethodLoadRemover,
 ) {
-    match asr::timer::state() {
+    let timer_state = asr::timer::state();
+    match timer_state {
         // detect manual resets
         TimerState::NotRunning if 0 < *i => {
             *i = 0;
@@ -161,7 +162,7 @@ async fn tick_action(
                 // no break, allow other actions after a skip or reset
             }
             SplitterAction::Pass => {
-                if auto_reset {
+                if auto_reset.contains(&timer_state) {
                     let a0 = splits::splits(&splits[0], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
                     match a0 {
                         SplitterAction::Split | SplitterAction::Reset => {

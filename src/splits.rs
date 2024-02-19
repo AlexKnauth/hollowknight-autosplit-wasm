@@ -1,6 +1,7 @@
 
 use asr::Process;
 use asr::settings::Gui;
+use asr::timer::TimerState;
 use asr::watcher::Pair;
 use serde::{Deserialize, Serialize};
 use ugly_widget::radio_button::{RadioButtonOptions, options_str};
@@ -4226,16 +4227,23 @@ fn entering_kings_pass(p: &Pair<&str>, prc: &Process, g: &GameManagerFinder) -> 
     })
 }
 
-pub fn auto_reset_safe(s: &[Split]) -> bool {
+pub fn auto_reset_safe(s: &[Split]) -> &'static [TimerState] {
     let s_first = s.first();
-    (s_first == Some(&Split::StartNewGame))
-    && !s[1..].contains(&Split::StartNewGame)
-    && !s[1..].contains(&Split::LegacyStart)
-    && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
-    && !s[0..(s.len()-1)].contains(&Split::EndingA)
-    && !s[0..(s.len()-1)].contains(&Split::EndingB)
-    && !s[0..(s.len()-1)].contains(&Split::EndingC)
-    && !s[0..(s.len()-1)].contains(&Split::EndingD)
-    && !s[0..(s.len()-1)].contains(&Split::EndingE)
-    && !s[0..(s.len()-1)].contains(&Split::RadianceP)
+    if (s_first == Some(&Split::StartNewGame))
+       && !s[1..].contains(&Split::StartNewGame)
+       && !s[1..].contains(&Split::LegacyStart)
+       && !s[0..(s.len()-1)].contains(&Split::EndingSplit)
+       && !s[0..(s.len()-1)].contains(&Split::EndingA)
+       && !s[0..(s.len()-1)].contains(&Split::EndingB)
+       && !s[0..(s.len()-1)].contains(&Split::EndingC)
+       && !s[0..(s.len()-1)].contains(&Split::EndingD)
+       && !s[0..(s.len()-1)].contains(&Split::EndingE)
+       && !s[0..(s.len()-1)].contains(&Split::RadianceP)
+    {
+        &[TimerState::Ended, TimerState::Running]
+    } else if s_first == Some(&Split::StartNewGame) || s_first == Some(&Split::LegacyStart) {
+        &[TimerState::Ended]
+    } else {
+        &[]
+    }
 }
