@@ -3342,6 +3342,9 @@ impl SceneDataStore {
         let offsets = gmf.scene_data_pointers.offsets(prc, &gmf.module, &gmf.image)?;
         let mut killed = 0;
         for pbi in list_object_iter(prc, &gmf.string_list_offests, pbis)? {
+            if pbi.is_null() {
+                continue;
+            }
             let scene_addr = prc.read_pointer(pbi + offsets.persistentbooldata_scenename, gmf.string_list_offests.pointer_size).ok()?;
             let scene_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, scene_addr)?;
             if !scene_str.starts_with("RestingGrounds_08") {
