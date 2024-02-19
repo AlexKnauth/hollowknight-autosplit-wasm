@@ -1028,6 +1028,7 @@ pub struct GameManagerFinder {
     pointers: Box<GameManagerPointers>,
     player_data_pointers: Box<PlayerDataPointers>,
     completion_pointers: Box<CompletionPointers>,
+    scene_data_pointers: Box<SceneDataPointers>,
     ui_state_offset: OnceCell<u32>,
     modded: OnceCell<bool>,
 }
@@ -1041,6 +1042,7 @@ impl GameManagerFinder {
             pointers: Box::new(GameManagerPointers::new()),
             player_data_pointers: Box::new(PlayerDataPointers::new()),
             completion_pointers: Box::new(CompletionPointers::new()),
+            scene_data_pointers: Box::new(SceneDataPointers::new()),
             ui_state_offset: OnceCell::new(),
             modded: OnceCell::new(),
         }
@@ -3313,6 +3315,29 @@ impl PlayerDataStore {
     pub fn gold_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // God Tamer: {0} +1 {1}
         self.kills_decreased_by(prc, gmf, "kills_lobster_lancer_on_entry", &gmf.player_data_pointers.kills_lobster_lancer, 1)
+    }
+}
+
+// --------------------------------------------------------
+
+pub struct SceneDataStore {
+    map_bool_items: BTreeMap<(String, String), bool>,
+}
+
+impl SceneDataStore {
+    pub fn new() -> SceneDataStore {
+        SceneDataStore { 
+            map_bool_items: BTreeMap::new(),
+        }
+    }
+    pub fn reset(&mut self) {
+        self.map_bool_items.clear();
+    }
+    
+    pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &mut GameManagerFinder) -> Option<i32> {
+        let pbis = gmf.deref_pointer(prc, &gmf.scene_data_pointers.persistent_bool_items).ok()?;
+        let offsets = gmf.scene_data_pointers.offsets(prc, &gmf.module, &gmf.image)?;
+        None
     }
 }
 
