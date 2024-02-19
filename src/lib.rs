@@ -121,6 +121,7 @@ async fn tick_action(
     scene_data_store: &mut SceneDataStore,
     load_remover: &mut TimingMethodLoadRemover,
 ) {
+    let n = splits.len();
     let timer_state = asr::timer::state();
     match timer_state {
         // detect manual resets
@@ -136,8 +137,8 @@ async fn tick_action(
             asr::print_message("Detected a manual start.");
         }
         // detect manual end-splits
-        TimerState::Ended if 0 < *i => {
-            *i = 0;
+        TimerState::Ended if 0 < *i && *i < n => {
+            *i = n;
             load_remover.reset();
             asr::print_message("Detected a manual end-split.");
         }
@@ -146,10 +147,12 @@ async fn tick_action(
         }
     }
 
-    let n = splits.len();
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
     loop {
-        let a = splits::splits(&splits[*i], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
+        let Some(s) = splits.get(*i) else {
+            break;
+        };
+        let a = splits::splits(s, &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
         match a {
             SplitterAction::Split | SplitterAction::ManualSplit => {
                 splitter_action(a, i, n, load_remover);
@@ -175,6 +178,10 @@ async fn tick_action(
                 break;
             }
         }
+    }
+
+    if auto_reset.contains(&timer_state) && n <= *i {
+        *i = 0;
     }
 
     if trans_now {
@@ -204,7 +211,6 @@ fn splitter_action(a: SplitterAction, i: &mut usize, n: usize, load_remover: &mu
             *i += 1;
         }
         SplitterAction::Split if *i == 0 => {
-            asr::timer::reset();
             asr::timer::start();
             load_remover.reset();
             *i += 1;
@@ -218,9 +224,6 @@ fn splitter_action(a: SplitterAction, i: &mut usize, n: usize, load_remover: &mu
                 *i += 1;
             }
         }
-    }
-    if n <= *i {
-        *i = 0;
     }
 }
 
