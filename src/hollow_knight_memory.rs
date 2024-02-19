@@ -3338,7 +3338,29 @@ impl SceneDataStore {
     pub fn glade_ghosts_killed(&mut self, prc: &Process, gmf: &mut GameManagerFinder) -> Option<i32> {
         let pbis = gmf.deref_pointer(prc, &gmf.scene_data_pointers.persistent_bool_items).ok()?;
         let offsets = gmf.scene_data_pointers.offsets(prc, &gmf.module, &gmf.image)?;
-        None
+        let mut killed = 0;
+        for pbi in list_object_iter(prc, &gmf.string_list_offests, pbis)? {
+            let scene_addr = prc.read_pointer(pbi + offsets.persistentbooldata_scenename, gmf.string_list_offests.pointer_size).ok()?;
+            let scene_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, scene_addr)?;
+            if !scene_str.starts_with("RestingGrounds_08") {
+                continue;
+            }
+            let id_addr = prc.read_pointer(pbi + offsets.persistentbooldata_id, gmf.string_list_offests.pointer_size).ok()?;
+            let id_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, id_addr)?;
+            if !id_str.starts_with("Ghost ") {
+                continue;
+            }
+            let key = (scene_str, id_str);
+            let activated: bool = prc.read(pbi + offsets.persistentbooldata_activated).ok()?;
+            if !self.map_bool_items.get(&key).is_some_and(|&prev_activated| prev_activated == activated) {
+                asr::print_message(&format!("SceneData {:?}: {}", key, activated));
+                self.map_bool_items.insert(key, activated);
+            }
+            if activated {
+                killed += 1;
+            }
+        }
+        Some(killed)
     }
 }
 
