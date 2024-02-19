@@ -2825,6 +2825,25 @@ impl PlayerDataStore {
         self.incremented_i32(process, game_manager_finder, "dream_orbs", &game_manager_finder.player_data_pointers.dream_orbs)
     }
 
+    pub fn glade_essence_since_changed(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, changed: bool) -> i32 {
+        let glade_essence_since_changed = if changed {
+            self.map_i32.insert("glade_essence_since_changed", 0);
+            0
+        } else if let Some(&glade_essence_since_changed) = self.map_i32.get("glade_essence_since_changed") {
+            glade_essence_since_changed
+        } else {
+            0
+        };
+        let o = self.incremented_dream_orbs(process, game_manager_finder);
+        if o && game_manager_finder.get_scene_name(process).is_some_and(|s| s.starts_with("RestingGrounds_08")) {
+            let next_glade_essence = glade_essence_since_changed + 1;
+            self.map_i32.insert("glade_essence_since_changed", next_glade_essence);
+            next_glade_essence
+        } else {
+            glade_essence_since_changed
+        }
+    }
+
     pub fn incremented_grey_prince_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "grey_prince_defeats", &game_manager_finder.player_data_pointers.grey_prince_defeats)
     }
