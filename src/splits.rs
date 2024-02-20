@@ -3521,6 +3521,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::CrystalHeart => should_split(g.has_super_dash(p).is_some_and(|s| s)),
         Split::IsmasTear => should_split(g.has_acid_armour(p).is_some_and(|a| a)),
         Split::TransTear => { pds.has_acid_armour(p, g); should_split(false) },
+        Split::TransTearWithGrub => { pds.has_acid_armour(p, g); pds.grub_waterways_isma(p, g); should_split(false) }, 
         Split::MenuIsmasTear => { pds.has_acid_armour(p, g); should_split(false) },
         // endregion: Movement Abilities
         // region: Nail Arts
