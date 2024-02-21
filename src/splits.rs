@@ -217,6 +217,9 @@ pub enum Split {
     /// 
     /// Splits on transition after Shade Soul acquired
     TransShadeSoul,
+    /// Main Menu w/ Shade Soul (Menu)
+    /// 
+    /// Splits on transition to the main menu after Shade Soul acquired
     MenuShadeSoul,
     /// Desolate Dive (Skill)
     /// 
