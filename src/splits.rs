@@ -879,6 +879,18 @@ pub enum Split {
     /// 
     /// Splits after obtaining the third flame.
     Flame3,
+    /// Grimm Flame 1 (Transition)
+    /// 
+    /// Splits on transition after obtaining the first flame on current Grimmchild cycle.
+    TransFlame1,
+    /// Grimm Flame 2 (Transition)
+    /// 
+    /// Splits on transition after obtaining the second flame on current Grimmchild cycle.
+    TransFlame2,
+    /// Grimm Flame 3 (Transition)
+    /// 
+    /// Splits on transition after obtaining the third flame on current Grimmchild cycle.
+    TransFlame3,
     /// Brumm Flame (NPC)
     /// 
     /// Splits when collecting Brumm's flame in Deepnest
@@ -3259,6 +3271,9 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::SlyShopExit => should_split(p.old == "Room_shop" && p.current != p.old),
         Split::LumaflyLanternTransition | Split::PreGrimmShopTrans => should_split(pds.has_lantern(prc, g) && !p.current.starts_with("Room_shop")),
         Split::SlyShopFinished => should_split(pds.sly_shop_finished(prc, g) && !p.current.starts_with("Room_shop")),
+        Split::TransFlame1 => should_split(1 <= pds.flames_collected(prc, g)),
+        Split::TransFlame2 => should_split(2 <= pds.flames_collected(prc, g)),
+        Split::TransFlame3 => should_split(3 <= pds.flames_collected(prc, g)),
         Split::EnterTMG => should_split(p.current.starts_with("Grimm_Main_Tent")
                                         && p.current != p.old
                                         && g.equipped_charm_40(prc).is_some_and(|e| e)
@@ -3690,6 +3705,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::Flame1 => should_split(g.flames_collected(p).is_some_and(|f| 1 <= f)),
         Split::Flame2 => should_split(g.flames_collected(p).is_some_and(|f| 2 <= f)),
         Split::Flame3 => should_split(g.flames_collected(p).is_some_and(|f| 3 <= f)),
+        Split::TransFlame1 => { pds.flames_collected(p, g); should_split(false) },
+        Split::TransFlame2 => { pds.flames_collected(p, g); should_split(false) },
+        Split::TransFlame3 => { pds.flames_collected(p, g); should_split(false) },
         Split::BrummFlame => should_split(g.got_brumms_flame(p).is_some_and(|f| f)),
         // Kingsoul / VoidHeart
         Split::WhiteFragmentLeft => should_split(g.got_queen_fragment(p).is_some_and(|c| c)),
