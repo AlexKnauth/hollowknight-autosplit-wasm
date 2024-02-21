@@ -2750,6 +2750,10 @@ impl PlayerDataStore {
         self.get_bool(p, g, "got_charm_31", &g.player_data_pointers.got_charm_31).unwrap_or(false)
     }
 
+    pub fn flames_collected(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
+        self.get_i32(p, g, "flames_collected", &g.player_data_pointers.flames_collected).unwrap_or(0)
+    }
+
     pub fn got_shade_charm(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "got_shade_charm", &g.player_data_pointers.got_shade_charm).unwrap_or(false)
     }
