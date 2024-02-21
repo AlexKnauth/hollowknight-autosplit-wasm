@@ -72,10 +72,10 @@
                         ]
                     ]
                 },
-                "split_time_accuracy": "Seconds",
+                "split_time_accuracy": "Hundredths",
                 "segment_time_accuracy": "Hundredths",
-                "delta_time_accuracy": "Tenths",
-                "delta_drop_decimals": true,
+                "delta_time_accuracy": "Hundredths",
+                "delta_drop_decimals": false,
                 "show_column_labels": false,
                 "columns": [
                     {
@@ -142,8 +142,8 @@
                 "comparison_override": null,
                 "display_two_rows": false,
                 "label_color": null,
-                "drop_decimals": true,
-                "accuracy": "Tenths",
+                "drop_decimals": false,
+                "accuracy": "Hundredths",
                 "show_possible_time_save": false
             }
         }
