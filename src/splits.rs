@@ -2962,6 +2962,10 @@ pub enum Split {
     /// 
     /// Splits when absorbing essence from Galien
     GalienEssence,
+    /// Beast Den (Transition)
+    /// 
+    /// Splits on transition into Beast Den
+    EnterBeastDen,
     /// Trap Bench (Event)
     /// 
     /// Splits when getting the trap bench in Beasts Den
@@ -3403,6 +3407,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // region: Deepnest
         Split::EnterDeepnest => should_split(starts_with_any(p.current, DEEPNEST_ENTRY_SCENES) && p.current != p.old),
         Split::EnterNosk => should_split(p.current.starts_with("Deepnest_32") && p.current != p.old),
+        Split::EnterBeastDen => should_split(p.current.starts_with("Deepnest_Spider_Town") && p.current != p.old),
         // endregion: Deepnest
         // region: Godhome
         Split::EnterGodhome => should_split(p.current.starts_with("GG_Atrium") && p.current != p.old),
