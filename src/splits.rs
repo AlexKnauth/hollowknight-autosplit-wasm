@@ -2220,6 +2220,10 @@ pub enum Split {
     /// 
     /// Splits each time defeating White Defender in Dung Defender's dream
     OnDefeatWhiteDefender,
+    /// Stinky (Event)
+    /// 
+    /// Splits when seeing the Dung Defender's statue of the Knight
+    WhiteDefenderStatueUnlocked,
     /// Met Emilitia (Event)
     /// 
     /// Splits when talking to Emilitia for the first time
@@ -4065,6 +4069,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::WhiteDefender => should_split(g.killed_white_defender(p).is_some_and(|k| k)),
         Split::WhiteDefenderEssence => should_split(g.white_defender_orbs_collected(p).is_some_and(|o| o)),
         Split::OnDefeatWhiteDefender => should_split(pds.incremented_white_defender_defeats(p, g)),
+        Split::WhiteDefenderStatueUnlocked => todo!("WhiteDefenderStatueUnlocked"),
         Split::MetEmilitia => should_split(g.met_emilitia(p).is_some_and(|m| m)),
         Split::GivenEmilitiaFlower => should_split(g.given_emilitia_flower(p).is_some_and(|g| g)),
         Split::Flukemarm => should_split(g.killed_fluke_mother(p).is_some_and(|k| k)),
