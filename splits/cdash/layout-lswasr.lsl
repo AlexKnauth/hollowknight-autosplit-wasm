@@ -187,15 +187,15 @@
         <ScriptPath>C:\Users\Owner\Documents\git\LiveSplit\hollowknight-autosplit-wasm\target\wasm32-wasi\debug\hollowknight_autosplit_wasm.wasm</ScriptPath>
         <CustomSettings>
           <Setting id="splits" type="list">
-            <Setting type="string" value="AnyTransition" />
-            <Setting type="string" value="AnyTransition" />
-            <Setting type="string" value="AnyTransition" />
-            <Setting type="string" value="AnyTransition" />
+            <Setting type="string" value="TransitionAfterSaveState" />
+            <Setting type="string" value="TransitionAfterSaveState" />
+            <Setting type="string" value="TransitionAfterSaveState" />
+            <Setting type="string" value="TransitionAfterSaveState" />
           </Setting>
-          <Setting id="splits_0_item" type="string" value="AnyTransition" />
-          <Setting id="splits_1_item" type="string" value="AnyTransition" />
-          <Setting id="splits_2_item" type="string" value="AnyTransition" />
-          <Setting id="splits_3_item" type="string" value="AnyTransition" />
+          <Setting id="splits_0_item" type="string" value="TransitionAfterSaveState" />
+          <Setting id="splits_1_item" type="string" value="TransitionAfterSaveState" />
+          <Setting id="splits_2_item" type="string" value="TransitionAfterSaveState" />
+          <Setting id="splits_3_item" type="string" value="TransitionAfterSaveState" />
           <Setting id="splits_4_item" type="string" value="MaskFragment1" />
           <Setting id="splits_5_item" type="string" value="Grub2" />
           <Setting id="splits_6_item" type="string" value="MaskFragment2" />

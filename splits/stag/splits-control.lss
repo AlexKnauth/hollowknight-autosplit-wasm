@@ -42,8 +42,8 @@
     <AutosplitEndRuns>True</AutosplitEndRuns>
     <AutosplitStartRuns>RidingStag</AutosplitStartRuns>
     <Splits>
-      <Split>AnyTransition</Split>
-      <Split>AnyTransition</Split>
+      <Split>TransitionAfterSaveState</Split>
+      <Split>TransitionAfterSaveState</Split>
     </Splits>
   </AutoSplitterSettings>
 </Run>

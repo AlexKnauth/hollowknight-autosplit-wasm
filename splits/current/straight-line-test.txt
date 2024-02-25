@@ -7,32 +7,32 @@ Set-up:
 Straight line walk tests:
  1. Start from Crossroads_01.
     Hold right.
-    Start-triggering autosplit: AnyTransition, from Crossroads_01 to Crossroads_02.
-    Next autosplit: AnyTransition, from Crossroads_02 to Crossroads_39.
-    End-triggering autosplit: AnyTransition, from Crossroads_39 to Crossroads_14.
+    Start-triggering autosplit: TransitionAfterSaveState, from Crossroads_01 to Crossroads_02.
+    Next autosplit: TransitionAfterSaveState, from Crossroads_02 to Crossroads_39.
+    End-triggering autosplit: TransitionAfterSaveState, from Crossroads_39 to Crossroads_14.
  2. Start from Crossroads_14.
     Hold left.
-    Start-triggering autosplit: AnyTransition, from Crossroads_14 to Crossroads_39.
-    Next autosplit: AnyTransition, from Crossroads_39 to Crossroads_02.
-    End-triggering autosplit: AnyTransition, from Crossroads_02 to Crossroads_01.
+    Start-triggering autosplit: TransitionAfterSaveState, from Crossroads_14 to Crossroads_39.
+    Next autosplit: TransitionAfterSaveState, from Crossroads_39 to Crossroads_02.
+    End-triggering autosplit: TransitionAfterSaveState, from Crossroads_02 to Crossroads_01.
 
 Straight line CDash test:
  1. Start from Crossroads_01.
     CDash right.
-    Start-triggering autosplit: AnyTransition, from Crossroads_01 to Crossroads_02.
-    Next autosplit: AnyTransition, from Crossroads_02 to Crossroads_39.
-    End-triggering autosplit: AnyTransition, from Crossroads_39 to Crossroads_14.
+    Start-triggering autosplit: TransitionAfterSaveState, from Crossroads_01 to Crossroads_02.
+    Next autosplit: TransitionAfterSaveState, from Crossroads_02 to Crossroads_39.
+    End-triggering autosplit: TransitionAfterSaveState, from Crossroads_39 to Crossroads_14.
  2. Start from Crossroads_48.
     CDash left.
-    Start-triggering autosplit: AnyTransition, from Crossroads_48 to Crossroads_14.
-    Next autosplit: AnyTransition, from Crossroads_14 to Crossroads_39.
-    Next autosplit: AnyTransition, from Crossroads_39 to Crossroads_02.
-    End-triggering autosplit: AnyTransition, from Crossroads_02 to Crossroads_01.
+    Start-triggering autosplit: TransitionAfterSaveState, from Crossroads_48 to Crossroads_14.
+    Next autosplit: TransitionAfterSaveState, from Crossroads_14 to Crossroads_39.
+    Next autosplit: TransitionAfterSaveState, from Crossroads_39 to Crossroads_02.
+    End-triggering autosplit: TransitionAfterSaveState, from Crossroads_02 to Crossroads_01.
 
 Stag test:
  1. Start from Dirtmouth Stag.
     Stag -> Crossroads, hold right.
     Start-triggering autosplit: RidingStag.
-    Next autosplit: AnyTransition, from Room_Town_Stag_Station to Cinematic_Stag_Travel.
-    Next autosplit: AnyTransition, from Cinematic_Stag_Travel to Crossroads_47.
-    End-triggering autosplit: AnyTransition, from Crossroads_47 to Crossroads_03.
+    Next autosplit: TransitionAfterSaveState, from Room_Town_Stag_Station to Cinematic_Stag_Travel.
+    Next autosplit: TransitionAfterSaveState, from Cinematic_Stag_Travel to Crossroads_47.
+    End-triggering autosplit: TransitionAfterSaveState, from Crossroads_47 to Crossroads_03.
