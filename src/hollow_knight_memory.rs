@@ -3492,8 +3492,10 @@ pub fn is_menu(s: &str) -> bool {
     s == MENU_TITLE || s == QUIT_TO_MENU || s == PERMA_DEATH
 }
 
-/// Produces true on scenes where Dream-Falling can occur.
-/// Produces false on scenes where it's possible to Dream-Gate
+/// Produces true on Dream scenes and Godhome scenes,
+/// especially scenes where Dream-Falling can occur.
+/// Produces false on physical overworld scenes,
+/// especially scenes where it's possible to Dream-Gate
 /// from the scene back to the same scene.
 /// 
 /// The only 3 scenes I know of that start with "GG_"
