@@ -48,14 +48,5 @@
       <SegmentHistory />
     </Segment>
   </Segments>
-  <AutoSplitterSettings>
-    <Ordered>True</Ordered>
-    <AutosplitEndRuns>True</AutosplitEndRuns>
-    <AutosplitStartRuns>TransitionAfterSaveState</AutosplitStartRuns>
-    <Splits>
-      <Split>TransitionAfterSaveState</Split>
-      <Split>TransitionAfterSaveState</Split>
-      <Split>TransitionAfterSaveState</Split>
-    </Splits>
-  </AutoSplitterSettings>
+  <AutoSplitterSettings />
 </Run>
