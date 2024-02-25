@@ -3316,7 +3316,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         //       or only the rooms that the area text can appear in?
         // region: Resting Grounds
         Split::BlueLake => should_split(p.current.starts_with("Crossroads_50") && !p.old.starts_with("Crossroads_50")), // blue lake is Crossroads_50
-        Split::EnterAnyDream => should_split(p.current.starts_with("Dream_") && p.current != p.old),
+        Split::EnterAnyDream => should_split(is_dream(p.current) && p.current != p.old),
         Split::DreamNailExit => should_split(p.old == "Dream_Nailcollection" && p.current == "RestingGrounds_07"),
         Split::MenuDreamNail => should_split(pds.has_dream_nail(prc, g) && p.current == MENU_TITLE),
         Split::MenuDreamGate => should_split(pds.has_dream_gate(prc, g) && p.current == MENU_TITLE),

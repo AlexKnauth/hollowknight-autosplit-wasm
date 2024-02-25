@@ -3492,6 +3492,22 @@ pub fn is_menu(s: &str) -> bool {
     s == MENU_TITLE || s == QUIT_TO_MENU || s == PERMA_DEATH
 }
 
+/// Produces true on Dream scenes and Godhome scenes,
+/// especially scenes where Dream-Falling can occur.
+/// Produces false on physical overworld scenes,
+/// especially scenes where it's possible to Dream-Gate
+/// from the scene back to the same scene.
+/// 
+/// The only 3 scenes I know of that start with "GG_"
+/// but this must produce false for, are:
+/// - "GG_Waterways" covered by !s.contains("way")
+/// - "GG_Pipeway" covered by !s.contains("way")
+/// - "GG_Lurker" covered by !s.contains("Lurker")
+pub fn is_dream(s: &str) -> bool {
+    s.starts_with("Dream_")
+    || (s.starts_with("GG_") && !s.contains("way") && !s.contains("Lurker"))
+}
+
 pub fn is_play_scene(s: &str) -> bool {
     !NON_PLAY_SCENES.contains(&s) && !BAD_SCENE_NAMES.contains(&s)
 }
