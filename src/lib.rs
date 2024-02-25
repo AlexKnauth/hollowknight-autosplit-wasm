@@ -438,7 +438,7 @@ impl HitCounter {
 
         if self.count_dream_falling {
             if let Some(s) = maybe_scene_name {
-                if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && s.starts_with("Dream_") {
+                if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && is_dream(&s) {
                     self.hits += 1;
                     asr::timer::set_game_time(Duration::seconds(self.hits));
                     asr::timer::set_variable_int("hits", self.hits);
