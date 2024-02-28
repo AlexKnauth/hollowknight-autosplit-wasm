@@ -1,6 +1,6 @@
 # hollowknight-autosplit-wasm
 
-An auto splitter for Hollow Knight.
+An auto splitter for Hollow Knight that supports Windows, Mac, and Linux.
 
 ## Installation
 
