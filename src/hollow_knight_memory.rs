@@ -190,6 +190,7 @@ struct GameManagerPointers {
     version_number: UnityPointer<4>,
     scene_name: UnityPointer<2>,
     next_scene_name: UnityPointer<2>,
+    entry_gate_name: UnityPointer<2>,
     game_state: UnityPointer<2>,
     ui_state_vanilla: UnityPointer<3>,
     ui_state_modded: UnityPointer<3>,
@@ -211,6 +212,7 @@ impl GameManagerPointers {
             version_number: UnityPointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "debugInfo", "versionNumber"]),
             scene_name: UnityPointer::new("GameManager", 0, &["_instance", "sceneName"]),
             next_scene_name: UnityPointer::new("GameManager", 0, &["_instance", "nextSceneName"]),
+            entry_gate_name: UnityPointer::new("GameManager", 0, &["_instance", "entryGateName"]),
             game_state: UnityPointer::new("GameManager", 0, &["_instance", "gameState"]),
             ui_state_vanilla: UnityPointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
             ui_state_modded: UnityPointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
@@ -1091,6 +1093,11 @@ impl GameManagerFinder {
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
         let s = self.deref_pointer(process, &self.pointers.next_scene_name).ok()?;
+        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
+    }
+
+    pub fn get_entry_gate_name(&self, process: &Process) -> Option<String> {
+        let s = self.deref_pointer(process, &self.pointers.entry_gate_name).ok()?;
         read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
     }
 
