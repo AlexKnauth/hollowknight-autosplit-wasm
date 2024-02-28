@@ -3251,7 +3251,8 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
                                                             || p.current.is_empty()
                                                             || is_menu(p.old)
                                                             || is_debug_save_state_scene(p.old)
-                                                            || is_debug_save_state_scene(p.current))),
+                                                            || is_debug_save_state_scene(p.current)
+                                                            || g.get_entry_gate_name(prc).is_some_and(|e| e == "dreamGate"))),
         // endregion: Start, End, and Menu
 
         // region: Dreamers
