@@ -504,6 +504,7 @@ struct PlayerDataPointers {
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
     white_defender_defeats: UnityPointer<3>,
+    dung_defender_awake_convo: UnityPointer<3>,
     met_emilitia: UnityPointer<3>,
     given_emilitia_flower: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
@@ -859,6 +860,7 @@ impl PlayerDataPointers {
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
             white_defender_defeats: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderDefeats"]),
+            dung_defender_awake_convo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dungDefenderAwakeConvo"]),
             met_emilitia: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metEmilitia"]),
             given_emilitia_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenEmilitiaFlower"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
@@ -2854,6 +2856,24 @@ impl PlayerDataStore {
 
     pub fn incremented_white_defender_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "white_defender_defeats", &game_manager_finder.player_data_pointers.white_defender_defeats)
+    }
+
+    pub fn dung_defender_awake_convo_on_entry(&mut self, prc: &Process, gmf: &GameManagerFinder) -> bool {
+        if gmf.is_game_state_non_continuous(prc) {
+            self.map_bool.remove("dung_defender_awake_convo_on_entry");
+            return false;
+        }
+        match self.map_bool.get("dung_defender_awake_convo_on_entry") {
+            None => {
+                if let Ok(convo_now) = gmf.player_data_pointers.dung_defender_awake_convo.deref(prc, &gmf.module, &gmf.image) {
+                    self.map_bool.insert("dung_defender_awake_convo_on_entry", convo_now);
+                    convo_now
+                } else {
+                    false
+                }
+            }
+            Some(convo_on_entry) => *convo_on_entry
+        }
     }
 
     pub fn zote_rescued_buzzer(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
