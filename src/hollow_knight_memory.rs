@@ -186,6 +186,14 @@ pub const UI_STATE_PAUSED: i32 = 7;
 
 pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
 
+#[derive(bytemuck::CheckedBitPattern, Clone, Copy)]
+#[repr(C)]
+pub struct Vector3 {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
 struct GameManagerPointers {
     version_number: UnityPointer<4>,
     scene_name: UnityPointer<2>,
@@ -194,6 +202,7 @@ struct GameManagerPointers {
     ui_state_vanilla: UnityPointer<3>,
     ui_state_modded: UnityPointer<3>,
     camera_teleporting: UnityPointer<3>,
+    camera_target_destination: UnityPointer<4>,
     accepting_input: UnityPointer<3>,
     tile_map_dirty: UnityPointer<2>,
     hero_dead: UnityPointer<4>,
@@ -215,6 +224,7 @@ impl GameManagerPointers {
             ui_state_vanilla: UnityPointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
             ui_state_modded: UnityPointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
             camera_teleporting: UnityPointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
+            camera_target_destination: UnityPointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "camTarget", "destination"]),
             accepting_input: UnityPointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
             tile_map_dirty: UnityPointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
             hero_dead: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "dead"]),
@@ -1143,6 +1153,10 @@ impl GameManagerFinder {
 
     pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {
         self.pointers.camera_teleporting.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn camera_target_destination(&self, process: &Process) -> Option<Vector3> {
+        self.pointers.camera_target_destination.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn hazard_respawning(&self, process: &Process) -> Option<bool> {
