@@ -4071,7 +4071,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnDefeatWhiteDefender => should_split(pds.incremented_white_defender_defeats(p, g)),
         Split::WhiteDefenderStatueUnlocked => should_split(pds.dung_defender_awake_convo_on_entry(p, g)
                                                            && g.get_scene_name(p).is_some_and(|s| s.starts_with("Waterways_15"))
-                                                           && g.camera_target_destination(p).is_some_and(|v| v.x < 30.0)),
+                                                           && g.camera_target_destination(p).is_some_and(|v| v.x < 29.5)),
         Split::MetEmilitia => should_split(g.met_emilitia(p).is_some_and(|m| m)),
         Split::GivenEmilitiaFlower => should_split(g.given_emilitia_flower(p).is_some_and(|g| g)),
         Split::Flukemarm => should_split(g.killed_fluke_mother(p).is_some_and(|k| k)),
