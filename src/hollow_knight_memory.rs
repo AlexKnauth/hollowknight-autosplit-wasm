@@ -186,6 +186,14 @@ pub const UI_STATE_PAUSED: i32 = 7;
 
 pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
 
+#[derive(bytemuck::CheckedBitPattern, Clone, Copy)]
+#[repr(C)]
+pub struct Vector3 {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
 struct GameManagerPointers {
     version_number: UnityPointer<4>,
     scene_name: UnityPointer<2>,
@@ -195,6 +203,7 @@ struct GameManagerPointers {
     ui_state_vanilla: UnityPointer<3>,
     ui_state_modded: UnityPointer<3>,
     camera_teleporting: UnityPointer<3>,
+    camera_target_destination: UnityPointer<4>,
     accepting_input: UnityPointer<3>,
     tile_map_dirty: UnityPointer<2>,
     hero_dead: UnityPointer<4>,
@@ -217,6 +226,7 @@ impl GameManagerPointers {
             ui_state_vanilla: UnityPointer::new("GameManager", 0, &["_instance", "<ui>k__BackingField", "uiState"]),
             ui_state_modded: UnityPointer::new("GameManager", 0, &["_instance", "_uiInstance", "uiState"]),
             camera_teleporting: UnityPointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "teleporting"]),
+            camera_target_destination: UnityPointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "camTarget", "destination"]),
             accepting_input: UnityPointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
             tile_map_dirty: UnityPointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
             hero_dead: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "dead"]),
@@ -506,6 +516,7 @@ struct PlayerDataPointers {
     killed_white_defender: UnityPointer<3>,
     white_defender_orbs_collected: UnityPointer<3>,
     white_defender_defeats: UnityPointer<3>,
+    dung_defender_awake_convo: UnityPointer<3>,
     met_emilitia: UnityPointer<3>,
     given_emilitia_flower: UnityPointer<3>,
     killed_fluke_mother: UnityPointer<3>,
@@ -861,6 +872,7 @@ impl PlayerDataPointers {
             killed_white_defender: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedWhiteDefender"]),
             white_defender_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderOrbsCollected"]),
             white_defender_defeats: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "whiteDefenderDefeats"]),
+            dung_defender_awake_convo: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "dungDefenderAwakeConvo"]),
             met_emilitia: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "metEmilitia"]),
             given_emilitia_flower: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "givenEmilitiaFlower"]),
             killed_fluke_mother: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFlukeMother"]),
@@ -1148,6 +1160,10 @@ impl GameManagerFinder {
 
     pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {
         self.pointers.camera_teleporting.deref(process, &self.module, &self.image).ok()
+    }
+
+    pub fn camera_target_destination(&self, process: &Process) -> Option<Vector3> {
+        self.pointers.camera_target_destination.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn hazard_respawning(&self, process: &Process) -> Option<bool> {
@@ -2861,6 +2877,24 @@ impl PlayerDataStore {
 
     pub fn incremented_white_defender_defeats(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> bool {
         self.incremented_i32(process, game_manager_finder, "white_defender_defeats", &game_manager_finder.player_data_pointers.white_defender_defeats)
+    }
+
+    pub fn dung_defender_awake_convo_on_entry(&mut self, prc: &Process, gmf: &GameManagerFinder) -> bool {
+        if gmf.is_game_state_non_continuous(prc) {
+            self.map_bool.remove("dung_defender_awake_convo_on_entry");
+            return false;
+        }
+        match self.map_bool.get("dung_defender_awake_convo_on_entry") {
+            None => {
+                if let Ok(convo_now) = gmf.player_data_pointers.dung_defender_awake_convo.deref(prc, &gmf.module, &gmf.image) {
+                    self.map_bool.insert("dung_defender_awake_convo_on_entry", convo_now);
+                    convo_now
+                } else {
+                    false
+                }
+            }
+            Some(convo_on_entry) => *convo_on_entry
+        }
     }
 
     pub fn zote_rescued_buzzer(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
