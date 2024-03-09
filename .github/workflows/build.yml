@@ -30,12 +30,10 @@ jobs:
           cargo release --locked
 
       - name: Release
-        if: github.ref == 'refs/heads/master'
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
-          tag_name: release-${{ github.sha }}
-          name: Release ${{ github.sha }}
           files: target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm
 
   clippy:
