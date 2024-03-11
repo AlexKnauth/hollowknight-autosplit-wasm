@@ -112,6 +112,13 @@
         <Columns>
           <Settings>
             <Version>1.5</Version>
+            <Name>Seg</Name>
+            <Type>SegmentTime</Type>
+            <Comparison>Current Comparison</Comparison>
+            <TimingMethod>Current Timing Method</TimingMethod>
+          </Settings>
+          <Settings>
+            <Version>1.5</Version>
             <Name>+/-</Name>
             <Type>Delta</Type>
             <Comparison>Current Comparison</Comparison>

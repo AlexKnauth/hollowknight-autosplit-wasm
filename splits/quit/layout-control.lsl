@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Layout version="1.6.1">
   <Mode>Vertical</Mode>
-  <X>3</X>
-  <Y>475</Y>
+  <X>16</X>
+  <Y>470</Y>
   <VerticalWidth>286</VerticalWidth>
   <VerticalHeight>561</VerticalHeight>
   <HorizontalWidth>-1</HorizontalWidth>
@@ -110,6 +110,13 @@
         <ShowColumnLabels>False</ShowColumnLabels>
         <LabelsColor>FFFFFFFF</LabelsColor>
         <Columns>
+          <Settings>
+            <Version>1.5</Version>
+            <Name>Seg</Name>
+            <Type>SegmentTime</Type>
+            <Comparison>Current Comparison</Comparison>
+            <TimingMethod>Current Timing Method</TimingMethod>
+          </Settings>
           <Settings>
             <Version>1.5</Version>
             <Name>+/-</Name>
