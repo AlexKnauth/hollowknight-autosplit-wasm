@@ -131,6 +131,11 @@ On Mac, the config file should be at
 In my experience, you have to create a file here yourself,
 running `livesplit-one-druid` doesn't initialize it on Mac.
 
+On Linux, the config file should be at
+```
+/home/<name>/.local/share/livesplitone/config.yml
+```
+
 Modify the `config.yml` file so that it contains
 ```yaml
 splits:
