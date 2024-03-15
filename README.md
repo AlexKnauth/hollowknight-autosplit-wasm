@@ -113,13 +113,17 @@ On Windows, extract the `obs-livesplit-one.dll` to either
 `C:\Program Files\obs-studio\obs-plugins\64bit` or
 `C:\Program Files (x86)\obs-studio\obs-plugins\64bit`.
 
+For hit-counter mode, modify your splits file,
+near the end after `</Splits>` but before `</AutoSplitterSettings>`,
+so that it contains `<TimingMethod>HitsDreamFalls</TimingMethod>`
+or `<TimingMethod>HitsDamage</TimingMethod>`.
+
 Add OBS Source Livesplit One.
 
 Properties:
 - Splits: Select your splits file
 - Use local autosplitter: Check
-- Local Auto Splitter file: Select the compiled `wasm` file
-  found at `target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+- Local Auto Splitter file: Select the `hollowknight_autosplit_wasm.wasm` file
 - Custom auto splitter settings: Select `Import Splits`
 - Select a file: Select your splits file
 
