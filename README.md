@@ -10,6 +10,7 @@ Or follow the steps in [Compilation](#compilation) and use `target/wasm32-wasi/r
 
 To configure LiveSplit or a LiveSplit One prototype to use this, see:
  - [Instructions for LiveSplit Windows](#instructions-for-livesplit-windows)
+ - [Instructions for obs-livesplit-one](#instructions-for-obs-livesplit-one)
  - [Instructions for livesplit-one-druid](#instructions-for-livesplit-one-druid)
  - [Instructions for livesplit-one-desktop](#instructions-for-livesplit-one-desktop)
 
@@ -98,6 +99,29 @@ Finally, do not manually split or skip while running with this autosplitter,
 unless either it's explicitly marked as `ManualSplit` or it's the end-split.
 Don't manually split, skip, or undo splits in any other situation.
 The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with LiveSplit's state.
+
+## Instructions for obs-livesplit-one
+
+Make sure to use `obs-livesplit-one` release v0.3.5 or later.
+
+Go to the [obs-livesplit-one releases](https://github.com/LiveSplit/obs-livesplit-one/releases) page,
+and under the `Assets` section, download the one that matches your architecture and operating system.
+Follow the instructions in the
+[`How to install`](https://github.com/LiveSplit/obs-livesplit-one/blob/master/README.md#how-to-install)
+section of the `obs-livesplit-one` README file.
+On Windows, extract the `obs-livesplit-one.dll` to either
+`C:\Program Files\obs-studio\obs-plugins\64bit` or
+`C:\Program Files (x86)\obs-studio\obs-plugins\64bit`.
+
+Add OBS Source Livesplit One.
+
+Properties:
+- Splits: Select your splits file
+- Use local autosplitter: Check
+- Local Auto Splitter file: Select the compiled `wasm` file
+  found at `target/wasm32-wasi/release/wasm_hollowknight_autosplit.wasm`
+- Custom auto splitter settings: Select `Import Splits`
+- Select a file: Select your splits file
 
 ## Instructions for livesplit-one-druid
 
