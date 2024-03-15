@@ -127,6 +127,25 @@ Properties:
 - Custom auto splitter settings: Select `Import Splits`
 - Select a file: Select your splits file
 
+### Mac Troubleshooting for obs-livesplit-one
+
+If you're using Steam on Mac, you need a Hollow Knight installation separate from your steam installation.
+You can create a separate installation like this:
+
+1. In the Steam Library entry, Game settings, Properties, Installed Files, Verify integrity of game files.
+2. Browse local files, copy the `hollow_knight.app` into a new location, and add `steam_appid.txt` files in that new location. I don't know exactly where `steam_appid.txt` belongs, so I just put it in many places both next to and inside the package contents of the `hollow_knight.app` in the new location.
+3. In obs-livesplit-one properties, set the Game path to that new location `hollow_knight.app`.
+
+If setting the Game path to a path to `hollow_knight.app` doesn't work, try setting it to a path to `hollow_knight.app/Contents/MacOS/Hollow Knight` and see if that does any better.
+
+If it still isn't working, another thing to try on Mac could be running OBS under `sudo`.
+For example in the directory where you have OBS installed, you can run
+```sh
+sudo ./OBS.app/Contents/MacOS/OBS
+```
+
+But even while trying all of this, I still haven't managed to get it working on Mac yet.
+
 ## Instructions for livesplit-one-druid
 
 Note: The main `livesplit-one-druid` repository might not
