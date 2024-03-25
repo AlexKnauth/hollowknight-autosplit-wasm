@@ -1,0 +1,61 @@
+{
+    "categoryName": "Any%",
+    "splitIds": [
+        "KingsPass",
+        "AspidHunter",
+        "VengefulSpirit",
+        "EnterGreenpath",
+        "MossKnight",
+        "MothwingCloak",
+        "MantisClaw",
+        "OnObtainWanderersJournal",
+        "OnObtainHallownestSeal",
+        "OnObtainWanderersJournal",
+        "CrossroadsStation",
+        "OnObtainHallownestSeal",
+        "GruzMother",
+        "BlueLake",
+        "DreamNail",
+        "OnObtainWanderersJournal",
+        "OnObtainHallownestSeal",
+        "TransGorgeousHusk",
+        "OnObtainHallownestSeal",
+        "Lemm2",
+        "LumaflyLantern",
+        "SlyKey",
+        "CrystalHeart",
+        "ElegantKey",
+        "ShadeSoul",
+        "FogCanyonEntry",
+        "Uumuu",
+        "Monomon",
+        "BeastsDenTrapBench",
+        "Hegemol",
+        "WatcherChandelier",
+        "BlackKnight",
+        "Lurien",
+        "UnchainedHollowKnight"
+    ],
+    "names": {
+        "OnObtainWanderersJournal": [
+            "Mantis Journal",
+            "Sporg Journal",
+            "King's Journal"
+        ],
+        "OnObtainHallownestSeal": [
+            "Sporg Seal",
+            "Well Seal",
+            "King's Seal",
+            "Rafters Seal"
+        ]
+    },
+    "endTriggeringAutosplit": false,
+    "endingSplit": {
+        "name": "Hollow Knight",
+        "icon": "HollowKnightBoss"
+    },
+    "gameName": "Hollow Knight",
+    "variables": {
+        "Any% Glitch": "1.4.3.2+ NMG"
+    }
+}
