@@ -16,6 +16,7 @@ use ugly_widget::store::StoreGui;
 use std::string::String;
 
 use crate::file;
+use crate::settings_gui::SettingsGui;
 
 // --------------------------------------------------------
 
@@ -3458,9 +3459,21 @@ impl SceneDataStore {
 
 // --------------------------------------------------------
 
-pub async fn wait_attach_hollow_knight<G: StoreGui>(gui: &mut G) -> Process {
+pub async fn wait_attach_hollow_knight(gui: &mut SettingsGui) -> Process {
+    let mut splits = gui.get_splits();
+    let mut timing_method = gui.get_timing_method();
     retry(|| {
         gui.loop_load_update_store();
+        let new_timing_method = gui.get_timing_method();
+        if new_timing_method != timing_method {
+            timing_method = new_timing_method;
+            asr::print_message(&format!("timing_method: {:?}", timing_method));
+        }
+        let new_splits = gui.get_splits();
+        if new_splits != splits {
+            splits = new_splits;
+            asr::print_message(&format!("splits: {:?}", splits));
+        }
         HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
     }).await
 }
