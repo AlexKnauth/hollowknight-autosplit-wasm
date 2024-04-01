@@ -5,19 +5,16 @@ use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
 use asr::file_format::{elf, pe};
-use asr::future::{next_tick, retry};
+use asr::future::next_tick;
 use asr::watcher::Pair;
 use asr::{Address, PointerSize, Process};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
 use asr::string::ArrayWString;
-use ugly_widget::store::StoreGui;
 
 #[cfg(debug_assertions)]
 use std::string::String;
 
 use crate::file;
-use crate::settings_gui::{SettingsGui, TimingMethod};
-use crate::splits::Split;
 
 // --------------------------------------------------------
 
@@ -3460,13 +3457,8 @@ impl SceneDataStore {
 
 // --------------------------------------------------------
 
-pub async fn wait_attach_hollow_knight(gui: &mut SettingsGui, timing_method: &mut TimingMethod, splits: &mut Vec<Split>) -> Process {
-    retry(|| {
-        gui.loop_load_update_store();
-        gui.check_timing_method(timing_method);
-        gui.check_splits(splits);
-        HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
-    }).await
+pub fn attach_hollow_knight() -> Option<Process> {
+    HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
 }
 
 fn process_pointer_size(process: &Process) -> Option<PointerSize> {

@@ -9,12 +9,13 @@ mod legacy_xml;
 mod settings_gui;
 mod splits;
 
-use asr::{future::next_tick, Process};
+use asr::future::{next_tick, retry};
+use asr::Process;
 use asr::time::Duration;
 use asr::timer::TimerState;
 use settings_gui::{SettingsGui, TimingMethod};
 use hollow_knight_memory::*;
-use splits::SplitterAction;
+use splits::{Split, SplitterAction};
 use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
@@ -39,8 +40,6 @@ async fn main() {
     asr::print_message(&format!("timing_method: {:?}", timing_method));
     asr::print_message(&format!("splits: {:?}", splits));
 
-    let mut auto_reset: &'static [TimerState] = splits::auto_reset_safe(&splits);
-
     loop {
         let process = wait_attach_hollow_knight(&mut *gui, &mut timing_method, &mut splits).await;
         process
@@ -48,6 +47,7 @@ async fn main() {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = Box::new(SceneStore::new());
                 let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
+                let mut auto_reset: &'static [TimerState] = splits::auto_reset_safe(&splits);
 
                 next_tick().await;
                 let game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
@@ -56,10 +56,6 @@ async fn main() {
 
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
-
-                if let Some(new_splits) = gui.check_splits(&mut splits) {
-                    auto_reset = splits::auto_reset_safe(new_splits);
-                }
 
                 #[cfg(debug_assertions)]
                 let mut scenes_grub_rescued = game_manager_finder.scenes_grub_rescued(&process);
@@ -99,6 +95,15 @@ async fn main() {
             })
             .await;
     }
+}
+
+async fn wait_attach_hollow_knight(gui: &mut SettingsGui, timing_method: &mut TimingMethod, splits: &mut Vec<Split>) -> Process {
+    retry(|| {
+        gui.loop_load_update_store();
+        gui.check_timing_method(timing_method);
+        gui.check_splits(splits);
+        attach_hollow_knight()
+    }).await
 }
 
 async fn tick_action(
