@@ -34,18 +34,19 @@ async fn main() {
     let mut gui = Box::new(SettingsGui::wait_load_merge_register().await);
 
     let mut ticks_since_gui = 0;
+    let mut timing_method = gui.get_timing_method();
     let mut splits = gui.get_splits();
+    asr::print_message(&format!("timing_method: {:?}", timing_method));
     asr::print_message(&format!("splits: {:?}", splits));
 
     let mut auto_reset: &'static [TimerState] = splits::auto_reset_safe(&splits);
 
     loop {
-        let process = wait_attach_hollow_knight(&mut *gui).await;
+        let process = wait_attach_hollow_knight(&mut *gui, &mut timing_method, &mut splits).await;
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = Box::new(SceneStore::new());
-                let mut timing_method = gui.get_timing_method();
                 let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
 
                 next_tick().await;
