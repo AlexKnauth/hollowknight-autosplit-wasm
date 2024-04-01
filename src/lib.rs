@@ -56,11 +56,8 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("geo: {:?}", game_manager_finder.get_geo(&process)));
 
-                let gui_splits = gui.get_splits();
-                if gui_splits != splits {
-                    splits = gui_splits;
-                    asr::print_message(&format!("splits: {:?}", splits));
-                    auto_reset = splits::auto_reset_safe(&splits);
+                if let Some(new_splits) = gui.check_splits(&mut splits) {
+                    auto_reset = splits::auto_reset_safe(new_splits);
                 }
 
                 #[cfg(debug_assertions)]
@@ -86,18 +83,12 @@ async fn main() {
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
                         if i == 0 && [TimerState::NotRunning, TimerState::Ended].contains(&asr::timer::state()) {
-                            let new_timing_method = gui.get_timing_method();
-                            if new_timing_method != timing_method {
-                                timing_method = new_timing_method;
-                                *load_remover = TimingMethodLoadRemover::new(timing_method);
-                                asr::print_message(&format!("timing_method: {:?}", timing_method));
+                            if let Some(new_timing_method) = gui.check_timing_method(&mut timing_method) {
+                                *load_remover = TimingMethodLoadRemover::new(new_timing_method);
                             }
                         }
-                        let gui_splits = gui.get_splits();
-                        if gui_splits != splits {
-                            splits = gui_splits;
-                            asr::print_message(&format!("splits: {:?}", splits));
-                            auto_reset = splits::auto_reset_safe(&splits);
+                        if let Some(new_splits) = gui.check_splits(&mut splits) {
+                            auto_reset = splits::auto_reset_safe(new_splits);
                         }
                         ticks_since_gui = 0;
                     }

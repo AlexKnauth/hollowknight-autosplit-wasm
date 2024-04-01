@@ -3460,20 +3460,12 @@ impl SceneDataStore {
 // --------------------------------------------------------
 
 pub async fn wait_attach_hollow_knight(gui: &mut SettingsGui) -> Process {
-    let mut splits = gui.get_splits();
     let mut timing_method = gui.get_timing_method();
+    let mut splits = gui.get_splits();
     retry(|| {
         gui.loop_load_update_store();
-        let new_timing_method = gui.get_timing_method();
-        if new_timing_method != timing_method {
-            timing_method = new_timing_method;
-            asr::print_message(&format!("timing_method: {:?}", timing_method));
-        }
-        let new_splits = gui.get_splits();
-        if new_splits != splits {
-            splits = new_splits;
-            asr::print_message(&format!("splits: {:?}", splits));
-        }
+        gui.check_timing_method(&mut timing_method);
+        gui.check_splits(&mut splits);
         HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
     }).await
 }
