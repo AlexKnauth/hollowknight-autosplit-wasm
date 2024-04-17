@@ -10,9 +10,9 @@ Or follow the steps in [Compilation](#compilation) and use `target/wasm32-wasi/r
 
 To configure LiveSplit or a LiveSplit One prototype to use this, see:
  - [Instructions for LiveSplit Windows](#instructions-for-livesplit-windows)
- - [Instructions for obs-livesplit-one](#instructions-for-obs-livesplit-one)
- - [Instructions for livesplit-one-druid](#instructions-for-livesplit-one-druid)
- - [Instructions for livesplit-one-desktop](#instructions-for-livesplit-one-desktop)
+ - [Instructions for obs-livesplit-one](#instructions-for-obs-livesplit-one) (OBS plugin)
+ - [Instructions for livesplit-one-druid](#instructions-for-livesplit-one-druid) (Desktop prototype made with the Druid GUI framework)
+ - [Instructions for livesplit-one-desktop](#instructions-for-livesplit-one-desktop) (Desktop prototype made with the MiniFB GUI framework)
 
 ## Compilation
 
