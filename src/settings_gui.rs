@@ -65,6 +65,28 @@ impl SettingsGui {
         gui.loop_load_update_store();
         gui
     }
+
+    pub fn check_timing_method(&self, timing_method: &mut TimingMethod) -> Option<TimingMethod> {
+        let new_timing_method = self.get_timing_method();
+        if new_timing_method != *timing_method {
+            *timing_method = new_timing_method;
+            asr::print_message(&format!("timing_method: {:?}", timing_method));
+            Some(new_timing_method)
+        } else {
+            None
+        }
+    }
+
+    pub fn check_splits<'a>(&self, splits: &'a mut Vec<Split>) -> Option<&'a [Split]> {
+        let new_splits = self.get_splits();
+        if new_splits != *splits {
+            *splits = new_splits;
+            asr::print_message(&format!("splits: {:?}", splits));
+            Some(splits)
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
