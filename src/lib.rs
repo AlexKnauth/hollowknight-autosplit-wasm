@@ -161,6 +161,7 @@ async fn tick_action(
                 // no break, allow other actions after a skip or reset
             }
             SplitterAction::Pass => {
+                // TODO: this timer_state may be out of date
                 if auto_reset.contains(&timer_state) {
                     let a0 = splits::splits(&splits[0], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
                     match a0 {
@@ -176,6 +177,7 @@ async fn tick_action(
         }
     }
 
+    // TODO: this timer_state may be out of date
     if auto_reset.contains(&timer_state) && n <= *i {
         *i = 0;
     }
