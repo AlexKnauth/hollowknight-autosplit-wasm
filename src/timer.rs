@@ -113,6 +113,7 @@ impl Timer {
     pub fn update<R: Resettable>(&mut self, r: &mut R) {
         let asr_state = asr::timer::state();
         if asr_state == self.state || asr_state == self.last_state {
+            self.last_state = asr_state;
             return;
         }
         match asr_state {
