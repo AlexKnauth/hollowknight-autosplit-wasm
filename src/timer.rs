@@ -157,15 +157,15 @@ impl Timer {
                 asr::timer::skip_split();
                 self.i += 1;
             }
-            SplitterAction::Split if self.i == 0 => {
-                asr::timer::reset();
-                asr::timer::start();
-                r.reset();
-                self.state = TimerState::Running;
-                self.i += 1;
-            }
             SplitterAction::Split => {
-                asr::timer::split();
+                if self.i == 0 {
+                    asr::timer::reset();
+                    asr::timer::start();
+                    r.reset();
+                    self.state = TimerState::Running;
+                } else {
+                    asr::timer::split();
+                }
                 self.i += 1;
             }
             SplitterAction::ManualSplit => {
