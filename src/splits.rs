@@ -7,50 +7,8 @@ use serde::{Deserialize, Serialize};
 use ugly_widget::radio_button::{RadioButtonOptions, options_str};
 use ugly_widget::store::StoreWidget;
 
-use super::hollow_knight_memory::*;
-
-#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
-pub enum SplitterAction {
-    #[default]
-    Pass,
-    Split,
-    Skip,
-    Reset,
-    ManualSplit,
-}
-
-impl SplitterAction {
-    pub fn or_else<F: FnOnce() -> SplitterAction>(self, f: F) -> SplitterAction {
-        match self {
-            SplitterAction::Pass => f(),
-            a => a,
-        }
-    }
-}
-
-fn should_split(b: bool) -> SplitterAction {
-    if b {
-        SplitterAction::Split
-    } else {
-        SplitterAction::Pass
-    }
-}
-
-fn should_skip(b: bool) -> SplitterAction {
-    if b {
-        SplitterAction::Skip
-    } else {
-        SplitterAction::Pass
-    }
-}
-
-fn should_split_skip(mb: Option<bool>) -> SplitterAction {
-    match mb  {
-        Some(true) => SplitterAction::Split,
-        Some(false) => SplitterAction::Skip,
-        None => SplitterAction::Pass,
-    }
-}
+use crate::hollow_knight_memory::*;
+use crate::timer::*;
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
 pub enum Split {

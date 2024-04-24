@@ -8,6 +8,7 @@ mod hollow_knight_memory;
 mod legacy_xml;
 mod settings_gui;
 mod splits;
+mod timer;
 
 use asr::future::{next_tick, retry};
 use asr::Process;
@@ -15,7 +16,8 @@ use asr::time::Duration;
 use asr::timer::TimerState;
 use settings_gui::{SettingsGui, TimingMethod};
 use hollow_knight_memory::*;
-use splits::{Split, SplitterAction};
+use splits::Split;
+use timer::{Resettable, SplitterAction, Timer};
 use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
@@ -47,7 +49,6 @@ async fn main() {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = Box::new(SceneStore::new());
                 let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
-                let mut auto_reset: &'static [TimerState] = splits::auto_reset_safe(&splits);
 
                 next_tick().await;
                 let game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
@@ -62,12 +63,11 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("scenes_grub_rescued: {:?}", scenes_grub_rescued));
 
-                let mut last_timer_state = TimerState::Unknown;
-                let mut i = 0;
+                let mut timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
                 loop {
-                    tick_action(&process, &splits, &mut last_timer_state, &mut i, auto_reset, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store, &mut load_remover).await;
+                    tick_action(&process, &splits, &mut timer, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store, &mut load_remover).await;
 
-                    load_remover.load_removal(&process, &game_manager_finder, i);
+                    load_remover.load_removal(&process, &game_manager_finder);
 
                     #[cfg(debug_assertions)]
                     let new_scenes_grub_rescued = game_manager_finder.scenes_grub_rescued(&process);
@@ -79,13 +79,13 @@ async fn main() {
 
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
-                        if i == 0 && [TimerState::NotRunning, TimerState::Ended].contains(&asr::timer::state()) {
+                        if timer.is_timer_state_between_runs() {
                             if let Some(new_timing_method) = gui.check_timing_method(&mut timing_method) {
                                 *load_remover = TimingMethodLoadRemover::new(new_timing_method);
                             }
                         }
                         if let Some(new_splits) = gui.check_splits(&mut splits) {
-                            auto_reset = splits::auto_reset_safe(new_splits);
+                            timer.renew(new_splits.len(), splits::auto_reset_safe(new_splits));
                         }
                         ticks_since_gui = 0;
                     }
@@ -109,65 +109,39 @@ async fn wait_attach_hollow_knight(gui: &mut SettingsGui, timing_method: &mut Ti
 async fn tick_action(
     process: &Process,
     splits: &[splits::Split],
-    last_timer_state: &mut TimerState,
-    i: &mut usize,
-    auto_reset: &'static [TimerState],
+    timer: &mut Timer,
     game_manager_finder: &GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
     scene_data_store: &mut SceneDataStore,
     load_remover: &mut TimingMethodLoadRemover,
 ) {
-    let n = splits.len();
-    let timer_state = asr::timer::state();
-    match timer_state {
-        // detect manual resets
-        TimerState::NotRunning if 0 < *i => {
-            *i = 0;
-            load_remover.reset();
-            asr::print_message("Detected a manual reset.");
-        }
-        // detect manual starts
-        TimerState::Running if *i == 0 && is_timer_state_between_runs(*last_timer_state) => {
-            *i = 1;
-            load_remover.reset();
-            asr::print_message("Detected a manual start.");
-        }
-        // detect manual end-splits
-        TimerState::Ended if 0 < *i && *i < n => {
-            *i = n;
-            load_remover.reset();
-            asr::print_message("Detected a manual end-split.");
-        }
-        s => {
-            *last_timer_state = s;
-        }
-    }
+    timer.update(load_remover);
 
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
     loop {
-        let Some(s) = splits.get(*i) else {
+        let Some(s) = splits.get(timer.i()) else {
             break;
         };
         let a = splits::splits(s, &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
         match a {
             SplitterAction::Split | SplitterAction::ManualSplit => {
-                splitter_action(a, i, n, load_remover);
+                timer.action(a, load_remover);
                 next_tick().await;
                 break;
             }
             SplitterAction::Skip | SplitterAction::Reset => {
-                splitter_action(a, i, n, load_remover);
+                timer.action(a, load_remover);
                 next_tick().await;
                 // no break, allow other actions after a skip or reset
             }
             SplitterAction::Pass => {
-                if auto_reset.contains(&timer_state) {
+                if timer.is_auto_reset_safe() {
                     let a0 = splits::splits(&splits[0], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
                     match a0 {
                         SplitterAction::Split | SplitterAction::Reset => {
-                            *i = 0;
-                            splitter_action(a0, i, n, load_remover);
+                            timer.reset();
+                            timer.action(a0, load_remover);
                         }
                         _ => (),
                     }
@@ -175,10 +149,6 @@ async fn tick_action(
                 break;
             }
         }
-    }
-
-    if auto_reset.contains(&timer_state) && n <= *i {
-        *i = 0;
     }
 
     if trans_now {
@@ -191,43 +161,18 @@ async fn tick_action(
     }
 }
 
-fn is_timer_state_between_runs(s: TimerState) -> bool {
-    s == TimerState::NotRunning || s == TimerState::Ended
-}
-
-fn splitter_action(a: SplitterAction, i: &mut usize, n: usize, load_remover: &mut TimingMethodLoadRemover) {
-    match a {
-        SplitterAction::Pass => (),
-        SplitterAction::Reset => {
-            asr::timer::reset();
-            load_remover.reset();
-            *i = 0;
-        }
-        SplitterAction::Skip => {
-            asr::timer::skip_split();
-            *i += 1;
-        }
-        SplitterAction::Split if *i == 0 => {
-            asr::timer::reset();
-            asr::timer::start();
-            load_remover.reset();
-            *i += 1;
-        }
-        SplitterAction::Split => {
-            asr::timer::split();
-            *i += 1;
-        }
-        SplitterAction::ManualSplit => {
-            if 0 < *i && *i + 1 < n {
-                *i += 1;
-            }
-        }
-    }
-}
-
 enum TimingMethodLoadRemover {
     LoadRemover(LoadRemover),
     HitCounter(HitCounter),
+}
+
+impl Resettable for TimingMethodLoadRemover {
+    fn reset(&mut self) {
+        match self {
+            TimingMethodLoadRemover::LoadRemover(lr) => lr.reset(),
+            TimingMethodLoadRemover::HitCounter(hc) => hc.reset(),
+        }
+    }
 }
 
 impl TimingMethodLoadRemover {
@@ -239,17 +184,10 @@ impl TimingMethodLoadRemover {
         }
     }
 
-    fn reset(&mut self) {
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
         match self {
-            TimingMethodLoadRemover::LoadRemover(lr) => lr.reset(),
-            TimingMethodLoadRemover::HitCounter(hc) => hc.reset(),
-        }
-    }
-
-    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, i: usize) -> Option<()> {
-        match self {
-            TimingMethodLoadRemover::LoadRemover(lr) => lr.load_removal(process, game_manager_finder, i),
-            TimingMethodLoadRemover::HitCounter(hc) => hc.load_removal(process, game_manager_finder, i),
+            TimingMethodLoadRemover::LoadRemover(lr) => lr.load_removal(process, game_manager_finder),
+            TimingMethodLoadRemover::HitCounter(hc) => hc.load_removal(process, game_manager_finder),
         }
     }
 }
@@ -259,6 +197,10 @@ struct LoadRemover {
     last_game_state: i32,
     #[cfg(debug_assertions)]
     last_paused: bool,
+}
+
+impl Resettable for LoadRemover {
+    fn reset(&mut self) {}
 }
 
 #[allow(unused)]
@@ -272,9 +214,7 @@ impl LoadRemover {
         }
     }
 
-    fn reset(&mut self) {}
-
-    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, _i: usize) -> Option<()> {
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
         // Initialize pointers for load-remover before timer is running
         let maybe_ui_state = game_manager_finder.get_ui_state(process);
         let maybe_scene_name =  game_manager_finder.get_scene_name(process);
@@ -355,7 +295,15 @@ struct HitCounter {
     last_hazard: bool,
     last_dead_or_0: bool,
     last_exiting_level: Option<String>,
-    last_index: usize,
+}
+
+impl Resettable for HitCounter {
+    fn reset(&mut self) {
+        self.hits = 0;
+        asr::timer::pause_game_time();
+        asr::timer::set_game_time(Duration::seconds(0));
+        asr::timer::set_variable_int("hits", 0);
+    }
 }
 
 #[allow(unused)]
@@ -369,26 +317,12 @@ impl HitCounter {
             last_hazard: false,
             last_dead_or_0: false,
             last_exiting_level: None,
-            last_index: 0,
         }
     }
 
-    fn reset(&mut self) {
-        self.hits = 0;
-        asr::timer::pause_game_time();
-        asr::timer::set_game_time(Duration::seconds(0));
-        asr::timer::set_variable_int("hits", 0);
-    }
-
-    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder, i: usize) -> Option<()> {
+    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
 
         asr::timer::pause_game_time();
-
-        // detect resets
-        if i == 0 && 0 < self.last_index {
-            self.reset();
-        }
-        self.last_index = i;
 
         // only count hits if timer is running
         if asr::timer::state() != TimerState::Running { return Some(()); }
