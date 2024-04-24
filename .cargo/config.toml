@@ -3,6 +3,9 @@ target = "wasm32-wasi"
 rustflags = [
     # The auto splitting runtime supports all the following WASM features.
     "-C", "target-feature=+bulk-memory,+mutable-globals,+nontrapping-fptoint,+sign-ext,+simd128",
+    # The stack-size should be an even multiple of 4kiB, that is the last three hexadecimal digits should be zero.
+    # The default stack-size is 1 MiB, or 1048576 Bytes.
+    # "link-args=-z stack-size=1048576"
 ]
 
 [alias]
