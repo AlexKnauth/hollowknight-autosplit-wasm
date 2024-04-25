@@ -1065,29 +1065,35 @@ impl GameManagerFinder {
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
         let pointer_size = process_pointer_size(process).unwrap_or(PointerSize::Bit64);
         asr::print_message(&format!("GameManagerFinder wait_attach: pointer_size = {:?}", pointer_size));
-        asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
+        asr::print_message("GameManagerFinder wait_attach: Module attach_auto_detect...");
         next_tick().await;
         let mut found_module = false;
         let mut needed_retry = false;
         loop {
-            let module = mono::Module::wait_attach_auto_detect(process).await;
-            if !found_module {
-                found_module = true;
-                asr::print_message("GameManagerFinder wait_attach: module get_default_image...");
-                next_tick().await;
-            }
-            for _ in 0..0x10 {
-                if let Some(image) = module.get_default_image(process) {
-                    asr::print_message("GameManagerFinder wait_attach: got module and image");
+            if let Some(module) = mono::Module::attach_auto_detect(process) {
+                if !found_module {
+                    found_module = true;
+                    asr::print_message("GameManagerFinder wait_attach: module get_default_image...");
                     next_tick().await;
-                    return GameManagerFinder::new(pointer_size, module, image);
                 }
-                next_tick().await;
-            }
-            if !needed_retry {
-                needed_retry = true;
-                asr::print_message("GameManagerFinder wait_attach: retry...");
-                next_tick().await;
+                for _ in 0..0x10 {
+                    if let Some(image) = module.get_default_image(process) {
+                        asr::print_message("GameManagerFinder wait_attach: got module and image");
+                        next_tick().await;
+                        return GameManagerFinder::new(pointer_size, module, image);
+                    }
+                    next_tick().await;
+                }
+                if !needed_retry {
+                    needed_retry = true;
+                    asr::print_message("GameManagerFinder wait_attach: retry...");
+                    next_tick().await;
+                }
+            } else if !found_module {
+                for _ in 0..0x10 {
+                    next_tick().await;
+                }
+                panic!("GameManagerFinder wait_attach: Module attach_auto_detect failed.");
             }
         }
     }
