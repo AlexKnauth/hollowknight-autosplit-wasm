@@ -1069,6 +1069,7 @@ impl GameManagerFinder {
         next_tick().await;
         // has needed at least 1091498 module tries
         #[cfg(debug_assertions)]
+        #[allow(unused_mut)]
         let mut module_tries: usize = 1;
         // has needed at least 17 image tries
         #[cfg(debug_assertions)]
@@ -1103,10 +1104,10 @@ impl GameManagerFinder {
                     next_tick().await;
                 }
             } else if !found_module {
-                #[cfg(debug_assertions)]
-                {
-                    module_tries += 1;
+                for _ in 0..0x10 {
+                    next_tick().await;
                 }
+                panic!("GameManagerFinder wait_attach: Module attach_auto_detect failed.");
             }
             next_tick().await;
         }
