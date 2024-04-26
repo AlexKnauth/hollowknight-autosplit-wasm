@@ -2612,13 +2612,16 @@ impl PlayerDataStore {
 
     fn changed_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<Pair<i32>> {
         let store_val = self.map_i32.get(key).cloned();
-        let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
-        if let Some(val) = player_data_val {
-            if val != 0 || g.is_game_state_non_menu(p) {
-                self.map_i32.insert(key, val);
-            }
+        let current = pointer.deref(p, &g.module, &g.image).ok()?;
+        if current != 0 || g.is_game_state_non_menu(p) {
+            self.map_i32.insert(key, current);
         }
-        Some(Pair { old: store_val?, current: player_data_val? })
+        let old = store_val?;
+        if current != old {
+            Some(Pair { old, current })
+        } else {
+            None
+        }
     }
 
     fn changed_i32_delta<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
