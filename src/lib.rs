@@ -128,6 +128,7 @@ async fn tick_action(
             SplitterAction::Split | SplitterAction::ManualSplit => {
                 timer.action(a, load_remover);
                 next_tick().await;
+                asr::timer::set_variable("item", "");
                 break;
             }
             SplitterAction::Skip | SplitterAction::Reset => {

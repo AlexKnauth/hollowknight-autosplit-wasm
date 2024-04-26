@@ -980,6 +980,11 @@ pub enum Split {
     /// 
     /// Splits when the ghostCoins PlayerData is updated. Unused by unmodded game, intended for use with mods.
     OnGhostCoinsIncremented,
+    /// All Skills Shuffle Item (Obtain)
+    /// 
+    /// Splits when obtaining any randomized and required item in All Skills Shuffle:
+    /// Movement skills, Nail arts, Spells, Dream nail, and Dreamers, making 19 items total.
+    OnObtainAllSkillsShuffleItem,
     // endregion: Relics
 
     // region: Grubs and Mimics
@@ -3714,6 +3719,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::OnObtainRancidEgg => should_split(pds.incremented_rancid_eggs(p, g)),
         Split::AllEggs => should_split(21 <= g.rancid_eggs(p).unwrap_or_default() + g.jinn_eggs_sold(p).unwrap_or_default()),
         Split::OnGhostCoinsIncremented => should_split(pds.incremented_ghost_coins(p, g)),
+        Split::OnObtainAllSkillsShuffleItem => should_split(pds.obtained_all_skills_shuffle_item(p, g)),
         // endregion: Relics
         // region: Grubs and Mimics
         Split::Grub1 => should_split(g.grubs_collected(p).is_some_and(|g| g == 1)),
