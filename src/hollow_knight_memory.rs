@@ -2610,15 +2610,23 @@ impl PlayerDataStore {
         Some(i)
     }
 
-    fn changed_i32_delta<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
+    fn changed_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<Pair<i32>> {
         let store_val = self.map_i32.get(key).cloned();
-        let player_data_val = pointer.deref(p, &g.module, &g.image).ok();
-        if let Some(val) = player_data_val {
-            if val != 0 || g.is_game_state_non_menu(p) {
-                self.map_i32.insert(key, val);
-            }
+        let current = pointer.deref(p, &g.module, &g.image).ok()?;
+        if current != 0 || g.is_game_state_non_menu(p) {
+            self.map_i32.insert(key, current);
         }
-        Some(player_data_val? - store_val?)
+        let old = store_val?;
+        if current != old {
+            Some(Pair { old, current })
+        } else {
+            None
+        }
+    }
+
+    fn changed_i32_delta<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> Option<i32> {
+        let Pair { old, current } = self.changed_i32(p, g, key, pointer)?;
+        Some(current - old)
     }
 
     fn incremented_i32<const N: usize>(&mut self, p: &Process, g: &GameManagerFinder, key: &'static str, pointer: &UnityPointer<N>) -> bool {
@@ -3379,6 +3387,70 @@ impl PlayerDataStore {
     pub fn gold_end(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // God Tamer: {0} +1 {1}
         self.kills_decreased_by(prc, gmf, "kills_lobster_lancer_on_entry", &gmf.player_data_pointers.kills_lobster_lancer, 1)
+    }
+
+    pub fn obtained_all_skills_shuffle_item(&mut self, prc: &Process, gmf: &GameManagerFinder) -> bool {
+        if self.changed_bool(prc, gmf, "has_dash", &gmf.player_data_pointers.has_dash).is_some_and(|h| h) {
+            asr::timer::set_variable("item", "Dash");
+            true
+        } else if self.changed_bool(prc, gmf, "has_shadow_dash", &gmf.player_data_pointers.has_shadow_dash).is_some_and(|h| h) {
+            asr::timer::set_variable("item", "Shade Cloak");
+            true
+        } else if self.changed_bool(prc, gmf, "has_wall_jump", &gmf.player_data_pointers.has_wall_jump).is_some_and(|h| h) {
+            asr::timer::set_variable("item", "Claw");
+            true
+        } else if self.changed_bool(prc, gmf, "has_double_jump", &gmf.player_data_pointers.has_double_jump).is_some_and(|h| h) {
+            asr::timer::set_variable("item", "Wings");
+            true
+        } else if self.changed_bool(prc, gmf, "has_super_dash", &gmf.player_data_pointers.has_super_dash).is_some_and(|h| h) {
+            asr::timer::set_variable("item", "CDash");
+            true
+        } else if self.changed_bool(prc, gmf, "has_acid_armour", &gmf.player_data_pointers.has_acid_armour).is_some_and(|h| h) {
+            asr::timer::set_variable("item", "Isma's");
+            true
+        } else if self.changed_bool(prc, gmf, "has_cyclone", &gmf.player_data_pointers.has_cyclone).is_some_and(|h| h) {
+            // has_cyclone: actually means Cyclone Slash, from Mato
+            asr::timer::set_variable("item", "Cyclone");
+            true
+        } else if self.changed_bool(prc, gmf, "has_dash_slash", &gmf.player_data_pointers.has_dash_slash).is_some_and(|h| h) {
+            // has_dash_slash: secretly means Great Slash, from Sheo
+            asr::timer::set_variable("item", "Great Slash");
+            true
+        } else if self.changed_bool(prc, gmf, "has_upward_slash", &gmf.player_data_pointers.has_upward_slash).is_some_and(|h| h) {
+            // has_upward_slash: secretly means Dash Slash, from Oro
+            asr::timer::set_variable("item", "Dash Slash");
+            true
+        } else if let Some(p) = self.changed_i32(prc, gmf, "fireball_level", &gmf.player_data_pointers.fireball_level) {
+            match p {
+                Pair { old: 0, current: 1 } => asr::timer::set_variable("item", "Fireball"),
+                Pair { old: 0 | 1, current: 2 } => asr::timer::set_variable("item", "Shade Soul"),
+                _ => { return false; }
+            }
+            true
+        } else if let Some(p) = self.changed_i32(prc, gmf, "quake_level", &gmf.player_data_pointers.quake_level) {
+            match p {
+                Pair { old: 0, current: 1 } => asr::timer::set_variable("item", "Dive"),
+                Pair { old: 0 | 1, current: 2 } => asr::timer::set_variable("item", "DDark"),
+                _ => { return false; }
+            }
+            true
+        } else if let Some(p) = self.changed_i32(prc, gmf, "scream_level", &gmf.player_data_pointers.scream_level) {
+            match p {
+                Pair { old: 0, current: 1 } => asr::timer::set_variable("item", "Wraiths"),
+                Pair { old: 0 | 1, current: 2 } => asr::timer::set_variable("item", "Shriek"),
+                _ => { return false; }
+            }
+            true
+        } else if self.changed_bool(prc, gmf, "has_dream_nail", &gmf.player_data_pointers.has_dream_nail).is_some_and(|h| h) {
+            asr::timer::set_variable("item", "DNail");
+            true
+        } else if let Some(p) = self.changed_i32(prc, gmf, "guardians_defeated", &gmf.player_data_pointers.guardians_defeated) {
+            if !(p.old < p.current) { return false; }
+            asr::timer::set_variable("item", &format!("Dreamer {}", p.current));
+            true
+        } else {
+            false
+        }
     }
 }
 
