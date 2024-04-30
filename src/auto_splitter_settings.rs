@@ -4,7 +4,7 @@ use asr::future::retry;
 use std::path::Path;
 use xmltree::{Element, XMLNode};
 
-use crate::{file, legacy_xml};
+use crate::{asr_xml, file, legacy_xml};
 
 pub async fn wait_asr_settings_init() -> asr::settings::Map {
     let settings1 = asr::settings::Map::load();
@@ -40,8 +40,11 @@ fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> 
 }
 
 fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
-    // TODO: deal with either Legacy XML or ASR XML
-    legacy_xml::asr_settings_from_xml_nodes(xml_nodes)
+    if any_xml_nodes_from_asr(&xml_nodes) {
+        asr_xml::asr_settings_from_xml_nodes(xml_nodes)
+    } else {
+        legacy_xml::asr_settings_from_xml_nodes(xml_nodes)
+    }
 }
 
 fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNode>> {
@@ -67,6 +70,10 @@ fn component_is_asr(e: &Element) -> bool {
     let [c] = &p.children[..] else { return false; };
     let Some(s) = c.as_text() else { return false; };
     s.contains("LiveSplit.AutoSplittingRuntime")
+}
+
+fn any_xml_nodes_from_asr(xml_nodes: &[XMLNode]) -> bool {
+    xml_nodes.iter().any(|n| n.as_element().is_some_and(|e| ["Version", "ScriptPath", "CustomSettings"].contains(&e.name.as_str())))
 }
 
 // --------------------------------------------------------

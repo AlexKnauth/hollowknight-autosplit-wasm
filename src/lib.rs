@@ -2,6 +2,7 @@
 
 extern crate alloc;
 
+mod asr_xml;
 mod auto_splitter_settings;
 mod file;
 mod hollow_knight_memory;
