@@ -43,13 +43,15 @@ async fn main() {
     asr::print_message(&format!("timing_method: {:?}", timing_method));
     asr::print_message(&format!("splits: {:?}", splits));
 
+    let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
+    let mut timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
+
     loop {
-        let process = wait_attach_hollow_knight(&mut *gui, &mut timing_method, &mut splits).await;
+        let process = wait_attach_hollow_knight(&mut *gui, &mut timing_method, &mut splits, &mut load_remover, &mut timer).await;
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = Box::new(SceneStore::new());
-                let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
 
                 next_tick().await;
                 let game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
@@ -64,7 +66,6 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("scenes_grub_rescued: {:?}", scenes_grub_rescued));
 
-                let mut timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
                 loop {
                     tick_action(&process, &splits, &mut timer, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store, &mut load_remover).await;
 
@@ -80,14 +81,7 @@ async fn main() {
 
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
-                        if timer.is_timer_state_between_runs() {
-                            if let Some(new_timing_method) = gui.check_timing_method(&mut timing_method) {
-                                *load_remover = TimingMethodLoadRemover::new(new_timing_method);
-                            }
-                        }
-                        if let Some(new_splits) = gui.check_splits(&mut splits) {
-                            timer.renew(new_splits.len(), splits::auto_reset_safe(new_splits));
-                        }
+                        check_state_change(&mut gui, &mut timing_method, &mut splits, &mut load_remover, &mut timer);
                         ticks_since_gui = 0;
                     }
 
@@ -98,13 +92,35 @@ async fn main() {
     }
 }
 
-async fn wait_attach_hollow_knight(gui: &mut SettingsGui, timing_method: &mut TimingMethod, splits: &mut Vec<Split>) -> Process {
+async fn wait_attach_hollow_knight(
+    gui: &mut SettingsGui,
+    timing_method: &mut TimingMethod,
+    splits: &mut Vec<Split>,
+    load_remover: &mut TimingMethodLoadRemover,
+    timer: &mut Timer,
+) -> Process {
     retry(|| {
         gui.loop_load_update_store();
-        gui.check_timing_method(timing_method);
-        gui.check_splits(splits);
+        check_state_change(gui, timing_method, splits, load_remover, timer);
         attach_hollow_knight()
     }).await
+}
+
+fn check_state_change(
+    gui: &mut SettingsGui,
+    timing_method: &mut TimingMethod,
+    splits: &mut Vec<Split>,
+    load_remover: &mut TimingMethodLoadRemover,
+    timer: &mut Timer,
+) {
+    if timer.is_timer_state_between_runs() {
+        if let Some(new_timing_method) = gui.check_timing_method(timing_method) {
+            *load_remover = TimingMethodLoadRemover::new(new_timing_method);
+        }
+    }
+    if let Some(new_splits) = gui.check_splits(splits) {
+        timer.renew(new_splits.len(), splits::auto_reset_safe(new_splits));
+    }
 }
 
 async fn tick_action(
