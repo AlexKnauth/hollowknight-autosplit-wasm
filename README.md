@@ -10,9 +10,9 @@ Or follow the steps in [Compilation](#compilation) and use `target/wasm32-wasi/r
 
 To configure LiveSplit or a LiveSplit One prototype to use this, see:
  - [Instructions for LiveSplit Windows](#instructions-for-livesplit-windows)
- - [Instructions for obs-livesplit-one](#instructions-for-obs-livesplit-one) (OBS plugin)
- - [Instructions for livesplit-one-druid](#instructions-for-livesplit-one-druid) (Desktop prototype made with the Druid GUI framework)
- - [Instructions for livesplit-one-desktop](#instructions-for-livesplit-one-desktop) (Desktop prototype made with the MiniFB GUI framework)
+ - [Instructions for OBS LiveSplit One](#instructions-for-obs-livesplit-one) (OBS plugin)
+ - [Instructions for LiveSplit One Druid](#instructions-for-livesplit-one-druid) (Recommended Desktop prototype)
+ - [Instructions for livesplit-one-desktop](#instructions-for-livesplit-one-desktop) (Older Desktop prototype)
 
 ## Compilation
 
@@ -100,7 +100,7 @@ unless either it's explicitly marked as `ManualSplit` or it's the end-split.
 Don't manually split, skip, or undo splits in any other situation.
 The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with LiveSplit's state.
 
-## Instructions for obs-livesplit-one
+## Instructions for OBS LiveSplit One
 
 Make sure to use `obs-livesplit-one` release v0.3.5 or later.
 
@@ -127,7 +127,7 @@ Properties:
 - Custom auto splitter settings: Select `Import Splits`
 - Select a file: Select your splits file
 
-## Instructions for livesplit-one-druid
+## Instructions for LiveSplit One Druid
 
 Note: The main `livesplit-one-druid` repository might not
 be up-to-date enough to run this autosplitter.
@@ -137,90 +137,36 @@ be up-to-date enough to run this autosplitter.
   then you'll need to use a more up-to-date version,
   such as my fork https://github.com/AlexKnauth/livesplit-one-druid.
 
-You can clone my fork with
-```sh
-git clone https://github.com/AlexKnauth/livesplit-one-druid.git
-```
+To install my fork, go to the
+[AlexKnauth LiveSplit One Druid Latest Release](https://github.com/AlexKnauth/livesplit-one-druid/releases/latest) page, and under the `Assets` section,
+download the one for your architecture and operating system.
 
-Create a config file if it's not there already.
-
-On Windows, the config file should be at
-```
-C:\Users\<name>\AppData\Local\LiveSplit\LiveSplit One\data\config.yml
-```
-When running `livesplit-one-druid` for the first time,
-you should be able to get it to initialize the config file itself,
-possibly after changing one of the settings, opening a file, etc.
-
-On Mac, the config file should be at
-```
-/Users/<name>/Library/Application Support/org.LiveSplit.LiveSplit-One/config.yml
-```
-In my experience, you have to create a file here yourself,
-running `livesplit-one-druid` doesn't initialize it on Mac.
-
-On Linux, the config file should be at
-```
-/home/<name>/.local/share/livesplitone/config.yml
-```
-
-Modify the `config.yml` file so that it contains
-```yaml
-splits:
-  current: <path-to-splits.lss>
-general:
-  timing-method: GameTime
-  auto-splitter: <path-to-hollowknight_autosplit_wasm.wasm>
-```
-where you replace `<path-to-splits.lss>` with the path to your splits file,
-and you replace `<path-to-hollowknight_autosplit_wasm.wasm>`
-with a path to the `hollowknight_autosplit_wasm.wasm` file.
-
-To configure it with a layout file, modify the `config.yml` file so that it contains
-```yaml
-general:
-  layout: <path-to-layout.ls1l>
-```
-where you replace `<path-to-layout.ls1l>` with a path to your layout file.
-I recommend you use `.ls1l` layout file for `livesplit-one-druid`, not a `.lsl` layout file.
-You can make a `.ls1l` file in the LiveSplit One Web version at https://one.livesplit.org/,
-or you can use the `layout-web.ls1l` file included in this repository as a starting point.
-
-To configure hotkeys, modify the `config.yml` file so that it contains
-```yaml
-hotkeys:
-  split: Numpad1
-  reset: Numpad3
-  undo: Numpad8
-  skip: Numpad2
-  pause: null
-  undo_all_pauses: null
-  previous_comparison: Numpad4
-  next_comparison: Numpad6
-  toggle_timing_method: null
-```
-Where you can replace those hotkey values with variants from
-[`livesplit_hotkey::KeyCode`](https://docs.rs/livesplit-hotkey/latest/livesplit_hotkey/enum.KeyCode.html).
-
-When you run `livesplit-one-druid`,
-it needs to have permission to read memory of other processes.
-On Mac, that might require running it under `sudo`.
-For example in the `livesplit-one-druid` repository, you can run
-```sh
-cargo build --release
-sudo ./target/release/livesplit-one
-```
-
-For hit-counter mode, modify your splits file,
+For hit-counter mode,
+modify your splits file before you open it in LiveSplit One Druid:
 near the end after `</Splits>` but before `</AutoSplitterSettings>`,
 so that it contains `<TimingMethod>HitsDreamFalls</TimingMethod>`
 or `<TimingMethod>HitsDamage</TimingMethod>`.
+If you need to after you've opened and saved it:
+modify it so it contains `<Setting id="timing_method" type="string" value="HitsDreamFalls" />` or `<Setting id="timing_method" type="string" value="HitsDamage" />`.
+
+When you run LiveSplit One Druid,
+it needs to have permission to read memory of other processes.
+On Mac, that might require running it under `sudo`.
+
+Right-click or Control-click for the context menu:
+- Splits, Open... : Select your `.lss` splits file.
+- Layout, Open... : For the Layout, I recommend you use `.ls1l` layout file for LiveSplit One Druid, not a `.lsl` layout file.
+  You can make a `.ls1l` file in the LiveSplit One Web version at https://one.livesplit.org/,
+  or you can use the `layout-web.ls1l` file included in this repository as a starting point.
+- Open Auto-splitter... : Select the `hollowknight_autosplit_wasm.wasm` file.
+- Compare Against: Game Time.
+- Settings: Configure the hotkeys you want.
 
 Finally, do not manually split or skip while running with this autosplitter,
 unless either it's explicitly marked as `ManualSplit` or it's the end-split.
 Don't manually split, skip, or undo splits in any other situation.
 The autosplitter will not know that you did that,
-and the autosplitter's state will be out of sync with `livesplit-one-druid`'s state.
+and the autosplitter's state will be out of sync with LiveSplit One Druid's state.
 
 ## Instructions for livesplit-one-desktop
 
