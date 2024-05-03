@@ -37,8 +37,6 @@ impl StoreGui for SettingsGui {
                 let mut splits_args = UglyListArgs::default();
                 splits_args.set_heading_level(1);
                 self.splits.update_from(&settings_map, "splits", splits_args);
-                let new_splits2 = self.splits.get_list();
-                asr::print_message(&format!("splits: {:?}", new_splits2));
             }
         }
     }
