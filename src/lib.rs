@@ -106,6 +106,7 @@ async fn main() {
 async fn wait_attach_hollow_knight(gui: &mut SettingsGui, state: &mut AutoSplitterState) -> Process {
     retry(|| {
         gui.loop_load_update_store();
+        state.timer.update(&mut state.load_remover);
         check_state_change(gui, state);
         attach_hollow_knight()
     }).await
