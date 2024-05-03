@@ -26,6 +26,21 @@ asr::async_main!(stable);
 
 const TICKS_PER_GUI: usize = 0x100;
 
+struct AutoSplitterState {
+    timing_method: TimingMethod,
+    splits: Vec<Split>,
+    load_remover: TimingMethodLoadRemover,
+    timer: Timer,
+}
+
+impl AutoSplitterState {
+    fn new(timing_method: TimingMethod, splits: Vec<Split>) -> AutoSplitterState {
+        let load_remover = TimingMethodLoadRemover::new(timing_method);
+        let timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
+        AutoSplitterState { timing_method, splits, load_remover, timer }
+    }
+}
+
 async fn main() {
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
@@ -38,18 +53,16 @@ async fn main() {
     let mut gui = Box::new(SettingsGui::wait_load_merge_register().await);
 
     let mut ticks_since_gui = 0;
-    let mut timing_method = gui.get_timing_method();
-    let mut splits = gui.get_splits();
-    asr::print_message(&format!("timing_method: {:?}", timing_method));
-    asr::print_message(&format!("splits: {:?}", splits));
+    let mut state = Box::new(AutoSplitterState::new(gui.get_timing_method(), gui.get_splits()));
+    asr::print_message(&format!("timing_method: {:?}", state.timing_method));
+    asr::print_message(&format!("splits: {:?}", state.splits));
 
     loop {
-        let process = wait_attach_hollow_knight(&mut *gui, &mut timing_method, &mut splits).await;
+        let process = wait_attach_hollow_knight(&mut *gui, &mut state).await;
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = Box::new(SceneStore::new());
-                let mut load_remover = Box::new(TimingMethodLoadRemover::new(timing_method));
 
                 next_tick().await;
                 let game_manager_finder = Box::new(GameManagerFinder::wait_attach(&process).await);
@@ -64,11 +77,10 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("scenes_grub_rescued: {:?}", scenes_grub_rescued));
 
-                let mut timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
                 loop {
-                    tick_action(&process, &splits, &mut timer, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store, &mut load_remover).await;
+                    tick_action(&process, &mut state, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store).await;
 
-                    load_remover.load_removal(&process, &game_manager_finder);
+                    state.load_remover.load_removal(&process, &game_manager_finder);
 
                     #[cfg(debug_assertions)]
                     let new_scenes_grub_rescued = game_manager_finder.scenes_grub_rescued(&process);
@@ -80,14 +92,7 @@ async fn main() {
 
                     ticks_since_gui += 1;
                     if TICKS_PER_GUI <= ticks_since_gui && gui.load_update_store_if_unchanged() {
-                        if timer.is_timer_state_between_runs() {
-                            if let Some(new_timing_method) = gui.check_timing_method(&mut timing_method) {
-                                *load_remover = TimingMethodLoadRemover::new(new_timing_method);
-                            }
-                        }
-                        if let Some(new_splits) = gui.check_splits(&mut splits) {
-                            timer.renew(new_splits.len(), splits::auto_reset_safe(new_splits));
-                        }
+                        check_state_change(&mut gui, &mut state);
                         ticks_since_gui = 0;
                     }
 
@@ -98,52 +103,61 @@ async fn main() {
     }
 }
 
-async fn wait_attach_hollow_knight(gui: &mut SettingsGui, timing_method: &mut TimingMethod, splits: &mut Vec<Split>) -> Process {
+async fn wait_attach_hollow_knight(gui: &mut SettingsGui, state: &mut AutoSplitterState) -> Process {
     retry(|| {
         gui.loop_load_update_store();
-        gui.check_timing_method(timing_method);
-        gui.check_splits(splits);
+        state.timer.update(&mut state.load_remover);
+        check_state_change(gui, state);
         attach_hollow_knight()
     }).await
 }
 
+fn check_state_change(gui: &mut SettingsGui, state: &mut AutoSplitterState) {
+    if state.timer.is_timer_state_between_runs() {
+        if let Some(new_timing_method) = gui.check_timing_method(&mut state.timing_method) {
+            state.load_remover = TimingMethodLoadRemover::new(new_timing_method);
+        }
+    }
+    if let Some(new_splits) = gui.check_splits(&mut state.splits) {
+        state.timer.renew(new_splits.len(), splits::auto_reset_safe(new_splits));
+    }
+}
+
 async fn tick_action(
     process: &Process,
-    splits: &[splits::Split],
-    timer: &mut Timer,
+    state: &mut AutoSplitterState,
     game_manager_finder: &GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
     scene_data_store: &mut SceneDataStore,
-    load_remover: &mut TimingMethodLoadRemover,
 ) {
-    timer.update(load_remover);
+    state.timer.update(&mut state.load_remover);
 
     let trans_now = scene_store.transition_now(&process, &game_manager_finder);
     loop {
-        let Some(s) = splits.get(timer.i()) else {
+        let Some(s) = state.splits.get(state.timer.i()) else {
             break;
         };
         let a = splits::splits(s, &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
         match a {
             SplitterAction::Split | SplitterAction::ManualSplit => {
-                timer.action(a, load_remover);
+                state.timer.action(a, &mut state.load_remover);
                 next_tick().await;
                 asr::timer::set_variable("item", "");
                 break;
             }
             SplitterAction::Skip | SplitterAction::Reset => {
-                timer.action(a, load_remover);
+                state.timer.action(a, &mut state.load_remover);
                 next_tick().await;
                 // no break, allow other actions after a skip or reset
             }
             SplitterAction::Pass => {
-                if timer.is_auto_reset_safe() {
-                    let a0 = splits::splits(&splits[0], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
+                if state.timer.is_auto_reset_safe() {
+                    let a0 = splits::splits(&state.splits[0], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
                     match a0 {
                         SplitterAction::Split | SplitterAction::Reset => {
-                            timer.reset();
-                            timer.action(a0, load_remover);
+                            state.timer.reset();
+                            state.timer.action(a0, &mut state.load_remover);
                         }
                         _ => (),
                     }
