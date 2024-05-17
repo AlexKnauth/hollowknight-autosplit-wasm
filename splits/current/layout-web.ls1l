@@ -146,6 +146,39 @@
                 "accuracy": "Tenths",
                 "show_possible_time_save": false
             }
+        },
+        {
+            "CurrentPace": {
+                "background": "Transparent",
+                "comparison_override": "Best Segments",
+                "display_two_rows": false,
+                "label_color": null,
+                "value_color": null,
+                "accuracy": "Seconds"
+            }
+        },
+        {
+            "CurrentComparison": {
+                "background": {
+                    "Vertical": [
+                        [
+                            1.0,
+                            1.0,
+                            1.0,
+                            0.06
+                        ],
+                        [
+                            1.0,
+                            1.0,
+                            1.0,
+                            0.005
+                        ]
+                    ]
+                },
+                "display_two_rows": false,
+                "label_color": null,
+                "value_color": null
+            }
         }
     ],
     "general": {
