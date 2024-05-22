@@ -253,6 +253,7 @@
             1.0,
             1.0,
             1.0
-        ]
+        ],
+        "mouse_pass_through_while_running": false
     }
 }
