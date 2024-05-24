@@ -1303,10 +1303,6 @@ impl GameManagerFinder {
         self.player_data_pointers.has_dream_nail.deref(process, &self.module, &self.image).ok()
     }
 
-    pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_dream_gate.deref(process, &self.module, &self.image).ok()
-    }
-
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.dream_nail_upgraded.deref(process, &self.module, &self.image).ok()
     }
@@ -1922,11 +1918,6 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_mawlek.deref(process, &self.module, &self.image).ok()
     }
 
-    // Gruz Mother
-    pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.killed_big_fly.deref(process, &self.module, &self.image).ok()
-    }
-
     pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_rescued.deref(process, &self.module, &self.image).ok()
     }
@@ -1945,10 +1936,6 @@ impl GameManagerFinder {
 
     pub fn salubra_blessing(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.salubra_blessing.deref(process, &self.module, &self.image).ok()
-    }
-
-    pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.unchained_hollow_knight.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_hollow_knight(&self, process: &Process) -> Option<bool> {
@@ -2906,6 +2893,15 @@ impl PlayerDataStore {
 
     pub fn mega_moss_charger_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "mega_moss_charger_defeated", &g.player_data_pointers.mega_moss_charger_defeated).unwrap_or(false)
+    }
+
+    pub fn unchained_hollow_knight(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "unchained_hollow_knight", &g.player_data_pointers.unchained_hollow_knight).unwrap_or(false)
+    }
+
+    // Gruz Mother
+    pub fn killed_big_fly(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "killed_big_fly", &g.player_data_pointers.killed_big_fly).unwrap_or(false)
     }
 
     pub fn killed_ghost_hu(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
