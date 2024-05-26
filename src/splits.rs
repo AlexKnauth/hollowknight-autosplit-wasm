@@ -3525,7 +3525,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // region: Dream Nail Levels
         Split::DreamNail => should_split(g.has_dream_nail(p).is_some_and(|d| d)),
         Split::MenuDreamNail => { pds.has_dream_nail(p, g); should_split(false) },
-        Split::DreamGate => should_split(g.has_dream_gate(p).is_some_and(|d| d)),
+        Split::DreamGate => should_split(pds.has_dream_gate(p, g)),
         Split::MenuDreamGate => { pds.has_dream_gate(p, g); should_split(false) },
         Split::DreamNail2 => should_split(g.dream_nail_upgraded(p).is_some_and(|d| d)),
         // endregion: Dream Nail Levels
@@ -3927,7 +3927,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::BroodingMawlek => should_split(g.killed_mawlek(p).is_some_and(|k| k)),
         Split::AspidHunter => should_split_skip(pds.aspid_hunter_arena(p, g)),
         Split::BenchCrossroadsStag => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_47")),
-        Split::GruzMother => should_split(g.killed_big_fly(p).is_some_and(|f| f)),
+        Split::GruzMother => should_split(pds.killed_big_fly(p, g)),
         Split::SlyRescued => should_split(g.sly_rescued(p).is_some_and(|s| s)),
         Split::FalseKnight => should_split(g.killed_false_knight(p).is_some_and(|k| k)),
         Split::FailedKnight => should_split(g.false_knight_dream_defeated(p).is_some_and(|k| k)),
@@ -3935,7 +3935,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::SalubrasBlessing => should_split(g.salubra_blessing(p).is_some_and(|b| b)),
         // the award for the most miscellaneous split goes to this one probably
         Split::PureSnail => should_split(pds.pure_snail(p, g)),
-        Split::UnchainedHollowKnight => should_split(g.unchained_hollow_knight(p).is_some_and(|u| u)),
+        Split::UnchainedHollowKnight => should_split(pds.unchained_hollow_knight(p, g)),
         Split::HollowKnightBoss => should_split(g.killed_hollow_knight(p).is_some_and(|k| k)),
         Split::RadianceBoss => should_split(g.killed_final_boss(p).is_some_and(|k| k)),
         // endregion: Crossroads

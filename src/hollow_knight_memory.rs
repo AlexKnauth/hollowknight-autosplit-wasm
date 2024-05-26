@@ -1,7 +1,6 @@
 
 use core::cell::OnceCell;
 use core::iter::FusedIterator;
-use std::cmp::min;
 use std::mem;
 use std::collections::BTreeMap;
 use asr::file_format::{elf, pe};
@@ -9,7 +8,6 @@ use asr::future::next_tick;
 use asr::watcher::Pair;
 use asr::{Address, PointerSize, Process};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
-use asr::string::ArrayWString;
 
 #[cfg(debug_assertions)]
 use std::string::String;
@@ -24,8 +22,6 @@ static HOLLOW_KNIGHT_NAMES: [&str; 4] = [
     "Hollow Knight", // Mac
     "hollow_knight", // Mac
 ];
-
-pub const SCENE_PATH_SIZE: usize = 64;
 
 struct StringListOffsets {
     pointer_size: PointerSize,
@@ -1099,17 +1095,17 @@ impl GameManagerFinder {
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {
         let s = self.deref_pointer(process, &self.pointers.scene_name).ok()?;
-        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
+        read_string_object(process, &self.string_list_offests, s)
     }
 
     pub fn get_next_scene_name(&self, process: &Process) -> Option<String> {
         let s = self.deref_pointer(process, &self.pointers.next_scene_name).ok()?;
-        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
+        read_string_object(process, &self.string_list_offests, s)
     }
 
     pub fn get_entry_gate_name(&self, process: &Process) -> Option<String> {
         let s = self.deref_pointer(process, &self.pointers.entry_gate_name).ok()?;
-        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
+        read_string_object(process, &self.string_list_offests, s)
     }
 
     pub fn get_game_state(&self, process: &Process) -> Option<i32> {
@@ -1227,7 +1223,7 @@ impl GameManagerFinder {
         let s: Address = [&self.pointers.version_number, &self.player_data_pointers.version].into_iter().find_map(|ptr| {
             self.deref_pointer(process, ptr).ok()
         })?;
-        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
+        read_string_object(process, &self.string_list_offests, s)
     }
 
     pub fn get_version_vec(&self, process: &Process) -> Option<Vec<i32>> {
@@ -1305,10 +1301,6 @@ impl GameManagerFinder {
 
     pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.has_dream_nail.deref(process, &self.module, &self.image).ok()
-    }
-
-    pub fn has_dream_gate(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.has_dream_gate.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn dream_nail_upgraded(&self, process: &Process) -> Option<bool> {
@@ -1791,7 +1783,7 @@ impl GameManagerFinder {
 
     pub fn scenes_grub_rescued(&self, process: &Process) -> Option<Vec<String>> {
         let l = self.deref_pointer(process, &self.player_data_pointers.scenes_grub_rescued).ok()?;
-        read_string_list_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, l)
+        read_string_list_object(process, &self.string_list_offests, l)
     }
 
     pub fn grub_waterways_isma(&self, process: &Process) -> Option<bool> {
@@ -1808,12 +1800,12 @@ impl GameManagerFinder {
 
     pub fn scenes_encountered_dream_plant_c(&self, process: &Process) -> Option<Vec<String>> {
         let l = self.deref_pointer(process, &self.player_data_pointers.scenes_encountered_dream_plant_c).ok()?;
-        read_string_list_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, l)
+        read_string_list_object(process, &self.string_list_offests, l)
     }
 
     pub fn dream_gate_scene(&self, process: &Process) -> Option<String> {
         let s = self.deref_pointer(process, &self.player_data_pointers.dream_gate_scene).ok()?;
-        read_string_object::<SCENE_PATH_SIZE>(process, &self.string_list_offests, s)
+        read_string_object(process, &self.string_list_offests, s)
     }
     pub fn dream_gate_x(&self, process: &Process) -> Option<f32> {
         self.player_data_pointers.dream_gate_x.deref(process, &self.module, &self.image).ok()
@@ -1926,11 +1918,6 @@ impl GameManagerFinder {
         self.player_data_pointers.killed_mawlek.deref(process, &self.module, &self.image).ok()
     }
 
-    // Gruz Mother
-    pub fn killed_big_fly(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.killed_big_fly.deref(process, &self.module, &self.image).ok()
-    }
-
     pub fn sly_rescued(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.sly_rescued.deref(process, &self.module, &self.image).ok()
     }
@@ -1949,10 +1936,6 @@ impl GameManagerFinder {
 
     pub fn salubra_blessing(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.salubra_blessing.deref(process, &self.module, &self.image).ok()
-    }
-
-    pub fn unchained_hollow_knight(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers.unchained_hollow_knight.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn killed_hollow_knight(&self, process: &Process) -> Option<bool> {
@@ -2912,6 +2895,15 @@ impl PlayerDataStore {
         self.get_bool(p, g, "mega_moss_charger_defeated", &g.player_data_pointers.mega_moss_charger_defeated).unwrap_or(false)
     }
 
+    pub fn unchained_hollow_knight(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "unchained_hollow_knight", &g.player_data_pointers.unchained_hollow_knight).unwrap_or(false)
+    }
+
+    // Gruz Mother
+    pub fn killed_big_fly(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(p, g, "killed_big_fly", &g.player_data_pointers.killed_big_fly).unwrap_or(false)
+    }
+
     pub fn killed_ghost_hu(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "killed_ghost_hu", &g.player_data_pointers.killed_ghost_hu).unwrap_or(false)
     }
@@ -3485,12 +3477,12 @@ impl SceneDataStore {
                 continue;
             }
             let scene_addr = prc.read_pointer(pbi + offsets.persistentbooldata_scenename, gmf.string_list_offests.pointer_size).ok()?;
-            let scene_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, scene_addr)?;
+            let scene_str = read_string_object(prc, &gmf.string_list_offests, scene_addr)?;
             if !scene_str.starts_with("RestingGrounds_08") {
                 continue;
             }
             let id_addr = prc.read_pointer(pbi + offsets.persistentbooldata_id, gmf.string_list_offests.pointer_size).ok()?;
-            let id_str = read_string_object::<SCENE_PATH_SIZE>(prc, &gmf.string_list_offests, id_addr)?;
+            let id_str = read_string_object(prc, &gmf.string_list_offests, id_addr)?;
             if !(id_str.starts_with("Ghost ") || id_str.contains("karina")) {
                 continue;
             }
@@ -3561,12 +3553,11 @@ fn process_pointer_size(process: &Process) -> Option<PointerSize> {
     }
 }
 
-fn read_string_object<const N: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<String> {
+fn read_string_object(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<String> {
     let n: u32 = process.read(a + offsets.string_len).ok()?;
     if !(n < 2048) { return None; }
-    let w: ArrayWString<N> = process.read(a + offsets.string_contents).ok()?;
-    if !(w.len() == min(n as usize, N)) { return None; }
-    String::from_utf16(&w.to_vec()).ok()
+    let w: Vec<u16> = process.read_vec(a + offsets.string_contents, n as usize).ok()?;
+    String::from_utf16(&w).ok()
 }
 
 fn list_object_iter<'a>(process: &'a Process, offsets: &'a StringListOffsets, a: Address) -> Option<impl FusedIterator<Item = Address> + 'a> {
@@ -3582,13 +3573,13 @@ fn list_object_iter<'a>(process: &'a Process, offsets: &'a StringListOffsets, a:
     )
 }
 
-fn read_string_list_object<const SN: usize>(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<Vec<String>> {
+fn read_string_list_object(process: &Process, offsets: &StringListOffsets, a: Address) -> Option<Vec<String>> {
     let mut v = Vec::new();
     for item_ptr in list_object_iter(process, offsets, a)? {
         if item_ptr.is_null() {
             continue;
         }
-        let s = read_string_object::<SN>(process, offsets, item_ptr)?;
+        let s = read_string_object(process, offsets, item_ptr)?;
         v.push(s);
     }
     Some(v)
