@@ -4,7 +4,7 @@ use core::iter::FusedIterator;
 use std::mem;
 use std::collections::BTreeMap;
 use asr::file_format::{elf, pe};
-use asr::future::next_tick;
+use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
 use asr::{Address, PointerSize, Process};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
@@ -1091,6 +1091,38 @@ impl GameManagerFinder {
     fn deref_pointer<const PN: usize>(&self, process: &Process, pointer: &UnityPointer<PN>) -> Result<Address, asr::Error> {
         let a = pointer.deref_offsets(process, &self.module, &self.image)?;
         process.read_pointer(a, self.string_list_offests.pointer_size)
+    }
+
+    pub async fn init_load_removal_pointers(&self, process: &Process) {
+        retry(|| self.get_game_state(process)).await;
+        next_tick().await;
+        retry(|| self.get_ui_state(process)).await;
+        next_tick().await;
+        retry(|| self.get_scene_name(process)).await;
+        next_tick().await;
+        retry(|| self.get_next_scene_name(process)).await;
+        next_tick().await;
+        retry(|| self.camera_teleporting(process)).await;
+        next_tick().await;
+        retry(|| self.accepting_input(process)).await;
+        next_tick().await;
+        retry(|| self.tile_map_dirty(process)).await;
+        next_tick().await;
+        retry(|| self.deref_pointer(process, &self.player_data_pointers.version)).await;
+        next_tick().await;
+        retry(|| self.uses_scene_transition_routine(process)).await;
+        next_tick().await;
+        retry(|| self.get_health(process)).await;
+        next_tick().await;
+        self.hazard_respawning(process);
+        next_tick().await;
+        self.hero_transition_state(process);
+        next_tick().await;
+        self.hero_recoil(process);
+        next_tick().await;
+        self.hazard_death(process);
+        next_tick().await;
+        self.hero_dead(process);
     }
 
     pub fn get_scene_name(&self, process: &Process) -> Option<String> {

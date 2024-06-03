@@ -77,6 +77,13 @@ async fn main() {
                 #[cfg(debug_assertions)]
                 asr::print_message(&format!("scenes_grub_rescued: {:?}", scenes_grub_rescued));
 
+                next_tick().await;
+                // Initialize pointers for load-remover before timer is running
+                game_manager_finder.init_load_removal_pointers(&process).await;
+                next_tick().await;
+                asr::print_message("Initialized load removal pointers");
+                next_tick().await;
+
                 loop {
                     tick_action(&process, &mut state, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store).await;
 
