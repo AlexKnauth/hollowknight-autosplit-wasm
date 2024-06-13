@@ -35,6 +35,10 @@ xmltree = { version = "0.10.3" }
 [lib]
 crate-type = ["cdylib"]
 
+# LTO is required on nightly, even for the dev profile, because of the rustflags.
+[profile.dev]
+lto = true
+
 [profile.release]
 lto = true
 panic = "abort"

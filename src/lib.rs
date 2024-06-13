@@ -1,4 +1,5 @@
 // #![no_std]
+#![feature(linkage)]
 
 extern crate alloc;
 
@@ -10,6 +11,7 @@ mod legacy_xml;
 mod settings_gui;
 mod splits;
 mod timer;
+mod weak;
 
 use asr::future::{next_tick, retry};
 use asr::Process;

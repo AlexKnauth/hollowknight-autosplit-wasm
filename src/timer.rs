@@ -2,6 +2,8 @@
 use asr::timer::TimerState;
 use serde::{Deserialize, Serialize};
 
+use crate::weak::get_timer_current_split_index;
+
 pub fn is_timer_state_between_runs(s: TimerState) -> bool {
     s == TimerState::NotRunning || s == TimerState::Ended
 }
@@ -66,6 +68,13 @@ pub struct Timer {
     /// [1,n): Running
     /// n: Ended without knowing auto-reset safe
     i: usize,
+    /// The last observed timer_current_split_index.
+    /// Just in case timer_current_split_index is a tad out-of-date.
+    /// -2: Unknown
+    /// -1: NotRunning
+    /// [0,n-1): Running
+    /// n-1: Ended
+    last_split_index: i32,
     /// Number of autosplits including both start and end.
     /// One more than the number of segments.
     n: usize,
@@ -84,10 +93,12 @@ impl Resettable for Timer {
 impl Timer {
     pub fn new(n: usize, auto_reset: &'static [TimerState]) -> Timer {
         let asr_state = asr::timer::state();
+        let asr_index = get_timer_current_split_index();
         Timer {
             state: asr_state,
             last_state: asr_state,
             i: 0,
+            last_split_index: asr_index.unwrap_or(-2),
             n,
             auto_reset,
         }
@@ -111,6 +122,11 @@ impl Timer {
     }
 
     pub fn update<R: Resettable>(&mut self, r: &mut R) {
+        self.update_state(r);
+        self.update_index();
+    }
+
+    fn update_state<R: Resettable>(&mut self, r: &mut R) {
         let asr_state = asr::timer::state();
         if asr_state == self.state || asr_state == self.last_state {
             self.last_state = asr_state;
@@ -146,6 +162,32 @@ impl Timer {
         self.last_state = asr_state;
     }
 
+    fn update_index(&mut self) -> Option<()>  {
+        let asr_index = get_timer_current_split_index()?;
+        if asr_index == self.last_split_index
+        {
+            return Some(());
+        }
+        let delta = asr_index + 1 - self.i as i32;
+        if delta == 0 || delta >= self.n as i32 {
+            return Some(());
+        }
+        match delta {
+            -1 => asr::print_message("Detected a manual undo."),
+            1 => asr::print_message("Detected a manual split or skip."),
+            d if d.is_negative() => asr::print_message(&format!("Detected a {} manual undos.", -d)),
+            d if d.is_positive() => asr::print_message(&format!("Detected a {} manual splits or skips.", d)),
+            _ => (),
+        }
+        let new_i = (self.i as i32 + delta) as usize;
+        if new_i >= self.n && self.is_auto_reset_safe() {
+            self.i = 0;
+        } else {
+            self.i = new_i;
+        }
+        Some(())
+    }
+
     pub fn action<R: Resettable>(&mut self, a: SplitterAction, r: &mut R) {
         match a {
             SplitterAction::Pass => (),
@@ -169,7 +211,7 @@ impl Timer {
                 self.i += 1;
             }
             SplitterAction::ManualSplit => {
-                if 0 < self.i && self.i + 1 < self.n {
+                if self.last_split_index == -2 && 0 < self.i && self.i + 1 < self.n {
                     self.i += 1;
                 }
             }
