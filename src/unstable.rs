@@ -1,0 +1,22 @@
+
+#[cfg(feature = "unstable")]
+extern "C" {
+    /// Accesses the index of the split the attempt is currently on. If there's
+    /// no attempt in progress, `-1` is returned instead. This returns an
+    /// index that is equal to the amount of segments when the attempt is
+    /// finished, but has not been reset. So you need to be careful when using
+    /// this value for indexing.
+    fn timer_current_split_index() -> i32;
+}
+
+/// Accesses the index of the split the attempt is currently on. If there's
+/// no attempt in progress, `-1` is returned instead. This returns an
+/// index that is equal to the amount of segments when the attempt is
+/// finished, but has not been reset. So you need to be careful when using
+/// this value for indexing.
+pub fn maybe_timer_current_split_index() -> Option<i32> {
+    #[cfg(feature = "unstable")]
+    return Some(unsafe { timer_current_split_index() });
+    #[allow(unreachable_code)]
+    None
+}

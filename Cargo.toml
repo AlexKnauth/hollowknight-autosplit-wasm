@@ -32,6 +32,9 @@ serde_json = { version = "1" }
 
 xmltree = { version = "0.10.3" }
 
+[features]
+unstable = []
+
 [lib]
 crate-type = ["cdylib"]
 

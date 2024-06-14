@@ -10,6 +10,7 @@ mod legacy_xml;
 mod settings_gui;
 mod splits;
 mod timer;
+mod unstable;
 
 use asr::future::{next_tick, retry};
 use asr::Process;
