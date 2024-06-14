@@ -24,10 +24,10 @@ jobs:
         include:
           - label: Stable
             postfix: _stable
-            features: ""
+            features: '""'
           - label: Unstable
             postfix: _unstable
-            features: "unstable"
+            features: '"unstable"'
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
