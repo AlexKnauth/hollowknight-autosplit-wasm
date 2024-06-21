@@ -4,7 +4,7 @@ An auto splitter for Hollow Knight that supports Windows, Mac, and Linux.
 
 ## Installation
 
-Download the `hollowknight_autosplit_wasm.wasm` file from the [Latest Release](https://github.com/AlexKnauth/hollowknight-autosplit-wasm/releases/latest).
+Download the `hollowknight_autosplit_wasm_stable.wasm` file from the [Latest Release](https://github.com/AlexKnauth/hollowknight-autosplit-wasm/releases/latest).
 
 Or follow the steps in [Compilation](#compilation) and use `target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm`.
 
@@ -75,7 +75,7 @@ If it does not have a component named `Auto Splitting Runtime`,
 add one using the `+` Plus button -> `Control` -> `Auto Splitting Runtime`.
 Once that's there, click `Layout Settings` -> `Auto Splitting Runtime`,
 and next to `Script Path`, click `Browse...`,
-then navigate to the `hollowknight_autosplit_wasm.wasm` file.
+then navigate to the `hollowknight_autosplit_wasm_stable.wasm` file.
 Then click `Import Splits` and select your splits file.
 
 For hit-counter mode, change the `Timing Method` setting to
@@ -123,7 +123,7 @@ Add OBS Source Livesplit One.
 Properties:
 - Splits: Select your splits file
 - Use local autosplitter: Check
-- Local Auto Splitter file: Select the `hollowknight_autosplit_wasm.wasm` file
+- Local Auto Splitter file: Select the `hollowknight_autosplit_wasm_stable.wasm` file
 - Custom auto splitter settings: Select `Import Splits`
 - Select a file: Select your splits file
 
@@ -158,7 +158,7 @@ Right-click or Control-click for the context menu:
 - Layout, Open... : For the Layout, I recommend you use `.ls1l` layout file for LiveSplit One Druid, not a `.lsl` layout file.
   You can make a `.ls1l` file in the LiveSplit One Web version at https://one.livesplit.org/,
   or you can use the `layout-web.ls1l` file included in this repository as a starting point.
-- Open Auto-splitter... : Select the `hollowknight_autosplit_wasm.wasm` file.
+- Open Auto-splitter... : Select the `hollowknight_autosplit_wasm_stable.wasm` file.
 - Compare Against: Game Time.
 - Settings: Configure the hotkeys you want.
 
@@ -167,6 +167,15 @@ unless either it's explicitly marked as `ManualSplit` or it's the end-split.
 Don't manually split, skip, or undo splits in any other situation.
 The autosplitter will not know that you did that,
 and the autosplitter's state will be out of sync with LiveSplit One Druid's state.
+
+### Unstable version for LiveSplit One Druid only
+
+If you're only going to use this auto-splitter with LiveSplit One Druid 0.4.0 or later,
+you can download the `hollowknight_autosplit_wasm_unstable.wasm` file from the
+[Latest Release](https://github.com/AlexKnauth/hollowknight-autosplit-wasm/releases/latest),
+instead of the stable version.
+
+The unstable version works with manual split/skip/undo when used with LiveSplit One Druid, but it will crash if you try to use it with any other timer.
 
 ## Instructions for livesplit-one-desktop
 
@@ -194,11 +203,11 @@ In the `livesplit-one-desktop` repository, modify the `config.yaml` file so that
 general:
   splits: <path-to-splits.lss>
   timing-method: GameTime
-  auto-splitter: <path-to-hollowknight_autosplit_wasm.wasm>
+  auto-splitter: <path-to-hollowknight_autosplit_wasm_stable.wasm>
 ```
 where you replace `<path-to-splits.lss>` with the path to your splits file,
-and you replace `<path-to-hollowknight_autosplit_wasm.wasm>`
-with a path to the `hollowknight_autosplit_wasm.wasm` file.
+and you replace `<path-to-hollowknight_autosplit_wasm_stable.wasm>`
+with a path to the `hollowknight_autosplit_wasm_stable.wasm` file.
 
 To configure it with a layout file, modify the `config.yaml` file so that it contains
 ```yaml
