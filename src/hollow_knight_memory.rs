@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::watcher::Pair;
-use asr::{Address, PointerSize, Process};
+use asr::{Address, Address16, Address32, Address64, PointerSize, Process};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
 
 #[cfg(debug_assertions)]
@@ -1089,8 +1089,11 @@ impl GameManagerFinder {
     }
 
     fn deref_pointer<const PN: usize>(&self, process: &Process, pointer: &UnityPointer<PN>) -> Result<Address, asr::Error> {
-        let a = pointer.deref_offsets(process, &self.module, &self.image)?;
-        process.read_pointer(a, self.string_list_offests.pointer_size)
+        match self.string_list_offests.pointer_size {
+            PointerSize::Bit64 => Ok(pointer.deref::<Address64>(process, &self.module, &self.image)?.into()),
+            PointerSize::Bit32 => Ok(pointer.deref::<Address32>(process, &self.module, &self.image)?.into()),
+            PointerSize::Bit16 => Ok(pointer.deref::<Address16>(process, &self.module, &self.image)?.into()),
+        }
     }
 
     pub async fn init_load_removal_pointers(&self, process: &Process) {
