@@ -409,6 +409,11 @@ impl HitCounter {
             }
         }
 
+        // Even set hits when it hasn't incremented,
+        // in case this auto-splitter is fighting with something else trying to advance the timer.
+        // https://github.com/AlexKnauth/hollowknight-autosplit-wasm/issues/83
+        asr::timer::set_variable_int("hits", self.hits);
+
         Some(())
     }
 }
