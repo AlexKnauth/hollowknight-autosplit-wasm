@@ -17,7 +17,7 @@ mod load_remover;
 
 use asr::future::{next_tick, retry};
 use asr::Process;
-use game_time::GameTime;
+use game_time::{GameTime, GameTimePlusVars};
 use settings_gui::{SettingsGui, TimingMethod};
 use hollow_knight_memory::*;
 use splits::Split;
@@ -34,13 +34,13 @@ const TICKS_PER_GUI: usize = 0x100;
 struct AutoSplitterState {
     timing_method: TimingMethod,
     splits: Vec<Split>,
-    load_remover: TimingMethodLoadRemover,
+    load_remover: GameTimePlusVars,
     timer: Timer,
 }
 
 impl AutoSplitterState {
     fn new(timing_method: TimingMethod, splits: Vec<Split>) -> AutoSplitterState {
-        let load_remover = TimingMethodLoadRemover::new(timing_method);
+        let load_remover = timing_method_game_time(timing_method);
         let timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
         AutoSplitterState { timing_method, splits, load_remover, timer }
     }
@@ -127,7 +127,7 @@ async fn wait_attach_hollow_knight(gui: &mut SettingsGui, state: &mut AutoSplitt
 fn check_state_change(gui: &mut SettingsGui, state: &mut AutoSplitterState) {
     if state.timer.is_timer_state_between_runs() {
         if let Some(new_timing_method) = gui.check_timing_method(&mut state.timing_method) {
-            state.load_remover = TimingMethodLoadRemover::new(new_timing_method);
+            state.load_remover = timing_method_game_time(new_timing_method);
         }
     }
     if let Some(new_splits) = gui.check_splits(&mut state.splits) {
@@ -189,37 +189,10 @@ async fn tick_action(
     }
 }
 
-enum TimingMethodLoadRemover {
-    LoadRemover(LoadRemover),
-    HitCounter(HitCounter),
-}
-
-impl Resettable for TimingMethodLoadRemover {
-    fn reset(&mut self) {
-        match self {
-            TimingMethodLoadRemover::LoadRemover(lr) => lr.reset(),
-            TimingMethodLoadRemover::HitCounter(hc) => hc.reset(),
-        }
-    }
-}
-
-impl TimingMethodLoadRemover {
-    fn new(timing_method: TimingMethod) -> TimingMethodLoadRemover {
-        match timing_method {
-            TimingMethod::LoadRemovedTime => TimingMethodLoadRemover::LoadRemover(LoadRemover::new()),
-            TimingMethod::HitsDreamFalls => TimingMethodLoadRemover::HitCounter(HitCounter::new(true)),
-            TimingMethod::HitsDamage => TimingMethodLoadRemover::HitCounter(HitCounter::new(false)),
-        }
-    }
-}
-
-impl GameTime for TimingMethodLoadRemover {
-    fn update_variables(&mut self, _: &Timer, _: &Process, _: &GameManagerFinder) {}
-
-    fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
-        match self {
-            TimingMethodLoadRemover::LoadRemover(lr) => lr.update_game_time(timer, process, game_manager_finder),
-            TimingMethodLoadRemover::HitCounter(hc) => hc.update_game_time(timer, process, game_manager_finder),
-        }
+fn timing_method_game_time(timing_method: TimingMethod) -> GameTimePlusVars {
+    match timing_method {
+        TimingMethod::LoadRemovedTime => GameTimePlusVars::new(Box::new(LoadRemover::new())),
+        TimingMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(HitCounter::new(true))),
+        TimingMethod::HitsDamage => GameTimePlusVars::new(Box::new(HitCounter::new(false))),
     }
 }

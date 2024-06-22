@@ -8,3 +8,42 @@ pub trait GameTime: Resettable {
     fn update_variables(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder);
     fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder);
 }
+
+pub struct GameTimePlusVars {
+    main: Box<dyn GameTime>,
+    vars: Vec<Box<dyn GameTime>>,
+}
+
+impl GameTimePlusVars {
+    pub fn new(main: Box<dyn GameTime>) -> GameTimePlusVars {
+        GameTimePlusVars {
+            main,
+            vars: Vec::new(),
+        }
+    }
+}
+
+impl Resettable for GameTimePlusVars {
+    fn reset(&mut self) {
+        self.main.reset();
+        for v in self.vars.iter_mut() {
+            v.reset();
+        }
+    }
+}
+
+impl GameTime for GameTimePlusVars {
+    fn update_variables(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
+        self.main.update_variables(timer, process, game_manager_finder);
+        for v in self.vars.iter_mut() {
+            v.update_variables(timer, process, game_manager_finder);
+        }
+    }
+
+    fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
+        self.main.update_game_time(timer, process, game_manager_finder);
+        for v in self.vars.iter_mut() {
+            v.update_variables(timer, process, game_manager_finder);
+        }
+    }
+}
