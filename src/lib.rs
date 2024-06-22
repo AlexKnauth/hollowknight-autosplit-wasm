@@ -11,11 +11,13 @@ mod settings_gui;
 mod splits;
 mod timer;
 mod unstable;
+mod game_time;
 mod hit_counter;
 mod load_remover;
 
 use asr::future::{next_tick, retry};
 use asr::Process;
+use game_time::GameTime;
 use settings_gui::{SettingsGui, TimingMethod};
 use hollow_knight_memory::*;
 use splits::Split;
@@ -90,7 +92,7 @@ async fn main() {
                 loop {
                     tick_action(&process, &mut state, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store).await;
 
-                    state.load_remover.load_removal(&process, &game_manager_finder);
+                    state.load_remover.update_game_time(&state.timer, &process, &game_manager_finder);
 
                     #[cfg(debug_assertions)]
                     let new_scenes_grub_rescued = game_manager_finder.scenes_grub_rescued(&process);
@@ -209,11 +211,13 @@ impl TimingMethodLoadRemover {
             TimingMethod::HitsDamage => TimingMethodLoadRemover::HitCounter(HitCounter::new(false)),
         }
     }
+}
 
-    fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+impl GameTime for TimingMethodLoadRemover {
+    fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
         match self {
-            TimingMethodLoadRemover::LoadRemover(lr) => lr.load_removal(process, game_manager_finder),
-            TimingMethodLoadRemover::HitCounter(hc) => hc.load_removal(process, game_manager_finder),
+            TimingMethodLoadRemover::LoadRemover(lr) => lr.update_game_time(timer, process, game_manager_finder),
+            TimingMethodLoadRemover::HitCounter(hc) => hc.update_game_time(timer, process, game_manager_finder),
         }
     }
 }

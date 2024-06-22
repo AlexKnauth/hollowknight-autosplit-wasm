@@ -3,8 +3,9 @@ use asr::Process;
 use asr::time::Duration;
 use asr::timer::TimerState;
 
+use crate::game_time::GameTime;
 use crate::hollow_knight_memory::*;
-use crate::timer::Resettable;
+use crate::timer::{Resettable, Timer};
 
 pub struct HitCounter {
     count_dream_falling: bool,
@@ -37,7 +38,7 @@ impl HitCounter {
     }
 
     /// Sets hits variable, but does not set game time
-    pub fn count_hits(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i64 {
+    pub fn count_hits(&mut self, _: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) -> i64 {
         // only count hits if timer is running
         if asr::timer::state() != TimerState::Running { return self.hits; }
 
@@ -97,19 +98,19 @@ impl HitCounter {
         
         self.hits
     }
+}
 
+impl GameTime for HitCounter {
     /// Sets game time to hits
-    pub fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+    fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
 
         asr::timer::pause_game_time();
 
-        let hits = self.count_hits(process, game_manager_finder);
+        let hits = self.count_hits(timer, process, game_manager_finder);
 
         // Even set hits when it hasn't incremented,
         // in case this auto-splitter is fighting with something else trying to advance the timer.
         // https://github.com/AlexKnauth/hollowknight-autosplit-wasm/issues/83
         asr::timer::set_game_time(Duration::seconds(hits));
-
-        Some(())
     }
 }

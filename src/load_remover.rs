@@ -2,8 +2,9 @@
 use asr::Process;
 use asr::timer::TimerState;
 
+use crate::game_time::GameTime;
 use crate::hollow_knight_memory::*;
-use crate::timer::Resettable;
+use crate::timer::{Resettable, Timer};
 
 pub struct LoadRemover {
     look_for_teleporting: bool,
@@ -26,8 +27,10 @@ impl LoadRemover {
             last_paused: false,
         }
     }
+}
 
-    pub fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+impl GameTime for LoadRemover {
+    fn update_game_time(&mut self, _: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
         // Initialize pointers for load-remover before timer is running
         let maybe_ui_state = game_manager_finder.get_ui_state(process);
         let maybe_scene_name =  game_manager_finder.get_scene_name(process);
@@ -43,7 +46,7 @@ impl LoadRemover {
         // only remove loads if timer is running
         if asr::timer::state() != TimerState::Running {
             asr::timer::pause_game_time();
-            return Some(());
+            return;
         }
 
         let ui_state = maybe_ui_state.unwrap_or_default();
@@ -97,6 +100,5 @@ impl LoadRemover {
             }
             self.last_paused = is_game_time_paused;
         }
-        Some(())
     }
 }
