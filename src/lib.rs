@@ -214,6 +214,8 @@ impl TimingMethodLoadRemover {
 }
 
 impl GameTime for TimingMethodLoadRemover {
+    fn update_variables(&mut self, _: &Timer, _: &Process, _: &GameManagerFinder) {}
+
     fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
         match self {
             TimingMethodLoadRemover::LoadRemover(lr) => lr.update_game_time(timer, process, game_manager_finder),

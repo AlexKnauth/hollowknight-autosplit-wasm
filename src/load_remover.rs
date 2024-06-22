@@ -30,6 +30,8 @@ impl LoadRemover {
 }
 
 impl GameTime for LoadRemover {
+    fn update_variables(&mut self, _: &Timer, _: &Process, _: &GameManagerFinder) {}
+
     fn update_game_time(&mut self, _: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
         // Initialize pointers for load-remover before timer is running
         let maybe_ui_state = game_manager_finder.get_ui_state(process);

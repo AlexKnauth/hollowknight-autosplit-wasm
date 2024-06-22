@@ -36,11 +36,13 @@ impl HitCounter {
             last_exiting_level: None,
         }
     }
+}
 
+impl GameTime for HitCounter {
     /// Sets hits variable, but does not set game time
-    pub fn count_hits(&mut self, _: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) -> i64 {
+    fn update_variables(&mut self, _: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
         // only count hits if timer is running
-        if asr::timer::state() != TimerState::Running { return self.hits; }
+        if asr::timer::state() != TimerState::Running { return; }
 
         // new state
         let maybe_recoil = game_manager_finder.hero_recoil(process);
@@ -95,22 +97,18 @@ impl HitCounter {
                 }
             }
         }
-        
-        self.hits
     }
-}
 
-impl GameTime for HitCounter {
     /// Sets game time to hits
     fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
 
         asr::timer::pause_game_time();
 
-        let hits = self.count_hits(timer, process, game_manager_finder);
+        self.update_variables(timer, process, game_manager_finder);
 
         // Even set hits when it hasn't incremented,
         // in case this auto-splitter is fighting with something else trying to advance the timer.
         // https://github.com/AlexKnauth/hollowknight-autosplit-wasm/issues/83
-        asr::timer::set_game_time(Duration::seconds(hits));
+        asr::timer::set_game_time(Duration::seconds(self.hits));
     }
 }
