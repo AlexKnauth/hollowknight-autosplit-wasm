@@ -18,8 +18,6 @@ pub struct HitCounter {
 impl Resettable for HitCounter {
     fn reset(&mut self) {
         self.hits = 0;
-        asr::timer::pause_game_time();
-        asr::timer::set_game_time(Duration::seconds(0));
         asr::timer::set_variable_int("hits", 0);
     }
 }
@@ -38,12 +36,10 @@ impl HitCounter {
         }
     }
 
-    pub fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
-
-        asr::timer::pause_game_time();
-
+    /// Sets hits variable, but does not set game time
+    pub fn count_hits(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> i64 {
         // only count hits if timer is running
-        if asr::timer::state() != TimerState::Running { return Some(()); }
+        if asr::timer::state() != TimerState::Running { return self.hits; }
 
         // new state
         let maybe_recoil = game_manager_finder.hero_recoil(process);
@@ -56,7 +52,6 @@ impl HitCounter {
         if let Some(r) = maybe_recoil {
             if !self.last_recoil && r {
                 self.hits += 1;
-                asr::timer::set_game_time(Duration::seconds(self.hits));
                 asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from recoil", self.hits));
             }
@@ -66,7 +61,6 @@ impl HitCounter {
         if let Some(h) = maybe_hazard {
             if !self.last_hazard && h {
                 self.hits += 1;
-                asr::timer::set_game_time(Duration::seconds(self.hits));
                 asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from hazard", self.hits));
             }
@@ -78,7 +72,6 @@ impl HitCounter {
             let d = maybe_dead == Some(true) || (maybe_health == Some(0) && maybe_game_state == Some(GAME_STATE_PLAYING));
             if !self.last_dead_or_0 && d {
                 self.hits += 1;
-                asr::timer::set_game_time(Duration::seconds(self.hits));
                 asr::timer::set_variable_int("hits", self.hits);
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
@@ -89,7 +82,6 @@ impl HitCounter {
             if let Some(s) = maybe_scene_name {
                 if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && is_dream(&s) {
                     self.hits += 1;
-                    asr::timer::set_game_time(Duration::seconds(self.hits));
                     asr::timer::set_variable_int("hits", self.hits);
                     asr::print_message(&format!("hit: {}, from dream falling", self.hits));
                 }
@@ -102,11 +94,21 @@ impl HitCounter {
                 }
             }
         }
+        
+        self.hits
+    }
+
+    /// Sets game time to hits
+    pub fn load_removal(&mut self, process: &Process, game_manager_finder: &GameManagerFinder) -> Option<()> {
+
+        asr::timer::pause_game_time();
+
+        let hits = self.count_hits(process, game_manager_finder);
 
         // Even set hits when it hasn't incremented,
         // in case this auto-splitter is fighting with something else trying to advance the timer.
         // https://github.com/AlexKnauth/hollowknight-autosplit-wasm/issues/83
-        asr::timer::set_variable_int("hits", self.hits);
+        asr::timer::set_game_time(Duration::seconds(hits));
 
         Some(())
     }
