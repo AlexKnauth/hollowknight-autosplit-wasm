@@ -18,7 +18,7 @@ mod load_remover;
 use asr::future::{next_tick, retry};
 use asr::Process;
 use game_time::{GameTime, GameTimePlusVars};
-use settings_gui::{SettingsGui, TimingMethod};
+use settings_gui::{SettingsGui, TimingMethod, HitsMethod};
 use hollow_knight_memory::*;
 use splits::Split;
 use timer::{Resettable, SplitterAction, Timer};
@@ -33,16 +33,17 @@ const TICKS_PER_GUI: usize = 0x100;
 
 struct AutoSplitterState {
     timing_method: TimingMethod,
+    hits_method: HitsMethod,
     splits: Vec<Split>,
     load_remover: GameTimePlusVars,
     timer: Timer,
 }
 
 impl AutoSplitterState {
-    fn new(timing_method: TimingMethod, splits: Vec<Split>) -> AutoSplitterState {
-        let load_remover = timing_method_game_time(timing_method);
+    fn new(timing_method: TimingMethod, hits_method: HitsMethod, splits: Vec<Split>) -> AutoSplitterState {
+        let load_remover = timing_method_game_time(timing_method, hits_method);
         let timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
-        AutoSplitterState { timing_method, splits, load_remover, timer }
+        AutoSplitterState { timing_method, hits_method, splits, load_remover, timer }
     }
 }
 
@@ -58,8 +59,9 @@ async fn main() {
     let mut gui = Box::new(SettingsGui::wait_load_merge_register().await);
 
     let mut ticks_since_gui = 0;
-    let mut state = Box::new(AutoSplitterState::new(gui.get_timing_method(), gui.get_splits()));
+    let mut state = Box::new(AutoSplitterState::new(gui.get_timing_method(), gui.get_hit_counter(), gui.get_splits()));
     asr::print_message(&format!("timing_method: {:?}", state.timing_method));
+    asr::print_message(&format!("hit_counter: {:?}", state.hits_method));
     asr::print_message(&format!("splits: {:?}", state.splits));
 
     loop {
@@ -126,8 +128,11 @@ async fn wait_attach_hollow_knight(gui: &mut SettingsGui, state: &mut AutoSplitt
 
 fn check_state_change(gui: &mut SettingsGui, state: &mut AutoSplitterState) {
     if state.timer.is_timer_state_between_runs() {
-        if let Some(new_timing_method) = gui.check_timing_method(&mut state.timing_method) {
-            state.load_remover = timing_method_game_time(new_timing_method);
+        match (gui.check_timing_method(&mut state.timing_method), gui.check_hit_counter(&mut state.hits_method)) {
+            (None, None) => (),
+            _ => {
+                state.load_remover = timing_method_game_time(state.timing_method, state.hits_method);
+            }
         }
     }
     if let Some(new_splits) = gui.check_splits(&mut state.splits) {
@@ -189,9 +194,15 @@ async fn tick_action(
     }
 }
 
-fn timing_method_game_time(timing_method: TimingMethod) -> GameTimePlusVars {
+fn timing_method_game_time(timing_method: TimingMethod, hits_method: HitsMethod) -> GameTimePlusVars {
     match timing_method {
-        TimingMethod::LoadRemovedTime => GameTimePlusVars::new(Box::new(LoadRemover::new())),
+        TimingMethod::LoadRemovedTime => {
+            match hits_method {
+                HitsMethod::None => GameTimePlusVars::new(Box::new(LoadRemover::new())),
+                HitsMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(true))),
+                HitsMethod::HitsDamage => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(false))),
+            }
+        }
         TimingMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(HitCounter::new(true))),
         TimingMethod::HitsDamage => GameTimePlusVars::new(Box::new(HitCounter::new(false))),
     }

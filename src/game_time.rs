@@ -21,6 +21,11 @@ impl GameTimePlusVars {
             vars: Vec::new(),
         }
     }
+
+    pub fn with_var(mut self, var: Box<dyn GameTime>) -> GameTimePlusVars {
+        self.vars.push(var);
+        self
+    }
 }
 
 impl Resettable for GameTimePlusVars {
