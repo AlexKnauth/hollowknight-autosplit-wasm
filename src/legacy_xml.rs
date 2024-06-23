@@ -2,7 +2,7 @@
 use ugly_widget::radio_button::options_str;
 use xmltree::XMLNode;
 
-use crate::{settings_gui::TimingMethod, splits::Split};
+use crate::{settings_gui::{HitsMethod, TimingMethod}, splits::Split};
 
 pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
     let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
@@ -13,6 +13,10 @@ pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::setti
     if let Some(timing_method) = xml_settings.dict_get("TimingMethod") {
         let tm = timing_method_from_settings_str(timing_method).unwrap_or_default();
         settings_map.insert("timing_method", options_str(&tm));
+    }
+    if let Some(hit_counter) = xml_settings.dict_get("HitCounter") {
+        let hm = hits_method_from_settings_str(hit_counter).unwrap_or_default();
+        settings_map.insert("hit_counter", options_str(&hm));
     }
     Some(settings_map)
 }
@@ -139,5 +143,9 @@ fn split_from_settings_str(s: XMLSettings) -> Option<Split> {
 }
 
 fn timing_method_from_settings_str(s: XMLSettings) -> Option<TimingMethod> {
+    serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
+}
+
+fn hits_method_from_settings_str(s: XMLSettings) -> Option<HitsMethod> {
     serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
 }
