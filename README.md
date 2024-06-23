@@ -170,7 +170,7 @@ and the autosplitter's state will be out of sync with LiveSplit One Druid's stat
 
 ### Unstable version for LiveSplit One Druid only
 
-If you're only going to use this auto-splitter with LiveSplit One Druid 0.4.0 or later,
+If you're only going to use this auto-splitter with LiveSplit One Druid 0.4.1 or later,
 you can download the `hollowknight_autosplit_wasm_unstable.wasm` file from the
 [Latest Release](https://github.com/AlexKnauth/hollowknight-autosplit-wasm/releases/latest),
 instead of the stable version.
