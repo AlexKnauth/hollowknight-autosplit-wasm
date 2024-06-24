@@ -1,4 +1,6 @@
 
+use std::cmp::max;
+
 use asr::Process;
 use asr::time::Duration;
 use asr::timer::TimerState;
@@ -10,6 +12,8 @@ use crate::timer::{Resettable, Timer};
 pub struct HitCounter {
     count_dream_falling: bool,
     hits: i64,
+    segments_hits: Vec<i64>,
+    i: usize,
     last_recoil: bool,
     last_hazard: bool,
     last_dead_or_0: bool,
@@ -19,7 +23,10 @@ pub struct HitCounter {
 impl Resettable for HitCounter {
     fn reset(&mut self) {
         self.hits = 0;
+        self.segments_hits = Vec::new();
+        self.i = 0;
         asr::timer::set_variable_int("hits", 0);
+        asr::timer::set_variable_int("segment hits", 0);
     }
 }
 
@@ -27,20 +34,38 @@ impl Resettable for HitCounter {
 impl HitCounter {
     pub fn new(count_dream_falling: bool) -> HitCounter {
         asr::timer::set_variable_int("hits", 0);
+        asr::timer::set_variable_int("segment hits", 0);
         HitCounter {
             count_dream_falling,
             hits: 0,
+            segments_hits: Vec::new(),
+            i: 0,
             last_recoil: false,
             last_hazard: false,
             last_dead_or_0: false,
             last_exiting_level: None,
         }
     }
+
+    fn add_hit(&mut self) {
+        self.hits += 1;
+        asr::timer::set_variable_int("hits", self.hits);
+        self.segments_hits.resize(max(self.segments_hits.len(), self.i + 1), 0);
+        self.segments_hits[self.i] += 1;
+        asr::timer::set_variable_int("segment hits", self.segments_hits[self.i]);
+    }
 }
 
 impl GameTime for HitCounter {
     /// Sets hits variable, but does not set game time
-    fn update_variables(&mut self, _: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
+    fn update_variables(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
+        let i = timer.i();
+        if i != self.i {
+            self.i = i;
+            self.segments_hits.resize(max(self.segments_hits.len(), i + 1), 0);
+            asr::timer::set_variable_int("segment hits", self.segments_hits[i]);
+        }
+
         // only count hits if timer is running
         if asr::timer::state() != TimerState::Running { return; }
 
@@ -54,8 +79,7 @@ impl GameTime for HitCounter {
 
         if let Some(r) = maybe_recoil {
             if !self.last_recoil && r {
-                self.hits += 1;
-                asr::timer::set_variable_int("hits", self.hits);
+                self.add_hit();
                 asr::print_message(&format!("hit: {}, from recoil", self.hits));
             }
             self.last_recoil = r;
@@ -63,8 +87,7 @@ impl GameTime for HitCounter {
 
         if let Some(h) = maybe_hazard {
             if !self.last_hazard && h {
-                self.hits += 1;
-                asr::timer::set_variable_int("hits", self.hits);
+                self.add_hit();
                 asr::print_message(&format!("hit: {}, from hazard", self.hits));
             }
             self.last_hazard = h;
@@ -74,8 +97,7 @@ impl GameTime for HitCounter {
         {
             let d = maybe_dead == Some(true) || (maybe_health == Some(0) && maybe_game_state == Some(GAME_STATE_PLAYING));
             if !self.last_dead_or_0 && d {
-                self.hits += 1;
-                asr::timer::set_variable_int("hits", self.hits);
+                self.add_hit();
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
             }
             self.last_dead_or_0 = d;
@@ -84,8 +106,7 @@ impl GameTime for HitCounter {
         if self.count_dream_falling {
             if let Some(s) = maybe_scene_name {
                 if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && is_dream(&s) {
-                    self.hits += 1;
-                    asr::timer::set_variable_int("hits", self.hits);
+                    self.add_hit();
                     asr::print_message(&format!("hit: {}, from dream falling", self.hits));
                 }
                 if maybe_game_state == Some(GAME_STATE_EXITING_LEVEL) {
