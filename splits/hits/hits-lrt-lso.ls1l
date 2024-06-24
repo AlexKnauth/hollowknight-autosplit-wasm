@@ -95,8 +95,8 @@
                         "timing_method": null
                     },
                     {
-                        "name": "hits",
-                        "variable_name": "hits"
+                        "name": "segment hits",
+                        "variable_name": "segment hits"
                     }
                 ]
             }
