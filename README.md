@@ -66,7 +66,7 @@ different splits file you run with this autosplitter.
 
 For hit-counter mode, best to use a layout that formats
 times and deltas without the decimals, such as the
-[splits/hits/layout-direct.lsl](splits/hits/layout-direct.lsl)
+[splits/hits/hits-windows-ls.lsl](splits/hits/hits-windows-ls.lsl)
 file included in this repository.
 
 Right-click -> `Edit Layout...` and you should see a Layout
