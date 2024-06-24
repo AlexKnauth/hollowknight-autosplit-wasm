@@ -471,19 +471,38 @@
     </Segment>
   </Segments>
   <AutoSplitterSettings>
-    <Ordered>True</Ordered>
-    <AutosplitEndRuns>True</AutosplitEndRuns>
-    <AutosplitStartRuns></AutosplitStartRuns>
-    <Splits>
-      <Split>KingsPass</Split>
-      <Split>AspidHunter</Split>
-      <Split>VengefulSpirit</Split>
-      <Split>EnterGreenpath</Split>
-      <Split>MossKnight</Split>
-      <Split>MothwingCloak</Split>
-      <Split>Aluba</Split>
-    </Splits>
-    <TimingMethod>LoadRemovedTime</TimingMethod>
-    <HitCounter>HitsDreamFalls</HitCounter>
+    <Version>1.0.0.0</Version>
+    <ScriptPath />
+    <CustomSettings>
+      <Setting id="splits" type="list">
+        <Setting type="string" value="LegacyStart" />
+        <Setting type="string" value="KingsPass" />
+        <Setting type="string" value="AspidHunter" />
+        <Setting type="string" value="VengefulSpirit" />
+        <Setting type="string" value="EnterGreenpath" />
+        <Setting type="string" value="MossKnight" />
+        <Setting type="string" value="MothwingCloak" />
+        <Setting type="string" value="Aluba" />
+      </Setting>
+      <Setting id="timing_method" type="string" value="LoadRemovedTime" />
+      <Setting id="hit_counter" type="string" value="HitsDreamFalls" />
+      <Setting id="splits_0_item" type="string" value="LegacyStart" />
+      <Setting id="splits_1_item" type="string" value="KingsPass" />
+      <Setting id="splits_2_item" type="string" value="AspidHunter" />
+      <Setting id="splits_3_item" type="string" value="VengefulSpirit" />
+      <Setting id="splits_4_item" type="string" value="EnterGreenpath" />
+      <Setting id="splits_5_item" type="string" value="MossKnight" />
+      <Setting id="splits_6_item" type="string" value="MothwingCloak" />
+      <Setting id="splits_7_item" type="string" value="Aluba" />
+      <Setting id="splits_insert_0" type="bool">False</Setting>
+      <Setting id="splits_0_action" type="string" value="None" />
+      <Setting id="splits_1_action" type="string" value="None" />
+      <Setting id="splits_2_action" type="string" value="None" />
+      <Setting id="splits_3_action" type="string" value="None" />
+      <Setting id="splits_4_action" type="string" value="None" />
+      <Setting id="splits_5_action" type="string" value="None" />
+      <Setting id="splits_6_action" type="string" value="None" />
+      <Setting id="splits_7_action" type="string" value="None" />
+    </CustomSettings>
   </AutoSplitterSettings>
 </Run>
