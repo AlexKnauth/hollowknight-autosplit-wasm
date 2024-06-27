@@ -1,5 +1,5 @@
 
-use std::cmp::max;
+use std::cmp::{max, min};
 
 use asr::Process;
 use asr::time::Duration;
@@ -9,10 +9,18 @@ use crate::game_time::GameTime;
 use crate::hollow_knight_memory::*;
 use crate::timer::{Resettable, Timer};
 
+/// The dash symbol to use for generic dashes in text.
+const DASH: &str = "—";
+/// The minus symbol to use for negative numbers.
+const MINUS: &str = "−";
+/// The plus symbol to use for positive numbers.
+const PLUS: &str = "+";
+
 pub struct HitCounter {
     count_dream_falling: bool,
     hits: i64,
     segments_hits: Vec<i64>,
+    comparison_hits: Vec<i64>,
     i: usize,
     last_recoil: bool,
     last_hazard: bool,
@@ -24,6 +32,7 @@ impl Resettable for HitCounter {
     fn reset(&mut self) {
         self.hits = 0;
         self.segments_hits = Vec::new();
+        store_comparison_hits(&self.comparison_hits);
         self.i = 0;
         asr::timer::set_variable_int("hits", 0);
         asr::timer::set_variable_int("segment hits", 0);
@@ -35,10 +44,12 @@ impl HitCounter {
     pub fn new(count_dream_falling: bool) -> HitCounter {
         asr::timer::set_variable_int("hits", 0);
         asr::timer::set_variable_int("segment hits", 0);
+        let comparison_hits = load_comparison_hits().unwrap_or_default();
         HitCounter {
             count_dream_falling,
             hits: 0,
             segments_hits: Vec::new(),
+            comparison_hits,
             i: 0,
             last_recoil: false,
             last_hazard: false,
@@ -53,6 +64,18 @@ impl HitCounter {
         self.segments_hits.resize(max(self.segments_hits.len(), self.i + 1), 0);
         self.segments_hits[self.i] += 1;
         asr::timer::set_variable_int("segment hits", self.segments_hits[self.i]);
+        if let Some(cmp) = self.comparison_hits.get(self.i) {
+            asr::timer::set_variable("delta hits", &delta_string(self.hits - *cmp));
+        } else {
+            asr::timer::set_variable("delta hits", DASH);
+        }
+    }
+
+    fn add_pace(&mut self) {
+        self.comparison_hits.resize(max(self.comparison_hits.len(), self.i), self.hits);
+        if 1 <= self.i {
+            self.comparison_hits[self.i - 1] = min(self.comparison_hits[self.i - 1], self.hits);
+        }
     }
 }
 
@@ -61,9 +84,22 @@ impl GameTime for HitCounter {
     fn update_variables(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
         let i = timer.i();
         if i != self.i {
+            if self.i == 0 {
+                self.comparison_hits = load_comparison_hits().unwrap_or_default();
+            } else if i == 0 {
+                store_comparison_hits(&self.comparison_hits);
+            }
             self.i = i;
             self.segments_hits.resize(max(self.segments_hits.len(), i + 1), 0);
             asr::timer::set_variable_int("segment hits", self.segments_hits[i]);
+            if let Some(cmp) = self.comparison_hits.get(self.i) {
+                asr::timer::set_variable_int("comparison hits", *cmp);
+                asr::timer::set_variable("delta hits", &delta_string(self.hits - *cmp));
+            } else {
+                asr::timer::set_variable("comparison hits", DASH);
+                asr::timer::set_variable("delta hits", DASH);
+            }
+            self.add_pace();
         }
 
         // only count hits if timer is running
@@ -131,5 +167,47 @@ impl GameTime for HitCounter {
         // in case this auto-splitter is fighting with something else trying to advance the timer.
         // https://github.com/AlexKnauth/hollowknight-autosplit-wasm/issues/83
         asr::timer::set_game_time(Duration::seconds(self.hits));
+    }
+}
+
+fn load_comparison_hits() -> Option<Vec<i64>> {
+    let v = asr::settings::Map::load().get("comparison_hits")?;
+    let l = v.get_list()?;
+    let mut r = Vec::new();
+    for e in l.iter() {
+        let Some(i) = e.get_i64() else {
+            break;
+        };
+        r.push(i);
+    }
+    Some(r)
+}
+
+fn store_comparison_hits(is: &[i64]) {
+    loop {
+        if store_comparison_hits_if_unchanged(is) {
+            break;
+        }
+    }
+}
+
+fn store_comparison_hits_if_unchanged(is: &[i64]) -> bool {
+    let l = asr::settings::List::new();
+    for i in is {
+        l.push(*i);
+    }
+    let m = asr::settings::Map::load();
+    let old = m.clone();
+    m.insert("comparison_hits", l);
+    m.store_if_unchanged(&old)
+}
+
+fn delta_string(i: i64) -> String {
+    if i.is_positive() {
+        format!("{}{}", PLUS, i)
+    } else if i.is_negative() {
+        format!("{}{}", MINUS, -i)
+    } else {
+        format!("{}", i)
     }
 }
