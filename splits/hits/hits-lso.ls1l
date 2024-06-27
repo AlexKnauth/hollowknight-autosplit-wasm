@@ -95,6 +95,18 @@
                         "timing_method": null
                     },
                     {
+                        "name": "comparison hits",
+                        "variable_name": "comparison hits"
+                    },
+                    {
+                        "name": "hits",
+                        "variable_name": "hits"
+                    },
+                    {
+                        "name": "delta hits",
+                        "variable_name": "delta hits"
+                    },
+                    {
                         "name": "segment hits",
                         "variable_name": "segment hits"
                     }
