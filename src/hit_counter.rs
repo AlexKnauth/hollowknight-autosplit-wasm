@@ -37,7 +37,7 @@ pub struct HitCounter {
     i: usize,
     /// Number of autosplits including both start and end.
     /// One more than the number of segments.
-    n: Option<usize>,
+    n: usize,
     last_recoil: bool,
     last_hazard: bool,
     last_dead_or_0: bool,
@@ -46,13 +46,10 @@ pub struct HitCounter {
 
 impl Resettable for HitCounter {
     fn ended(&mut self) {
-        let Some(n) = self.n else {
-            return;
-        };
-        self.comparison_hits.resize(max(self.comparison_hits.len(), n), self.hits);
-        if 1 <= n {
-            self.comparison_hits[n - 1] = min(self.comparison_hits[n - 1], self.hits);
-            asr::timer::set_variable_int("pb hits", self.comparison_hits[n - 1]);
+        self.comparison_hits.resize(max(self.comparison_hits.len(), self.n), self.hits);
+        if 1 <= self.n {
+            self.comparison_hits[self.n - 1] = min(self.comparison_hits[self.n - 1], self.hits);
+            asr::timer::set_variable_int("pb hits", self.comparison_hits[self.n - 1]);
         }
     }
     fn reset(&mut self) {
@@ -67,17 +64,20 @@ impl Resettable for HitCounter {
 
 #[allow(unused)]
 impl HitCounter {
-    pub fn new(count_dream_falling: bool) -> HitCounter {
+    pub fn new(n: usize, count_dream_falling: bool) -> HitCounter {
         asr::timer::set_variable_int("hits", 0);
         asr::timer::set_variable_int("segment hits", 0);
         let comparison_hits = load_comparison_hits().unwrap_or_default();
+        if let Some(pb_hits) = comparison_hits.get(n - 1) {
+            asr::timer::set_variable_int("pb hits", *pb_hits);
+        }
         HitCounter {
             count_dream_falling,
             hits: 0,
             segments_hits: Vec::new(),
             comparison_hits,
             i: 0,
-            n: None,
+            n,
             last_recoil: false,
             last_hazard: false,
             last_dead_or_0: false,
@@ -117,7 +117,7 @@ impl GameTime for HitCounter {
                 store_comparison_hits(&self.comparison_hits);
             }
             self.i = i;
-            self.n = Some(timer.n());
+            self.n = timer.n();
             self.segments_hits.resize(max(self.segments_hits.len(), i + 1), 0);
             asr::timer::set_variable_int("segment hits", self.segments_hits[i]);
             if let Some(cmp) = self.comparison_hits.get(self.i) {
