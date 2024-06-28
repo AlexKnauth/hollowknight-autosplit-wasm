@@ -41,7 +41,7 @@ struct AutoSplitterState {
 
 impl AutoSplitterState {
     fn new(timing_method: TimingMethod, hits_method: HitsMethod, splits: Vec<Split>) -> AutoSplitterState {
-        let load_remover = timing_method_game_time(timing_method, hits_method);
+        let load_remover = timing_method_game_time(splits.len(), timing_method, hits_method);
         let timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
         AutoSplitterState { timing_method, hits_method, splits, load_remover, timer }
     }
@@ -131,7 +131,7 @@ fn check_state_change(gui: &mut SettingsGui, state: &mut AutoSplitterState) {
         match (gui.check_timing_method(&mut state.timing_method), gui.check_hit_counter(&mut state.hits_method)) {
             (None, None) => (),
             _ => {
-                state.load_remover = timing_method_game_time(state.timing_method, state.hits_method);
+                state.load_remover = timing_method_game_time(state.timer.n(), state.timing_method, state.hits_method);
             }
         }
     }
@@ -194,16 +194,16 @@ async fn tick_action(
     }
 }
 
-fn timing_method_game_time(timing_method: TimingMethod, hits_method: HitsMethod) -> GameTimePlusVars {
+fn timing_method_game_time(n: usize, timing_method: TimingMethod, hits_method: HitsMethod) -> GameTimePlusVars {
     match timing_method {
         TimingMethod::LoadRemovedTime => {
             match hits_method {
                 HitsMethod::None => GameTimePlusVars::new(Box::new(LoadRemover::new())),
-                HitsMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(true))),
-                HitsMethod::HitsDamage => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(false))),
+                HitsMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(n, true))),
+                HitsMethod::HitsDamage => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(n, false))),
             }
         }
-        TimingMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(HitCounter::new(true))),
-        TimingMethod::HitsDamage => GameTimePlusVars::new(Box::new(HitCounter::new(false))),
+        TimingMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(HitCounter::new(n, true))),
+        TimingMethod::HitsDamage => GameTimePlusVars::new(Box::new(HitCounter::new(n, false))),
     }
 }

@@ -95,6 +95,14 @@
                         "timing_method": null
                     },
                     {
+                        "name": "hits",
+                        "variable_name": "hits"
+                    },
+                    {
+                        "name": "delta hits",
+                        "variable_name": "delta hits"
+                    },
+                    {
                         "name": "segment hits",
                         "variable_name": "segment hits"
                     }
@@ -125,6 +133,35 @@
                 "text": {
                     "Variable": [
                         "hits",
+                        true
+                    ]
+                }
+            }
+        },
+        {
+            "Text": {
+                "background": {
+                    "Vertical": [
+                        [
+                            1.0,
+                            1.0,
+                            1.0,
+                            0.06
+                        ],
+                        [
+                            1.0,
+                            1.0,
+                            1.0,
+                            0.005
+                        ]
+                    ]
+                },
+                "display_two_rows": false,
+                "left_center_color": null,
+                "right_color": null,
+                "text": {
+                    "Variable": [
+                        "pb hits",
                         true
                     ]
                 }
