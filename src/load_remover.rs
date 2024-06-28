@@ -14,6 +14,7 @@ pub struct LoadRemover {
 }
 
 impl Resettable for LoadRemover {
+    fn ended(&mut self) {}
     fn reset(&mut self) {}
 }
 

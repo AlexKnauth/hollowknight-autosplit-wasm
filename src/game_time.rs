@@ -29,6 +29,12 @@ impl GameTimePlusVars {
 }
 
 impl Resettable for GameTimePlusVars {
+    fn ended(&mut self) {
+        self.main.ended();
+        for v in self.vars.iter_mut() {
+            v.ended();
+        }
+    }
     fn reset(&mut self) {
         self.main.reset();
         for v in self.vars.iter_mut() {

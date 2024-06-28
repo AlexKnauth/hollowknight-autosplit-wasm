@@ -52,6 +52,7 @@ pub fn should_split_skip(mb: Option<bool>) -> SplitterAction {
 }
 
 pub trait Resettable {
+    fn ended(&mut self);
     fn reset(&mut self);
 }
 
@@ -83,6 +84,7 @@ pub struct Timer {
 }
 
 impl Resettable for Timer {
+    fn ended(&mut self) {}
     fn reset(&mut self) {
         asr::timer::reset();
         self.state = TimerState::NotRunning;
@@ -111,6 +113,10 @@ impl Timer {
 
     pub fn i(&self) -> usize {
         self.i
+    }
+
+    pub fn n(&self) -> usize {
+        self.n
     }
 
     pub fn is_auto_reset_safe(&self) -> bool {
@@ -220,6 +226,7 @@ impl Timer {
         }
         if self.n <= self.i {
             self.state = TimerState::Ended;
+            r.ended();
             if self.is_auto_reset_safe() {
                 // do NOT actually reset
                 // 0: either NotRunning, or Ended with auto-reset safe

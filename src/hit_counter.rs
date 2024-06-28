@@ -19,9 +19,25 @@ const PLUS: &str = "+";
 pub struct HitCounter {
     count_dream_falling: bool,
     hits: i64,
+    /// Vector up to length n. Entries:
+    /// 0: 0
+    /// [1,n): number of hits in the i_th segment of the active attempt, where
+    /// n-1: number of hits on the last segment
     segments_hits: Vec<i64>,
+    /// Vector up to length n. Entries:
+    /// 0: 0
+    /// [1,n): cumulative number of hits up through the end of segment i, where
+    /// n-1: pb hits
     comparison_hits: Vec<i64>,
+    /// Index into the list of autosplits including start and end.
+    /// Not a segment index, since start is not a segment.
+    /// 0: either NotRunning, or Ended with auto-reset safe
+    /// [1,n): Running
+    /// n: Ended without knowing auto-reset safe
     i: usize,
+    /// Number of autosplits including both start and end.
+    /// One more than the number of segments.
+    n: Option<usize>,
     last_recoil: bool,
     last_hazard: bool,
     last_dead_or_0: bool,
@@ -29,6 +45,16 @@ pub struct HitCounter {
 }
 
 impl Resettable for HitCounter {
+    fn ended(&mut self) {
+        let Some(n) = self.n else {
+            return;
+        };
+        self.comparison_hits.resize(max(self.comparison_hits.len(), n), self.hits);
+        if 1 <= n {
+            self.comparison_hits[n - 1] = min(self.comparison_hits[n - 1], self.hits);
+            asr::timer::set_variable_int("pb hits", self.comparison_hits[n - 1]);
+        }
+    }
     fn reset(&mut self) {
         self.hits = 0;
         self.segments_hits = Vec::new();
@@ -51,6 +77,7 @@ impl HitCounter {
             segments_hits: Vec::new(),
             comparison_hits,
             i: 0,
+            n: None,
             last_recoil: false,
             last_hazard: false,
             last_dead_or_0: false,
@@ -90,6 +117,7 @@ impl GameTime for HitCounter {
                 store_comparison_hits(&self.comparison_hits);
             }
             self.i = i;
+            self.n = Some(timer.n());
             self.segments_hits.resize(max(self.segments_hits.len(), i + 1), 0);
             asr::timer::set_variable_int("segment hits", self.segments_hits[i]);
             if let Some(cmp) = self.comparison_hits.get(self.i) {
