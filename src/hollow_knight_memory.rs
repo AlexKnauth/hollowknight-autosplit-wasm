@@ -3026,6 +3026,9 @@ impl PlayerDataStore {
         match self.kills_on_entry(prc, gmf, key, pointer) {
             None => None,
             Some(kills_on_entry) => {
+                if !gmf.is_game_state_non_menu(prc) {
+                    return None;
+                }
                 let kills_now: i32 = pointer.deref(prc, &gmf.module, &gmf.image).ok()?;
                 if kills_now + d <= kills_on_entry {
                     Some(true)
