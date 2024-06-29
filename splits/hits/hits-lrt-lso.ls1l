@@ -95,10 +95,6 @@
                         "timing_method": null
                     },
                     {
-                        "name": "hits",
-                        "variable_name": "hits"
-                    },
-                    {
                         "name": "delta hits",
                         "variable_name": "delta hits"
                     },
