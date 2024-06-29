@@ -30,13 +30,13 @@ jobs:
             features: '"unstable"'
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: hecrj/setup-rust-action@v1
+        uses: hecrj/setup-rust-action@v2
         with:
           rust-version: stable
-          targets: wasm32-wasi
+          targets: wasm32-wasip1
 
       - name: Build
         run: |
@@ -44,11 +44,11 @@ jobs:
 
       - name: Prepare Release
         run: |
-          cp target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
+          cp target/wasm32-wasip1/release/hollowknight_autosplit_wasm.wasm hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           files: hollowknight_autosplit_wasm*.wasm
@@ -58,13 +58,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: hecrj/setup-rust-action@v1
+        uses: hecrj/setup-rust-action@v2
         with:
           components: clippy
-          targets: wasm32-wasi
+          targets: wasm32-wasip1
 
       - name: Run Clippy
         run: cargo clippy --all-features
@@ -74,10 +74,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: hecrj/setup-rust-action@v1
+        uses: hecrj/setup-rust-action@v2
         with:
           components: rustfmt
 

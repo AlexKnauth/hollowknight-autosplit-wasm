@@ -1,5 +1,5 @@
 [build]
-target = "wasm32-wasi"
+target = "wasm32-wasip1"
 rustflags = [
     # The auto splitting runtime supports all the following WASM features.
     "-C", "target-feature=+bulk-memory,+mutable-globals,+nontrapping-fptoint,+sign-ext,+simd128",

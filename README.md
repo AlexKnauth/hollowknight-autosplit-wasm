@@ -6,7 +6,7 @@ An auto splitter for Hollow Knight that supports Windows, Mac, and Linux.
 
 Download the `hollowknight_autosplit_wasm_stable.wasm` file from the [Latest Release](https://github.com/AlexKnauth/hollowknight-autosplit-wasm/releases/latest).
 
-Or follow the steps in [Compilation](#compilation) and use `target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm`.
+Or follow the steps in [Compilation](#compilation) and use `target/wasm32-wasip1/release/hollowknight_autosplit_wasm.wasm`.
 
 To configure LiveSplit or a LiveSplit One prototype to use this, see:
  - [Instructions for LiveSplit Windows](#instructions-for-livesplit-windows)
@@ -21,7 +21,7 @@ install the Rust compiler: [Install Rust](https://www.rust-lang.org/tools/instal
 
 Afterwards install the WebAssembly target:
 ```sh
-rustup target add wasm32-wasi --toolchain stable
+rustup target add wasm32-wasip1 --toolchain stable
 ```
 
 The auto splitter can now be compiled:
@@ -31,7 +31,7 @@ cargo release
 
 The auto splitter is then available at:
 ```
-target/wasm32-wasi/release/hollowknight_autosplit_wasm.wasm
+target/wasm32-wasip1/release/hollowknight_autosplit_wasm.wasm
 ```
 
 Make sure too look into the [API documentation](https://livesplit.org/asr/asr/) for the `asr` crate.
