@@ -1,0 +1,20 @@
+{
+    "gameName": "Hollow Knight Category Extensions",
+    "categoryName": "Mantis Lords",
+    "splitIds": [
+        "KingsPass",
+        "AspidHunter",
+        "VengefulSpirit",
+        "EnterGreenpath",
+        "MossKnight",
+        "MothwingCloak",
+        "FungalWastesEntry",
+        "MantisClaw",
+        "TransClaw",
+        "MantisLords"
+    ],
+    "endTriggeringAutosplit": true,
+    "names": {
+        "TransClaw": "Enter Mantis Lords"
+    }
+}
