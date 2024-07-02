@@ -151,7 +151,13 @@ modify it so it contains `<Setting id="timing_method" type="string" value="HitsD
 
 When you run LiveSplit One Druid,
 it needs to have permission to read memory of other processes.
-On Mac, that might require running it under `sudo`.
+- On Mac, that might require running it under `sudo`.
+- On Linux, give it permission with one of:
+  - setting `/proc/sys/kernel/yama/ptrace_scope` to 0, which can be done with
+    `echo "0"|sudo tee /proc/sys/kernel/yama/ptrace_scope`
+  - setting the capabilities to include `CAP_SYS_PTRACE`, which can be done with
+    `setcap CAP_SYS_PTRACE=+eip LiveSplitOne` or some variation of that
+  - running it under `sudo`
 
 Right-click or Control-click for the context menu:
 - Splits, Open... : Select your `.lss` splits file.
