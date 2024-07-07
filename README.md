@@ -127,6 +127,14 @@ Properties:
 - Custom auto splitter settings: Select `Import Splits`
 - Select a file: Select your splits file
 
+When you run OBS, it needs to have permission to read memory of other processes.
+- On Mac, I have not found a good way to do this. I do *not* recommend running OBS under `sudo`.
+- On Linux, give it permission with one of:
+  - setting `/proc/sys/kernel/yama/ptrace_scope` to 0, which can be done with
+    `echo "0"|sudo tee /proc/sys/kernel/yama/ptrace_scope`
+  - setting the capabilities to include `CAP_SYS_PTRACE`, which can be done with
+    `sudo setcap CAP_SYS_PTRACE=+eip /usr/bin/obs` or some variation of that
+
 ## Instructions for LiveSplit One Druid
 
 Note: The main `livesplit-one-druid` repository might not
@@ -156,7 +164,7 @@ it needs to have permission to read memory of other processes.
   - setting `/proc/sys/kernel/yama/ptrace_scope` to 0, which can be done with
     `echo "0"|sudo tee /proc/sys/kernel/yama/ptrace_scope`
   - setting the capabilities to include `CAP_SYS_PTRACE`, which can be done with
-    `setcap CAP_SYS_PTRACE=+eip LiveSplitOne` or some variation of that
+    `sudo setcap CAP_SYS_PTRACE=+eip LiveSplitOne` or some variation of that
   - running it under `sudo`
 
 Right-click or Control-click for the context menu:
