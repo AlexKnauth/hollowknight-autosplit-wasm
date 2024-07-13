@@ -1796,6 +1796,10 @@ pub enum Split {
     /// Splits upon entering the Radiance dream
     /// 
     /// Skips upon killing the Hollow Knight
+    // before LiveSplit.HollowKnight 2.9.0 this autosplit id was HollowKnight,
+    // but it was changed to HollowKnightDreamnail to distinguish it
+    // from the new autosplit HollowKnightBoss intended for segment practice
+    #[serde(alias = "HollowKnight")]
     HollowKnightDreamnail,
     /// Segment Practice - Radiance (Boss)
     /// 
