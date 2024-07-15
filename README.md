@@ -171,7 +171,7 @@ Right-click or Control-click for the context menu:
 - Splits, Open... : Select your `.lss` splits file.
 - Layout, Open... : For the Layout, I recommend you use `.ls1l` layout file for LiveSplit One Druid, not a `.lsl` layout file.
   You can make a `.ls1l` file in the LiveSplit One Web version at https://one.livesplit.org/,
-  or you can use the `layout-web.ls1l` file included in this repository as a starting point.
+  or you can use the `layout-lso.ls1l` file included in this repository as a starting point.
 - Open Auto-splitter... : Select the `hollowknight_autosplit_wasm_stable.wasm` file.
 - Compare Against: Game Time.
 - Settings: Configure the hotkeys you want.
