@@ -181,6 +181,36 @@
       </Settings>
     </Component>
     <Component>
+      <Path>LiveSplit.RunPrediction.dll</Path>
+      <Settings>
+        <Version>1.4</Version>
+        <TextColor>FFFFFFFF</TextColor>
+        <OverrideTextColor>False</OverrideTextColor>
+        <TimeColor>FFFFFFFF</TimeColor>
+        <OverrideTimeColor>False</OverrideTimeColor>
+        <Accuracy>Hundredths</Accuracy>
+        <BackgroundColor>00FFFFFF</BackgroundColor>
+        <BackgroundColor2>00FFFFFF</BackgroundColor2>
+        <BackgroundGradient>Plain</BackgroundGradient>
+        <Comparison>Best Segments</Comparison>
+        <Display2Rows>False</Display2Rows>
+      </Settings>
+    </Component>
+    <Component>
+      <Path>LiveSplit.CurrentComparison.dll</Path>
+      <Settings>
+        <Version>1.4</Version>
+        <TextColor>FFFFFFFF</TextColor>
+        <OverrideTextColor>False</OverrideTextColor>
+        <TimeColor>FFFFFFFF</TimeColor>
+        <OverrideTimeColor>False</OverrideTimeColor>
+        <BackgroundColor>FF1C1C1C</BackgroundColor>
+        <BackgroundColor2>FF0D0D0D</BackgroundColor2>
+        <BackgroundGradient>Vertical</BackgroundGradient>
+        <Display2Rows>False</Display2Rows>
+      </Settings>
+    </Component>
+    <Component>
       <Path>LiveSplit.AutoSplittingRuntime.dll</Path>
       <Settings>
         <Version>1.0</Version>
