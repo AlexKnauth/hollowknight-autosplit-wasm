@@ -23,7 +23,7 @@ use hollow_knight_memory::*;
 use splits::Split;
 use timer::{Resettable, SplitterAction, Timer};
 use load_remover::LoadRemover;
-use hit_counter::HitCounter;
+use hit_counter::{HitCounter, DASH};
 use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
@@ -55,6 +55,14 @@ async fn main() {
     // TODO: Set up some general state and settings.
 
     asr::print_message("Hello, World!");
+
+    // register the variables on start
+    asr::timer::set_variable_int("hits", 0);
+    asr::timer::set_variable_int("segment hits", 0);
+    asr::timer::set_variable("pb hits", DASH);
+    asr::timer::set_variable("comparison hits", DASH);
+    asr::timer::set_variable("delta hits", DASH);
+    asr::timer::set_variable("item", "");
 
     let mut gui = Box::new(SettingsGui::wait_load_merge_register().await);
 
