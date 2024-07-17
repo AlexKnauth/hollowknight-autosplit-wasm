@@ -10,7 +10,7 @@ use crate::hollow_knight_memory::*;
 use crate::timer::{Resettable, Timer};
 
 /// The dash symbol to use for generic dashes in text.
-const DASH: &str = "—";
+pub const DASH: &str = "—";
 /// The minus symbol to use for negative numbers.
 const MINUS: &str = "−";
 /// The plus symbol to use for positive numbers.
