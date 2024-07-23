@@ -1649,6 +1649,21 @@ pub enum Split {
     // region: Maps and Cornifer
 
     // region: Dirtmouth
+    /// King's Pass Focus Passed
+    /// 
+    /// Splits after passing the Focus tablet in King's Pass
+    /// at the respawn point for the left spikes
+    KingsPassFocusPassed,
+    /// King's Pass Rockfall
+    /// 
+    /// Splits after landing from the rockfall in King's Pass
+    /// at the checkpoint before the spikes
+    KingsPassRockfall,
+    /// King's Pass Spikes
+    /// 
+    /// Splits after crossing the middle spikes in King's Pass
+    /// at the checkpoint above the spikes
+    KingsPassSpikes,
     /// King's Pass (Transition)
     /// 
     /// Splits when entering Dirtmouth from King's Pass
@@ -3909,6 +3924,27 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         // endregion: Maps and Cornifer
 
         // region: Dirtmouth
+        Split::KingsPassFocusPassed => {
+            should_split(g.get_scene_name(p).is_some_and(|s| s.starts_with("Tutorial_01"))
+                         && g.camera_target_destination(p).is_some_and(|v| {
+                            56.0f32 <= v.x && v.x <= 102.9f32
+                            && 24.0f32 <= v.y
+                         }))
+        }
+        Split::KingsPassRockfall => {
+            should_split(g.get_scene_name(p).is_some_and(|s| s.starts_with("Tutorial_01"))
+                         && g.camera_target_destination(p).is_some_and(|v| {
+                            131.7f32 <= v.x
+                            && 37.0f32 <= v.y
+                         }))
+        }
+        Split::KingsPassSpikes => {
+            should_split(g.get_scene_name(p).is_some_and(|s| s.starts_with("Tutorial_01"))
+                         && g.camera_target_destination(p).is_some_and(|v| {
+                            129.8f32 <= v.x && v.x <= 155.2f32
+                            && 55.0f32 <= v.y
+                         }))
+        }
         Split::Dirtmouth => should_split(g.visited_dirtmouth(p).is_some_and(|v| v)),
         Split::PreGrimmShop => should_split(g.has_lantern(p).is_some_and(|l| l)
                                             && (g.sly_shell_frag1(p).is_some_and(|s| s)
