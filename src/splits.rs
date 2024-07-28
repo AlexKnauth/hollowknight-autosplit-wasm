@@ -2080,6 +2080,10 @@ pub enum Split {
     /// 
     /// Splits when sitting on the bench in King's Station
     BenchKingsStation,
+    /// Great Husk Sentry (Killed)
+    /// 
+    /// Splits when killing a Great Husk Sentry
+    GreatHuskSentry,
     /// Watcher's Spire (Bench)
     /// 
     /// Splits when sitting on the bench in Watcher's Spire
@@ -2088,6 +2092,10 @@ pub enum Split {
     /// 
     /// Splits when sitting on the bench in Watcher's Spire after killing a Great Husk Sentry
     BenchSpireGHS,
+    /// Spire Bench Exit (Transition)
+    /// 
+    /// Splits on the transition out of the bench room in Watcher's Spire
+    SpireBenchExit,
     EnterBlackKnight,
     /// Chandelier - Watcher Knights (Event)
     /// 
@@ -3303,6 +3311,8 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::EnterSoulMaster => should_split(p.current.starts_with("Ruins1_24") && p.current != p.old),
         Split::TransShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current != p.old),
         Split::MenuShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current == MENU_TITLE),
+        // since Ruins1_18 has both bench and bridge, don't include Ruins1_18 bridge to Ruins2_03b
+        Split::SpireBenchExit => should_split(p.old.starts_with("Ruins1_18") && p.current.starts_with("Ruins2_01")),
         Split::EnterBlackKnight => should_split(p.current == "Ruins2_03" && p.current != p.old),
         Split::BlackKnightTrans => should_split(pds.killed_black_knight(prc, g) && p.current != p.old),
         Split::EnterLoveTower => should_split(p.current.starts_with("Ruins2_11") && p.current != p.old),
@@ -4010,6 +4020,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
                                                                 && g.scenes_grub_rescued(p).is_some_and(|s| s.contains(&"Ruins1_32".to_string()))),
         Split::BenchStorerooms => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_29")),
         Split::BenchKingsStation => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Ruins2_08")),
+        Split::GreatHuskSentry => should_split(g.killed_great_shield_zombie(p).is_some_and(|k| k)),
         Split::BenchSpire => should_split(g.at_bench(p).is_some_and(|b| b) && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_18")),
         Split::BenchSpireGHS => should_split(g.at_bench(p).is_some_and(|b| b)
                                              && g.get_scene_name(p).is_some_and(|s| s == "Ruins1_18")
