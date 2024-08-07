@@ -10,9 +10,9 @@ Or follow the steps in [Compilation](#compilation) and use `target/wasm32-wasip1
 
 To configure LiveSplit or a LiveSplit One prototype to use this, see:
  - [Instructions for LiveSplit Windows](#instructions-for-livesplit-windows)
- - [Instructions for OBS LiveSplit One](#instructions-for-obs-livesplit-one) (OBS plugin)
- - [Instructions for LiveSplit One Druid](#instructions-for-livesplit-one-druid) (Recommended Desktop prototype)
- - [Instructions for livesplit-one-desktop](#instructions-for-livesplit-one-desktop) (Older Desktop prototype)
+ - [Instructions for OBS LiveSplit One](#instructions-for-obs-livesplit-one) (OBS plugin, Windows or Linux)
+ - [Instructions for LiveSplit One Druid](#instructions-for-livesplit-one-druid) (Recommended Desktop prototype, cross-platform)
+ - [Instructions for livesplit-one-desktop](#instructions-for-livesplit-one-desktop) (Older Desktop prototype, cross-platform)
 
 ## Compilation
 
@@ -59,6 +59,8 @@ currently does not work all the time.
 
 ## Instructions for LiveSplit Windows
 
+The original LiveSplit is Windows-only. If you're on Mac or Linux, see other options below.
+
 LiveSplit connects to this autosplitter and its settings
 via a LiveSplit Layout (`.lsl`) file.
 Make sure to use a different copy of your Layout for every
@@ -102,6 +104,9 @@ The autosplitter will not know that you did that, and the autosplitter's state w
 
 ## Instructions for OBS LiveSplit One
 
+OBS LiveSplit One works best on Windows or Linux.
+If you're on Mac, I'd remmond [LiveSplit One Druid](#instructions-for-livesplit-one-druid) below.
+
 Make sure to use `obs-livesplit-one` release v0.3.5 or later.
 
 Go to the [obs-livesplit-one releases](https://github.com/LiveSplit/obs-livesplit-one/releases) page,
@@ -134,6 +139,7 @@ When you run OBS, it needs to have permission to read memory of other processes.
     `echo "0"|sudo tee /proc/sys/kernel/yama/ptrace_scope`
   - setting the capabilities to include `CAP_SYS_PTRACE`, which can be done with
     `sudo setcap CAP_SYS_PTRACE=+eip /usr/bin/obs` or some variation of that
+- On Windows, it should just work. Windows allows memory reading by default.
 
 ## Instructions for LiveSplit One Druid
 
@@ -166,6 +172,7 @@ it needs to have permission to read memory of other processes.
   - setting the capabilities to include `CAP_SYS_PTRACE`, which can be done with
     `sudo setcap CAP_SYS_PTRACE=+eip LiveSplitOne` or some variation of that
   - running it under `sudo`
+- On Windows, it should just work. Windows allows memory reading by default.
 
 Right-click or Control-click for the context menu:
 - Splits, Open... : Select your `.lss` splits file.
