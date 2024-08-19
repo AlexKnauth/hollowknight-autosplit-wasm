@@ -1,1 +1,8 @@
+# Rust-generated files
 target
+
+# Editor-generated files
+.vscode/settings.json
+
+# OS-generated files
+.DS_Store
