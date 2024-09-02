@@ -201,11 +201,13 @@ struct GameManagerPointers {
     camera_target_destination: UnityPointer<4>,
     accepting_input: UnityPointer<3>,
     tile_map_dirty: UnityPointer<2>,
+    on_ground: UnityPointer<4>,
     hero_dead: UnityPointer<4>,
     hazard_death: UnityPointer<4>,
     hazard_respawning: UnityPointer<4>,
     hero_recoiling: UnityPointer<4>,
     hero_recoil_frozen: UnityPointer<4>,
+    spell_quake: UnityPointer<4>,
     hero_transition_state: UnityPointer<3>,
     focusing: UnityPointer<4>,
 }
@@ -224,11 +226,13 @@ impl GameManagerPointers {
             camera_target_destination: UnityPointer::new("GameManager", 0, &["_instance", "<cameraCtrl>k__BackingField", "camTarget", "destination"]),
             accepting_input: UnityPointer::new("GameManager", 0, &["_instance", "<inputHandler>k__BackingField", "acceptingInput"]),
             tile_map_dirty: UnityPointer::new("GameManager", 0, &["_instance", "tilemapDirty"]),
+            on_ground: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "onGround"]),
             hero_dead: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "dead"]),
             hazard_death: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardDeath"]),
             hazard_respawning: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "hazardRespawning"]),
             hero_recoiling: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "recoiling"]),
             hero_recoil_frozen: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "recoilFrozen"]),
+            spell_quake: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "spellQuake"]),
             hero_transition_state: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "transitionState"]),
             focusing: UnityPointer::new("GameManager", 0, &["_instance", "<hero_ctrl>k__BackingField", "cState", "focusing"]),
         }
@@ -442,6 +446,8 @@ struct PlayerDataPointers {
     killed_false_knight: UnityPointer<3>,
     false_knight_dream_defeated: UnityPointer<3>,
     false_knight_orbs_collected: UnityPointer<3>,
+    kills_prayer_slug: UnityPointer<3>,
+    kills_roller: UnityPointer<3>,
     salubra_blessing: UnityPointer<3>,
     unchained_hollow_knight: UnityPointer<3>,
     killed_hollow_knight: UnityPointer<3>,
@@ -806,6 +812,8 @@ impl PlayerDataPointers {
             killed_false_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedFalseKnight"]),
             false_knight_dream_defeated: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "falseKnightDreamDefeated"]),
             false_knight_orbs_collected: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "falseKnightOrbsCollected"]),
+            kills_prayer_slug: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsPrayerSlug"]),
+            kills_roller: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killsRoller"]),
             salubra_blessing: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "salubraBlessing"]),
             unchained_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "unchainedHollowKnight"]),
             killed_hollow_knight: UnityPointer::new("GameManager", 0, &["_instance", "playerData", "killedHollowKnight"]),
@@ -1228,6 +1236,10 @@ impl GameManagerFinder {
         Some(*self.get_version_vec(process)?.get(VERSION_VEC_MINOR)? >= 3)
     }
 
+    pub fn on_ground(&self, process: &Process) -> Option<bool> {
+        self.pointers.on_ground.deref(process, &self.module, &self.image).ok()
+    }
+
     pub fn hero_dead(&self, process: &Process) -> Option<bool> {
         self.pointers.hero_dead.deref(process, &self.module, &self.image).ok()
     }
@@ -1254,6 +1266,10 @@ impl GameManagerFinder {
             return Some(true);
         }
         Some(maybe_recoil_frozen? || maybe_recoiling?)
+    }
+
+    pub fn spell_quake(&self, process: &Process) -> Option<bool> {
+        self.pointers.spell_quake.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn get_version_string(&self, process: &Process) -> Option<String> {
@@ -1969,6 +1985,16 @@ impl GameManagerFinder {
 
     pub fn false_knight_orbs_collected(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers.false_knight_orbs_collected.deref(process, &self.module, &self.image).ok()
+    }
+
+    /// killsPrayerSlug: Kills Maggot
+    pub fn kills_prayer_slug(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.kills_prayer_slug.deref(process, &self.module, &self.image).ok()
+    }
+    
+    /// killsRoller: Kills Little Baldur
+    pub fn kills_roller(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers.kills_roller.deref(process, &self.module, &self.image).ok()
     }
 
     pub fn salubra_blessing(&self, process: &Process) -> Option<bool> {

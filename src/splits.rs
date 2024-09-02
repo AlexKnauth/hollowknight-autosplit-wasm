@@ -1766,10 +1766,18 @@ pub enum Split {
     /// 
     /// Splits when getting Failed Champion essence
     FailedChampionEssence,
+    /// Maggots (Killed)
+    /// 
+    /// Splits when killing both Maggots
+    Maggots,
     /// Ancestral Mound (Transition)
     /// 
     /// Splits on transition into Ancestral Mound
     AncestralMound,
+    /// Little Baldur Hunter's Notes (Killed)
+    /// 
+    /// Splits when killing all little Baldurs needed for Hunter's Notes journal completion
+    RollerHuntersNotes,
     /// Salubra's Blessing (Item)
     /// 
     /// Splits when obtaining Salubra's Blessing
@@ -2341,6 +2349,10 @@ pub enum Split {
     /// 
     /// Splits on transition to the fourth room in PoP (Final room)
     PathOfPainTransition3,
+    /// Path of Pain Room 4 DDark (Event)
+    /// 
+    /// Splits on landing with Descending Dark in fourth room of PoP
+    PathOfPainRoom4DDark,
     /// Path of Pain (Completed)
     /// 
     /// Splits when completing the Path of Pain in White Palace
@@ -3946,6 +3958,8 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::FalseKnight => should_split(g.killed_false_knight(p).is_some_and(|k| k)),
         Split::FailedKnight => should_split(g.false_knight_dream_defeated(p).is_some_and(|k| k)),
         Split::FailedChampionEssence => should_split(g.false_knight_orbs_collected(p).is_some_and(|o| o)),
+        Split::Maggots => should_split(g.kills_prayer_slug(p).is_some_and(|k| k == 0)),
+        Split::RollerHuntersNotes => should_split(g.kills_roller(p).is_some_and(|k| k == 0)),
         Split::SalubrasBlessing => should_split(g.salubra_blessing(p).is_some_and(|b| b)),
         // the award for the most miscellaneous split goes to this one probably
         Split::PureSnail => should_split(pds.pure_snail(p, g)),
@@ -4074,6 +4088,9 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::WhitePalaceOrb1 => should_split(g.white_palace_orb_1(p).is_some_and(|o| o)),
         Split::WhitePalaceOrb3 => should_split(g.white_palace_orb_3(p).is_some_and(|o| o)),
         Split::WhitePalaceOrb2 => should_split(g.white_palace_orb_2(p).is_some_and(|o| o)),
+        Split::PathOfPainRoom4DDark => should_split(g.get_scene_name(p).is_some_and(|s| s.starts_with("White_Palace_20"))
+                                                    && g.on_ground(p).is_some_and(|b| b)
+                                                    && g.spell_quake(p).is_some_and(|b| b)),
         Split::PathOfPain => should_split(g.new_data_binding_seal(p).is_some_and(|n| n)),
         Split::WhitePalaceSecretRoom => should_split(g.white_palace_secret_room_visited(p).is_some_and(|v| v)),
         // endregion: White Palace
