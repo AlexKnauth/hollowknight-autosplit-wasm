@@ -218,28 +218,28 @@
         <CustomSettings>
           <Setting id="splits" type="list">
             <Setting type="string" value="LegacyStart" />
-            <Setting type="string" value="VengeflyKingP" />
-            <Setting type="string" value="GruzMotherP" />
-            <Setting type="string" value="FalseKnightP" />
-            <Setting type="string" value="MassiveMossChargerP" />
-            <Setting type="string" value="Hornet1P" />
-            <Setting type="string" value="GorbP" />
-            <Setting type="string" value="DungDefenderP" />
-            <Setting type="string" value="SoulWarriorP" />
-            <Setting type="string" value="BroodingMawlekP" />
-            <Setting type="string" value="OroMatoNailBrosP" />
+            <Setting type="string" value="EnragedGuardianP" />
+            <Setting type="string" value="LostKinP" />
+            <Setting type="string" value="NoEyesP" />
+            <Setting type="string" value="TraitorLordP" />
+            <Setting type="string" value="WhiteDefenderP" />
+            <Setting type="string" value="FailedChampionP" />
+            <Setting type="string" value="MarkothP" />
+            <Setting type="string" value="WatcherKnightsP" />
+            <Setting type="string" value="SoulTyrantP" />
+            <Setting type="string" value="PureVesselP" />
           </Setting>
           <Setting id="splits_0_item" type="string" value="LegacyStart" />
-          <Setting id="splits_1_item" type="string" value="VengeflyKingP" />
-          <Setting id="splits_2_item" type="string" value="GruzMotherP" />
-          <Setting id="splits_3_item" type="string" value="FalseKnightP" />
-          <Setting id="splits_4_item" type="string" value="MassiveMossChargerP" />
-          <Setting id="splits_5_item" type="string" value="Hornet1P" />
-          <Setting id="splits_6_item" type="string" value="GorbP" />
-          <Setting id="splits_7_item" type="string" value="DungDefenderP" />
-          <Setting id="splits_8_item" type="string" value="SoulWarriorP" />
-          <Setting id="splits_9_item" type="string" value="BroodingMawlekP" />
-          <Setting id="splits_10_item" type="string" value="OroMatoNailBrosP" />
+          <Setting id="splits_1_item" type="string" value="EnragedGuardianP" />
+          <Setting id="splits_2_item" type="string" value="LostKinP" />
+          <Setting id="splits_3_item" type="string" value="NoEyesP" />
+          <Setting id="splits_4_item" type="string" value="TraitorLordP" />
+          <Setting id="splits_5_item" type="string" value="WhiteDefenderP" />
+          <Setting id="splits_6_item" type="string" value="FailedChampionP" />
+          <Setting id="splits_7_item" type="string" value="MarkothP" />
+          <Setting id="splits_8_item" type="string" value="WatcherKnightsP" />
+          <Setting id="splits_9_item" type="string" value="SoulTyrantP" />
+          <Setting id="splits_10_item" type="string" value="PureVesselP" />
           <Setting id="splits_11_item" type="string" value="Grub5" />
           <Setting id="splits_12_item" type="string" value="MaskFragment3" />
           <Setting id="splits_13_item" type="string" value="Mask1" />
@@ -260,20 +260,7 @@
           <Setting id="splits_13_action" type="string" value="None" />
           <Setting id="timing_method" type="string" value="LoadRemovedTime" />
           <Setting id="hit_counter" type="string" value="HitsDreamFalls" />
-          <Setting id="import" type="string" value="/mnt/c/Users/Owner/Documents/git/LiveSplit/hollowknight-autosplit-wasm/splits/p1/pantheon_of_the_master-windows-ls.lss" />
-          <Setting id="comparison_hits" type="list">
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-            <Setting type="i64">0</Setting>
-          </Setting>
+          <Setting id="import" type="string" value="/mnt/c/Users/Owner/Documents/git/LiveSplit/hollowknight-autosplit-wasm/splits/p4/pantheon_of_the_knight-windows-ls.lss" />
         </CustomSettings>
       </Settings>
     </Component>
