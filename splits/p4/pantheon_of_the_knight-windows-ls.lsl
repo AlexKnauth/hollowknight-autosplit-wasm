@@ -261,6 +261,19 @@
           <Setting id="timing_method" type="string" value="LoadRemovedTime" />
           <Setting id="hit_counter" type="string" value="HitsDreamFalls" />
           <Setting id="import" type="string" value="/mnt/c/Users/Owner/Documents/git/LiveSplit/hollowknight-autosplit-wasm/splits/p4/pantheon_of_the_knight-windows-ls.lss" />
+          <Setting id="comparison_hits" type="list">
+            <Setting type="i64">0</Setting>
+            <Setting type="i64">0</Setting>
+            <Setting type="i64">1</Setting>
+            <Setting type="i64">4</Setting>
+            <Setting type="i64">4</Setting>
+            <Setting type="i64">6</Setting>
+            <Setting type="i64">8</Setting>
+            <Setting type="i64">10</Setting>
+            <Setting type="i64">12</Setting>
+            <Setting type="i64">14</Setting>
+            <Setting type="i64">14</Setting>
+          </Setting>
         </CustomSettings>
       </Settings>
     </Component>
