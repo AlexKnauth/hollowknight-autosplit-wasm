@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Layout version="1.6.1">
   <Mode>Vertical</Mode>
-  <X>1632</X>
+  <X>1633</X>
   <Y>477</Y>
   <VerticalWidth>286</VerticalWidth>
   <VerticalHeight>561</VerticalHeight>
@@ -261,6 +261,19 @@
           <Setting id="timing_method" type="string" value="LoadRemovedTime" />
           <Setting id="hit_counter" type="string" value="HitsDreamFalls" />
           <Setting id="import" type="string" value="/mnt/c/Users/Owner/Documents/git/LiveSplit/hollowknight-autosplit-wasm/splits/p2/pantheon_of_the_artist-windows-ls.lss" />
+          <Setting id="comparison_hits" type="list">
+            <Setting type="i64">0</Setting>
+            <Setting type="i64">0</Setting>
+            <Setting type="i64">0</Setting>
+            <Setting type="i64">0</Setting>
+            <Setting type="i64">1</Setting>
+            <Setting type="i64">1</Setting>
+            <Setting type="i64">1</Setting>
+            <Setting type="i64">1</Setting>
+            <Setting type="i64">1</Setting>
+            <Setting type="i64">2</Setting>
+            <Setting type="i64">3</Setting>
+          </Setting>
         </CustomSettings>
       </Settings>
     </Component>
