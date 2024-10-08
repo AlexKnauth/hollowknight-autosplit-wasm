@@ -5,9 +5,13 @@
   <CategoryName>All Stag Stations</CategoryName>
   <Metadata>
     <Run id="" />
-    <Platform usesEmulator="False" />
+    <Platform usesEmulator="False">PC</Platform>
     <Region />
-    <SpeedrunComVariables />
+    <SpeedrunComVariables>
+      <Variable name="Patch">1.5.78</Variable>
+      <Variable name="All Stag Stations Glitch">1.4.3.2+ NMG</Variable>
+      <Variable name="Load Remover">WASM</Variable>
+    </SpeedrunComVariables>
     <CustomVariables />
   </Metadata>
   <LayoutPath />
