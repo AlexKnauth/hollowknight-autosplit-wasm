@@ -1,0 +1,20 @@
+{
+    "categoryName": "Myla%",
+    "splitIds": [
+        "AspidHunter",
+        "VengefulSpirit",
+        "EnterGreenpath",
+        "MossKnight",
+        "MothwingCloak",
+        "MantisClaw",
+        "CrossroadsStation",
+        "BlueLake",
+        "TransGorgeousHusk",
+        "Lemm2",
+        "LumaflyLantern",
+        "CrystalHeart",
+        "HuskMiner"
+    ],
+    "endTriggeringAutosplit": true,
+    "gameName": "Hollow Knight Category Extensions"
+}
