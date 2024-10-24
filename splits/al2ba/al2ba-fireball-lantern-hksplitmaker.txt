@@ -1,0 +1,31 @@
+{
+    "categoryName": "Al2ba%",
+    "splitIds": [
+        "AspidHunter",
+        "VengefulSpirit",
+        "EnterGreenpath",
+        "MossKnight",
+        "MothwingCloak",
+        "Aluba",
+        "MantisClaw",
+        "QueensStationStation",
+        "BlueLake",
+        "TransGorgeousHusk",
+        "Lemm2",
+        "LumaflyLantern",
+        "SporeShroom",
+        "DeepnestSpa",
+        "QueensGardensEntry",
+        "QueensGardensPostArenaTransition",
+        "ManualSplit"
+    ],
+    "names": {
+        "Aluba": "A1uba",
+        "ManualSplit": "Al2ba (Manual Split)"
+    },
+    "icons": {
+        "ManualSplit": "Aluba"
+    },
+    "endTriggeringAutosplit": true,
+    "gameName": "Hollow Knight Category Extensions"
+}
