@@ -26,17 +26,22 @@ pub enum Split {
     /// 
     /// Splits when entering a new or existing save file
     StartAnyGame,
-    /// Rando Wake (Event)
+    /// Rando Wake (Start)
     /// 
     /// Splits when gaining control after waking up in Rando
     RandoWake,
+    /// Start Pantheon (Start)
+    /// 
+    /// Splits when starting a Pantheon run
+    StartPantheon,
     /// [DEPRECATED] Start Run (Start)
     /// 
     /// Splits when autosplitter version 3 would have automatically started runs
     LegacyStart,
-    /// Credits Roll (Event)
+    /// Credits Roll (Ending)
     /// 
     /// Splits on any credits rolling
+    #[serde(alias = "LegacyEnd")]
     EndingSplit,
     /// The Hollow Knight (Ending)
     /// 
@@ -82,6 +87,11 @@ pub enum Split {
     /// 
     /// Splits when the knight enters a transition (excludes save states and Sly's basement)
     TransitionAfterSaveState,
+    /// Transition excluding discontinuities (Transition)
+    /// 
+    /// Splits when the knight enters a transition
+    /// (excludes discontinuities including save states, deaths, and dreamgates)
+    TransitionExcludingDiscontinuities,
     // endregion: Start, End, and Menu
 
     // region: Dreamers
@@ -944,7 +954,7 @@ pub enum Split {
     /// 
     /// Splits when obtaining a Hallownest Seal
     OnObtainHallownestSeal,
-    /// Soul Sanctum Hallownest Seal (Relic)
+    /// Soul Sanctum Hallownest Seal (Item)
     /// 
     /// Splits when the Hallownest Seal in Soul Sanctum is collected
     SoulSanctumSeal,
@@ -2030,6 +2040,10 @@ pub enum Split {
     /// 
     /// Splits on having sold at least 6100 geo worth of relics to Lemm
     AllCharmNotchesLemm2CP,
+    /// City Toll Bench Room (Transition)
+    /// 
+    /// Splits when entering the city toll bench room
+    EnterCityTollBenchRoom,
     /// Sanctum Bench (Toll)
     /// 
     /// Splits when buying City/Sanctum toll bench by Cornifer's location
@@ -3204,7 +3218,7 @@ pub enum Split {
     /// 
     /// Splits after killing Nightmare King Grimm in Pantheon 5
     NightmareKingGrimmP,
-    /// Absolute Radiance (Pantheon)
+    /// Absolute Radiance (Ending)
     /// 
     /// Splits after killing Absolute Radiance in Pantheon 5
     RadianceP,
@@ -3242,8 +3256,17 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
                                                             || p.current.is_empty()
                                                             || is_menu(p.old)
                                                             || is_debug_save_state_scene(p.old)
-                                                            || is_debug_save_state_scene(p.current)
-                                                            || g.get_entry_gate_name(prc).is_some_and(|e| e == "dreamGate"))),
+                                                            || is_debug_save_state_scene(p.current))),
+        Split::TransitionExcludingDiscontinuities => {
+            should_split(p.current != p.old
+                         && !(p.old.is_empty()
+                              || p.current.is_empty()
+                              || is_menu(p.old)
+                              || is_menu(p.current)
+                              || is_debug_save_state_scene(p.old)
+                              || is_debug_save_state_scene(p.current)
+                              || g.get_entry_gate_name(prc).is_some_and(|e| e == "dreamGate" || e == "door_dreamReturn")))
+        }
         // endregion: Start, End, and Menu
 
         // region: Dreamers
@@ -3318,6 +3341,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         Split::TransGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && p.current != p.old),
         Split::MenuGorgeousHusk => should_split(pds.killed_gorgeous_husk(prc, g) && p.current == MENU_TITLE),
         Split::EnterRafters => should_split(p.current == "Ruins1_03" && p.current != p.old),
+        Split::EnterCityTollBenchRoom => should_split(p.current.starts_with("Ruins1_31") && !p.old.starts_with("Ruins1_31")),
         Split::EnterSanctum => should_split(p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSanctumWithShadeSoul => should_split(2 <= pds.get_fireball_level(prc, g) && p.current.starts_with("Ruins1_23") && !p.old.starts_with("Ruins1_23")),
         Split::EnterSoulMaster => should_split(p.current.starts_with("Ruins1_24") && p.current != p.old),
@@ -3405,6 +3429,8 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Deepnest
         // region: Godhome
         Split::EnterGodhome => should_split(p.current.starts_with("GG_Atrium") && p.current != p.old),
+        Split::StartPantheon => should_split((p.current.starts_with("GG_Boss_Door_Entrance") && p.current != p.old)
+                                             || (p.current.starts_with("GG_Vengefly_V") && p.old.starts_with("GG_Atrium_Roof"))),
         Split::Pantheon1to4Entry => should_split(p.current.starts_with("GG_Boss_Door_Entrance") && p.current != p.old),
         Split::VengeflyKingP => should_split(p.old.starts_with("GG_Vengefly") && p.current.starts_with("GG_Gruz_Mother")),
         Split::GruzMotherP => should_split(p.old.starts_with("GG_Gruz_Mother") && p.current.starts_with("GG_False_Knight")),
