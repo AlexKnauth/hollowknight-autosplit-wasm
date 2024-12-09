@@ -3265,6 +3265,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
                               || is_menu(p.current)
                               || is_debug_save_state_scene(p.old)
                               || is_debug_save_state_scene(p.current)
+                              || g.get_health(prc).is_some_and(|h| h == 0)
                               || g.get_entry_gate_name(prc).is_some_and(|e| e == "dreamGate" || e == "door_dreamReturn")))
         }
         // endregion: Start, End, and Menu
