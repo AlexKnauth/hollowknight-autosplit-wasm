@@ -827,6 +827,7 @@
         <Setting type="i64">7</Setting>
         <Setting type="i64">7</Setting>
         <Setting type="i64">7</Setting>
+        <Setting type="i64">7</Setting>
       </Setting>
     </CustomSettings>
   </AutoSplitterSettings>
