@@ -2736,7 +2736,7 @@
       <Setting id="splits_13_item" type="string" value="MaskFragment3" />
       <Setting id="splits_14_item" type="string" value="Mask1" />
       <Setting id="timing_method" type="string" value="LoadRemovedTime" />
-      <Setting id="hit_counter" type="string" value="None" />
+      <Setting id="hit_counter" type="string" value="HitsDreamFalls" />
       <Setting id="splits_insert_0" type="bool">False</Setting>
       <Setting id="splits_0_action" type="string" value="None" />
       <Setting id="splits_1_action" type="string" value="None" />
@@ -2753,6 +2753,23 @@
       <Setting id="splits_12_action" type="string" value="None" />
       <Setting id="splits_13_action" type="string" value="None" />
       <Setting id="splits_14_action" type="string" value="None" />
+      <Setting id="comparison_hits" type="list">
+        <Setting type="i64">0</Setting>
+        <Setting type="i64">0</Setting>
+        <Setting type="i64">0</Setting>
+        <Setting type="i64">0</Setting>
+        <Setting type="i64">1</Setting>
+        <Setting type="i64">2</Setting>
+        <Setting type="i64">4</Setting>
+        <Setting type="i64">4</Setting>
+        <Setting type="i64">4</Setting>
+        <Setting type="i64">4</Setting>
+        <Setting type="i64">5</Setting>
+        <Setting type="i64">7</Setting>
+        <Setting type="i64">7</Setting>
+        <Setting type="i64">7</Setting>
+        <Setting type="i64">7</Setting>
+      </Setting>
     </CustomSettings>
   </AutoSplitterSettings>
 </Run>
