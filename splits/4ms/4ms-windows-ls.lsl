@@ -193,6 +193,7 @@
             <Setting type="string" value="EnterBroodingMawlek" />
             <Setting type="string" value="MaskFragment1" />
             <Setting type="string" value="Grub2" />
+            <Setting type="string" value="AspidHunter" />
             <Setting type="string" value="MaskFragment2" />
             <Setting type="string" value="GruzMother" />
             <Setting type="string" value="SlyRescued" />
@@ -202,22 +203,23 @@
             <Setting type="string" value="MaskFragment3" />
             <Setting type="string" value="Mask1" />
           </Setting>
-          <Setting id="timing_method" type="string" value="LoadRemovedTime" />
-          <Setting id="hit_counter" type="string" value="None" />
           <Setting id="splits_0_item" type="string" value="StartNewGame" />
           <Setting id="splits_1_item" type="string" value="KingsPass" />
           <Setting id="splits_2_item" type="string" value="Grub1" />
           <Setting id="splits_3_item" type="string" value="EnterBroodingMawlek" />
           <Setting id="splits_4_item" type="string" value="MaskFragment1" />
           <Setting id="splits_5_item" type="string" value="Grub2" />
-          <Setting id="splits_6_item" type="string" value="MaskFragment2" />
-          <Setting id="splits_7_item" type="string" value="GruzMother" />
-          <Setting id="splits_8_item" type="string" value="SlyRescued" />
-          <Setting id="splits_9_item" type="string" value="Grub3" />
-          <Setting id="splits_10_item" type="string" value="Grub4" />
-          <Setting id="splits_11_item" type="string" value="Grub5" />
-          <Setting id="splits_12_item" type="string" value="MaskFragment3" />
-          <Setting id="splits_13_item" type="string" value="Mask1" />
+          <Setting id="splits_6_item" type="string" value="AspidHunter" />
+          <Setting id="splits_7_item" type="string" value="MaskFragment2" />
+          <Setting id="splits_8_item" type="string" value="GruzMother" />
+          <Setting id="splits_9_item" type="string" value="SlyRescued" />
+          <Setting id="splits_10_item" type="string" value="Grub3" />
+          <Setting id="splits_11_item" type="string" value="Grub4" />
+          <Setting id="splits_12_item" type="string" value="Grub5" />
+          <Setting id="splits_13_item" type="string" value="MaskFragment3" />
+          <Setting id="splits_14_item" type="string" value="Mask1" />
+          <Setting id="timing_method" type="string" value="LoadRemovedTime" />
+          <Setting id="hit_counter" type="string" value="None" />
           <Setting id="splits_insert_0" type="bool">False</Setting>
           <Setting id="splits_0_action" type="string" value="None" />
           <Setting id="splits_1_action" type="string" value="None" />
@@ -233,6 +235,7 @@
           <Setting id="splits_11_action" type="string" value="None" />
           <Setting id="splits_12_action" type="string" value="None" />
           <Setting id="splits_13_action" type="string" value="None" />
+          <Setting id="splits_14_action" type="string" value="None" />
         </CustomSettings>
       </Settings>
     </Component>
