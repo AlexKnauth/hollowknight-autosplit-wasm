@@ -15,8 +15,15 @@
   </Metadata>
   <LayoutPath />
   <Offset>00:00:00.000000000</Offset>
-  <AttemptCount>0</AttemptCount>
-  <AttemptHistory />
+  <AttemptCount>6</AttemptCount>
+  <AttemptHistory>
+    <Attempt id="1" started="12/31/2024 02:28:37" isStartedSynced="False" ended="12/31/2024 02:37:20" isEndedSynced="False" />
+    <Attempt id="2" started="12/31/2024 02:38:10" isStartedSynced="False" ended="12/31/2024 02:44:56" isEndedSynced="False" />
+    <Attempt id="3" started="12/31/2024 02:45:36" isStartedSynced="False" ended="12/31/2024 02:58:34" isEndedSynced="False" />
+    <Attempt id="4" started="12/31/2024 02:59:28" isStartedSynced="False" ended="12/31/2024 03:13:39" isEndedSynced="False" />
+    <Attempt id="5" started="12/31/2024 03:18:42" isStartedSynced="False" ended="12/31/2024 03:31:35" isEndedSynced="False" />
+    <Attempt id="6" started="12/31/2024 03:32:55" isStartedSynced="False" ended="12/31/2024 03:47:08" isEndedSynced="False" />
+  </AttemptHistory>
   <Segments>
     <Segment>
       <Name>Colo 3 Wave 1</Name>
@@ -26,8 +33,36 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:01:11.421273500</RealTime>
+        <GameTime>00:01:08.661542900</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:01:11.421273500</RealTime>
+          <GameTime>00:01:08.661542900</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:01:36.361477400</RealTime>
+          <GameTime>00:01:33.452316700</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:01:20.017046300</RealTime>
+          <GameTime>00:01:17.425993200</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:01:32.118252000</RealTime>
+          <GameTime>00:01:29.491077300</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:01:16.171368900</RealTime>
+          <GameTime>00:01:13.524326600</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:01:22.271154400</RealTime>
+          <GameTime>00:01:19.655482100</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 3</Name>
@@ -37,8 +72,36 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:37.927632200</RealTime>
+        <GameTime>00:00:37.927632200</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:00:44.139041200</RealTime>
+          <GameTime>00:00:44.139041200</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:00:46.020761200</RealTime>
+          <GameTime>00:00:46.020761200</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:01:06.357543100</RealTime>
+          <GameTime>00:01:06.357543100</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:43.682987000</RealTime>
+          <GameTime>00:00:43.682987000</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:37.927632200</RealTime>
+          <GameTime>00:00:37.927632200</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:46.167225300</RealTime>
+          <GameTime>00:00:46.167225300</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 4</Name>
@@ -48,8 +111,36 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:13.768986000</RealTime>
+        <GameTime>00:00:13.768986000</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:00:13.784071600</RealTime>
+          <GameTime>00:00:13.784071600</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:00:13.768986000</RealTime>
+          <GameTime>00:00:13.768986000</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:00:13.776053000</RealTime>
+          <GameTime>00:00:13.776053000</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:13.775633900</RealTime>
+          <GameTime>00:00:13.775633900</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:13.772170200</RealTime>
+          <GameTime>00:00:13.772170200</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:13.775746400</RealTime>
+          <GameTime>00:00:13.775746400</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 5</Name>
@@ -59,8 +150,36 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:18.106984100</RealTime>
+        <GameTime>00:00:18.106984100</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:00:25.712626200</RealTime>
+          <GameTime>00:00:25.712626200</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:00:18.106984100</RealTime>
+          <GameTime>00:00:18.106984100</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:00:24.860528900</RealTime>
+          <GameTime>00:00:24.860528900</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:19.392575100</RealTime>
+          <GameTime>00:00:19.392575100</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:32.190821100</RealTime>
+          <GameTime>00:00:32.190821100</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:35.578164900</RealTime>
+          <GameTime>00:00:35.578164900</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 6</Name>
@@ -70,8 +189,36 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:32.882087400</RealTime>
+        <GameTime>00:00:32.882087400</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:00:46.199202300</RealTime>
+          <GameTime>00:00:46.199202300</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:00:32.882087400</RealTime>
+          <GameTime>00:00:32.882087400</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:01:04.317391300</RealTime>
+          <GameTime>00:01:04.317391300</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:35.714693500</RealTime>
+          <GameTime>00:00:35.714693500</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:43.334047300</RealTime>
+          <GameTime>00:00:43.334047300</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:41.731720100</RealTime>
+          <GameTime>00:00:41.731720100</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 7</Name>
@@ -81,8 +228,36 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:11.489462300</RealTime>
+        <GameTime>00:00:11.489462300</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:00:11.489462300</RealTime>
+          <GameTime>00:00:11.489462300</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:00:20.996566000</RealTime>
+          <GameTime>00:00:20.996566000</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:00:25.250138200</RealTime>
+          <GameTime>00:00:25.250138200</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:25.618764400</RealTime>
+          <GameTime>00:00:25.618764400</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:21.412056200</RealTime>
+          <GameTime>00:00:21.412056200</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:29.114262300</RealTime>
+          <GameTime>00:00:29.114262300</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 8b</Name>
@@ -92,8 +267,36 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:01:27.971154100</RealTime>
+        <GameTime>00:01:27.971154100</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:01:27.971154100</RealTime>
+          <GameTime>00:01:27.971154100</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:01:58.525328200</RealTime>
+          <GameTime>00:01:58.525328200</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:01:44.233608200</RealTime>
+          <GameTime>00:01:44.233608200</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:02:06.889426400</RealTime>
+          <GameTime>00:02:06.889426400</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:01:39.010379800</RealTime>
+          <GameTime>00:01:39.010379800</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:01:38.852546700</RealTime>
+          <GameTime>00:01:38.852546700</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 9a</Name>
@@ -103,8 +306,32 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:01:22.240403500</RealTime>
+        <GameTime>00:01:22.240403500</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:02:10.185762500</RealTime>
+          <GameTime>00:02:10.185762500</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:01:45.963301000</RealTime>
+          <GameTime>00:01:45.963301000</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:01:55.954351200</RealTime>
+          <GameTime>00:01:55.954351200</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:01:49.532144400</RealTime>
+          <GameTime>00:01:49.532144400</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:01:22.240403500</RealTime>
+          <GameTime>00:01:22.240403500</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 9b</Name>
@@ -114,8 +341,32 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:31.182087300</RealTime>
+        <GameTime>00:00:31.182087300</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="1">
+          <RealTime>00:00:37.431009500</RealTime>
+          <GameTime>00:00:37.431009500</GameTime>
+        </Time>
+        <Time id="3">
+          <RealTime>00:00:31.182087300</RealTime>
+          <GameTime>00:00:31.182087300</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:39.598756600</RealTime>
+          <GameTime>00:00:39.598756600</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:01:03.521404300</RealTime>
+          <GameTime>00:01:03.521404300</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:40.728990600</RealTime>
+          <GameTime>00:00:40.728990600</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 10</Name>
@@ -125,8 +376,28 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:01:15.799350900</RealTime>
+        <GameTime>00:01:15.799350900</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="3">
+          <RealTime>00:01:15.799350900</RealTime>
+          <GameTime>00:01:15.799350900</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:02:13.658303100</RealTime>
+          <GameTime>00:02:13.658303100</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:01:31.697863500</RealTime>
+          <GameTime>00:01:31.697863500</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:02:12.555603000</RealTime>
+          <GameTime>00:02:12.555603000</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 11</Name>
@@ -136,8 +407,28 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:16.133998600</RealTime>
+        <GameTime>00:00:16.133998600</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="3">
+          <RealTime>00:00:23.327214100</RealTime>
+          <GameTime>00:00:23.327214100</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:17.623985800</RealTime>
+          <GameTime>00:00:17.623985800</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:16.133998600</RealTime>
+          <GameTime>00:00:16.133998600</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:43.962856100</RealTime>
+          <GameTime>00:00:43.962856100</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 12a</Name>
@@ -147,8 +438,28 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:39.181137200</RealTime>
+        <GameTime>00:00:39.181137200</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="3">
+          <RealTime>00:00:39.735601500</RealTime>
+          <GameTime>00:00:39.735601500</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:39.181137200</RealTime>
+          <GameTime>00:00:39.181137200</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:46.135683700</RealTime>
+          <GameTime>00:00:46.135683700</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:45.564319400</RealTime>
+          <GameTime>00:00:45.564319400</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 12b</Name>
@@ -158,8 +469,28 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:00:31.182250300</RealTime>
+        <GameTime>00:00:31.182250300</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="3">
+          <RealTime>00:00:31.182250300</RealTime>
+          <GameTime>00:00:31.182250300</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:00:40.439064100</RealTime>
+          <GameTime>00:00:40.439064100</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:00:35.988137600</RealTime>
+          <GameTime>00:00:35.988137600</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:00:45.083216300</RealTime>
+          <GameTime>00:00:45.083216300</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 14a</Name>
@@ -169,8 +500,24 @@
       <SplitTimes>
         <SplitTime name="Personal Best" />
       </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
+      <BestSegmentTime>
+        <RealTime>00:01:00.096665700</RealTime>
+        <GameTime>00:01:00.096665700</GameTime>
+      </BestSegmentTime>
+      <SegmentHistory>
+        <Time id="3">
+          <RealTime>00:01:00.096665700</RealTime>
+          <GameTime>00:01:00.096665700</GameTime>
+        </Time>
+        <Time id="4">
+          <RealTime>00:01:06.053665400</RealTime>
+          <GameTime>00:01:06.053665400</GameTime>
+        </Time>
+        <Time id="6">
+          <RealTime>00:01:06.094469200</RealTime>
+          <GameTime>00:01:06.094469200</GameTime>
+        </Time>
+      </SegmentHistory>
     </Segment>
     <Segment>
       <Name>Colo 3 Wave 14b</Name>
@@ -325,6 +672,23 @@
       <Setting id="splits_19_action" type="string" value="None" />
       <Setting id="splits_20_action" type="string" value="None" />
       <Setting id="splits_21_action" type="string" value="None" />
+      <Setting id="comparison_hits" type="list">
+        <Setting type="i64">0</Setting>
+        <Setting type="i64">1</Setting>
+        <Setting type="i64">2</Setting>
+        <Setting type="i64">2</Setting>
+        <Setting type="i64">4</Setting>
+        <Setting type="i64">4</Setting>
+        <Setting type="i64">5</Setting>
+        <Setting type="i64">11</Setting>
+        <Setting type="i64">15</Setting>
+        <Setting type="i64">16</Setting>
+        <Setting type="i64">18</Setting>
+        <Setting type="i64">18</Setting>
+        <Setting type="i64">18</Setting>
+        <Setting type="i64">18</Setting>
+        <Setting type="i64">21</Setting>
+      </Setting>
     </CustomSettings>
   </AutoSplitterSettings>
 </Run>
