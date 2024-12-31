@@ -301,7 +301,7 @@
       <Setting id="splits_20_item" type="string" value="Gold17c" />
       <Setting id="splits_21_item" type="string" value="GoldEnd" />
       <Setting id="timing_method" type="string" value="LoadRemovedTime" />
-      <Setting id="hit_counter" type="string" value="None" />
+      <Setting id="hit_counter" type="string" value="HitsDreamFalls" />
       <Setting id="splits_insert_0" type="bool">False</Setting>
       <Setting id="splits_0_action" type="string" value="None" />
       <Setting id="splits_1_action" type="string" value="None" />
