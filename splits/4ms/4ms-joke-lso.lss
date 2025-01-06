@@ -12,7 +12,7 @@
   </Metadata>
   <LayoutPath />
   <Offset>00:00:00.000000000</Offset>
-  <AttemptCount>4</AttemptCount>
+  <AttemptCount>5</AttemptCount>
   <AttemptHistory>
     <Attempt id="1" started="09/19/2024 02:38:53" isStartedSynced="False" ended="09/19/2024 02:51:25" isEndedSynced="False">
       <RealTime>00:12:32.164298000</RealTime>
@@ -30,6 +30,7 @@
       <RealTime>00:09:43.753235100</RealTime>
       <GameTime>00:08:44.642283200</GameTime>
     </Attempt>
+    <Attempt id="5" started="01/06/2025 00:25:08" isStartedSynced="False" ended="01/06/2025 00:29:39" isEndedSynced="False" />
   </AttemptHistory>
   <Segments>
     <Segment>
@@ -64,6 +65,10 @@
           <RealTime>00:01:00.869605200</RealTime>
           <GameTime>00:00:59.113418400</GameTime>
         </Time>
+        <Time id="5">
+          <RealTime>00:01:07.841314800</RealTime>
+          <GameTime>00:01:06.012624400</GameTime>
+        </Time>
       </SegmentHistory>
     </Segment>
     <Segment>
@@ -97,6 +102,10 @@
         <Time id="4">
           <RealTime>00:00:55.826099300</RealTime>
           <GameTime>00:00:48.577869000</GameTime>
+        </Time>
+        <Time id="5">
+          <RealTime>00:01:30.546634800</RealTime>
+          <GameTime>00:01:20.765769000</GameTime>
         </Time>
       </SegmentHistory>
     </Segment>
