@@ -49,6 +49,7 @@
         "MonarchWings",
         "ShadeCloak",
         "AbyssShriek",
+        "HiddenStationStation",
         "GreatSlash",
         "FogCanyonEntry",
         "UumuuEncountered",
