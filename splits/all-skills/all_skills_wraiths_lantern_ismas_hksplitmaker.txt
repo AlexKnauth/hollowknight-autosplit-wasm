@@ -74,7 +74,7 @@
         "LumaflyLantern": "[1D] Lantern",
         "CrystalHeart": "%s (Bottom lever)",
         "ShadeSoul": "[1U] %s (Spire bench)",
-        "GreatSlash": "[1U] %s",
+        "GreatSlash": "[2U] %s",
         "FogCanyonEntry": "[1U] %s",
         "EnterDirtmouth": "[2D] %s",
         "EndingSplit": "Hollow Knight"
