@@ -476,6 +476,10 @@ pub enum Split {
     /// 
     /// Splits when getting 4 extra Masks (9 base HP)
     Mask4,
+    /// Mask Upgrade 20 (Upgrade)
+    /// 
+    /// (Glitched Only) Splits when getting 5 extra Masks (10 base HP)
+    Mask5,
     /// Brooding Mawlek Mask Shard (Obtain)
     /// 
     /// Splits when getting the Mask Shard from Brooding Mawlek
@@ -1592,6 +1596,10 @@ pub enum Split {
     /// Splits when acquiring the Crossroads map
     #[serde(rename = "mapCrossroads", alias = "MapCrossroads")]
     MapCrossroads,
+    /// Has Map Crossroads (Transition)
+    /// 
+    /// Splits on transition after Crossroads Map acquired
+    TransMapCrossroads,
     /// Map Greenpath (Item)
     /// 
     /// Splits when acquiring the Greenpath map
@@ -3303,6 +3311,7 @@ pub fn transition_splits(s: &Split, p: &Pair<&str>, prc: &Process, g: &GameManag
         // endregion: Dirtmouth
         // region: Crossroads
         Split::EnterBroodingMawlek => should_split(p.current == "Crossroads_09" && p.current != p.old),
+        Split::TransMapCrossroads => should_split(g.map_crossroads(prc).is_some_and(|m| m) && p.current != p.old),
         Split::AncestralMound => should_split(p.current == "Crossroads_ShamanTemple" && p.current != p.old),
         Split::TransVS => should_split(1 <= pds.get_fireball_level(prc, g) && p.current != p.old),
         Split::SalubraExit => should_split(p.old == "Room_Charm_Shop" && p.current != p.old),
@@ -3629,6 +3638,7 @@ pub fn continuous_splits(s: &Split, p: &Process, g: &GameManagerFinder, pds: &mu
         Split::MaskFragment14 => should_split(g.heart_pieces(p).is_some_and(|s| s == 14 || (g.max_health_base(p).is_some_and(|h| h == 8) && s == 2))),
         Split::MaskFragment15 => should_split(g.heart_pieces(p).is_some_and(|s| s == 15 || (g.max_health_base(p).is_some_and(|h| h == 8) && s == 3))),
         Split::Mask4 => should_split(g.max_health_base(p).is_some_and(|h| h == 9)),
+        Split::Mask5 => should_split(g.max_health_base(p).is_some_and(|h| h == 10)),
         Split::MaskShardMawlek => should_split(pds.obtained_mask_shard(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_09")),
         Split::MaskShardGrubfather => should_split(pds.obtained_mask_shard(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Crossroads_38")),
         Split::MaskShardBretta => should_split(pds.obtained_mask_shard(p, g) && g.get_scene_name(p).is_some_and(|s| s == "Room_Bretta")),
