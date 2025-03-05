@@ -1,0 +1,56 @@
+{
+    "categoryName": "Duelist",
+    "splitIds": [
+        "AspidHunter",
+        "VengefulSpirit",
+        "EnterGreenpath",
+        "MossKnight",
+        "GreenpathStation",
+        "MothwingCloak",
+        "NotchShrumalOgres",
+        "MantisClaw",
+        "MantisLords",
+        "DeepnestSpa",
+        "TramPass",
+        "KingsStationStation",
+        "DreamNail",
+        "SlyRescued",
+        "NightmareLantern",
+        "Grimmchild",
+        "Flame1",
+        "Lemm2",
+        "Flame2",
+        "LumaflyLantern",
+        "CrystalHeart",
+        "Flame3",
+        "Grimmchild2",
+        "Flame1",
+        "Flame2",
+        "Flame3",
+        "Hornet2",
+        "TroupeMasterGrimm",
+        "DungDefender"
+    ],
+    "names": {
+        "NightmareLantern": "[1D] %s",
+        "Grimmchild": "[2U] %s",
+        "Flame1": [
+            "GPath Flame",
+            "King's Pass Flame"
+        ],
+        "Lemm2": "[1D] %s",
+        "Flame2": [
+            "Storerooms Flame",
+            "[1U] Resting Grounds Flame"
+        ],
+        "LumaflyLantern": "[2D] %s",
+        "CrystalHeart": "[1D] %s",
+        "Flame3": [
+            "CPeak Flame",
+            "[1U] Kingdom's Edge Flame"
+        ],
+        "TroupeMasterGrimm": "[2D] %s"
+    },
+    "endTriggeringAutosplit": true,
+    "gameName": "Hollow Knight Category Extensions"
+}
