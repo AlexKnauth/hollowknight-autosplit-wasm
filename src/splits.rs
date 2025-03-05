@@ -2204,6 +2204,7 @@ pub enum Split {
     /// Waterways (Transition)
     /// 
     /// Splits on transition to Waterways
+    /// (Simple Key manhole or Spike-tunnel)
     WaterwaysEntry,
     /// Royal Waterways (Area)
     /// 
