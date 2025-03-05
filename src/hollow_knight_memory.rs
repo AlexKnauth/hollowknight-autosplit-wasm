@@ -120,8 +120,8 @@ pub static CRYSTAL_PEAK_ENTRY_SCENES: &[&str] = &[
 
 pub static WATERWAYS_ENTRY_SCENES: &[&str] = &[
     "Waterways_01", // Simple Key manhole entrance
-    // Note: Waterways_06 does not show the Area Text
-    "Waterways_07", // Where the Spike-tunnel and KE-Tram-CDash entrances meet
+    "Waterways_06", // Left of Spike-tunnel, Note: Waterways_06 does not show the Area Text
+    "Waterways_07", // Right of Spike-tunnel, Where the Spike-tunnel and KE-Tram-CDash entrances meet
 ];
 
 pub static FOG_CANYON_ENTRY_SCENES: &[&str] = &[
