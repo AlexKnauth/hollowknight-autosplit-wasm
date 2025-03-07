@@ -2,7 +2,7 @@
 <Run version="1.7.0">
   <GameIcon></GameIcon>
   <GameName>Hollow Knight Category Extensions</GameName>
-  <CategoryName>Enter KP</CategoryName>
+  <CategoryName>Enter KP (Control)</CategoryName>
   <Metadata>
     <Run id="" />
     <Platform usesEmulator="False" />
