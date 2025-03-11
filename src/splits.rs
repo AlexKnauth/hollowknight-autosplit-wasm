@@ -3280,13 +3280,18 @@ pub fn transition_splits(
         Split::EndingE => should_split(p.current == "Cinematic_Ending_E"),
         Split::Menu => should_split(p.current == MENU_TITLE),
         Split::AnyTransition => should_split(
-            p.current != p.old && !(p.old.is_empty() || p.current.is_empty() || is_menu(p.old)),
+            p.current != p.old
+                && !(p.old.is_empty()
+                    || p.current.is_empty()
+                    || is_menu(p.old)
+                    || is_menu(p.current)),
         ),
         Split::TransitionAfterSaveState => should_split(
             p.current != p.old
                 && !(p.old.is_empty()
                     || p.current.is_empty()
                     || is_menu(p.old)
+                    || is_menu(p.current)
                     || is_debug_save_state_scene(p.old)
                     || is_debug_save_state_scene(p.current)),
         ),
