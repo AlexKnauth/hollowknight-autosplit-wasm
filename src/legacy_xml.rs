@@ -1,8 +1,10 @@
-
 use ugly_widget::radio_button::options_str;
 use xmltree::XMLNode;
 
-use crate::{settings_gui::{HitsMethod, TimingMethod}, splits::Split};
+use crate::{
+    settings_gui::{HitsMethod, TimingMethod},
+    splits::Split,
+};
 
 pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
     let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
@@ -37,13 +39,26 @@ struct XMLSettings {
 }
 
 impl Default for XMLSettings {
-    fn default() -> Self { XMLSettings { name: None, children: vec![], list_items: Vec::new() } }
+    fn default() -> Self {
+        XMLSettings {
+            name: None,
+            children: vec![],
+            list_items: Vec::new(),
+        }
+    }
 }
 
 impl XMLSettings {
     fn from_xml_nodes(children: Vec<XMLNode>, list_items: &[(&str, &str)]) -> Self {
-        let list_items = list_items.into_iter().map(|(l, i)| (l.to_string(), i.to_string())).collect();
-        XMLSettings { name: None, children, list_items }
+        let list_items = list_items
+            .into_iter()
+            .map(|(l, i)| (l.to_string(), i.to_string()))
+            .collect();
+        XMLSettings {
+            name: None,
+            children,
+            list_items,
+        }
     }
 
     fn is_list_get_item_name(&self) -> Option<&str> {
@@ -74,18 +89,19 @@ impl XMLSettings {
 
     fn as_list(&self) -> Option<Vec<Self>> {
         let i = self.is_list_get_item_name()?;
-        Some(self.children.iter().filter_map(|c| {
-            match c.as_element() {
-                Some(e) if e.name == i => {
-                    Some(XMLSettings {
+        Some(
+            self.children
+                .iter()
+                .filter_map(|c| match c.as_element() {
+                    Some(e) if e.name == i => Some(XMLSettings {
                         name: Some(e.name.clone()),
                         children: e.children.clone(),
                         list_items: self.list_items.clone(),
-                    })
-                },
-                _ => None,
-            }
-        }).collect())
+                    }),
+                    _ => None,
+                })
+                .collect(),
+        )
     }
 
     fn dict_get(&self, key: &str) -> Option<Self> {
@@ -97,7 +113,7 @@ impl XMLSettings {
                         children: e.children.clone(),
                         list_items: self.list_items.clone(),
                     });
-                },
+                }
                 _ => (),
             }
         }
@@ -112,7 +128,9 @@ fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
     let maybe_splits = s.dict_get("Splits");
     if maybe_ordered.is_some() || maybe_start.is_some() || maybe_end.is_some() {
         // Splits files from up through version 3 of ShootMe/LiveSplit.HollowKnight
-        let start = maybe_start.and_then(split_from_settings_str).unwrap_or(Split::LegacyStart);
+        let start = maybe_start
+            .and_then(split_from_settings_str)
+            .unwrap_or(Split::LegacyStart);
         let end = maybe_end.and_then(|s| s.as_bool()).unwrap_or_default();
         let mut result = vec![start];
         if let Some(splits) = maybe_splits {
@@ -131,7 +149,11 @@ fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
 }
 
 fn splits_from_settings_split_list(s: &XMLSettings) -> Vec<Split> {
-    s.as_list().unwrap_or_default().into_iter().filter_map(split_from_settings_split).collect()
+    s.as_list()
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(split_from_settings_split)
+        .collect()
 }
 
 fn split_from_settings_split(s: XMLSettings) -> Option<Split> {
