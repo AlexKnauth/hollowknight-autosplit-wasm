@@ -14,7 +14,14 @@ pub struct LoadRemover {
 
 impl Resettable for LoadRemover {
     fn ended(&mut self) {}
-    fn reset(&mut self) {}
+    fn reset(&mut self) {
+        self.look_for_teleporting = false;
+        self.last_game_state = GAME_STATE_INACTIVE;
+        #[cfg(debug_assertions)]
+        {
+            self.last_paused = false;
+        }
+    }
 }
 
 #[allow(unused)]
