@@ -1733,6 +1733,26 @@ pub enum Split {
     ///
     /// Splits when killing Nightmare King Grimm
     NightmareKingGrimm,
+    /// Bretta House (Transition)
+    ///
+    /// Splits on transition to Bretta's House
+    BrettaHouse,
+    /// Modded: Bretta House Bubbles (Transition)
+    ///
+    /// Splits on transition to the fourth room of Bretta's House C-Side ('Scattered and Lost' mod)
+    BrettaHouseBubbles,
+    /// Modded: Bretta House Bumpers (Transition)
+    ///
+    /// Splits on transition to the third room of Bretta's House C-Side ('Scattered and Lost' mod)
+    BrettaHouseBumpers,
+    /// Modded: Bretta House Switches (Transition)
+    ///
+    /// Splits on transition to the second room of Bretta's House C-Side ('Scattered and Lost' mod)
+    BrettaHouseSwitches,
+    /// Modded: Bretta House Zippers (Transition)
+    ///
+    /// Splits on transition to the first room of Bretta's House C-Side ('Scattered and Lost' mod)
+    BrettaHouseZippers,
     /// Grey Prince Zote (Boss)
     ///
     /// Splits when killing Grey Prince
@@ -3347,6 +3367,19 @@ pub fn transition_splits(
         Split::EnterNKG => should_split(
             p.old.starts_with("Grimm_Main_Tent") && p.current.starts_with("Grimm_Nightmare"),
         ),
+        Split::BrettaHouse => should_split(p.current == "Room_Bretta" && p.current != p.old),
+        Split::BrettaHouseBubbles => {
+            should_split(p.current == "BrettaHouseBubbles" && p.current != p.old)
+        }
+        Split::BrettaHouseBumpers => {
+            should_split(p.current == "BrettaHouseBumpers" && p.current != p.old)
+        }
+        Split::BrettaHouseSwitches => {
+            should_split(p.current == "BrettaHouseSwitches" && p.current != p.old)
+        }
+        Split::BrettaHouseZippers => {
+            should_split(p.current == "BrettaHouseZippers" && p.current != p.old)
+        }
         // endregion: Dirtmouth
         // region: Crossroads
         Split::EnterBroodingMawlek => {
