@@ -4984,9 +4984,15 @@ impl SceneStore {
             true
         } else if self.new_data_curr {
             self.new_data_curr = false;
-            if is_menu(&self.next_scene_name) && !is_menu(&self.prev_scene_name) && !is_menu(&self.curr_scene_name) {
+            if is_menu(&self.next_scene_name)
+                && !is_menu(&self.prev_scene_name)
+                && !is_menu(&self.curr_scene_name)
+            {
                 #[cfg(debug_assertions)]
-                asr::print_message(&format!("IGNORING spurious curr {} during next {}", self.curr_scene_name, self.next_scene_name));
+                asr::print_message(&format!(
+                    "IGNORING spurious curr {} during next {}",
+                    self.curr_scene_name, self.next_scene_name
+                ));
                 return false;
             }
             self.last_next = false;

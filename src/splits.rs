@@ -3279,11 +3279,9 @@ pub fn transition_splits(
         Split::EndingD => should_split(p.current == "Cinematic_Ending_D"),
         Split::EndingE => should_split(p.current == "Cinematic_Ending_E"),
         Split::Menu => should_split(p.current == MENU_TITLE),
-        Split::AnyTransition => should_split(
-            p.current != p.old
-                && !(is_menu(p.old)
-                    || is_menu(p.current)),
-        ),
+        Split::AnyTransition => {
+            should_split(p.current != p.old && !(is_menu(p.old) || is_menu(p.current)))
+        }
         Split::TransitionAfterSaveState => should_split(
             p.current != p.old
                 && !(is_menu(p.old)
