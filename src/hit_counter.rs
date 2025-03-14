@@ -1,9 +1,8 @@
-
 use std::cmp::{max, min};
 
-use asr::Process;
 use asr::time::Duration;
 use asr::timer::TimerState;
+use asr::Process;
 
 use crate::game_time::GameTime;
 use crate::hollow_knight_memory::*;
@@ -46,7 +45,8 @@ pub struct HitCounter {
 
 impl Resettable for HitCounter {
     fn ended(&mut self) {
-        self.comparison_hits.resize(max(self.comparison_hits.len(), self.n), self.hits);
+        self.comparison_hits
+            .resize(max(self.comparison_hits.len(), self.n), self.hits);
         if 1 <= self.n {
             self.comparison_hits[self.n - 1] = min(self.comparison_hits[self.n - 1], self.hits);
             asr::timer::set_variable_int("pb hits", self.comparison_hits[self.n - 1]);
@@ -88,7 +88,8 @@ impl HitCounter {
     fn add_hit(&mut self) {
         self.hits += 1;
         asr::timer::set_variable_int("hits", self.hits);
-        self.segments_hits.resize(max(self.segments_hits.len(), self.i + 1), 0);
+        self.segments_hits
+            .resize(max(self.segments_hits.len(), self.i + 1), 0);
         self.segments_hits[self.i] += 1;
         asr::timer::set_variable_int("segment hits", self.segments_hits[self.i]);
         if let Some(cmp) = self.comparison_hits.get(self.i) {
@@ -99,7 +100,8 @@ impl HitCounter {
     }
 
     fn add_pace(&mut self) {
-        self.comparison_hits.resize(max(self.comparison_hits.len(), self.i), self.hits);
+        self.comparison_hits
+            .resize(max(self.comparison_hits.len(), self.i), self.hits);
         if 1 <= self.i {
             self.comparison_hits[self.i - 1] = min(self.comparison_hits[self.i - 1], self.hits);
         }
@@ -108,7 +110,12 @@ impl HitCounter {
 
 impl GameTime for HitCounter {
     /// Sets hits variable, but does not set game time
-    fn update_variables(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
+    fn update_variables(
+        &mut self,
+        timer: &Timer,
+        process: &Process,
+        game_manager_finder: &GameManagerFinder,
+    ) {
         let i = timer.i();
         if i != self.i {
             if self.i == 0 {
@@ -118,7 +125,8 @@ impl GameTime for HitCounter {
             }
             self.i = i;
             self.n = timer.n();
-            self.segments_hits.resize(max(self.segments_hits.len(), i + 1), 0);
+            self.segments_hits
+                .resize(max(self.segments_hits.len(), i + 1), 0);
             asr::timer::set_variable_int("segment hits", self.segments_hits[i]);
             if let Some(cmp) = self.comparison_hits.get(self.i) {
                 asr::timer::set_variable_int("comparison hits", *cmp);
@@ -131,7 +139,9 @@ impl GameTime for HitCounter {
         }
 
         // only count hits if timer is running
-        if asr::timer::state() != TimerState::Running { return; }
+        if asr::timer::state() != TimerState::Running {
+            return;
+        }
 
         // new state
         let maybe_recoil = game_manager_finder.hero_recoil(process);
@@ -157,9 +167,9 @@ impl GameTime for HitCounter {
             self.last_hazard = h;
         }
 
-
         {
-            let d = maybe_dead == Some(true) || (maybe_health == Some(0) && maybe_game_state == Some(GAME_STATE_PLAYING));
+            let d = maybe_dead == Some(true)
+                || (maybe_health == Some(0) && maybe_game_state == Some(GAME_STATE_PLAYING));
             if !self.last_dead_or_0 && d {
                 self.add_hit();
                 asr::print_message(&format!("hit: {}, from dead", self.hits));
@@ -169,7 +179,10 @@ impl GameTime for HitCounter {
 
         if self.count_dream_falling {
             if let Some(s) = maybe_scene_name {
-                if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL) && self.last_exiting_level.as_deref() == Some(&s) && is_dream(&s) {
+                if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL)
+                    && self.last_exiting_level.as_deref() == Some(&s)
+                    && is_dream(&s)
+                {
                     self.add_hit();
                     asr::print_message(&format!("hit: {}, from dream falling", self.hits));
                 }
@@ -185,8 +198,12 @@ impl GameTime for HitCounter {
     }
 
     /// Sets game time to hits
-    fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
-
+    fn update_game_time(
+        &mut self,
+        timer: &Timer,
+        process: &Process,
+        game_manager_finder: &GameManagerFinder,
+    ) {
         asr::timer::pause_game_time();
 
         self.update_variables(timer, process, game_manager_finder);

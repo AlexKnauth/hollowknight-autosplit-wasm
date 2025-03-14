@@ -1,4 +1,3 @@
-
 use std::str::FromStr;
 
 use xmltree::{Element, XMLNode};
@@ -37,7 +36,12 @@ fn parse_settings_list(xml_nodes: &[XMLNode]) -> asr::settings::List {
 }
 
 fn parse_settings_entry(xml_node: &XMLNode) -> (Option<&String>, Option<asr::settings::Value>) {
-    let Some(Element { attributes, children, .. }) = xml_node.as_element() else {
+    let Some(Element {
+        attributes,
+        children,
+        ..
+    }) = xml_node.as_element()
+    else {
         return (None, None);
     };
     let id = attributes.get("id");

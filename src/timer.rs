@@ -1,4 +1,3 @@
-
 use asr::timer::TimerState;
 use serde::{Deserialize, Serialize};
 
@@ -44,7 +43,7 @@ pub fn should_skip(b: bool) -> SplitterAction {
 }
 
 pub fn should_split_skip(mb: Option<bool>) -> SplitterAction {
-    match mb  {
+    match mb {
         Some(true) => SplitterAction::Split,
         Some(false) => SplitterAction::Skip,
         None => SplitterAction::Pass,
@@ -163,17 +162,16 @@ impl Timer {
                 }
                 asr::print_message("Detected a manual end-split.");
             }
-            _ => ()
+            _ => (),
         }
         self.state = asr_state;
         self.last_state = asr_state;
     }
 
     #[cfg(feature = "unstable")]
-    fn update_index(&mut self) -> Option<()>  {
+    fn update_index(&mut self) -> Option<()> {
         let asr_index = maybe_timer_current_split_index()?;
-        if asr_index == self.last_split_index
-        {
+        if asr_index == self.last_split_index {
             return Some(());
         }
         let delta = asr_index + 1 - self.i as i32;
@@ -184,7 +182,9 @@ impl Timer {
             -1 => asr::print_message("Detected a manual undo."),
             1 => asr::print_message("Detected a manual split or skip."),
             d if d.is_negative() => asr::print_message(&format!("Detected a {} manual undos.", -d)),
-            d if d.is_positive() => asr::print_message(&format!("Detected a {} manual splits or skips.", d)),
+            d if d.is_positive() => {
+                asr::print_message(&format!("Detected a {} manual splits or skips.", d))
+            }
             _ => (),
         }
         let new_i = (self.i as i32 + delta) as usize;

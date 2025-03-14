@@ -1,7 +1,10 @@
-
 use alloc::vec::Vec;
 
-use std::{path::Path, fs::File, io::{self, Read}};
+use std::{
+    fs::File,
+    io::{self, Read},
+    path::Path,
+};
 
 pub fn file_read_all_bytes<P: AsRef<Path>>(path: P) -> io::Result<Vec<u8>> {
     let mut f = File::open(path)?;

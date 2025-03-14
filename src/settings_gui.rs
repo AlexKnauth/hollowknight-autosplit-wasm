@@ -1,11 +1,14 @@
-use asr::{settings::gui::{FileSelect, Gui, Title, Widget}, watcher::Pair};
+use asr::{
+    settings::gui::{FileSelect, Gui, Title, Widget},
+    watcher::Pair,
+};
 
 use serde::{Deserialize, Serialize};
 use ugly_widget::{
     args::SetHeadingLevel,
     radio_button::{options_str, RadioButtonOptions},
     store::{StoreGui, StoreWidget},
-    ugly_list::{UglyList, UglyListArgs}
+    ugly_list::{UglyList, UglyListArgs},
 };
 
 use crate::{
@@ -35,24 +38,28 @@ impl StoreGui for SettingsGui {
             asr::print_message(&format!("import {}", self.import.current.path));
             if let Some(settings_map) = asr_settings_from_file(&self.import.current.path) {
                 let timing_method_args = <TimingMethod as Widget>::Args::default();
-                self.timing_method.update_from(&settings_map, "timing_method", timing_method_args);
+                self.timing_method
+                    .update_from(&settings_map, "timing_method", timing_method_args);
                 let hit_counter_args = <HitsMethod as Widget>::Args::default();
-                self.hit_counter.update_from(&settings_map, "hit_counter", hit_counter_args);
+                self.hit_counter
+                    .update_from(&settings_map, "hit_counter", hit_counter_args);
                 let mut splits_args = UglyListArgs::default();
                 splits_args.set_heading_level(1);
-                self.splits.update_from(&settings_map, "splits", splits_args);
+                self.splits
+                    .update_from(&settings_map, "splits", splits_args);
             }
         }
     }
 
     fn insert_into(&self, settings_map: &asr::settings::Map) -> bool {
-        let a = self.timing_method.insert_into(settings_map, "timing_method");
+        let a = self
+            .timing_method
+            .insert_into(settings_map, "timing_method");
         let b = self.hit_counter.insert_into(settings_map, "hit_counter");
         let c = self.splits.insert_into(settings_map, "splits");
         a || b || c
     }
 }
-
 
 impl SettingsGui {
     pub fn get_timing_method(&self) -> TimingMethod {
@@ -62,7 +69,11 @@ impl SettingsGui {
         self.hit_counter
     }
     pub fn get_splits(&self) -> Vec<Split> {
-        self.splits.get_list().into_iter().map(|rb| rb.clone()).collect()
+        self.splits
+            .get_list()
+            .into_iter()
+            .map(|rb| rb.clone())
+            .collect()
     }
 
     pub async fn wait_load_merge_register() -> SettingsGui {
@@ -106,7 +117,20 @@ impl SettingsGui {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Default,
+    Deserialize,
+    Eq,
+    Gui,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    RadioButtonOptions,
+    Serialize,
+)]
 pub enum TimingMethod {
     /// Load Removed Time
     #[default]
@@ -120,7 +144,10 @@ pub enum TimingMethod {
 impl StoreWidget for TimingMethod {
     fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
         let new_s = options_str(self);
-        if settings_map.get(key).is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s)) {
+        if settings_map
+            .get(key)
+            .is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s))
+        {
             return false;
         }
         settings_map.insert(key, new_s);
@@ -128,7 +155,20 @@ impl StoreWidget for TimingMethod {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions, Serialize)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Default,
+    Deserialize,
+    Eq,
+    Gui,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    RadioButtonOptions,
+    Serialize,
+)]
 pub enum HitsMethod {
     /// None
     #[default]
@@ -142,7 +182,10 @@ pub enum HitsMethod {
 impl StoreWidget for HitsMethod {
     fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
         let new_s = options_str(self);
-        if settings_map.get(key).is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s)) {
+        if settings_map
+            .get(key)
+            .is_some_and(|old_v| old_v.get_string().is_some_and(|old_s| old_s == new_s))
+        {
             return false;
         }
         settings_map.insert(key, new_s);

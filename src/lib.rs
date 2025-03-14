@@ -5,25 +5,25 @@ extern crate alloc;
 mod asr_xml;
 mod auto_splitter_settings;
 mod file;
+mod game_time;
+mod hit_counter;
 mod hollow_knight_memory;
 mod legacy_xml;
+mod load_remover;
 mod settings_gui;
 mod splits;
 mod timer;
 mod unstable;
-mod game_time;
-mod hit_counter;
-mod load_remover;
 
 use asr::future::{next_tick, retry};
 use asr::Process;
 use game_time::{GameTime, GameTimePlusVars};
-use settings_gui::{SettingsGui, TimingMethod, HitsMethod};
+use hit_counter::{HitCounter, DASH};
 use hollow_knight_memory::*;
+use load_remover::LoadRemover;
+use settings_gui::{HitsMethod, SettingsGui, TimingMethod};
 use splits::Split;
 use timer::{Resettable, SplitterAction, Timer};
-use load_remover::LoadRemover;
-use hit_counter::{HitCounter, DASH};
 use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
@@ -40,10 +40,20 @@ struct AutoSplitterState {
 }
 
 impl AutoSplitterState {
-    fn new(timing_method: TimingMethod, hits_method: HitsMethod, splits: Vec<Split>) -> AutoSplitterState {
+    fn new(
+        timing_method: TimingMethod,
+        hits_method: HitsMethod,
+        splits: Vec<Split>,
+    ) -> AutoSplitterState {
         let load_remover = timing_method_game_time(splits.len(), timing_method, hits_method);
         let timer = Timer::new(splits.len(), splits::auto_reset_safe(&splits));
-        AutoSplitterState { timing_method, hits_method, splits, load_remover, timer }
+        AutoSplitterState {
+            timing_method,
+            hits_method,
+            splits,
+            load_remover,
+            timer,
+        }
     }
 }
 
@@ -67,7 +77,11 @@ async fn main() {
     let mut gui = Box::new(SettingsGui::wait_load_merge_register().await);
 
     let mut ticks_since_gui = 0;
-    let mut state = Box::new(AutoSplitterState::new(gui.get_timing_method(), gui.get_hit_counter(), gui.get_splits()));
+    let mut state = Box::new(AutoSplitterState::new(
+        gui.get_timing_method(),
+        gui.get_hit_counter(),
+        gui.get_splits(),
+    ));
     asr::print_message(&format!("timing_method: {:?}", state.timing_method));
     asr::print_message(&format!("hit_counter: {:?}", state.hits_method));
     asr::print_message(&format!("splits: {:?}", state.splits));
@@ -94,22 +108,39 @@ async fn main() {
 
                 next_tick().await;
                 // Initialize pointers for load-remover before timer is running
-                game_manager_finder.init_load_removal_pointers(&process).await;
+                game_manager_finder
+                    .init_load_removal_pointers(&process)
+                    .await;
                 next_tick().await;
                 asr::print_message("Initialized load removal pointers");
                 next_tick().await;
 
                 loop {
-                    tick_action(&process, &mut state, &game_manager_finder, &mut scene_store, &mut player_data_store, &mut scene_data_store).await;
+                    tick_action(
+                        &process,
+                        &mut state,
+                        &game_manager_finder,
+                        &mut scene_store,
+                        &mut player_data_store,
+                        &mut scene_data_store,
+                    )
+                    .await;
 
-                    state.load_remover.update_game_time(&state.timer, &process, &game_manager_finder);
+                    state.load_remover.update_game_time(
+                        &state.timer,
+                        &process,
+                        &game_manager_finder,
+                    );
 
                     #[cfg(debug_assertions)]
                     let new_scenes_grub_rescued = game_manager_finder.scenes_grub_rescued(&process);
                     #[cfg(debug_assertions)]
                     if new_scenes_grub_rescued != scenes_grub_rescued {
                         scenes_grub_rescued = new_scenes_grub_rescued;
-                        asr::print_message(&format!("scenes_grub_rescued: {:?}", scenes_grub_rescued));
+                        asr::print_message(&format!(
+                            "scenes_grub_rescued: {:?}",
+                            scenes_grub_rescued
+                        ));
                     }
 
                     ticks_since_gui += 1;
@@ -125,26 +156,39 @@ async fn main() {
     }
 }
 
-async fn wait_attach_hollow_knight(gui: &mut SettingsGui, state: &mut AutoSplitterState) -> Process {
+async fn wait_attach_hollow_knight(
+    gui: &mut SettingsGui,
+    state: &mut AutoSplitterState,
+) -> Process {
     retry(|| {
         gui.loop_load_update_store();
         state.timer.update(&mut state.load_remover);
         check_state_change(gui, state);
         attach_hollow_knight()
-    }).await
+    })
+    .await
 }
 
 fn check_state_change(gui: &mut SettingsGui, state: &mut AutoSplitterState) {
     if state.timer.is_timer_state_between_runs() {
-        match (gui.check_timing_method(&mut state.timing_method), gui.check_hit_counter(&mut state.hits_method)) {
+        match (
+            gui.check_timing_method(&mut state.timing_method),
+            gui.check_hit_counter(&mut state.hits_method),
+        ) {
             (None, None) => (),
             _ => {
-                state.load_remover = timing_method_game_time(state.timer.n(), state.timing_method, state.hits_method);
+                state.load_remover = timing_method_game_time(
+                    state.timer.n(),
+                    state.timing_method,
+                    state.hits_method,
+                );
             }
         }
     }
     if let Some(new_splits) = gui.check_splits(&mut state.splits) {
-        state.timer.renew(new_splits.len(), splits::auto_reset_safe(new_splits));
+        state
+            .timer
+            .renew(new_splits.len(), splits::auto_reset_safe(new_splits));
     }
 }
 
@@ -163,7 +207,15 @@ async fn tick_action(
         let Some(s) = state.splits.get(state.timer.i()) else {
             break;
         };
-        let a = splits::splits(s, &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
+        let a = splits::splits(
+            s,
+            &process,
+            game_manager_finder,
+            trans_now,
+            scene_store,
+            player_data_store,
+            scene_data_store,
+        );
         match a {
             SplitterAction::Split | SplitterAction::ManualSplit => {
                 state.timer.action(a, &mut state.load_remover);
@@ -178,7 +230,15 @@ async fn tick_action(
             }
             SplitterAction::Pass => {
                 if state.timer.is_auto_reset_safe() {
-                    let a0 = splits::splits(&state.splits[0], &process, game_manager_finder, trans_now, scene_store, player_data_store, scene_data_store);
+                    let a0 = splits::splits(
+                        &state.splits[0],
+                        &process,
+                        game_manager_finder,
+                        trans_now,
+                        scene_store,
+                        player_data_store,
+                        scene_data_store,
+                    );
                     match a0 {
                         SplitterAction::Split | SplitterAction::Reset => {
                             state.timer.reset();
@@ -202,15 +262,19 @@ async fn tick_action(
     }
 }
 
-fn timing_method_game_time(n: usize, timing_method: TimingMethod, hits_method: HitsMethod) -> GameTimePlusVars {
+fn timing_method_game_time(
+    n: usize,
+    timing_method: TimingMethod,
+    hits_method: HitsMethod,
+) -> GameTimePlusVars {
     match timing_method {
-        TimingMethod::LoadRemovedTime => {
-            match hits_method {
-                HitsMethod::None => GameTimePlusVars::new(Box::new(LoadRemover::new())),
-                HitsMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(n, true))),
-                HitsMethod::HitsDamage => GameTimePlusVars::new(Box::new(LoadRemover::new())).with_var(Box::new(HitCounter::new(n, false))),
-            }
-        }
+        TimingMethod::LoadRemovedTime => match hits_method {
+            HitsMethod::None => GameTimePlusVars::new(Box::new(LoadRemover::new())),
+            HitsMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(LoadRemover::new()))
+                .with_var(Box::new(HitCounter::new(n, true))),
+            HitsMethod::HitsDamage => GameTimePlusVars::new(Box::new(LoadRemover::new()))
+                .with_var(Box::new(HitCounter::new(n, false))),
+        },
         TimingMethod::HitsDreamFalls => GameTimePlusVars::new(Box::new(HitCounter::new(n, true))),
         TimingMethod::HitsDamage => GameTimePlusVars::new(Box::new(HitCounter::new(n, false))),
     }

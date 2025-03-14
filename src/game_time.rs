@@ -1,12 +1,21 @@
-
 use asr::Process;
 
 use crate::hollow_knight_memory::GameManagerFinder;
 use crate::timer::{Resettable, Timer};
 
 pub trait GameTime: Resettable {
-    fn update_variables(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder);
-    fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder);
+    fn update_variables(
+        &mut self,
+        timer: &Timer,
+        process: &Process,
+        game_manager_finder: &GameManagerFinder,
+    );
+    fn update_game_time(
+        &mut self,
+        timer: &Timer,
+        process: &Process,
+        game_manager_finder: &GameManagerFinder,
+    );
 }
 
 pub struct GameTimePlusVars {
@@ -44,15 +53,27 @@ impl Resettable for GameTimePlusVars {
 }
 
 impl GameTime for GameTimePlusVars {
-    fn update_variables(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
-        self.main.update_variables(timer, process, game_manager_finder);
+    fn update_variables(
+        &mut self,
+        timer: &Timer,
+        process: &Process,
+        game_manager_finder: &GameManagerFinder,
+    ) {
+        self.main
+            .update_variables(timer, process, game_manager_finder);
         for v in self.vars.iter_mut() {
             v.update_variables(timer, process, game_manager_finder);
         }
     }
 
-    fn update_game_time(&mut self, timer: &Timer, process: &Process, game_manager_finder: &GameManagerFinder) {
-        self.main.update_game_time(timer, process, game_manager_finder);
+    fn update_game_time(
+        &mut self,
+        timer: &Timer,
+        process: &Process,
+        game_manager_finder: &GameManagerFinder,
+    ) {
+        self.main
+            .update_game_time(timer, process, game_manager_finder);
         for v in self.vars.iter_mut() {
             v.update_variables(timer, process, game_manager_finder);
         }
