@@ -940,7 +940,7 @@ pub enum Split {
     RestingGroundsStation,
     /// Hidden Station (Stag Station)
     ///
-    /// Splits when obtaining to Hidden Station Stag Station
+    /// Splits when obtaining Hidden Station Stag Station
     HiddenStationStation,
     /// Distant Village (Stag Station)
     ///
