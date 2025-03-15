@@ -954,6 +954,10 @@ pub enum Split {
     ///
     /// Splits when traveling to Stagnest (Requires Ordered Splits)
     StagnestStation,
+    /// Stagnest Buy (Stag Station)
+    ///
+    /// Splits when obtaining Stagnest Station (Not for All Stag Stations)
+    StagnestStationBuy,
     // endregion: Stags
 
     // region: Relics
@@ -4329,6 +4333,7 @@ pub fn continuous_splits(
                 && g.travelling(p).is_some_and(|t| t)
                 && g.opened_stag_nest(p).is_some_and(|o| o),
         ),
+        Split::StagnestStationBuy => should_split(g.opened_stag_nest(p).is_some_and(|o| o)),
         // endregion: Stags
         // region: Relics
         Split::OnObtainWanderersJournal => should_split(pds.incremented_trinket1(p, g)),
