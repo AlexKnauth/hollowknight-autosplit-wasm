@@ -252,6 +252,12 @@
         "timer_font": null,
         "times_font": null,
         "text_font": null,
+        "text_shadow": [
+            0.0,
+            0.0,
+            0.0,
+            0.5
+        ],
         "background": {
             "Plain": [
                 0.06,

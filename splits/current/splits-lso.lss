@@ -209,6 +209,7 @@
       <Setting id="splits_11_action" type="string" value="None" />
       <Setting id="splits_12_action" type="string" value="None" />
       <Setting id="splits_13_action" type="string" value="None" />
+      <Setting id="hit_counter" type="string" value="HitsDreamFalls" />
     </CustomSettings>
   </AutoSplitterSettings>
 </Run>
