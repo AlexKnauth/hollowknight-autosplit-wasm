@@ -4973,7 +4973,8 @@ pub fn continuous_splits(
                     .get_scene_name(p)
                     .is_some_and(|s| s.starts_with("Waterways_15"))
                     || ss.all_scene_names().contains(&"Waterways_15"))
-                && g.camera_target_destination(p).is_some_and(|v| v.x < 29.5),
+                && g.camera_target_destination(p)
+                    .is_some_and(|v| 4.5 < v.x && v.x < 29.5 && -1.5 < v.y && v.y < 18.0),
         ),
         Split::MetEmilitia => should_split(g.met_emilitia(p).is_some_and(|m| m)),
         Split::GivenEmilitiaFlower => should_split(g.given_emilitia_flower(p).is_some_and(|g| g)),
