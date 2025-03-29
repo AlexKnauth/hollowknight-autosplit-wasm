@@ -51,7 +51,7 @@ pub enum Split {
     LegacyStart,
     /// Credits Roll (Ending)
     ///
-    /// Splits on any credits rolling
+    /// Splits on any credits rolling, any ending
     #[serde(alias = "LegacyEnd")]
     EndingSplit,
     /// The Hollow Knight (Ending)
@@ -64,7 +64,7 @@ pub enum Split {
     EndingB,
     /// Dream No More (Ending)
     ///
-    /// Splits on Dream No More ending
+    /// Splits on Dream No More ending, True Ending
     EndingC,
     /// Embrace the Void (Ending)
     ///
@@ -3264,7 +3264,7 @@ pub enum Split {
     NightmareKingGrimmP,
     /// Absolute Radiance (Ending)
     ///
-    /// Splits after killing Absolute Radiance in Pantheon 5
+    /// Splits after killing Absolute Radiance in Pantheon 5, Godhome Ending
     RadianceP,
     /// Pantheon 5 (Trial)
     ///
