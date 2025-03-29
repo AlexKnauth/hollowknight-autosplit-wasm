@@ -4991,16 +4991,18 @@ impl SceneStore {
     pub fn transition_now(
         &mut self,
         prc: &Process,
-        sm: &SceneManager,
+        msm: Option<&SceneManager>,
         g: &GameManagerFinder,
     ) -> bool {
         self.new_curr_scene_name1(g.get_scene_name(prc));
         self.new_next_scene_name1(g.get_next_scene_name(prc));
-        self.new_all_scene_names(
-            sm.scenes(prc)
-                .filter_map(|s| scene_path_to_name_string(s.path::<SCENE_PATH_SIZE>(prc, sm).ok()?))
-                .collect(),
-        );
+        if let Some(sm) = msm {
+            self.new_all_scene_names(
+                sm.scenes(prc)
+                    .filter_map(|s| scene_path_to_name_string(s.path::<SCENE_PATH_SIZE>(prc, sm).ok()?))
+                    .collect(),
+            );
+        }
 
         if self.new_data_next {
             self.new_data_curr = false;

@@ -92,7 +92,6 @@ async fn main() {
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
-                let scene_manager = Box::new(SceneManager::wait_attach(&process).await);
                 let mut scene_store = Box::new(SceneStore::new());
 
                 next_tick().await;
@@ -117,11 +116,19 @@ async fn main() {
                 asr::print_message("Initialized load removal pointers");
                 next_tick().await;
 
+                let scene_manager = SceneManager::attach(&process);
+                if scene_manager.is_some() {
+                    asr::print_message("Attached SceneManager");
+                } else {
+                    asr::print_message("Warning: SceneManager not found");
+                }
+                next_tick().await;
+
                 loop {
                     tick_action(
                         &process,
                         &mut state,
-                        &scene_manager,
+                        scene_manager.as_ref(),
                         &game_manager_finder,
                         &mut scene_store,
                         &mut player_data_store,
@@ -198,7 +205,7 @@ fn check_state_change(gui: &mut SettingsGui, state: &mut AutoSplitterState) {
 async fn tick_action(
     process: &Process,
     state: &mut AutoSplitterState,
-    scene_manager: &SceneManager,
+    scene_manager: Option<&SceneManager>,
     game_manager_finder: &GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
@@ -206,7 +213,7 @@ async fn tick_action(
 ) {
     state.timer.update(&mut state.load_remover);
 
-    let trans_now = scene_store.transition_now(&process, &scene_manager, &game_manager_finder);
+    let trans_now = scene_store.transition_now(&process, scene_manager, &game_manager_finder);
     loop {
         let Some(s) = state.splits.get(state.timer.i()) else {
             break;
