@@ -16,6 +16,7 @@ mod timer;
 mod unstable;
 
 use asr::future::{next_tick, retry};
+use asr::game_engine::unity::SceneManager;
 use asr::Process;
 use game_time::{GameTime, GameTimePlusVars};
 use hit_counter::{HitCounter, DASH};
@@ -91,6 +92,7 @@ async fn main() {
         process
             .until_closes(async {
                 // TODO: Load some initial information from the process.
+                let scene_manager = Box::new(SceneManager::wait_attach(&process).await);
                 let mut scene_store = Box::new(SceneStore::new());
 
                 next_tick().await;
@@ -119,6 +121,7 @@ async fn main() {
                     tick_action(
                         &process,
                         &mut state,
+                        &scene_manager,
                         &game_manager_finder,
                         &mut scene_store,
                         &mut player_data_store,
@@ -195,6 +198,7 @@ fn check_state_change(gui: &mut SettingsGui, state: &mut AutoSplitterState) {
 async fn tick_action(
     process: &Process,
     state: &mut AutoSplitterState,
+    scene_manager: &SceneManager,
     game_manager_finder: &GameManagerFinder,
     scene_store: &mut SceneStore,
     player_data_store: &mut PlayerDataStore,
@@ -202,7 +206,7 @@ async fn tick_action(
 ) {
     state.timer.update(&mut state.load_remover);
 
-    let trans_now = scene_store.transition_now(&process, &game_manager_finder);
+    let trans_now = scene_store.transition_now(&process, &scene_manager, &game_manager_finder);
     loop {
         let Some(s) = state.splits.get(state.timer.i()) else {
             break;

@@ -1,6 +1,8 @@
 use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
+use asr::game_engine::unity::{get_scene_name, SceneManager};
+use asr::string::ArrayCString;
 use asr::watcher::Pair;
 use asr::{Address, Address16, Address32, Address64, PointerSize, Process};
 use core::cell::OnceCell;
@@ -21,6 +23,8 @@ static HOLLOW_KNIGHT_NAMES: [&str; 4] = [
     "Hollow Knight",        // Mac
     "hollow_knight",        // Mac
 ];
+
+const SCENE_PATH_SIZE: usize = 64;
 
 struct StringListOffsets {
     pointer_size: PointerSize,
@@ -4891,6 +4895,7 @@ pub struct SceneStore {
     prev_scene_name: String,
     curr_scene_name: String,
     next_scene_name: String,
+    all_scene_names: Vec<String>,
     new_data_curr: bool,
     new_data_next: bool,
     last_next: bool,
@@ -4903,6 +4908,7 @@ impl SceneStore {
             prev_scene_name: "".to_string(),
             curr_scene_name: "".to_string(),
             next_scene_name: "".to_string(),
+            all_scene_names: vec![],
             new_data_curr: false,
             new_data_next: false,
             last_next: true,
@@ -4922,6 +4928,10 @@ impl SceneStore {
                 current: &self.curr_scene_name,
             }
         }
+    }
+
+    pub fn all_scene_names(&self) -> Vec<&str> {
+        self.all_scene_names.iter().map(|s| s.as_str()).collect()
     }
 
     pub fn new_curr_scene_name(&mut self, mcsn: Option<String>) {
@@ -4967,9 +4977,30 @@ impl SceneStore {
         }
     }
 
-    pub fn transition_now(&mut self, prc: &Process, g: &GameManagerFinder) -> bool {
+    fn new_all_scene_names(&mut self, nasn: Vec<String>) -> bool {
+        if nasn != self.all_scene_names {
+            self.all_scene_names = nasn;
+            #[cfg(debug_assertions)]
+            asr::print_message(&format!("all_scene_names: {:?}", self.all_scene_names));
+            false
+        } else {
+            false
+        }
+    }
+
+    pub fn transition_now(
+        &mut self,
+        prc: &Process,
+        sm: &SceneManager,
+        g: &GameManagerFinder,
+    ) -> bool {
         self.new_curr_scene_name1(g.get_scene_name(prc));
         self.new_next_scene_name1(g.get_next_scene_name(prc));
+        self.new_all_scene_names(
+            sm.scenes(prc)
+                .filter_map(|s| scene_path_to_name_string(s.path::<SCENE_PATH_SIZE>(prc, sm).ok()?))
+                .collect(),
+        );
 
         if self.new_data_next {
             self.new_data_curr = false;
@@ -7351,6 +7382,10 @@ fn process_pointer_size(process: &Process) -> Option<PointerSize> {
     } else {
         None
     }
+}
+
+fn scene_path_to_name_string<const N: usize>(scene_path: ArrayCString<N>) -> Option<String> {
+    String::from_utf8(get_scene_name(&scene_path).to_vec()).ok()
 }
 
 fn read_string_object(
