@@ -95,12 +95,12 @@
                         "timing_method": null
                     },
                     {
-                        "name": "delta hits",
-                        "variable_name": "delta hits"
-                    },
-                    {
                         "name": "segment hits",
-                        "variable_name": "segment hits"
+                        "start_with": "ComparisonSegmentTime",
+                        "update_with": "SegmentDeltaWithFallback",
+                        "update_trigger": "Contextual",
+                        "comparison_override": "Best Segments",
+                        "timing_method": "GameTime"
                     }
                 ]
             }
@@ -242,6 +242,12 @@
         "timer_font": null,
         "times_font": null,
         "text_font": null,
+        "text_shadow": [
+            0.0,
+            0.0,
+            0.0,
+            0.5
+        ],
         "background": {
             "Plain": [
                 0.06,
@@ -315,6 +321,7 @@
             1.0,
             1.0,
             1.0
-        ]
+        ],
+        "mouse_pass_through_while_running": false
     }
 }
