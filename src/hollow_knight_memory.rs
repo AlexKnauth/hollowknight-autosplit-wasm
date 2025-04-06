@@ -19,9 +19,10 @@ use crate::file;
 
 // --------------------------------------------------------
 
-static HOLLOW_KNIGHT_NAMES: [&str; 4] = [
+static HOLLOW_KNIGHT_NAMES: [&str; 5] = [
     "hollow_knight.exe",    // Windows
     "hollow_knight.x86_64", // Linux
+    "Hollow Knight.exe",    // Linux GOG?
     "Hollow Knight",        // Mac
     "hollow_knight",        // Mac
 ];
