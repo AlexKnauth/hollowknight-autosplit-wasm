@@ -4,6 +4,7 @@ extern crate alloc;
 
 mod asr_xml;
 mod auto_splitter_settings;
+#[cfg(target_os = "wasi")]
 mod file;
 mod game_time;
 mod hit_counter;

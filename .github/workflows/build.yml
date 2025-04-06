@@ -21,13 +21,20 @@ jobs:
         label:
           - Stable
           - Unstable
+          - Unknown
         include:
           - label: Stable
             postfix: _stable
+            target: wasm32-wasip1
             features: '""'
           - label: Unstable
             postfix: _unstable
+            target: wasm32-wasip1
             features: '"unstable"'
+          - label: Unknown
+            postfix: _unknown
+            target: wasm32-unknown-unknown
+            features: '""'
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v4
@@ -36,15 +43,15 @@ jobs:
         uses: hecrj/setup-rust-action@v2
         with:
           rust-version: stable
-          targets: wasm32-wasip1
+          targets: ${{matrix.target}}
 
       - name: Build
         run: |
-          cargo release --locked --features ${{ matrix.features }}
+          cargo release --locked --target ${{matrix.target}} --features ${{ matrix.features }}
 
       - name: Prepare Release
         run: |
-          cp target/wasm32-wasip1/release/hollowknight_autosplit_wasm.wasm hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
+          cp target/${{matrix.target}}/release/hollowknight_autosplit_wasm.wasm hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')

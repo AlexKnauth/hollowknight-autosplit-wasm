@@ -1,3 +1,4 @@
+#[cfg(target_os = "wasi")]
 use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
@@ -13,6 +14,7 @@ use std::mem;
 #[cfg(debug_assertions)]
 use std::string::String;
 
+#[cfg(target_os = "wasi")]
 use crate::file;
 
 // --------------------------------------------------------
@@ -2479,11 +2481,15 @@ impl GameManagerFinder {
     }
 
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
+        #[cfg(target_os = "wasi")]
         let pointer_size = process_pointer_size(process).unwrap_or(PointerSize::Bit64);
+        #[cfg(target_os = "wasi")]
         asr::print_message(&format!(
             "GameManagerFinder wait_attach: pointer_size = {:?}",
             pointer_size
         ));
+        #[cfg(not(target_os = "wasi"))]
+        let pointer_size = PointerSize::Bit64;
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
         let mut found_module = false;
@@ -4999,7 +5005,9 @@ impl SceneStore {
         if let Some(sm) = msm {
             self.new_all_scene_names(
                 sm.scenes(prc)
-                    .filter_map(|s| scene_path_to_name_string(s.path::<SCENE_PATH_SIZE>(prc, sm).ok()?))
+                    .filter_map(|s| {
+                        scene_path_to_name_string(s.path::<SCENE_PATH_SIZE>(prc, sm).ok()?)
+                    })
                     .collect(),
             );
         }
@@ -7356,6 +7364,7 @@ pub fn attach_hollow_knight() -> Option<Process> {
     HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
 }
 
+#[cfg(target_os = "wasi")]
 fn process_pointer_size(process: &Process) -> Option<PointerSize> {
     let path = process.get_path().ok()?;
     let bytes = file::file_read_all_bytes(path).ok()?;

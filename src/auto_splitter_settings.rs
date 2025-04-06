@@ -1,10 +1,13 @@
 use alloc::collections::BTreeSet;
 use alloc::vec::Vec;
 use asr::future::retry;
+#[cfg(target_os = "wasi")]
 use std::path::Path;
 use xmltree::{Element, XMLNode};
 
-use crate::{asr_xml, file, legacy_xml};
+#[cfg(target_os = "wasi")]
+use crate::file;
+use crate::{asr_xml, legacy_xml};
 
 pub async fn wait_asr_settings_init() -> asr::settings::Map {
     let settings1 = asr::settings::Map::load();
@@ -32,6 +35,7 @@ pub async fn wait_asr_settings_init() -> asr::settings::Map {
 
 // --------------------------------------------------------
 
+#[cfg(target_os = "wasi")]
 pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
     let xml_nodes = file_find_auto_splitter_settings(path)?;
     asr_settings_from_xml_nodes(xml_nodes)
@@ -50,6 +54,7 @@ fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings:
     }
 }
 
+#[cfg(target_os = "wasi")]
 fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNode>> {
     let bs = file::file_read_all_bytes(path).ok()?;
     let es = Element::parse_all(bs.as_slice()).ok()?;
@@ -57,6 +62,7 @@ fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNo
     Some(auto_splitter_settings)
 }
 
+#[cfg(target_os = "wasi")]
 fn xml_find_auto_splitter_settings(xml: &XMLNode) -> Option<Vec<XMLNode>> {
     let e = xml.as_element()?;
     match e.name.as_str() {
@@ -72,6 +78,7 @@ fn xml_find_auto_splitter_settings(xml: &XMLNode) -> Option<Vec<XMLNode>> {
     }
 }
 
+#[cfg(target_os = "wasi")]
 fn component_is_asr(e: &Element) -> bool {
     let Some(p) = e.get_child("Path") else {
         return false;
