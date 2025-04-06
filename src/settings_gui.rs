@@ -1,24 +1,33 @@
+use asr::settings::gui::{Gui, Title};
+#[cfg(target_os = "wasi")]
 use asr::{
-    settings::gui::{FileSelect, Gui, Title, Widget},
+    settings::gui::{FileSelect, Widget},
     watcher::Pair,
 };
 
 use serde::{Deserialize, Serialize};
 use ugly_widget::{
-    args::SetHeadingLevel,
     radio_button::{options_str, RadioButtonOptions},
     store::{StoreGui, StoreWidget},
-    ugly_list::{UglyList, UglyListArgs},
+    ugly_list::UglyList,
+};
+#[cfg(target_os = "wasi")]
+use ugly_widget::{
+    args::SetHeadingLevel,
+    ugly_list::UglyListArgs,
 };
 
 use crate::{
-    auto_splitter_settings::{asr_settings_from_file, wait_asr_settings_init},
+    auto_splitter_settings::wait_asr_settings_init,
     splits::Split,
 };
+#[cfg(target_os = "wasi")]
+use crate::auto_splitter_settings::asr_settings_from_file;
 
 #[derive(Gui)]
 pub struct SettingsGui {
     /// Import Splits
+    #[cfg(target_os = "wasi")]
     #[filter((_, "*.lss *.lsl"))]
     import: Pair<FileSelect>,
     /// General Settings
@@ -34,6 +43,7 @@ pub struct SettingsGui {
 
 impl StoreGui for SettingsGui {
     fn post_update(&mut self) {
+        #[cfg(target_os = "wasi")]
         if self.import.changed() {
             asr::print_message(&format!("import {}", self.import.current.path));
             if let Some(settings_map) = asr_settings_from_file(&self.import.current.path) {
