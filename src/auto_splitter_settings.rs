@@ -5,9 +5,9 @@ use asr::future::retry;
 use std::path::Path;
 use xmltree::{Element, XMLNode};
 
-use crate::{asr_xml, legacy_xml};
 #[cfg(target_os = "wasi")]
 use crate::file;
+use crate::{asr_xml, legacy_xml};
 
 pub async fn wait_asr_settings_init() -> asr::settings::Map {
     let settings1 = asr::settings::Map::load();

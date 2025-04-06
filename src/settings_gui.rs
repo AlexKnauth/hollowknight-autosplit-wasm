@@ -6,23 +6,17 @@ use asr::{
 };
 
 use serde::{Deserialize, Serialize};
+#[cfg(target_os = "wasi")]
+use ugly_widget::{args::SetHeadingLevel, ugly_list::UglyListArgs};
 use ugly_widget::{
     radio_button::{options_str, RadioButtonOptions},
     store::{StoreGui, StoreWidget},
     ugly_list::UglyList,
 };
-#[cfg(target_os = "wasi")]
-use ugly_widget::{
-    args::SetHeadingLevel,
-    ugly_list::UglyListArgs,
-};
 
-use crate::{
-    auto_splitter_settings::wait_asr_settings_init,
-    splits::Split,
-};
 #[cfg(target_os = "wasi")]
 use crate::auto_splitter_settings::asr_settings_from_file;
+use crate::{auto_splitter_settings::wait_asr_settings_init, splits::Split};
 
 #[derive(Gui)]
 pub struct SettingsGui {

@@ -5005,7 +5005,9 @@ impl SceneStore {
         if let Some(sm) = msm {
             self.new_all_scene_names(
                 sm.scenes(prc)
-                    .filter_map(|s| scene_path_to_name_string(s.path::<SCENE_PATH_SIZE>(prc, sm).ok()?))
+                    .filter_map(|s| {
+                        scene_path_to_name_string(s.path::<SCENE_PATH_SIZE>(prc, sm).ok()?)
+                    })
                     .collect(),
             );
         }
