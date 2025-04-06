@@ -8,11 +8,16 @@ use asr::watcher::Pair;
 use asr::{Address, Address16, Address32, Address64, PointerSize, Process};
 use core::cell::OnceCell;
 use core::iter::FusedIterator;
-use std::collections::BTreeMap;
-use std::mem;
+use alloc::boxed::Box;
+use alloc::collections::BTreeMap;
+use alloc::format;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::mem;
 
 #[cfg(debug_assertions)]
-use std::string::String;
+use alloc::string::String;
 
 #[cfg(target_os = "wasi")]
 use crate::file;

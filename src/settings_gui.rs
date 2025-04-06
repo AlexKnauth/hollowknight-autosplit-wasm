@@ -1,3 +1,7 @@
+use alloc::format;
+use alloc::vec;
+use alloc::vec::Vec;
+
 use asr::settings::gui::{Gui, Title};
 #[cfg(target_os = "wasi")]
 use asr::{

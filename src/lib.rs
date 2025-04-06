@@ -1,4 +1,4 @@
-// #![no_std]
+// #![cfg_attr(not(target_os = "wasi"), no_std)]
 
 extern crate alloc;
 
@@ -16,6 +16,10 @@ mod splits;
 mod timer;
 mod unstable;
 
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::vec::Vec;
+
 use asr::future::{next_tick, retry};
 use asr::game_engine::unity::SceneManager;
 use asr::Process;
@@ -29,7 +33,10 @@ use timer::{Resettable, SplitterAction, Timer};
 use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
-// asr::panic_handler!();
+/*
+#[cfg(not(target_os = "wasi"))]
+asr::panic_handler!();
+*/
 
 const TICKS_PER_GUI: usize = 0x100;
 
@@ -60,6 +67,7 @@ impl AutoSplitterState {
 }
 
 async fn main() {
+    // #[cfg(target_os = "wasi")]
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
     }));

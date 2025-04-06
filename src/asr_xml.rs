@@ -1,4 +1,6 @@
-use std::str::FromStr;
+use core::str::FromStr;
+use alloc::string::String;
+use alloc::vec::Vec;
 
 use xmltree::{Element, XMLNode};
 

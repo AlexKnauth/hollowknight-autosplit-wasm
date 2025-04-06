@@ -1,3 +1,5 @@
+use alloc::format;
+
 use asr::timer::TimerState;
 use asr::Process;
 
