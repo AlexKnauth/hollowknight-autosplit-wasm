@@ -3,14 +3,14 @@ use alloc::vec;
 use alloc::vec::Vec;
 
 use ugly_widget::radio_button::{options_str, options_value};
-use xmltree::XMLNode;
+use roxmltree::Node;
 
 use crate::{
     settings_gui::{HitsMethod, TimingMethod},
     splits::Split,
 };
 
-pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
+pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Map> {
     let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
     let splits = splits_from_settings(&xml_settings)?;
     // new empty map, which will only include the new splits
@@ -36,13 +36,13 @@ fn asr_list_from_splits(splits: &[Split]) -> asr::settings::List {
 }
 
 #[derive(Clone, Debug)]
-struct XMLSettings {
+struct XMLSettings<'a> {
     name: Option<String>,
-    children: Vec<XMLNode>,
+    children: Vec<Node<'a, 'a>>,
     list_items: Vec<(String, String)>,
 }
 
-impl Default for XMLSettings {
+impl<'a> Default for XMLSettings<'a> {
     fn default() -> Self {
         XMLSettings {
             name: None,
@@ -52,8 +52,8 @@ impl Default for XMLSettings {
     }
 }
 
-impl XMLSettings {
-    fn from_xml_nodes(children: Vec<XMLNode>, list_items: &[(&str, &str)]) -> Self {
+impl<'a> XMLSettings<'a> {
+    fn from_xml_nodes(children: Vec<Node<'a, 'a>>, list_items: &[(&str, &str)]) -> Self {
         let list_items = list_items
             .into_iter()
             .map(|(l, i)| (l.to_string(), i.to_string()))
@@ -78,7 +78,7 @@ impl XMLSettings {
     fn as_string(&self) -> Option<String> {
         match &self.children[..] {
             [] => Some("".to_string()),
-            [XMLNode::Text(s)] => Some(s.to_string()),
+            [n] if n.is_text() => Some(n.text()?.to_string()),
             _ => None,
         }
     }
@@ -96,13 +96,14 @@ impl XMLSettings {
         Some(
             self.children
                 .iter()
-                .filter_map(|c| match c.as_element() {
-                    Some(e) if e.name == i => Some(XMLSettings {
-                        name: Some(e.name.clone()),
-                        children: e.children.clone(),
+                .filter_map(|c| if c.is_element() && c.has_tag_name(i) {
+                    Some(XMLSettings {
+                        name: Some(c.tag_name().name().to_string()),
+                        children: c.children().collect(),
                         list_items: self.list_items.clone(),
-                    }),
-                    _ => None,
+                    })
+                } else {
+                    None
                 })
                 .collect(),
         )
@@ -110,15 +111,12 @@ impl XMLSettings {
 
     fn dict_get(&self, key: &str) -> Option<Self> {
         for c in self.children.iter() {
-            match c.as_element() {
-                Some(e) if e.name == key => {
-                    return Some(XMLSettings {
-                        name: Some(e.name.clone()),
-                        children: e.children.clone(),
-                        list_items: self.list_items.clone(),
-                    });
-                }
-                _ => (),
+            if c.is_element() && c.has_tag_name(key) {
+                return Some(XMLSettings {
+                    name: Some(c.tag_name().name().to_string()),
+                    children: c.children().collect(),
+                    list_items: self.list_items.clone(),
+                });
             }
         }
         None
