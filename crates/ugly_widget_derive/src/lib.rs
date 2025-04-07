@@ -1,6 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Data, DataEnum, Variant, Meta, Expr, ExprLit, Lit, Attribute};
+use syn::{
+    parse_macro_input, Attribute, Data, DataEnum, DeriveInput, Expr, ExprLit, Lit, Meta, Variant,
+};
 
 #[proc_macro_derive(SetHeadingLevel)]
 pub fn set_heading_level_derive(input: TokenStream) -> TokenStream {
@@ -98,15 +100,24 @@ fn option_attrs(attrs: &[Attribute]) -> OptionAttrs {
         if let Meta::NameValue(nv) = &attr.meta {
             if let Some(ident) = nv.path.get_ident() {
                 if ident == "doc" {
-                    if let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value {
+                    if let Expr::Lit(ExprLit {
+                        lit: Lit::Str(s), ..
+                    }) = &nv.value
+                    {
                         doc_lines.push(s.value().trim().to_string());
                     }
                 } else if ident == "rename" {
-                    if let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value {
+                    if let Expr::Lit(ExprLit {
+                        lit: Lit::Str(s), ..
+                    }) = &nv.value
+                    {
                         rename.get_or_insert(s.value().trim().to_string());
                     }
                 } else if ident == "alias" {
-                    if let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value {
+                    if let Expr::Lit(ExprLit {
+                        lit: Lit::Str(s), ..
+                    }) = &nv.value
+                    {
                         alias.get_or_insert(s.value().trim().to_string());
                     }
                 }
@@ -114,18 +125,25 @@ fn option_attrs(attrs: &[Attribute]) -> OptionAttrs {
         }
     }
     let (description, tooltip) = lines_description_tooltip(&doc_lines);
-    OptionAttrs { rename, alias, description, tooltip }
+    OptionAttrs {
+        rename,
+        alias,
+        description,
+        tooltip,
+    }
 }
 
 fn lines_description_tooltip(lines: &[String]) -> (String, String) {
-    let paragraphs: Vec<String> = lines.split(|value| value.is_empty()).map(|ls| {
-        ls.join(" ")
-    }).collect();
+    let paragraphs: Vec<String> = lines
+        .split(|value| value.is_empty())
+        .map(|ls| ls.join(" "))
+        .collect();
     match paragraphs.split_first() {
         None => ("".to_string(), "".to_string()),
-        Some((description, tooltip_paragraphs)) => {
-            (description.to_string(), tooltip_paragraphs.join("\n").trim().to_string())
-        }
+        Some((description, tooltip_paragraphs)) => (
+            description.to_string(),
+            tooltip_paragraphs.join("\n").trim().to_string(),
+        ),
     }
 }
 
@@ -141,12 +159,15 @@ mod tests {
             #[rename = "mapCrossroads"]
             Thing
         };
-        assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: Some("mapCrossroads".to_string()),
-            alias: None,
-            description: "".to_string(),
-            tooltip: "".to_string(),
-        });
+        assert_eq!(
+            option_attrs(&v.attrs),
+            OptionAttrs {
+                rename: Some("mapCrossroads".to_string()),
+                alias: None,
+                description: "".to_string(),
+                tooltip: "".to_string(),
+            }
+        );
     }
 
     #[test]
@@ -155,12 +176,15 @@ mod tests {
             #[alias = "LegacyEnd"]
             Thing
         };
-        assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: None,
-            alias: Some("LegacyEnd".to_string()),
-            description: "".to_string(),
-            tooltip: "".to_string(),
-        });
+        assert_eq!(
+            option_attrs(&v.attrs),
+            OptionAttrs {
+                rename: None,
+                alias: Some("LegacyEnd".to_string()),
+                description: "".to_string(),
+                tooltip: "".to_string(),
+            }
+        );
     }
 
     #[test]
@@ -170,47 +194,56 @@ mod tests {
             #[alias = "MapCrossroads"]
             Thing
         };
-        assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: Some("mapCrossroads".to_string()),
-            alias: Some("MapCrossroads".to_string()),
-            description: "".to_string(),
-            tooltip: "".to_string(),
-        });
+        assert_eq!(
+            option_attrs(&v.attrs),
+            OptionAttrs {
+                rename: Some("mapCrossroads".to_string()),
+                alias: Some("MapCrossroads".to_string()),
+                description: "".to_string(),
+                tooltip: "".to_string(),
+            }
+        );
     }
 
     #[test]
     fn attrs_none() {
-        assert_eq!(lines_description_tooltip(&[]), (
-            "".to_string(),
-            "".to_string(),
-        ));
+        assert_eq!(
+            lines_description_tooltip(&[]),
+            ("".to_string(), "".to_string(),)
+        );
         let v: Variant = parse_quote! {
             Thing
         };
-        assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: None,
-            alias: None,
-            description: "".to_string(),
-            tooltip: "".to_string(),
-        });
+        assert_eq!(
+            option_attrs(&v.attrs),
+            OptionAttrs {
+                rename: None,
+                alias: None,
+                description: "".to_string(),
+                tooltip: "".to_string(),
+            }
+        );
     }
 
     #[test]
     fn attrs_description_single() {
-        assert_eq!(lines_description_tooltip(&["A one-line thing".to_string()]), (
-            "A one-line thing".to_string(),
-            "".to_string(),
-        ));
+        assert_eq!(
+            lines_description_tooltip(&["A one-line thing".to_string()]),
+            ("A one-line thing".to_string(), "".to_string(),)
+        );
         let v: Variant = parse_quote! {
             /// A one-line thing
             Thing
         };
-        assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: None,
-            alias: None,
-            description: "A one-line thing".to_string(),
-            tooltip: "".to_string(),
-        });
+        assert_eq!(
+            option_attrs(&v.attrs),
+            OptionAttrs {
+                rename: None,
+                alias: None,
+                description: "A one-line thing".to_string(),
+                tooltip: "".to_string(),
+            }
+        );
     }
 
     #[test]
@@ -263,10 +296,10 @@ mod tests {
             /// This is a description spanning
             /// multiple single-line comments
             /// without any blank lines in between.
-            /// 
+            ///
             /// This is a tooltip, with multiple
             /// lines per paragraph.
-            /// 
+            ///
             /// But a tooltip can also have multiple paragraphs,
             /// which are interpreted as multiple lines.
             Thing
@@ -303,12 +336,12 @@ mod tests {
             /// This is a description spanning
             /// multiple single-line comments
             /// without any blank lines in between.
-            /// 
-            /// 
+            ///
+            ///
             /// This is a tooltip, after multiple
             /// blank lines.
-            /// 
-            /// 
+            ///
+            ///
             /// And a continuation after even more blank lines.
             Thing
         };
