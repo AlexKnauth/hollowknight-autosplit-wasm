@@ -11,13 +11,11 @@ use core::iter::FusedIterator;
 use alloc::boxed::Box;
 use alloc::collections::BTreeMap;
 use alloc::format;
+use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::mem;
-
-#[cfg(debug_assertions)]
-use alloc::string::String;
 
 #[cfg(target_os = "wasi")]
 use crate::file;

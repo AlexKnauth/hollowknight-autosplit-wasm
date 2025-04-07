@@ -29,6 +29,9 @@ bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
 
 roxmltree = { version = "0.20.0", default-features = false }
 
+[target.'cfg(not(target_os = "wasi"))'.dependencies]
+dlmalloc = { version = "0.2.8", features = ["global"] }
+
 [features]
 unstable = ["asr/split-index"]
 
