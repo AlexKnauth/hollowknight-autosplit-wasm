@@ -27,7 +27,7 @@ ugly_widget_derive = { path = "crates/ugly_widget_derive", version = "0.1.0" }
 # Bytemuck can be used to define structs that are being read from the game's process.
 bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
 
-roxmltree = { version = "0.20.0" }
+roxmltree = { version = "0.20.0", default-features = false }
 
 [features]
 unstable = ["asr/split-index"]

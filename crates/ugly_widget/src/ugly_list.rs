@@ -1,4 +1,6 @@
 
+use alloc::format;
+use alloc::vec;
 use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Gui, Widget};
