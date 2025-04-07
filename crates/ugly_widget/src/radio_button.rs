@@ -14,6 +14,7 @@ use super::store::StoreWidget;
 pub struct RadioButtonOption<'a, T> {
     pub value: T,
     pub key: &'a str,
+    pub alias: Option<&'a str>,
     pub description: &'a str,
     pub tooltip: Option<&'a str>,
 }
@@ -113,9 +114,9 @@ pub fn options_str<T: RadioButtonOptions>(v: &T) -> &'static str {
     }).unwrap_or_default()
 }
 
-fn options_value<T: RadioButtonOptions>(s: &str) -> Option<T> {
+pub fn options_value<T: RadioButtonOptions>(s: &str) -> Option<T> {
     T::radio_button_options().into_iter().find_map(|o| {
-        if o.key == s {
+        if o.key == s || o.alias.is_some_and(|a| a == s) {
             Some(o.value)
         } else {
             None

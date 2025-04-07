@@ -9,7 +9,6 @@ use asr::{
     watcher::Pair,
 };
 
-use serde::{Deserialize, Serialize};
 #[cfg(target_os = "wasi")]
 use ugly_widget::{args::SetHeadingLevel, ugly_list::UglyListArgs};
 use ugly_widget::{
@@ -130,14 +129,12 @@ impl SettingsGui {
     Copy,
     Debug,
     Default,
-    Deserialize,
     Eq,
     Gui,
     Ord,
     PartialEq,
     PartialOrd,
     RadioButtonOptions,
-    Serialize,
 )]
 pub enum TimingMethod {
     /// Load Removed Time
@@ -168,14 +165,12 @@ impl StoreWidget for TimingMethod {
     Copy,
     Debug,
     Default,
-    Deserialize,
     Eq,
     Gui,
     Ord,
     PartialEq,
     PartialOrd,
     RadioButtonOptions,
-    Serialize,
 )]
 pub enum HitsMethod {
     /// None

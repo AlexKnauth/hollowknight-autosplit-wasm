@@ -2,7 +2,7 @@ use alloc::string::{String, ToString};
 use alloc::vec;
 use alloc::vec::Vec;
 
-use ugly_widget::radio_button::options_str;
+use ugly_widget::radio_button::{options_str, options_value};
 use xmltree::XMLNode;
 
 use crate::{
@@ -165,13 +165,13 @@ fn split_from_settings_split(s: XMLSettings) -> Option<Split> {
 }
 
 fn split_from_settings_str(s: XMLSettings) -> Option<Split> {
-    serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
+    options_value(&s.as_string()?)
 }
 
 fn timing_method_from_settings_str(s: XMLSettings) -> Option<TimingMethod> {
-    serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
+    options_value(&s.as_string()?)
 }
 
 fn hits_method_from_settings_str(s: XMLSettings) -> Option<HitsMethod> {
-    serde_json::value::from_value(serde_json::Value::String(s.as_string()?)).ok()
+    options_value(&s.as_string()?)
 }
