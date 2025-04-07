@@ -1,15 +1,19 @@
-use core::str::FromStr;
 use alloc::vec::Vec;
+use core::str::FromStr;
 
 use roxmltree::{Children, Node};
 
 pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Map> {
-    let custom_settings = xml_nodes.into_iter().find_map(xml_node_find_custom_settings)?;
+    let custom_settings = xml_nodes
+        .into_iter()
+        .find_map(xml_node_find_custom_settings)?;
     Some(parse_settings_map(custom_settings))
 }
 
 fn xml_node_find_custom_settings<'a>(xml: Node<'a, 'a>) -> Option<Children<'a, 'a>> {
-    if !xml.is_element() { return None; }
+    if !xml.is_element() {
+        return None;
+    }
     if xml.tag_name().name() != "CustomSettings" {
         return None;
     }
@@ -36,7 +40,9 @@ fn parse_settings_list(xml_nodes: Children) -> asr::settings::List {
     settings_list
 }
 
-fn parse_settings_entry<'a>(xml_node: Node<'a, 'a>) -> (Option<&'a str>, Option<asr::settings::Value>) {
+fn parse_settings_entry<'a>(
+    xml_node: Node<'a, 'a>,
+) -> (Option<&'a str>, Option<asr::settings::Value>) {
     if !xml_node.is_element() {
         return (None, None);
     }

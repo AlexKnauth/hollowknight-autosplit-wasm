@@ -124,18 +124,7 @@ impl SettingsGui {
     }
 }
 
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    Gui,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    RadioButtonOptions,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum TimingMethod {
     /// Load Removed Time
     #[default]
@@ -160,18 +149,7 @@ impl StoreWidget for TimingMethod {
     }
 }
 
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    Gui,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    RadioButtonOptions,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum HitsMethod {
     /// None
     #[default]

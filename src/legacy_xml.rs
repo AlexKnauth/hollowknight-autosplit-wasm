@@ -2,8 +2,8 @@ use alloc::string::{String, ToString};
 use alloc::vec;
 use alloc::vec::Vec;
 
-use ugly_widget::radio_button::{options_str, options_value};
 use roxmltree::Node;
+use ugly_widget::radio_button::{options_str, options_value};
 
 use crate::{
     settings_gui::{HitsMethod, TimingMethod},
@@ -96,14 +96,16 @@ impl<'a> XMLSettings<'a> {
         Some(
             self.children
                 .iter()
-                .filter_map(|c| if c.is_element() && c.has_tag_name(i) {
-                    Some(XMLSettings {
-                        name: Some(c.tag_name().name().to_string()),
-                        children: c.children().collect(),
-                        list_items: self.list_items.clone(),
-                    })
-                } else {
-                    None
+                .filter_map(|c| {
+                    if c.is_element() && c.has_tag_name(i) {
+                        Some(XMLSettings {
+                            name: Some(c.tag_name().name().to_string()),
+                            children: c.children().collect(),
+                            list_items: self.list_items.clone(),
+                        })
+                    } else {
+                        None
+                    }
                 })
                 .collect(),
         )

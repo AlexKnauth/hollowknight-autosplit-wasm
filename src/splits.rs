@@ -12,17 +12,7 @@ use ugly_widget::store::StoreWidget;
 use crate::hollow_knight_memory::*;
 use crate::timer::*;
 
-#[derive(
-    Clone,
-    Debug,
-    Default,
-    Eq,
-    Gui,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    RadioButtonOptions,
-)]
+#[derive(Clone, Debug, Default, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum Split {
     // region: Start, End, and Menu
     /// Manual Split (Misc)

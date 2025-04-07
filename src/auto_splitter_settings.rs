@@ -1,11 +1,11 @@
-use core::str;
 use alloc::collections::BTreeSet;
 use alloc::string::String;
 use alloc::vec::Vec;
 use asr::future::retry;
+use core::str;
+use roxmltree::Node;
 #[cfg(target_os = "wasi")]
 use std::path::Path;
-use roxmltree::Node;
 
 #[cfg(target_os = "wasi")]
 use crate::file;
@@ -60,16 +60,28 @@ fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Ma
 
 #[cfg(target_os = "wasi")]
 fn xml_find_auto_splitter_settings<'a>(xml: Node<'a, 'a>) -> Option<Vec<Node<'a, 'a>>> {
-    if !xml.is_element() { return None; }
+    if !xml.is_element() {
+        return None;
+    }
     match xml.tag_name().name() {
         "AutoSplitterSettings" => Some(xml.children().collect()),
-        "Run" => Some(xml.children().find(|c| c.has_tag_name("AutoSplitterSettings"))?.children().collect()),
+        "Run" => Some(
+            xml.children()
+                .find(|c| c.has_tag_name("AutoSplitterSettings"))?
+                .children()
+                .collect(),
+        ),
         "Layout" => xml
             .children()
             .find(|c| c.has_tag_name("Components"))?
             .children()
             .find_map(xml_find_auto_splitter_settings),
-        "Component" if component_is_asr(xml) => Some(xml.children().find(|c| c.has_tag_name("Settings"))?.children().collect()),
+        "Component" if component_is_asr(xml) => Some(
+            xml.children()
+                .find(|c| c.has_tag_name("Settings"))?
+                .children()
+                .collect(),
+        ),
         _ => None,
     }
 }
@@ -89,9 +101,9 @@ fn component_is_asr(e: Node) -> bool {
 }
 
 fn any_xml_nodes_from_asr(xml_nodes: &[Node]) -> bool {
-    xml_nodes.iter().any(|n| {
-        ["Version", "ScriptPath", "CustomSettings"].contains(&n.tag_name().name())
-    })
+    xml_nodes
+        .iter()
+        .any(|n| ["Version", "ScriptPath", "CustomSettings"].contains(&n.tag_name().name()))
 }
 
 // --------------------------------------------------------
