@@ -1,4 +1,3 @@
-
 use asr::settings::gui::{Gui, Widget};
 
 pub trait StoreGui: Gui {
@@ -33,7 +32,10 @@ pub trait StoreWidget: Widget {
 
 impl StoreWidget for bool {
     fn insert_into(&self, settings_map: &asr::settings::Map, key: &str) -> bool {
-        if settings_map.get(key).is_some_and(|old_v| old_v.get_bool().is_some_and(|old_b| old_b == *self)) {
+        if settings_map
+            .get(key)
+            .is_some_and(|old_v| old_v.get_bool().is_some_and(|old_b| old_b == *self))
+        {
             return false;
         }
         settings_map.insert(key, *self);
