@@ -12,7 +12,7 @@
     <CustomVariables />
   </Metadata>
   <Offset>00:00:00</Offset>
-  <AttemptCount>0</AttemptCount>
+  <AttemptCount>2</AttemptCount>
   <AttemptHistory />
   <Segments>
     <Segment>
@@ -44,7 +44,7 @@
     <AutosplitStartRuns>TransitionAfterSaveState</AutosplitStartRuns>
     <Splits>
       <Split>MenuCloak</Split>
-      <Split>MenuClaw</Split>
+      <Split>MenuCloak</Split>
     </Splits>
   </AutoSplitterSettings>
 </Run>
