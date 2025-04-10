@@ -41,13 +41,15 @@ pub async fn wait_asr_settings_init() -> asr::settings::Map {
 pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
     let bs = file::file_read_all_bytes(path).ok()?;
     let d = roxmltree::Document::parse(str::from_utf8(bs.as_slice()).ok()?).ok()?;
-    let xml_nodes = d.descendants().find_map(xml_find_auto_splitter_settings)?;
+    let xml_nodes = xml_find_auto_splitter_settings(d.root_element())?;
     asr_settings_from_xml_nodes(xml_nodes)
 }
 
 fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
-    let d = roxmltree::Document::parse(xml_string).ok()?;
-    asr_settings_from_xml_nodes(d.descendants().collect())
+    let wrapped = format!("<AutoSplitterSettings>{}</AutoSplitterSettings>", xml_string);
+    let d = roxmltree::Document::parse(&wrapped).ok()?;
+    let xml_nodes = d.root_element().children().collect();
+    asr_settings_from_xml_nodes(xml_nodes)
 }
 
 fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Map> {
