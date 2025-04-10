@@ -1,4 +1,3 @@
-
 pub use ugly_widget_derive::SetHeadingLevel;
 
 use asr::settings::gui::{BoolArgs, TitleArgs};

@@ -1,5 +1,4 @@
 use asr::timer::TimerState;
-use serde::{Deserialize, Serialize};
 
 use crate::unstable::maybe_timer_current_split_index;
 
@@ -7,12 +6,13 @@ pub fn is_timer_state_between_runs(s: TimerState) -> bool {
     s == TimerState::NotRunning || s == TimerState::Ended
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub enum SplitterAction {
     #[default]
     Pass,
     Split,
     Skip,
+    #[allow(dead_code)]
     Reset,
     ManualSplit,
 }

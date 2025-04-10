@@ -1,3 +1,6 @@
+use alloc::boxed::Box;
+use alloc::vec::Vec;
+
 use asr::Process;
 
 use crate::hollow_knight_memory::GameManagerFinder;

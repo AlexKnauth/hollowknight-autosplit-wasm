@@ -1,9 +1,12 @@
 use alloc::collections::BTreeSet;
+use alloc::format;
+use alloc::string::String;
 use alloc::vec::Vec;
 use asr::future::retry;
+use core::str;
+use roxmltree::Node;
 #[cfg(target_os = "wasi")]
 use std::path::Path;
-use xmltree::{Element, XMLNode};
 
 #[cfg(target_os = "wasi")]
 use crate::file;
@@ -37,16 +40,23 @@ pub async fn wait_asr_settings_init() -> asr::settings::Map {
 
 #[cfg(target_os = "wasi")]
 pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
-    let xml_nodes = file_find_auto_splitter_settings(path)?;
+    let bs = file::file_read_all_bytes(path).ok()?;
+    let d = roxmltree::Document::parse(str::from_utf8(bs.as_slice()).ok()?).ok()?;
+    let xml_nodes = xml_find_auto_splitter_settings(d.root_element())?;
     asr_settings_from_xml_nodes(xml_nodes)
 }
 
 fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
-    let xml_nodes = Element::parse_all(xml_string.as_bytes()).ok()?;
+    let wrapped = format!(
+        "<AutoSplitterSettings>{}</AutoSplitterSettings>",
+        xml_string
+    );
+    let d = roxmltree::Document::parse(&wrapped).ok()?;
+    let xml_nodes = d.root_element().children().collect();
     asr_settings_from_xml_nodes(xml_nodes)
 }
 
-fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings::Map> {
+fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Map> {
     if any_xml_nodes_from_asr(&xml_nodes) {
         asr_xml::asr_settings_from_xml_nodes(xml_nodes)
     } else {
@@ -55,48 +65,51 @@ fn asr_settings_from_xml_nodes(xml_nodes: Vec<XMLNode>) -> Option<asr::settings:
 }
 
 #[cfg(target_os = "wasi")]
-fn file_find_auto_splitter_settings<P: AsRef<Path>>(path: P) -> Option<Vec<XMLNode>> {
-    let bs = file::file_read_all_bytes(path).ok()?;
-    let es = Element::parse_all(bs.as_slice()).ok()?;
-    let auto_splitter_settings = es.iter().find_map(xml_find_auto_splitter_settings)?;
-    Some(auto_splitter_settings)
-}
-
-#[cfg(target_os = "wasi")]
-fn xml_find_auto_splitter_settings(xml: &XMLNode) -> Option<Vec<XMLNode>> {
-    let e = xml.as_element()?;
-    match e.name.as_str() {
-        "AutoSplitterSettings" => Some(e.children.clone()),
-        "Run" => Some(e.get_child("AutoSplitterSettings")?.children.clone()),
-        "Layout" => e
-            .get_child("Components")?
-            .children
-            .iter()
+fn xml_find_auto_splitter_settings<'a>(xml: Node<'a, 'a>) -> Option<Vec<Node<'a, 'a>>> {
+    if !xml.is_element() {
+        return None;
+    }
+    match xml.tag_name().name() {
+        "AutoSplitterSettings" => Some(xml.children().collect()),
+        "Run" => Some(
+            xml.children()
+                .find(|c| c.has_tag_name("AutoSplitterSettings"))?
+                .children()
+                .collect(),
+        ),
+        "Layout" => xml
+            .children()
+            .find(|c| c.has_tag_name("Components"))?
+            .children()
             .find_map(xml_find_auto_splitter_settings),
-        "Component" if component_is_asr(e) => Some(e.get_child("Settings")?.children.clone()),
+        "Component" if component_is_asr(xml) => Some(
+            xml.children()
+                .find(|c| c.has_tag_name("Settings"))?
+                .children()
+                .collect(),
+        ),
         _ => None,
     }
 }
 
 #[cfg(target_os = "wasi")]
-fn component_is_asr(e: &Element) -> bool {
-    let Some(p) = e.get_child("Path") else {
+fn component_is_asr(e: Node) -> bool {
+    let Some(p) = e.children().find(|c| c.has_tag_name("Path")) else {
         return false;
     };
-    let [c] = &p.children[..] else {
+    let [c] = &p.children().collect::<Vec<_>>()[..] else {
         return false;
     };
-    let Some(s) = c.as_text() else {
+    let Some(s) = c.text() else {
         return false;
     };
     s.contains("LiveSplit.AutoSplittingRuntime")
 }
 
-fn any_xml_nodes_from_asr(xml_nodes: &[XMLNode]) -> bool {
-    xml_nodes.iter().any(|n| {
-        n.as_element()
-            .is_some_and(|e| ["Version", "ScriptPath", "CustomSettings"].contains(&e.name.as_str()))
-    })
+fn any_xml_nodes_from_asr(xml_nodes: &[Node]) -> bool {
+    xml_nodes
+        .iter()
+        .any(|n| ["Version", "ScriptPath", "CustomSettings"].contains(&n.tag_name().name()))
 }
 
 // --------------------------------------------------------

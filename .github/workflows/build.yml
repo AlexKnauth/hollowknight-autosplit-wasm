@@ -52,6 +52,7 @@ jobs:
       - name: Prepare Release
         run: |
           cp target/${{matrix.target}}/release/hollowknight_autosplit_wasm.wasm hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
+          ls -lh hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')

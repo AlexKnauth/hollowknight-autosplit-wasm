@@ -1,3 +1,7 @@
+use alloc::format;
+use alloc::vec;
+use alloc::vec::Vec;
+
 use asr::settings::gui::{Gui, Title};
 #[cfg(target_os = "wasi")]
 use asr::{
@@ -5,7 +9,6 @@ use asr::{
     watcher::Pair,
 };
 
-use serde::{Deserialize, Serialize};
 #[cfg(target_os = "wasi")]
 use ugly_widget::{args::SetHeadingLevel, ugly_list::UglyListArgs};
 use ugly_widget::{
@@ -121,20 +124,7 @@ impl SettingsGui {
     }
 }
 
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Deserialize,
-    Eq,
-    Gui,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    RadioButtonOptions,
-    Serialize,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum TimingMethod {
     /// Load Removed Time
     #[default]
@@ -159,20 +149,7 @@ impl StoreWidget for TimingMethod {
     }
 }
 
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Deserialize,
-    Eq,
-    Gui,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    RadioButtonOptions,
-    Serialize,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum HitsMethod {
     /// None
     #[default]

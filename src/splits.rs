@@ -1,27 +1,18 @@
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
+
 use asr::settings::Gui;
 use asr::timer::TimerState;
 use asr::watcher::Pair;
 use asr::Process;
-use serde::{Deserialize, Serialize};
 use ugly_widget::radio_button::{options_str, RadioButtonOptions};
 use ugly_widget::store::StoreWidget;
 
 use crate::hollow_knight_memory::*;
 use crate::timer::*;
 
-#[derive(
-    Clone,
-    Debug,
-    Default,
-    Deserialize,
-    Eq,
-    Gui,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    RadioButtonOptions,
-    Serialize,
-)]
+#[derive(Clone, Debug, Default, Eq, Gui, Ord, PartialEq, PartialOrd, RadioButtonOptions)]
 pub enum Split {
     // region: Start, End, and Menu
     /// Manual Split (Misc)
@@ -52,7 +43,7 @@ pub enum Split {
     /// Credits Roll (Ending)
     ///
     /// Splits on any credits rolling, any ending
-    #[serde(alias = "LegacyEnd")]
+    #[alias = "LegacyEnd"]
     EndingSplit,
     /// The Hollow Knight (Ending)
     ///
@@ -1604,12 +1595,12 @@ pub enum Split {
     /// Map Dirtmouth (Item)
     ///
     /// Splits when acquiring the Dirtmouth map
-    #[serde(rename = "mapDirtmouth", alias = "MapDirtmouth")]
+    #[alias = "mapDirtmouth"]
     MapDirtmouth,
     /// Map Crossroads (Item)
     ///
     /// Splits when acquiring the Crossroads map
-    #[serde(rename = "mapCrossroads", alias = "MapCrossroads")]
+    #[alias = "mapCrossroads"]
     MapCrossroads,
     /// Has Map Crossroads (Transition)
     ///
@@ -1618,62 +1609,62 @@ pub enum Split {
     /// Map Greenpath (Item)
     ///
     /// Splits when acquiring the Greenpath map
-    #[serde(rename = "mapGreenpath", alias = "MapGreenpath")]
+    #[alias = "mapGreenpath"]
     MapGreenpath,
     /// Map Fog Canyon (Item)
     ///
     /// Splits when acquiring the Fog Canyon map
-    #[serde(rename = "mapFogCanyon", alias = "MapFogCanyon")]
+    #[alias = "mapFogCanyon"]
     MapFogCanyon,
     /// Map Queen's Gardens (Item)
     ///
     /// Splits when acquiring the QG map
-    #[serde(rename = "mapRoyalGardens", alias = "MapRoyalGardens")]
+    #[alias = "mapRoyalGardens"]
     MapRoyalGardens,
     /// Map Fungal Wastes (Item)
     ///
     /// Splits when acquiring the Fungal Wastes map
-    #[serde(rename = "mapFungalWastes", alias = "MapFungalWastes")]
+    #[alias = "mapFungalWastes"]
     MapFungalWastes,
     /// Map City of Tears (Item)
     ///
     /// Splits when acquiring the City map
-    #[serde(rename = "mapCity", alias = "MapCity")]
+    #[alias = "mapCity"]
     MapCity,
     /// Map Waterways (Item)
     ///
     /// Splits when acquiring the Waterways map
-    #[serde(rename = "mapWaterways", alias = "MapWaterways")]
+    #[alias = "mapWaterways"]
     MapWaterways,
     /// Map Crystal Peak (Item)
     ///
     /// Splits when acquiring the Crystal Peak map
-    #[serde(rename = "mapMines", alias = "MapMines")]
+    #[alias = "mapMines"]
     MapMines,
     /// Map Deepnest (Item)
     ///
     /// Splits when acquiring the Deepnest map
-    #[serde(rename = "mapDeepnest", alias = "MapDeepnest")]
+    #[alias = "mapDeepnest"]
     MapDeepnest,
     /// Map Howling Cliffs (Item)
     ///
     /// Splits when acquiring the Howling Cliffs map
-    #[serde(rename = "mapCliffs", alias = "MapCliffs")]
+    #[alias = "mapCliffs"]
     MapCliffs,
     /// Map Kingdom's Edge (Item)
     ///
     /// Splits when acquiring the KE map
-    #[serde(rename = "mapOutskirts", alias = "MapOutskirts")]
+    #[alias = "mapOutskirts"]
     MapOutskirts,
     /// Map Resting Grounds (Item)
     ///
     /// Splits when acquiring the Resting Grounds map
-    #[serde(rename = "mapRestingGrounds", alias = "MapRestingGrounds")]
+    #[alias = "mapRestingGrounds"]
     MapRestingGrounds,
     /// Map Ancient Basin (Item)
     ///
     /// Splits when acquiring the Abyss map
-    #[serde(rename = "mapAbyss", alias = "MapAbyss")]
+    #[alias = "mapAbyss"]
     MapAbyss,
     /// Cornifer at Home (Transition)
     ///
@@ -1860,7 +1851,7 @@ pub enum Split {
     // before LiveSplit.HollowKnight 2.9.0 this autosplit id was HollowKnight,
     // but it was changed to HollowKnightDreamnail to distinguish it
     // from the new autosplit HollowKnightBoss intended for segment practice
-    #[serde(alias = "HollowKnight")]
+    #[alias = "HollowKnight"]
     HollowKnightDreamnail,
     /// Segment Practice - Radiance (Boss)
     ///
@@ -2094,7 +2085,7 @@ pub enum Split {
     /// Soul Twister (Killed)
     ///
     /// Splits on first Soul Twister kill
-    #[serde(rename = "killedSoulTwister", alias = "KilledSoulTwister")]
+    #[alias = "killedSoulTwister"]
     KilledSoulTwister,
     /// Soul Sanctum (Transition)
     ///
@@ -2107,7 +2098,7 @@ pub enum Split {
     /// Soul Warrior (Killed)
     ///
     /// Splits on first Soul Warrior kill
-    #[serde(rename = "killedSanctumWarrior", alias = "KilledSanctumWarrior")]
+    #[alias = "killedSanctumWarrior"]
     KilledSanctumWarrior,
     /// Enter Soul Master (Transition)
     ///
@@ -2272,7 +2263,7 @@ pub enum Split {
     /// Emilitia Flower (NPC)
     ///
     /// Splits when giving Emilita a flower
-    #[serde(rename = "givenEmilitiaFlower", alias = "GivenEmilitiaFlower")]
+    #[alias = "givenEmilitiaFlower"]
     GivenEmilitiaFlower,
     /// Flukemarm (Boss)
     ///
@@ -2476,7 +2467,7 @@ pub enum Split {
     /// Oro Flower (NPC)
     ///
     /// Splits when giving Oro a flower
-    #[serde(rename = "givenOroFlower", alias = "GivenOroFlower")]
+    #[alias = "givenOroFlower"]
     GivenOroFlower,
     /// Enter Hornet 2 (Transition)
     ///
@@ -2971,7 +2962,7 @@ pub enum Split {
     /// White Lady Flower (NPC)
     ///
     /// Splits when giving White Lady a flower
-    #[serde(rename = "givenWhiteLadyFlower", alias = "GivenWhiteLadyFlower")]
+    #[alias = "givenWhiteLadyFlower"]
     GivenWhiteLadyFlower,
     // endregion: Queen's Gardens
     // region: Deepnest
@@ -3028,7 +3019,7 @@ pub enum Split {
     /// Godseeker Flower (NPC)
     ///
     /// Splits when giving Godseeker a flower
-    #[serde(rename = "givenGodseekerFlower", alias = "GivenGodseekerFlower")]
+    #[alias = "givenGodseekerFlower"]
     GivenGodseekerFlower,
     /// Godhome (Transition)
     ///
