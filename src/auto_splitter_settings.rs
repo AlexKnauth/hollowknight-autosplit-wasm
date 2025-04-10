@@ -46,7 +46,10 @@ pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::
 }
 
 fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
-    let wrapped = format!("<AutoSplitterSettings>{}</AutoSplitterSettings>", xml_string);
+    let wrapped = format!(
+        "<AutoSplitterSettings>{}</AutoSplitterSettings>",
+        xml_string
+    );
     let d = roxmltree::Document::parse(&wrapped).ok()?;
     let xml_nodes = d.root_element().children().collect();
     asr_settings_from_xml_nodes(xml_nodes)

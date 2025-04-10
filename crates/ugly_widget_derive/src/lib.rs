@@ -31,13 +31,12 @@ fn impl_set_heading_level(ast: &DeriveInput) -> TokenStream {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct OptionAttrs {
-    rename: Option<String>,
     alias: Option<String>,
     description: String,
     tooltip: String,
 }
 
-#[proc_macro_derive(RadioButtonOptions, attributes(rename, alias))]
+#[proc_macro_derive(RadioButtonOptions, attributes(alias))]
 pub fn radio_button_options_derive(input: TokenStream) -> TokenStream {
     // Parse the input tokens into a syntax tree
     let ast = parse_macro_input!(input as DeriveInput);
@@ -59,16 +58,15 @@ fn impl_radio_button_options(ast: &DeriveInput) -> TokenStream {
 
     let options = variants.into_iter().map(|v| {
         let v_name = &v.ident;
-        let OptionAttrs { rename, alias, description: doc_string, tooltip: tooltip_string } = option_attrs(&v.attrs);
-        let alias2 = alias.or_else(|| if rename.is_some() { Some(v_name.to_string()) } else { None });
-        let v_str = rename.unwrap_or(v_name.to_string());
-        let maybe_alias = if let Some(a) = alias2 {
+        let v_key = v_name.to_string();
+        let OptionAttrs { alias, description: doc_string, tooltip: tooltip_string } = option_attrs(&v.attrs);
+        let maybe_alias = if let Some(a) = alias {
             quote! { Some( #a ) }
         } else {
             quote! { None }
         };
         let desc_str =  if doc_string.is_empty() {
-            v_str.clone()
+            v_key.clone()
         } else {
             doc_string
         };
@@ -78,7 +76,7 @@ fn impl_radio_button_options(ast: &DeriveInput) -> TokenStream {
             quote! { Some( #tooltip_string ) }
         };
         quote! {
-            ::ugly_widget::radio_button::RadioButtonOption { value: #name::#v_name, key: #v_str, alias: #maybe_alias, description: #desc_str, tooltip: #maybe_tooltip }
+            ::ugly_widget::radio_button::RadioButtonOption { value: #name::#v_name, key: #v_key, alias: #maybe_alias, description: #desc_str, tooltip: #maybe_tooltip }
         }
     });
 
@@ -93,7 +91,6 @@ fn impl_radio_button_options(ast: &DeriveInput) -> TokenStream {
 }
 
 fn option_attrs(attrs: &[Attribute]) -> OptionAttrs {
-    let mut rename: Option<String> = None;
     let mut alias: Option<String> = None;
     let mut doc_lines: Vec<String> = Vec::new();
     for attr in attrs {
@@ -105,13 +102,6 @@ fn option_attrs(attrs: &[Attribute]) -> OptionAttrs {
                     }) = &nv.value
                     {
                         doc_lines.push(s.value().trim().to_string());
-                    }
-                } else if ident == "rename" {
-                    if let Expr::Lit(ExprLit {
-                        lit: Lit::Str(s), ..
-                    }) = &nv.value
-                    {
-                        rename.get_or_insert(s.value().trim().to_string());
                     }
                 } else if ident == "alias" {
                     if let Expr::Lit(ExprLit {
@@ -126,7 +116,6 @@ fn option_attrs(attrs: &[Attribute]) -> OptionAttrs {
     }
     let (description, tooltip) = lines_description_tooltip(&doc_lines);
     OptionAttrs {
-        rename,
         alias,
         description,
         tooltip,
@@ -156,14 +145,13 @@ mod tests {
     #[test]
     fn attrs_rename() {
         let v: Variant = parse_quote! {
-            #[rename = "mapCrossroads"]
+            #[alias = "mapCrossroads"]
             Thing
         };
         assert_eq!(
             option_attrs(&v.attrs),
             OptionAttrs {
-                rename: Some("mapCrossroads".to_string()),
-                alias: None,
+                alias: Some("mapCrossroads".to_string()),
                 description: "".to_string(),
                 tooltip: "".to_string(),
             }
@@ -179,26 +167,7 @@ mod tests {
         assert_eq!(
             option_attrs(&v.attrs),
             OptionAttrs {
-                rename: None,
                 alias: Some("LegacyEnd".to_string()),
-                description: "".to_string(),
-                tooltip: "".to_string(),
-            }
-        );
-    }
-
-    #[test]
-    fn attrs_rename_alias() {
-        let v: Variant = parse_quote! {
-            #[rename = "mapCrossroads"]
-            #[alias = "MapCrossroads"]
-            Thing
-        };
-        assert_eq!(
-            option_attrs(&v.attrs),
-            OptionAttrs {
-                rename: Some("mapCrossroads".to_string()),
-                alias: Some("MapCrossroads".to_string()),
                 description: "".to_string(),
                 tooltip: "".to_string(),
             }
@@ -217,7 +186,6 @@ mod tests {
         assert_eq!(
             option_attrs(&v.attrs),
             OptionAttrs {
-                rename: None,
                 alias: None,
                 description: "".to_string(),
                 tooltip: "".to_string(),
@@ -238,7 +206,6 @@ mod tests {
         assert_eq!(
             option_attrs(&v.attrs),
             OptionAttrs {
-                rename: None,
                 alias: None,
                 description: "A one-line thing".to_string(),
                 tooltip: "".to_string(),
@@ -266,7 +233,6 @@ mod tests {
             Thing
         };
         assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: None,
             alias: None,
             description: "This is a description spanning multiple single-line comments without any blank lines in between.".to_string(),
             tooltip: "".to_string(),
@@ -305,7 +271,6 @@ mod tests {
             Thing
         };
         assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: None,
             alias: None,
             description: "This is a description spanning multiple single-line comments without any blank lines in between.".to_string(),
             tooltip: "This is a tooltip, with multiple lines per paragraph.\nBut a tooltip can also have multiple paragraphs, which are interpreted as multiple lines.".to_string(),
@@ -346,7 +311,6 @@ mod tests {
             Thing
         };
         assert_eq!(option_attrs(&v.attrs), OptionAttrs {
-            rename: None,
             alias: None,
             description: "This is a description spanning multiple single-line comments without any blank lines in between.".to_string(),
             tooltip: "This is a tooltip, after multiple blank lines.\n\nAnd a continuation after even more blank lines.".to_string(),

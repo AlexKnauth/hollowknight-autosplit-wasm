@@ -1595,14 +1595,12 @@ pub enum Split {
     /// Map Dirtmouth (Item)
     ///
     /// Splits when acquiring the Dirtmouth map
-    #[rename = "mapDirtmouth"]
-    #[alias = "MapDirtmouth"]
+    #[alias = "mapDirtmouth"]
     MapDirtmouth,
     /// Map Crossroads (Item)
     ///
     /// Splits when acquiring the Crossroads map
-    #[rename = "mapCrossroads"]
-    #[alias = "MapCrossroads"]
+    #[alias = "mapCrossroads"]
     MapCrossroads,
     /// Has Map Crossroads (Transition)
     ///
@@ -1611,74 +1609,62 @@ pub enum Split {
     /// Map Greenpath (Item)
     ///
     /// Splits when acquiring the Greenpath map
-    #[rename = "mapGreenpath"]
-    #[alias = "MapGreenpath"]
+    #[alias = "mapGreenpath"]
     MapGreenpath,
     /// Map Fog Canyon (Item)
     ///
     /// Splits when acquiring the Fog Canyon map
-    #[rename = "mapFogCanyon"]
-    #[alias = "MapFogCanyon"]
+    #[alias = "mapFogCanyon"]
     MapFogCanyon,
     /// Map Queen's Gardens (Item)
     ///
     /// Splits when acquiring the QG map
-    #[rename = "mapRoyalGardens"]
-    #[alias = "MapRoyalGardens"]
+    #[alias = "mapRoyalGardens"]
     MapRoyalGardens,
     /// Map Fungal Wastes (Item)
     ///
     /// Splits when acquiring the Fungal Wastes map
-    #[rename = "mapFungalWastes"]
-    #[alias = "MapFungalWastes"]
+    #[alias = "mapFungalWastes"]
     MapFungalWastes,
     /// Map City of Tears (Item)
     ///
     /// Splits when acquiring the City map
-    #[rename = "mapCity"]
-    #[alias = "MapCity"]
+    #[alias = "mapCity"]
     MapCity,
     /// Map Waterways (Item)
     ///
     /// Splits when acquiring the Waterways map
-    #[rename = "mapWaterways"]
-    #[alias = "MapWaterways"]
+    #[alias = "mapWaterways"]
     MapWaterways,
     /// Map Crystal Peak (Item)
     ///
     /// Splits when acquiring the Crystal Peak map
-    #[rename = "mapMines"]
-    #[alias = "MapMines"]
+    #[alias = "mapMines"]
     MapMines,
     /// Map Deepnest (Item)
     ///
     /// Splits when acquiring the Deepnest map
-    #[rename = "mapDeepnest"]
-    #[alias = "MapDeepnest"]
+    #[alias = "mapDeepnest"]
     MapDeepnest,
     /// Map Howling Cliffs (Item)
     ///
     /// Splits when acquiring the Howling Cliffs map
-    #[rename = "mapCliffs"]
-    #[alias = "MapCliffs"]
+    #[alias = "mapCliffs"]
     MapCliffs,
     /// Map Kingdom's Edge (Item)
     ///
     /// Splits when acquiring the KE map
-    #[rename = "mapOutskirts"]
-    #[alias = "MapOutskirts"]
+    #[alias = "mapOutskirts"]
     MapOutskirts,
     /// Map Resting Grounds (Item)
     ///
     /// Splits when acquiring the Resting Grounds map
-    #[rename = "mapRestingGrounds"]
-    #[alias = "MapRestingGrounds"]
+    #[alias = "mapRestingGrounds"]
     MapRestingGrounds,
     /// Map Ancient Basin (Item)
     ///
     /// Splits when acquiring the Abyss map
-    #[rename = "mapAbyss"]
-    #[alias = "MapAbyss"]
+    #[alias = "mapAbyss"]
     MapAbyss,
     /// Cornifer at Home (Transition)
     ///
@@ -2099,8 +2085,7 @@ pub enum Split {
     /// Soul Twister (Killed)
     ///
     /// Splits on first Soul Twister kill
-    #[rename = "killedSoulTwister"]
-    #[alias = "KilledSoulTwister"]
+    #[alias = "killedSoulTwister"]
     KilledSoulTwister,
     /// Soul Sanctum (Transition)
     ///
@@ -2113,8 +2098,7 @@ pub enum Split {
     /// Soul Warrior (Killed)
     ///
     /// Splits on first Soul Warrior kill
-    #[rename = "killedSanctumWarrior"]
-    #[alias = "KilledSanctumWarrior"]
+    #[alias = "killedSanctumWarrior"]
     KilledSanctumWarrior,
     /// Enter Soul Master (Transition)
     ///
@@ -2279,8 +2263,7 @@ pub enum Split {
     /// Emilitia Flower (NPC)
     ///
     /// Splits when giving Emilita a flower
-    #[rename = "givenEmilitiaFlower"]
-    #[alias = "GivenEmilitiaFlower"]
+    #[alias = "givenEmilitiaFlower"]
     GivenEmilitiaFlower,
     /// Flukemarm (Boss)
     ///
@@ -2484,8 +2467,7 @@ pub enum Split {
     /// Oro Flower (NPC)
     ///
     /// Splits when giving Oro a flower
-    #[rename = "givenOroFlower"]
-    #[alias = "GivenOroFlower"]
+    #[alias = "givenOroFlower"]
     GivenOroFlower,
     /// Enter Hornet 2 (Transition)
     ///
@@ -2980,8 +2962,7 @@ pub enum Split {
     /// White Lady Flower (NPC)
     ///
     /// Splits when giving White Lady a flower
-    #[rename = "givenWhiteLadyFlower"]
-    #[alias = "GivenWhiteLadyFlower"]
+    #[alias = "givenWhiteLadyFlower"]
     GivenWhiteLadyFlower,
     // endregion: Queen's Gardens
     // region: Deepnest
@@ -3038,8 +3019,7 @@ pub enum Split {
     /// Godseeker Flower (NPC)
     ///
     /// Splits when giving Godseeker a flower
-    #[rename = "givenGodseekerFlower"]
-    #[alias = "GivenGodseekerFlower"]
+    #[alias = "givenGodseekerFlower"]
     GivenGodseekerFlower,
     /// Godhome (Transition)
     ///

@@ -165,7 +165,13 @@ fn split_from_settings_split(s: XMLSettings) -> Option<Split> {
 }
 
 fn split_from_settings_str(s: XMLSettings) -> Option<Split> {
-    options_value(&s.as_string()?)
+    let str1 = s.as_string()?;
+    let str2 = str1.trim();
+    if str2.is_empty() {
+        None
+    } else {
+        options_value(str2)
+    }
 }
 
 fn timing_method_from_settings_str(s: XMLSettings) -> Option<TimingMethod> {

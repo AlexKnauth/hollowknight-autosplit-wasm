@@ -12,7 +12,7 @@ use super::store::StoreWidget;
 
 // --------------------------------------------------------
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RadioButtonOption<'a, T> {
     pub value: T,
     pub key: &'a str,
