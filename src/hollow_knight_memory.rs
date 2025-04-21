@@ -5345,6 +5345,16 @@ impl PlayerDataStore {
             .unwrap_or(false)
     }
 
+    pub fn met_relic_dealer_shop(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(
+            p,
+            g,
+            "met_relic_dealer_shop",
+            &g.player_data_pointers.met_relic_dealer_shop,
+        )
+        .unwrap_or(false)
+    }
+
     pub fn sly_shop_finished(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         if !g.is_game_state_non_menu(p) {
             return self
