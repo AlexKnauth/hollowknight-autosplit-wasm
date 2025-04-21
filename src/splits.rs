@@ -2303,7 +2303,11 @@ pub enum Split {
     ///
     /// Splits when buying Ancient Basin toll bench
     TollBenchBasin,
-    Abyss19from18,
+    /// Basin Spike Pit Exit (Transition)
+    ///
+    /// Splits on transition after crossing the Spike Pit from Basin Toll Bench towards Broken Vessel
+    #[alias = "Abyss19from18"]
+    BasinSpikePitExit,
     /// Broken Vessel (Boss)
     ///
     /// Splits when killing Broken Vessel
@@ -3526,7 +3530,7 @@ pub fn transition_splits(
         // endregion: Waterways
         // region: Basin
         Split::BasinEntry => should_split(p.current.starts_with("Abyss_04") && p.current != p.old),
-        Split::Abyss19from18 => should_split(p.old == "Abyss_18" && p.current == "Abyss_19"),
+        Split::BasinSpikePitExit => should_split(p.old == "Abyss_18" && p.current == "Abyss_19"),
         Split::BrokenVesselTrans => should_split(
             pds.killed_infected_knight(prc, g) && g.get_health(prc).is_some_and(|h| 0 < h),
         ),
