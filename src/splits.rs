@@ -2086,6 +2086,10 @@ pub enum Split {
     ///
     /// Splits on having sold at least 6100 geo worth of relics to Lemm
     AllCharmNotchesLemm2CP,
+    /// Lemm Shop Exit (Transition)
+    ///
+    /// Splits on transition after talking to Lemm in the shop
+    LemmShopExit,
     /// City Toll Bench Room (Transition)
     ///
     /// Splits when entering the city toll bench room
@@ -3470,6 +3474,11 @@ pub fn transition_splits(
             should_split(pds.killed_gorgeous_husk(prc, g) && p.current == MENU_TITLE)
         }
         Split::EnterRafters => should_split(p.current == "Ruins1_03" && p.current != p.old),
+        Split::LemmShopExit => should_split(
+            pds.met_relic_dealer_shop(prc, g)
+                && p.old.starts_with("Ruins1_05b")
+                && p.current != p.old,
+        ),
         Split::EnterCityTollBenchRoom => {
             should_split(p.current.starts_with("Ruins1_31") && !p.old.starts_with("Ruins1_31"))
         }
