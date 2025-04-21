@@ -386,7 +386,7 @@ struct PlayerDataPointers {
     mask_broken_monomon: UnityPointer<3>,
     mask_broken_hegemol: UnityPointer<3>,
     guardians_defeated: UnityPointer<3>,
-    // Old Dreamer Timings, mark deprecated or whatever
+    // Old Dreamer Timings, for Dreamer Quit-outs on older patches
     lurien_defeated: UnityPointer<3>,
     monomon_defeated: UnityPointer<3>,
     hegemol_defeated: UnityPointer<3>,
@@ -2983,7 +2983,7 @@ impl GameManagerFinder {
             .ok()
     }
 
-    // Old Dreamer Timings, mark deprecated or whatever
+    // Old Dreamer Timings, for Dreamer Quit-outs on older patches
     pub fn lurien_defeated(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers
             .lurien_defeated
@@ -5243,6 +5243,36 @@ impl PlayerDataStore {
             &g.player_data_pointers.guardians_defeated,
         )
         .unwrap_or(0)
+    }
+
+    pub fn lurien_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(
+            p,
+            g,
+            "lurien_defeated",
+            &g.player_data_pointers.lurien_defeated,
+        )
+        .unwrap_or(false)
+    }
+
+    pub fn monomon_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(
+            p,
+            g,
+            "monomon_defeated",
+            &g.player_data_pointers.monomon_defeated,
+        )
+        .unwrap_or(false)
+    }
+
+    pub fn hegemol_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
+        self.get_bool(
+            p,
+            g,
+            "hegemol_defeated",
+            &g.player_data_pointers.hegemol_defeated,
+        )
+        .unwrap_or(false)
     }
 
     pub fn get_fireball_level(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {

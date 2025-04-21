@@ -127,16 +127,28 @@ pub enum Split {
     MenuDreamer3,
     /// Lurien (Old Dreamer Timing)
     ///
-    /// Matches the old legacy split. Splits when Lurien is registered as defeated (After killing Watcher Knight)
+    /// For Dreamer Quit-outs on older patches. Splits when Lurien is registered as defeated (After killing Watcher Knight)
     LurienDreamer,
     /// Monomon (Old Dreamer Timing)
     ///
-    /// Matches the old legacy split. Splits when Monomon is registered as defeated (After killing Uumuu)
+    /// For Dreamer Quit-outs on older patches. Splits when Monomon is registered as defeated (After killing Uumuu)
     MonomonDreamer,
     /// Herrah (Old Dreamer Timing)
     ///
-    /// Matches the old legacy split. Splits when Herrah is registered as defeated (In Spider Area)
+    /// For Dreamer Quit-outs on older patches. Splits when Herrah is registered as defeated (In Spider Area)
     HegemolDreamer,
+    /// Main Menu w/ Herrah (Menu)
+    ///
+    /// For Dreamer Quit-outs on older patches. Splits on transition to the main menu after Herrah is registered as defeated
+    MenuHegemol,
+    /// Main Menu w/ Lurien (Menu)
+    ///
+    /// For Dreamer Quit-outs on older patches. Splits on transition to the main menu after Lurien is registered as defeated
+    MenuLurien,
+    /// Main Menu w/ Monomon (Menu)
+    ///
+    /// For Dreamer Quit-outs on older patches. Splits on transition to the main menu after Monomon is registered as defeated
+    MenuMonomon,
     // endregion: Dreamers
 
     // region: Mr Mushroom
@@ -3326,6 +3338,9 @@ pub fn transition_splits(
         Split::MenuDreamer3 => {
             should_split(3 <= pds.guardians_defeated(prc, g) && p.current == MENU_TITLE)
         }
+        Split::MenuLurien => should_split(pds.lurien_defeated(prc, g) && p.current == MENU_TITLE),
+        Split::MenuMonomon => should_split(pds.monomon_defeated(prc, g) && p.current == MENU_TITLE),
+        Split::MenuHegemol => should_split(pds.hegemol_defeated(prc, g) && p.current == MENU_TITLE),
         // endregion: Dreamers
 
         // region: Maps and Cornifer
@@ -3893,10 +3908,22 @@ pub fn continuous_splits(
             pds.guardians_defeated(p, g);
             should_split(false)
         }
-        // Old Dreamer Timings, mark deprecated or whatever
+        // Old Dreamer Timings, for Dreamer Quit-outs on older patches
         Split::LurienDreamer => should_split(g.lurien_defeated(p).is_some_and(|d| d)),
         Split::MonomonDreamer => should_split(g.monomon_defeated(p).is_some_and(|d| d)),
         Split::HegemolDreamer => should_split(g.hegemol_defeated(p).is_some_and(|d| d)),
+        Split::MenuLurien => {
+            pds.lurien_defeated(p, g);
+            should_split(false)
+        }
+        Split::MenuMonomon => {
+            pds.monomon_defeated(p, g);
+            should_split(false)
+        }
+        Split::MenuHegemol => {
+            pds.hegemol_defeated(p, g);
+            should_split(false)
+        }
         // endregion: Dreamers
         // region: Mr Mushroom
         Split::MrMushroom1 => should_split(g.mr_mushroom_state(p).is_some_and(|s| 2 <= s)),
