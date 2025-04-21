@@ -311,7 +311,7 @@ pub enum Split {
     MenuDreamGate,
     /// Dream Nail - Awoken (Skill)
     ///
-    /// Splits when Awkening the Dream Nail
+    /// Splits when Awakening the Dream Nail
     DreamNail2,
     // endregion: Dream Nail Levels
 
@@ -520,7 +520,7 @@ pub enum Split {
     MaskShardStoneSanctuary,
     /// Waterways Mask Shard (Obtain)
     ///
-    /// Splits when getting the Mask Shard in Royal Wayerways
+    /// Splits when getting the Mask Shard in Royal Waterways
     MaskShardWaterways,
     /// Fungal Core Mask Shard (Obtain)
     ///
@@ -2753,7 +2753,7 @@ pub enum Split {
     SilverEnd,
     /// Oblobbles (Boss)
     ///
-    /// Splits when 2 Oblobbles are deafeated (ideally the first pair you encounter in Colo 2)
+    /// Splits when 2 Oblobbles are defeated (ideally the first pair you encounter in Colo 2)
     KilledOblobbles,
     /// Colosseum Fight 2 (Trial)
     ///
