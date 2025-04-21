@@ -42,6 +42,7 @@ pub fn should_skip(b: bool) -> SplitterAction {
     }
 }
 
+/// Interprets Some(true) as Split, Some(false) as Skip, and None as Pass
 pub fn should_split_skip(mb: Option<bool>) -> SplitterAction {
     match mb {
         Some(true) => SplitterAction::Split,
