@@ -274,11 +274,5 @@
         <Display2Rows>False</Display2Rows>
       </Settings>
     </Component>
-    <Component>
-      <Path>LiveSplit.HitCounterManagerConnector.dll</Path>
-      <Settings>
-        <Version>0.0</Version>
-      </Settings>
-    </Component>
   </Components>
 </Layout>
