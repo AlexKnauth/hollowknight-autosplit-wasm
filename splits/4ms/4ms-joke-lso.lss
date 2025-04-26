@@ -12,7 +12,7 @@
   </Metadata>
   <LayoutPath />
   <Offset>00:00:00.000000000</Offset>
-  <AttemptCount>7</AttemptCount>
+  <AttemptCount>8</AttemptCount>
   <AttemptHistory>
     <Attempt id="1" started="09/19/2024 02:38:53" isStartedSynced="False" ended="09/19/2024 02:51:25" isEndedSynced="False">
       <RealTime>00:12:32.164298000</RealTime>
@@ -39,6 +39,7 @@
       <RealTime>00:10:30.612074500</RealTime>
       <GameTime>00:09:29.859319300</GameTime>
     </Attempt>
+    <Attempt id="8" started="04/26/2025 19:03:05" isStartedSynced="False" ended="04/26/2025 19:07:02" isEndedSynced="False" />
   </AttemptHistory>
   <Segments>
     <Segment>
@@ -53,8 +54,8 @@
         </SplitTime>
       </SplitTimes>
       <BestSegmentTime>
-        <RealTime>00:01:00.869605200</RealTime>
-        <GameTime>00:00:59.113418400</GameTime>
+        <RealTime>00:01:00.417420300</RealTime>
+        <GameTime>00:00:58.605608300</GameTime>
       </BestSegmentTime>
       <SegmentHistory>
         <Time id="1">
@@ -85,6 +86,10 @@
           <RealTime>00:01:17.423235200</RealTime>
           <GameTime>00:01:15.325733100</GameTime>
         </Time>
+        <Time id="8">
+          <RealTime>00:01:00.417420300</RealTime>
+          <GameTime>00:00:58.605608300</GameTime>
+        </Time>
       </SegmentHistory>
     </Segment>
     <Segment>
@@ -99,8 +104,8 @@
         </SplitTime>
       </SplitTimes>
       <BestSegmentTime>
-        <RealTime>00:00:55.826099300</RealTime>
-        <GameTime>00:00:48.577869000</GameTime>
+        <RealTime>00:00:54.792495000</RealTime>
+        <GameTime>00:00:47.552657800</GameTime>
       </BestSegmentTime>
       <SegmentHistory>
         <Time id="1">
@@ -130,6 +135,10 @@
         <Time id="7">
           <RealTime>00:01:16.936994900</RealTime>
           <GameTime>00:01:09.673442500</GameTime>
+        </Time>
+        <Time id="8">
+          <RealTime>00:00:54.792495000</RealTime>
+          <GameTime>00:00:47.552657800</GameTime>
         </Time>
       </SegmentHistory>
     </Segment>
