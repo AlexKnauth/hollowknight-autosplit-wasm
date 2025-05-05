@@ -13,7 +13,7 @@
       <Variable name="Load Remover">WASM</Variable>
     </SpeedrunComVariables>
     <CustomVariables>
-      <Variable name="pb hits">—</Variable>
+      <Variable name="pb hits">4</Variable>
     </CustomVariables>
   </Metadata>
   <LayoutPath />
