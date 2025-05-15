@@ -1243,6 +1243,7 @@ impl PlayerDataPointers {
                 0,
                 &["_instance", "playerData", "gotCharm_30"],
             ),
+            // Dashmaster
             got_charm_31: UnityPointer::new(
                 "GameManager",
                 0,
@@ -2817,13 +2818,6 @@ impl GameManagerFinder {
             .ok()
     }
 
-    pub fn get_fireball_level(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers
-            .fireball_level
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
     pub fn get_quake_level(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers
             .quake_level
@@ -2838,13 +2832,6 @@ impl GameManagerFinder {
             .ok()
     }
 
-    pub fn has_dash(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .has_dash
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
     pub fn has_shadow_dash(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers
             .has_shadow_dash
@@ -2852,30 +2839,9 @@ impl GameManagerFinder {
             .ok()
     }
 
-    pub fn has_wall_jump(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .has_wall_jump
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
-    pub fn has_double_jump(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .has_double_jump
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
     pub fn has_super_dash(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers
             .has_super_dash
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
-    pub fn has_acid_armour(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .has_acid_armour
             .deref(process, &self.module, &self.image)
             .ok()
     }
@@ -2900,13 +2866,6 @@ impl GameManagerFinder {
     pub fn has_upward_slash(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers
             .has_upward_slash
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
-    pub fn has_dream_nail(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .has_dream_nail
             .deref(process, &self.module, &self.image)
             .ok()
     }
@@ -2972,33 +2931,6 @@ impl GameManagerFinder {
     pub fn mask_broken_hegemol(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers
             .mask_broken_hegemol
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
-    pub fn guardians_defeated(&self, process: &Process) -> Option<i32> {
-        self.player_data_pointers
-            .guardians_defeated
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
-    // Old Dreamer Timings, for Dreamer Quit-outs on older patches
-    pub fn lurien_defeated(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .lurien_defeated
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-    pub fn monomon_defeated(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .monomon_defeated
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-    pub fn hegemol_defeated(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .hegemol_defeated
             .deref(process, &self.module, &self.image)
             .ok()
     }
@@ -3534,14 +3466,6 @@ impl GameManagerFinder {
             .ok()
     }
 
-    // Dashmaster
-    pub fn got_charm_31(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .got_charm_31
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
     pub fn got_charm_32(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers
             .got_charm_32
@@ -3718,13 +3642,6 @@ impl GameManagerFinder {
     pub fn royal_charm_state(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers
             .royal_charm_state
-            .deref(process, &self.module, &self.image)
-            .ok()
-    }
-
-    pub fn got_shade_charm(&self, process: &Process) -> Option<bool> {
-        self.player_data_pointers
-            .got_shade_charm
             .deref(process, &self.module, &self.image)
             .ok()
     }
@@ -5245,6 +5162,7 @@ impl PlayerDataStore {
         .unwrap_or(0)
     }
 
+    // Old Dreamer Timings, for Dreamer Quit-outs on older patches
     pub fn lurien_defeated(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(
             p,
@@ -5435,6 +5353,7 @@ impl PlayerDataStore {
         }
     }
 
+    // Dashmaster
     pub fn got_charm_31(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "got_charm_31", &g.player_data_pointers.got_charm_31)
             .unwrap_or(false)
