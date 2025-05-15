@@ -4858,7 +4858,7 @@ pub fn continuous_splits(
             g.at_bench(p).is_some_and(|b| b)
                 && g.get_scene_name(p).is_some_and(|s| s == "Fungus1_16_alt"),
         ),
-        Split::Hornet1 => should_split(g.killed_hornet(p).is_some_and(|k| k)),
+        Split::Hornet1 => should_split(g.hornet1_defeated(p).is_some_and(|k| k)),
         Split::Aluba => should_split(g.killed_lazy_flyer(p).is_some_and(|k| k)),
         Split::HuntersMark => should_split(g.killed_hunter_mark(p).is_some_and(|k| k)),
         Split::NoEyes => should_split(g.killed_ghost_no_eyes(p).is_some_and(|k| k)),

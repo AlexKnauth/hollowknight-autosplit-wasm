@@ -558,7 +558,7 @@ struct PlayerDataPointers {
     visited_greenpath: UnityPointer<3>,
     killed_moss_knight: UnityPointer<3>,
     zote_rescued_buzzer: UnityPointer<3>,
-    killed_hornet: UnityPointer<3>,
+    hornet1_defeated: UnityPointer<3>,
     /// killedLazyFlyer: Aluba
     killed_lazy_flyer: UnityPointer<3>,
     killed_hunter_mark: UnityPointer<3>,
@@ -1632,10 +1632,10 @@ impl PlayerDataPointers {
                 0,
                 &["_instance", "playerData", "zoteRescuedBuzzer"],
             ),
-            killed_hornet: UnityPointer::new(
+            hornet1_defeated: UnityPointer::new(
                 "GameManager",
                 0,
-                &["_instance", "playerData", "killedHornet"],
+                &["_instance", "playerData", "hornet1Defeated"],
             ),
             killed_lazy_flyer: UnityPointer::new(
                 "GameManager",
@@ -4069,9 +4069,9 @@ impl GameManagerFinder {
             .ok()
     }
 
-    pub fn killed_hornet(&self, process: &Process) -> Option<bool> {
+    pub fn hornet1_defeated(&self, process: &Process) -> Option<bool> {
         self.player_data_pointers
-            .killed_hornet
+            .hornet1_defeated
             .deref(process, &self.module, &self.image)
             .ok()
     }
