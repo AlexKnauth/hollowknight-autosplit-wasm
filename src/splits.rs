@@ -3914,17 +3914,17 @@ pub fn continuous_splits(
         Split::Lurien => should_split(g.mask_broken_lurien(p).is_some_and(|b| b)),
         Split::Monomon => should_split(g.mask_broken_monomon(p).is_some_and(|b| b)),
         Split::Hegemol => should_split(g.mask_broken_hegemol(p).is_some_and(|b| b)),
-        Split::Dreamer1 => should_split(g.guardians_defeated(p).is_some_and(|d| 1 <= d)),
-        Split::Dreamer2 => should_split(g.guardians_defeated(p).is_some_and(|d| 2 <= d)),
-        Split::Dreamer3 => should_split(g.guardians_defeated(p).is_some_and(|d| 3 <= d)),
+        Split::Dreamer1 => should_split(1 <= pds.guardians_defeated(p, g)),
+        Split::Dreamer2 => should_split(2 <= pds.guardians_defeated(p, g)),
+        Split::Dreamer3 => should_split(3 <= pds.guardians_defeated(p, g)),
         Split::MenuDreamer3 => {
             pds.guardians_defeated(p, g);
             should_split(false)
         }
         // Old Dreamer Timings, for Dreamer Quit-outs on older patches
-        Split::LurienDreamer => should_split(g.lurien_defeated(p).is_some_and(|d| d)),
-        Split::MonomonDreamer => should_split(g.monomon_defeated(p).is_some_and(|d| d)),
-        Split::HegemolDreamer => should_split(g.hegemol_defeated(p).is_some_and(|d| d)),
+        Split::LurienDreamer => should_split(pds.lurien_defeated(p, g)),
+        Split::MonomonDreamer => should_split(pds.monomon_defeated(p, g)),
+        Split::HegemolDreamer => should_split(pds.hegemol_defeated(p, g)),
         Split::MenuLurien => {
             pds.lurien_defeated(p, g);
             should_split(false)
@@ -3948,12 +3948,12 @@ pub fn continuous_splits(
         Split::MrMushroom7 => should_split(g.mr_mushroom_state(p).is_some_and(|s| 8 <= s)),
         // endregion: Mr Mushroom
         // region: Spell Levels
-        Split::VengefulSpirit => should_split(g.get_fireball_level(p).is_some_and(|l| 1 <= l)),
+        Split::VengefulSpirit => should_split(1 <= pds.get_fireball_level(p, g)),
         Split::TransVS => {
             pds.get_fireball_level(p, g);
             should_split(false)
         }
-        Split::ShadeSoul => should_split(g.get_fireball_level(p).is_some_and(|l| 2 <= l)),
+        Split::ShadeSoul => should_split(2 <= pds.get_fireball_level(p, g)),
         Split::TransShadeSoul => {
             pds.get_fireball_level(p, g);
             should_split(false)
@@ -3972,13 +3972,13 @@ pub fn continuous_splits(
         Split::AbyssShriek => should_split(g.get_scream_level(p).is_some_and(|l| 2 <= l)),
         // endregion: Spell Levels
         // region: Movement Abilities
-        Split::MothwingCloak => should_split(g.has_dash(p).is_some_and(|d| d)),
+        Split::MothwingCloak => should_split(pds.has_dash(p, g)),
         Split::MenuCloak => {
             pds.has_dash(p, g);
             should_split(false)
         }
         Split::ShadeCloak => should_split(g.has_shadow_dash(p).is_some_and(|s| s)),
-        Split::MantisClaw => should_split(g.has_wall_jump(p).is_some_and(|w| w)),
+        Split::MantisClaw => should_split(pds.has_wall_jump(p, g)),
         Split::TransClaw => {
             pds.has_wall_jump(p, g);
             should_split(false)
@@ -3987,13 +3987,13 @@ pub fn continuous_splits(
             pds.has_wall_jump(p, g);
             should_split(false)
         }
-        Split::MonarchWings => should_split(g.has_double_jump(p).is_some_and(|w| w)),
+        Split::MonarchWings => should_split(pds.has_double_jump(p, g)),
         Split::MenuWings => {
             pds.has_double_jump(p, g);
             should_split(false)
         }
         Split::CrystalHeart => should_split(g.has_super_dash(p).is_some_and(|s| s)),
-        Split::IsmasTear => should_split(g.has_acid_armour(p).is_some_and(|a| a)),
+        Split::IsmasTear => should_split(pds.has_acid_armour(p, g)),
         Split::TransTear => {
             pds.has_acid_armour(p, g);
             should_split(false)
@@ -4016,7 +4016,7 @@ pub fn continuous_splits(
         Split::GreatSlash => should_split(g.has_dash_slash(p).is_some_and(|s| s)),
         // endregion: Nail Arts
         // region: Dream Nail Levels
-        Split::DreamNail => should_split(g.has_dream_nail(p).is_some_and(|d| d)),
+        Split::DreamNail => should_split(pds.has_dream_nail(p, g)),
         Split::MenuDreamNail => {
             pds.has_dream_nail(p, g);
             should_split(false)
@@ -4271,7 +4271,7 @@ pub fn continuous_splits(
         Split::ShapeOfUnn => should_split(g.got_charm_28(p).is_some_and(|c| c)),
         Split::Hiveblood => should_split(g.got_charm_29(p).is_some_and(|c| c)),
         Split::DreamWielder => should_split(g.got_charm_30(p).is_some_and(|c| c)),
-        Split::Dashmaster => should_split(g.got_charm_31(p).is_some_and(|c| c)),
+        Split::Dashmaster => should_split(pds.got_charm_31(p, g)),
         Split::MenuDashmaster => {
             pds.got_charm_31(p, g);
             should_split(false)
@@ -4340,7 +4340,7 @@ pub fn continuous_splits(
             g.charm_cost_36(p).is_some_and(|c| c == 5)
                 && g.royal_charm_state(p).is_some_and(|s| s == 3),
         ),
-        Split::VoidHeart => should_split(g.got_shade_charm(p).is_some_and(|c| c)),
+        Split::VoidHeart => should_split(pds.got_shade_charm(p, g)),
         Split::MenuVoidHeart => {
             pds.got_shade_charm(p, g);
             should_split(false)
