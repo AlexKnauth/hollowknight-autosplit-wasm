@@ -12,11 +12,15 @@
     <CustomVariables />
   </Metadata>
   <Offset>00:00:00</Offset>
-  <AttemptCount>1</AttemptCount>
+  <AttemptCount>2</AttemptCount>
   <AttemptHistory>
     <Attempt id="1" started="06/22/2025 18:38:32" isStartedSynced="False" ended="06/22/2025 18:41:24" isEndedSynced="True">
       <RealTime>00:02:51.6480578</RealTime>
       <GameTime>00:02:39.7920893</GameTime>
+    </Attempt>
+    <Attempt id="2" started="06/22/2025 18:53:38" isStartedSynced="True" ended="06/22/2025 18:56:48" isEndedSynced="True">
+      <RealTime>00:03:09.4575305</RealTime>
+      <GameTime>00:03:00.2050236</GameTime>
     </Attempt>
   </AttemptHistory>
   <Segments>
@@ -40,6 +44,10 @@
           <RealTime>00:01:31.3429409</RealTime>
           <GameTime>00:01:28.6307538</GameTime>
         </Time>
+        <Time id="2">
+          <RealTime>00:01:54.2507985</RealTime>
+          <GameTime>00:01:52.4384793</GameTime>
+        </Time>
       </SegmentHistory>
     </Segment>
     <Segment>
@@ -54,13 +62,17 @@
         </SplitTime>
       </SplitTimes>
       <BestSegmentTime>
-        <RealTime>00:01:20.3051169</RealTime>
-        <GameTime>00:01:11.1613355</GameTime>
+        <RealTime>00:01:15.2067320</RealTime>
+        <GameTime>00:01:07.7665443</GameTime>
       </BestSegmentTime>
       <SegmentHistory>
         <Time id="1">
           <RealTime>00:01:20.3051169</RealTime>
           <GameTime>00:01:11.1613355</GameTime>
+        </Time>
+        <Time id="2">
+          <RealTime>00:01:15.2067320</RealTime>
+          <GameTime>00:01:07.7665443</GameTime>
         </Time>
       </SegmentHistory>
     </Segment>
@@ -75,8 +87,8 @@
       <Split>Grub1</Split>
     </Splits>
     <ComparisonHits>
-      <Item>5</Item>
-      <Item>10</Item>
+      <Item>2</Item>
+      <Item>4</Item>
     </ComparisonHits>
   </AutoSplitterSettings>
 </Run>
