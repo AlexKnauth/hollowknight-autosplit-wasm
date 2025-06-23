@@ -92,9 +92,6 @@
       <Split>KingsPass</Split>
       <Split>Grub1</Split>
     </Splits>
-    <ComparisonHits>
-      <Item>1</Item>
-      <Item>4</Item>
-    </ComparisonHits>
+    <ComparisonHits />
   </AutoSplitterSettings>
 </Run>
