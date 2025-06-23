@@ -1050,25 +1050,6 @@
       <Split>MaskFragment3</Split>
       <Split>Mask1</Split>
     </Splits>
-    <ComparisonHits>
-      <Item>0</Item>
-      <Item>0</Item>
-      <Item>0</Item>
-      <Item>0</Item>
-      <Item>0</Item>
-      <Item>0</Item>
-      <Item>1</Item>
-      <Item>1</Item>
-      <Item>1</Item>
-      <Item>1</Item>
-      <Item>1</Item>
-      <Item>2</Item>
-      <Item>2</Item>
-      <Item>2</Item>
-      <Item>3</Item>
-      <Item>3</Item>
-      <Item>4</Item>
-      <Item>4</Item>
-    </ComparisonHits>
+    <ComparisonHits />
   </AutoSplitterSettings>
 </Run>
