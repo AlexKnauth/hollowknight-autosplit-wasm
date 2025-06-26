@@ -19,7 +19,7 @@ pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings
     let splits = splits_from_settings(&xml_settings)?;
     // new empty map, which will only include the new splits
     let settings_map = asr::settings::Map::new();
-    settings_map.insert("splits", asr_list_from_splits(&splits));
+    settings_map.insert("splits", asr_list_from_iter(splits.iter().map(options_str)));
     if let Some(timing_method) = xml_settings.dict_get("TimingMethod") {
         let tm = timing_method_from_settings_str(timing_method).unwrap_or_default();
         settings_map.insert("timing_method", options_str(&tm));
@@ -32,14 +32,6 @@ pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings
         settings_map.insert("comparison_hits", asr_list_from_iter(comparison_hits));
     }
     Some(settings_map)
-}
-
-fn asr_list_from_splits(splits: &[Split]) -> asr::settings::List {
-    let l = asr::settings::List::new();
-    for split in splits.iter() {
-        l.push(options_str(split));
-    }
-    l
 }
 
 fn asr_list_from_iter(items: impl IntoIterator<Item = impl AsValue>) -> asr::settings::List {
