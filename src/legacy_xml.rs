@@ -2,6 +2,7 @@ use alloc::string::{String, ToString};
 use alloc::vec;
 use alloc::vec::Vec;
 
+use asr::settings::AsValue;
 use roxmltree::Node;
 use ugly_widget::radio_button::{options_str, options_value};
 
@@ -11,7 +12,10 @@ use crate::{
 };
 
 pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Map> {
-    let xml_settings = XMLSettings::from_xml_nodes(xml_nodes, &[("Splits", "Split")]);
+    let xml_settings = XMLSettings::from_xml_nodes(
+        xml_nodes,
+        &[("Splits", "Split"), ("ComparisonHits", "Item")],
+    );
     let splits = splits_from_settings(&xml_settings)?;
     // new empty map, which will only include the new splits
     let settings_map = asr::settings::Map::new();
@@ -24,6 +28,9 @@ pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings
         let hm = hits_method_from_settings_str(hit_counter).unwrap_or_default();
         settings_map.insert("hit_counter", options_str(&hm));
     }
+    if let Some(comparison_hits) = comparison_hits_from_settings(&xml_settings) {
+        settings_map.insert("comparison_hits", asr_list_from_iter(comparison_hits));
+    }
     Some(settings_map)
 }
 
@@ -31,6 +38,14 @@ fn asr_list_from_splits(splits: &[Split]) -> asr::settings::List {
     let l = asr::settings::List::new();
     for split in splits.iter() {
         l.push(options_str(split));
+    }
+    l
+}
+
+fn asr_list_from_iter(items: impl IntoIterator<Item = impl AsValue>) -> asr::settings::List {
+    let l = asr::settings::List::new();
+    for item in items {
+        l.push(item);
     }
     l
 }
@@ -125,6 +140,18 @@ impl<'a> XMLSettings<'a> {
     }
 }
 
+fn comparison_hits_from_settings(s: &XMLSettings) -> Option<Vec<i64>> {
+    let comparison_hits = s.dict_get("ComparisonHits")?;
+    let mut result = vec![0];
+    result.extend(
+        comparison_hits
+            .as_list()?
+            .into_iter()
+            .filter_map(i64_from_settings_str),
+    );
+    Some(result)
+}
+
 fn splits_from_settings(s: &XMLSettings) -> Option<Vec<Split>> {
     let maybe_ordered = s.dict_get("Ordered");
     let maybe_start = s.dict_get("AutosplitStartRuns");
@@ -172,6 +199,12 @@ fn split_from_settings_str(s: XMLSettings) -> Option<Split> {
     } else {
         options_value(str2)
     }
+}
+
+fn i64_from_settings_str(s: XMLSettings) -> Option<i64> {
+    let str1 = s.as_string()?;
+    let str2 = str1.trim();
+    str2.parse().ok()
 }
 
 fn timing_method_from_settings_str(s: XMLSettings) -> Option<TimingMethod> {
