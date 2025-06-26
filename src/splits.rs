@@ -2939,6 +2939,10 @@ pub enum Split {
     Uumuu,
     // endregion: Fog Canyon
     // region: Queen's Gardens
+    /// Queen's Gardens or Deepnest (Transition)
+    ///
+    /// Splits on transition into either Queen's Gardens or Deepnest
+    EnterQueensGardensOrDeepnest,
     /// Queen's Garden Entry (Transition)
     ///
     /// Splits on transition to QG scene following QGA or above Deepnest
@@ -3657,6 +3661,10 @@ pub fn transition_splits(
         ),
         // endregion: Fog Canyon
         // region: Queen's Gardens
+        Split::EnterQueensGardensOrDeepnest => should_split(
+            starts_with_any(p.current, QUEENS_GARDENS_OR_DEEPNEST_ENTRY_SCENES)
+                && p.current != p.old,
+        ),
         Split::QueensGardensEntry => should_split(
             starts_with_any(p.current, QUEENS_GARDENS_ENTRY_SCENES) && p.current != p.old,
         ),

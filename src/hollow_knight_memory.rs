@@ -136,8 +136,15 @@ pub static QUEENS_GARDENS_ENTRY_SCENES: &[&str] = &["Fungus3_34", "Deepnest_43"]
 pub static DEEPNEST_ENTRY_SCENES: &[&str] = &[
     "Fungus2_25",   // Room after Mantis Lords
     "Deepnest_42",  // Room outside Mask Maker
-    "Abyss_03b",    // Deepnest Tram
+    "Abyss_03_b",   // Deepnest Tram
     "Deepnest_01b", // Near Spore Shroom
+];
+
+pub static QUEENS_GARDENS_OR_DEEPNEST_ENTRY_SCENES: &[&str] = &[
+    "Fungus3_34",   // Queen's Gardens entrance from QGA or Overgrown Mound
+    "Fungus2_25",   // Deepnest entrance from Mantis Lords or Fungal Core
+    "Abyss_03_b",   // Deepnest entrance from Tram
+    "Deepnest_01b", // Deepnest entrance from Fungal near Spore Shroom
 ];
 
 pub static GODHOME_LORE_SCENES: &[&str] = &[
