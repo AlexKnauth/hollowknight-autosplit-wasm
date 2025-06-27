@@ -2959,6 +2959,10 @@ pub enum Split {
     ///
     /// Splits when entering Queen's Gardens text first appears
     QueensGardens,
+    /// Petra Arena (Mini Boss)
+    ///
+    /// Splits when killing 3 Mantis Petras in a row (ideally Petra Arena)
+    PetraArena,
     /// Queen's Garden Bench (Toll)
     ///
     /// Splits when buying Queen's Garden toll bench
@@ -5187,6 +5191,7 @@ pub fn continuous_splits(
         // endregion: Fog Canyon
         // region: Queen's Gardens
         Split::QueensGardens => should_split(g.visited_royal_gardens(p).is_some_and(|v| v)),
+        Split::PetraArena => should_split_skip(pds.petra_arena(p, g)),
         Split::TollBenchQG => should_split(g.toll_bench_queens_gardens(p).is_some_and(|b| b)),
         Split::FlowerQuest => should_split(g.xun_flower_given(p).is_some_and(|g| g)),
         Split::Marmu => should_split(g.killed_ghost_marmu(p).is_some_and(|k| k)),

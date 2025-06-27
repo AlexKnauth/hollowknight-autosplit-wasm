@@ -6029,6 +6029,17 @@ impl PlayerDataStore {
         )
     }
 
+    pub fn petra_arena(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
+        // Mantis Petra: {0} +3 {3}
+        self.kills_decreased_by(
+            prc,
+            gmf,
+            "kills_mantis_heavy_flyer_on_entry",
+            &gmf.player_data_pointers.kills_mantis_heavy_flyer,
+            3,
+        )
+    }
+
     pub fn bronze1a(&mut self, prc: &Process, gmf: &GameManagerFinder) -> Option<bool> {
         // Shielded Fool: {0} +1 {1}
         self.kills_decreased_by(
