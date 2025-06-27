@@ -2233,6 +2233,14 @@ pub enum Split {
     ///
     /// Splits on transition from Crystal Mound
     CrystalMoundExit,
+    /// Crystal Peak Hunter's Notes (Killed)
+    ///
+    /// Splits when killing all Crystal Peak enemies needed for Hunter's Notes journal completion
+    ///
+    /// (Includes Crystal Crawler, Crystal Guardian 1&2, Crystal Hunter,
+    /// Crystallised Husk, Glimback, Husk Miner, and Shardmite.
+    /// Excludes Bluggsac, Grimmkin Novice, and Grub Mimic.)
+    CrystalPeakHuntersNotes,
     /// Crystal Peak Lift Opened (Event)
     ///
     /// Splits when opening the lever for the lift between Dirtmouth and Crystal Peak
@@ -4995,6 +5003,15 @@ pub fn continuous_splits(
         Split::HuskMiner => should_split(pds.decremented_kills_zombie_miner(p, g)),
         Split::CrystalGuardian1 => should_split(g.defeated_mega_beam_miner(p).is_some_and(|k| k)),
         Split::CrystalGuardian2 => should_split(g.kills_mega_beam_miner(p).is_some_and(|k| k == 0)),
+        Split::CrystalPeakHuntersNotes => should_split(
+            g.kills_laser_bug(p).is_some_and(|k| k == 0) // Crystal Crawler
+                && g.kills_mega_beam_miner(p).is_some_and(|k| k == 0) // Crystal Guardian 1&2
+                && g.kills_crystal_flyer(p).is_some_and(|k| k == 0) // Crystal Hunter
+                && g.kills_beam_miner(p).is_some_and(|k| k == 0) // Crystallised Husk
+                && g.kills_crystal_crawler(p).is_some_and(|k| k == 0) // Glimback
+                && g.kills_zombie_miner(p).is_some_and(|k| k == 0) // Husk Miner
+                && g.kills_mines_crawler(p).is_some_and(|k| k == 0), // Shardmite
+        ),
         Split::MineLiftOpened => should_split(g.mine_lift_opened(p).is_some_and(|o| o)),
         // endregion: Peak
         // region: Waterways

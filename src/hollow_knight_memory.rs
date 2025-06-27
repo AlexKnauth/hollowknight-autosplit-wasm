@@ -621,6 +621,11 @@ struct PlayerDataPointers {
     // Crystal Guardian
     defeated_mega_beam_miner: UnityPointer<3>,
     kills_mega_beam_miner: UnityPointer<3>,
+    kills_laser_bug: UnityPointer<3>,
+    kills_crystal_flyer: UnityPointer<3>,
+    kills_beam_miner: UnityPointer<3>,
+    kills_crystal_crawler: UnityPointer<3>,
+    kills_mines_crawler: UnityPointer<3>,
     mine_lift_opened: UnityPointer<3>,
     opened_waterways_manhole: UnityPointer<3>,
     visited_waterways: UnityPointer<3>,
@@ -1876,6 +1881,31 @@ impl PlayerDataPointers {
                 "GameManager",
                 0,
                 &["_instance", "playerData", "killsMegaBeamMiner"],
+            ),
+            kills_laser_bug: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "playerData", "killsLaserBug"],
+            ),
+            kills_crystal_flyer: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "playerData", "killsCrystalFlyer"],
+            ),
+            kills_beam_miner: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "playerData", "killsBeamMiner"],
+            ),
+            kills_crystal_crawler: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "playerData", "killsCrystalCrawler"],
+            ),
+            kills_mines_crawler: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "playerData", "killsMinesCrawler"],
             ),
             mine_lift_opened: UnityPointer::new(
                 "GameManager",
@@ -4307,6 +4337,54 @@ impl GameManagerFinder {
     pub fn kills_mega_beam_miner(&self, process: &Process) -> Option<i32> {
         self.player_data_pointers
             .kills_mega_beam_miner
+            .deref(process, &self.module, &self.image)
+            .ok()
+    }
+
+    /// Kills left to complete Crystal Crawler journal
+    pub fn kills_laser_bug(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers
+            .kills_laser_bug
+            .deref(process, &self.module, &self.image)
+            .ok()
+    }
+
+    /// Kills left to complete Crystal Hunter journal
+    pub fn kills_crystal_flyer(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers
+            .kills_crystal_flyer
+            .deref(process, &self.module, &self.image)
+            .ok()
+    }
+
+    /// Kills left to complete Crystallised Husk journal
+    pub fn kills_beam_miner(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers
+            .kills_beam_miner
+            .deref(process, &self.module, &self.image)
+            .ok()
+    }
+
+    /// Kills left to complete Glimback journal
+    pub fn kills_crystal_crawler(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers
+            .kills_crystal_crawler
+            .deref(process, &self.module, &self.image)
+            .ok()
+    }
+
+    /// Kills left to complete Husk Miner journal
+    pub fn kills_zombie_miner(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers
+            .kills_zombie_miner
+            .deref(process, &self.module, &self.image)
+            .ok()
+    }
+
+    /// Kills left to complete Shardmite journal
+    pub fn kills_mines_crawler(&self, process: &Process) -> Option<i32> {
+        self.player_data_pointers
+            .kills_mines_crawler
             .deref(process, &self.module, &self.image)
             .ok()
     }
