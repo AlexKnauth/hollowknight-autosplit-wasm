@@ -2537,7 +2537,7 @@ impl GameManagerFinder {
         let mut found_module = false;
         let mut needed_retry = false;
         loop {
-            let module = mono::Module::wait_attach_auto_detect(process).await;
+            let module = wait_attach_auto_detect(process).await;
             if !found_module {
                 found_module = true;
                 asr::print_message("GameManagerFinder wait_attach: module get_default_image...");
@@ -7451,6 +7451,24 @@ fn process_pointer_size(process: &Process) -> Option<PointerSize> {
         Some(PointerSize::Bit64)
     } else {
         None
+    }
+}
+
+async fn wait_attach_auto_detect(process: &Process) -> mono::Module {
+    retry(|| attach_auto_detect(process)).await
+}
+
+fn attach_auto_detect(process: &Process) -> Option<mono::Module> {
+    if process.get_module_address("mono.dll").is_ok()
+        || process.get_module_address("libmono.so").is_ok()
+        || process.get_module_address("libmono.0.dylib").is_ok()
+    {
+        // V1 or V1Cattrs
+        mono::Module::attach_auto_detect(process)
+    } else {
+        // if it's not V1 or V1Cattrs,
+        // it's always V2, never V3
+        mono::Module::attach(process, mono::Version::V2)
     }
 }
 
