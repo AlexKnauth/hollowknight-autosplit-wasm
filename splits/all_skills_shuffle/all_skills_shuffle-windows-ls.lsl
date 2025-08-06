@@ -2,9 +2,9 @@
 <Layout version="1.6.1">
   <Mode>Vertical</Mode>
   <X>8</X>
-  <Y>638</Y>
+  <Y>580</Y>
   <VerticalWidth>286</VerticalWidth>
-  <VerticalHeight>395</VerticalHeight>
+  <VerticalHeight>453</VerticalHeight>
   <HorizontalWidth>-1</HorizontalWidth>
   <HorizontalHeight>-1</HorizontalHeight>
   <Settings>
