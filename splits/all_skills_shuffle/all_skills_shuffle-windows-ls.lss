@@ -187,15 +187,6 @@
       <SegmentHistory />
     </Segment>
     <Segment>
-      <Name>Scream</Name>
-      <Icon />
-      <SplitTimes>
-        <SplitTime name="Personal Best" />
-      </SplitTimes>
-      <BestSegmentTime />
-      <SegmentHistory />
-    </Segment>
-    <Segment>
       <Name>THK</Name>
       <Icon />
       <SplitTimes>
@@ -230,7 +221,6 @@
       <Split>GreatSlash</Split>
       <Split>Monomon</Split>
       <Split>Hegemol</Split>
-      <Split>UnchainedHollowKnight</Split>
     </Splits>
     <ComparisonHits />
   </AutoSplitterSettings>
