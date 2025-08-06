@@ -199,7 +199,7 @@
   <AutoSplitterSettings>
     <Ordered>False</Ordered>
     <AutosplitEndRuns>False</AutosplitEndRuns>
-    <AutosplitStartRuns></AutosplitStartRuns>
+    <AutosplitStartRuns>RandoWake</AutosplitStartRuns>
     <HitCounter>None</HitCounter>
     <Splits>
       <Split>VengefulSpirit</Split>
