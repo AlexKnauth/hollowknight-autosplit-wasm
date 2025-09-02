@@ -1,4 +1,4 @@
-#![cfg_attr(not(target_os = "wasi"), no_std)]
+#![cfg_attr(target_os = "unknown", no_std)]
 
 extern crate alloc;
 extern crate self as ugly_widget;

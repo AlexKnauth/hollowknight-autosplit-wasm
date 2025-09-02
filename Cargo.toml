@@ -29,14 +29,17 @@ bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
 
 roxmltree = { version = "0.20.0", default-features = false }
 
-[target.'cfg(not(target_os = "wasi"))'.dependencies]
+[target.'cfg(target_os = "unknown")'.dependencies]
 dlmalloc = { version = "0.2.8", features = ["global"] }
+
+[target.'cfg(not(target_os = "unknown"))'.dev-dependencies]
+serde_json = { version = "1" }
 
 [features]
 unstable = ["asr/split-index"]
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "lib"]
 
 [profile.release]
 lto = true

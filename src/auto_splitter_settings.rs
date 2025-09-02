@@ -5,10 +5,10 @@ use alloc::vec::Vec;
 use asr::future::retry;
 use core::str;
 use roxmltree::Node;
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 use std::path::Path;
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 use crate::file;
 use crate::{asr_xml, legacy_xml};
 
@@ -38,7 +38,7 @@ pub async fn wait_asr_settings_init() -> asr::settings::Map {
 
 // --------------------------------------------------------
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::Map> {
     let bs = file::file_read_all_bytes(path).ok()?;
     let d = roxmltree::Document::parse(str::from_utf8(bs.as_slice()).ok()?).ok()?;
@@ -64,7 +64,7 @@ fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Ma
     }
 }
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 fn xml_find_auto_splitter_settings<'a>(xml: Node<'a, 'a>) -> Option<Vec<Node<'a, 'a>>> {
     if !xml.is_element() {
         return None;
@@ -92,7 +92,7 @@ fn xml_find_auto_splitter_settings<'a>(xml: Node<'a, 'a>) -> Option<Vec<Node<'a,
     }
 }
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 fn component_is_asr(e: Node) -> bool {
     let Some(p) = e.children().find(|c| c.has_tag_name("Path")) else {
         return false;

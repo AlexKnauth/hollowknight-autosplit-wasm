@@ -1,7 +1,7 @@
-#![cfg_attr(not(target_os = "wasi"), no_std)]
+#![cfg_attr(target_os = "unknown", no_std)]
 
 /// Global allocator
-#[cfg(not(target_os = "wasi"))]
+#[cfg(target_os = "unknown")]
 #[global_allocator]
 pub static ALLOC: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
 
@@ -9,7 +9,7 @@ extern crate alloc;
 
 mod asr_xml;
 mod auto_splitter_settings;
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 mod file;
 mod game_time;
 mod hit_counter;
@@ -17,7 +17,7 @@ mod hollow_knight_memory;
 mod legacy_xml;
 mod load_remover;
 mod settings_gui;
-mod splits;
+pub mod splits;
 mod timer;
 mod unstable;
 
@@ -38,7 +38,7 @@ use timer::{Resettable, SplitterAction, Timer};
 use ugly_widget::store::StoreGui;
 
 asr::async_main!(stable);
-#[cfg(not(target_os = "wasi"))]
+#[cfg(target_os = "unknown")]
 asr::panic_handler!();
 
 const TICKS_PER_GUI: usize = 0x100;
@@ -70,7 +70,7 @@ impl AutoSplitterState {
 }
 
 async fn main() {
-    #[cfg(target_os = "wasi")]
+    #[cfg(not(target_os = "unknown"))]
     std::panic::set_hook(Box::new(|panic_info| {
         asr::print_message(&panic_info.to_string());
     }));

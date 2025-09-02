@@ -1,0 +1,3812 @@
+[
+  {
+    "description": "Manual Split (Misc)",
+    "key": "ManualSplit",
+    "tooltip": "Never splits. Use this when you need to manually split while using ordered splits"
+  },
+  {
+    "description": "Start New Game (Start)",
+    "key": "StartNewGame",
+    "tooltip": "Splits when starting a new save file, including Normal, Steel Soul, and Godseeker mode"
+  },
+  {
+    "description": "Start Any Game (Start)",
+    "key": "StartAnyGame",
+    "tooltip": "Splits when entering a new or existing save file"
+  },
+  {
+    "description": "Rando Wake (Start)",
+    "key": "RandoWake",
+    "tooltip": "Splits when gaining control after waking up in Rando"
+  },
+  {
+    "description": "Start Pantheon (Start)",
+    "key": "StartPantheon",
+    "tooltip": "Splits when starting a Pantheon run"
+  },
+  {
+    "description": "[DEPRECATED] Start Run (Start)",
+    "key": "LegacyStart",
+    "tooltip": "Splits when autosplitter version 3 would have automatically started runs"
+  },
+  {
+    "description": "Credits Roll (Ending)",
+    "key": "EndingSplit",
+    "tooltip": "Splits on any credits rolling, any ending"
+  },
+  {
+    "description": "The Hollow Knight (Ending)",
+    "key": "EndingA",
+    "tooltip": "Splits on The Hollow Knight ending"
+  },
+  {
+    "description": "Sealed Siblings (Ending)",
+    "key": "EndingB",
+    "tooltip": "Splits on Sealed Siblings ending"
+  },
+  {
+    "description": "Dream No More (Ending)",
+    "key": "EndingC",
+    "tooltip": "Splits on Dream No More ending, True Ending"
+  },
+  {
+    "description": "Embrace the Void (Ending)",
+    "key": "EndingD",
+    "tooltip": "Splits on Embrace the Void ending"
+  },
+  {
+    "description": "Delicate Flower (Ending)",
+    "key": "EndingE",
+    "tooltip": "Splits on Delicate Flower ending"
+  },
+  {
+    "description": "Main Menu (Menu)",
+    "key": "Menu",
+    "tooltip": "Splits on the main menu"
+  },
+  {
+    "description": "Any Bench (Bench)",
+    "key": "BenchAny",
+    "tooltip": "Splits when sitting on a bench"
+  },
+  {
+    "description": "Death (Event)",
+    "key": "PlayerDeath",
+    "tooltip": "Splits when player HP is 0"
+  },
+  {
+    "description": "Shade Killed (Event)",
+    "key": "ShadeKilled",
+    "tooltip": "Splits when the Shade is killed"
+  },
+  {
+    "description": "Any Transition (Transition)",
+    "key": "AnyTransition",
+    "tooltip": "Splits when the knight enters a transition (only one will split per transition)"
+  },
+  {
+    "description": "Transition excluding Save State (Transition)",
+    "key": "TransitionAfterSaveState",
+    "tooltip": "Splits when the knight enters a transition (excludes save states and Sly's basement)"
+  },
+  {
+    "description": "Transition excluding discontinuities (Transition)",
+    "key": "TransitionExcludingDiscontinuities",
+    "tooltip": "Splits when the knight enters a transition (excludes discontinuities including save states, deaths, and dreamgates)"
+  },
+  {
+    "description": "Lurien the Watcher (Dreamer)",
+    "key": "Lurien",
+    "tooltip": "Splits when you see the mask for Lurien"
+  },
+  {
+    "description": "Monomon the Teacher (Dreamer)",
+    "key": "Monomon",
+    "tooltip": "Splits when you see the mask for Monomon"
+  },
+  {
+    "description": "Herrah the Beast (Dreamer)",
+    "key": "Hegemol",
+    "tooltip": "Splits when you see the mask for Herrah"
+  },
+  {
+    "description": "First Dreamer (Dreamer)",
+    "key": "Dreamer1",
+    "tooltip": "Splits when you see the mask for the first dreamer killed"
+  },
+  {
+    "description": "Second Dreamer (Dreamer)",
+    "key": "Dreamer2",
+    "tooltip": "Splits when you see the mask for the second dreamer killed"
+  },
+  {
+    "description": "Third Dreamer (Dreamer)",
+    "key": "Dreamer3",
+    "tooltip": "Splits when you see the mask for the third dreamer killed"
+  },
+  {
+    "description": "Main Menu w/ 3 Dreamers (Menu)",
+    "key": "MenuDreamer3",
+    "tooltip": "Splits on transition to the main menu after 3 Dreamers acquired"
+  },
+  {
+    "description": "Lurien (Old Dreamer Timing)",
+    "key": "LurienDreamer",
+    "tooltip": "For Dreamer Quit-outs on older patches. Splits when Lurien is registered as defeated (After killing Watcher Knight)"
+  },
+  {
+    "description": "Monomon (Old Dreamer Timing)",
+    "key": "MonomonDreamer",
+    "tooltip": "For Dreamer Quit-outs on older patches. Splits when Monomon is registered as defeated (After killing Uumuu)"
+  },
+  {
+    "description": "Herrah (Old Dreamer Timing)",
+    "key": "HegemolDreamer",
+    "tooltip": "For Dreamer Quit-outs on older patches. Splits when Herrah is registered as defeated (In Spider Area)"
+  },
+  {
+    "description": "Main Menu w/ Herrah (Menu)",
+    "key": "MenuHegemol",
+    "tooltip": "For Dreamer Quit-outs on older patches. Splits on transition to the main menu after Herrah is registered as defeated"
+  },
+  {
+    "description": "Main Menu w/ Lurien (Menu)",
+    "key": "MenuLurien",
+    "tooltip": "For Dreamer Quit-outs on older patches. Splits on transition to the main menu after Lurien is registered as defeated"
+  },
+  {
+    "description": "Main Menu w/ Monomon (Menu)",
+    "key": "MenuMonomon",
+    "tooltip": "For Dreamer Quit-outs on older patches. Splits on transition to the main menu after Monomon is registered as defeated"
+  },
+  {
+    "description": "Mr. Mushroom 1 (Spot)",
+    "key": "MrMushroom1",
+    "tooltip": "Splits when talking to Mister Mushroom in Fungal Wastes"
+  },
+  {
+    "description": "Mr. Mushroom 2 (Spot)",
+    "key": "MrMushroom2",
+    "tooltip": "Splits when talking to Mister Mushroom in Kingdom's Edge"
+  },
+  {
+    "description": "Mr. Mushroom 3 (Spot)",
+    "key": "MrMushroom3",
+    "tooltip": "Splits when talking to Mister Mushroom in Deepnest"
+  },
+  {
+    "description": "Mr. Mushroom 4 (Spot)",
+    "key": "MrMushroom4",
+    "tooltip": "Splits when talking to Mister Mushroom in Mato's Hut"
+  },
+  {
+    "description": "Mr. Mushroom 5 (Spot)",
+    "key": "MrMushroom5",
+    "tooltip": "Splits when talking to Mister Mushroom in Ancient Basin"
+  },
+  {
+    "description": "Mr. Mushroom 6 (Spot)",
+    "key": "MrMushroom6",
+    "tooltip": "Splits when talking to Mister Mushroom by Overgrown Mound"
+  },
+  {
+    "description": "Mr. Mushroom 7 (Spot)",
+    "key": "MrMushroom7",
+    "tooltip": "Splits when talking to Mister Mushroom in King's Pass"
+  },
+  {
+    "description": "Vengeful Spirit (Skill)",
+    "key": "VengefulSpirit",
+    "tooltip": "Splits when obtaining Vengeful Spirit"
+  },
+  {
+    "description": "Has Vengeful Spirit (Transition)",
+    "key": "TransVS",
+    "tooltip": "Splits on transition after Vengeful Spirit acquired"
+  },
+  {
+    "description": "Shade Soul (Skill)",
+    "key": "ShadeSoul",
+    "tooltip": "Splits when obtaining Shade Soul"
+  },
+  {
+    "description": "Has Shade Soul (Transition)",
+    "key": "TransShadeSoul",
+    "tooltip": "Splits on transition after Shade Soul acquired"
+  },
+  {
+    "description": "Main Menu w/ Shade Soul (Menu)",
+    "key": "MenuShadeSoul",
+    "tooltip": "Splits on transition to the main menu after Shade Soul acquired"
+  },
+  {
+    "description": "Desolate Dive (Skill)",
+    "key": "DesolateDive",
+    "tooltip": "Splits when obtaining Desolate Dive"
+  },
+  {
+    "description": "Descending Dark (Skill)",
+    "key": "DescendingDark",
+    "tooltip": "Splits when obtaining Descending Dark"
+  },
+  {
+    "description": "Has Descending Dark (Transition)",
+    "key": "TransDescendingDark",
+    "tooltip": "Splits on transition after Descending Dark acquired"
+  },
+  {
+    "description": "Howling Wraiths (Skill)",
+    "key": "HowlingWraiths",
+    "tooltip": "Splits when obtaining Howling Wraiths"
+  },
+  {
+    "description": "Abyss Shriek (Skill)",
+    "key": "AbyssShriek",
+    "tooltip": "Splits when obtaining Abyss Shriek"
+  },
+  {
+    "description": "Mothwing Cloak (Skill)",
+    "key": "MothwingCloak",
+    "tooltip": "Splits when obtaining Mothwing Cloak"
+  },
+  {
+    "description": "Main Menu w/ Mothwing Cloak (Menu)",
+    "key": "MenuCloak",
+    "tooltip": "Splits on transition to the main menu after Mothwing Cloak acquired"
+  },
+  {
+    "description": "Shade Cloak (Skill)",
+    "key": "ShadeCloak",
+    "tooltip": "Splits when obtaining Shade Cloak"
+  },
+  {
+    "description": "Mantis Claw (Skill)",
+    "key": "MantisClaw",
+    "tooltip": "Splits when obtaining Mantis Claw"
+  },
+  {
+    "description": "Has Claw (Transition)",
+    "key": "TransClaw",
+    "tooltip": "Splits on transition after Mantis Claw acquired"
+  },
+  {
+    "description": "Main Menu w/ Claw (Menu)",
+    "key": "MenuClaw",
+    "tooltip": "Splits on transition to the main menu after Mantis Claw acquired"
+  },
+  {
+    "description": "Monarch Wings (Skill)",
+    "key": "MonarchWings",
+    "tooltip": "Splits when obtaining Monarch Wings"
+  },
+  {
+    "description": "MenuWings",
+    "key": "MenuWings",
+    "tooltip": null
+  },
+  {
+    "description": "Crystal Heart (Skill)",
+    "key": "CrystalHeart",
+    "tooltip": "Splits when obtaining Crystal Heart"
+  },
+  {
+    "description": "Isma's Tear (Skill)",
+    "key": "IsmasTear",
+    "tooltip": "Splits when obtaining Isma's Tear"
+  },
+  {
+    "description": "Has Isma's Tear (Transition)",
+    "key": "TransTear",
+    "tooltip": "Splits on transition after Isma's Tear acquired"
+  },
+  {
+    "description": "Isma's Tear with Grub (Transition)",
+    "key": "TransTearWithGrub",
+    "tooltip": "Splits on transition after collecting Isma's Tear and saving the grub in Isma's Grove"
+  },
+  {
+    "description": "Main Menu w/ Isma's Tear (Menu)",
+    "key": "MenuIsmasTear",
+    "tooltip": "Splits on transition to the main menu after Isma's Tear acquired"
+  },
+  {
+    "description": "Cyclone Slash (Skill)",
+    "key": "CycloneSlash",
+    "tooltip": "Splits when obtaining Cyclone Slash"
+  },
+  {
+    "description": "Dash Slash (Skill)",
+    "key": "DashSlash",
+    "tooltip": "Splits when obtaining Dash Slash"
+  },
+  {
+    "description": "Great Slash (Skill)",
+    "key": "GreatSlash",
+    "tooltip": "Splits when obtaining Great Slash"
+  },
+  {
+    "description": "Dream Nail (Skill)",
+    "key": "DreamNail",
+    "tooltip": "Splits when obtaining Dream Nail"
+  },
+  {
+    "description": "Main Menu w/ Dream Nail (Menu)",
+    "key": "MenuDreamNail",
+    "tooltip": "Splits on transition to the main menu after Dream Nail acquired"
+  },
+  {
+    "description": "Dream Gate (Skill)",
+    "key": "DreamGate",
+    "tooltip": "Splits when obtaining Dream Gate"
+  },
+  {
+    "description": "Main Menu w/ Dream Gate (Menu)",
+    "key": "MenuDreamGate",
+    "tooltip": "Splits on transition to the main menu after Dream Gate acquired"
+  },
+  {
+    "description": "Dream Nail - Awoken (Skill)",
+    "key": "DreamNail2",
+    "tooltip": "Splits when Awakening the Dream Nail"
+  },
+  {
+    "description": "City Crest (Item)",
+    "key": "CityKey",
+    "tooltip": "Splits when obtaining the City Crest"
+  },
+  {
+    "description": "Lumafly Lantern (Item)",
+    "key": "LumaflyLantern",
+    "tooltip": "Splits when obtaining the Lumafly Lantern"
+  },
+  {
+    "description": "Shop Lumafly Lantern (Transition)",
+    "key": "LumaflyLanternTransition",
+    "tooltip": "Splits on transition after Lantern has been acquired"
+  },
+  {
+    "description": "Simple Key - First (Item)",
+    "key": "SimpleKey",
+    "tooltip": "Splits when obtaining the first Simple Key"
+  },
+  {
+    "description": "Simple Key (Obtain)",
+    "key": "OnObtainSimpleKey",
+    "tooltip": "Splits when obtaining a Simple Key"
+  },
+  {
+    "description": "Use Simple Key (Obtain)",
+    "key": "OnUseSimpleKey",
+    "tooltip": "Splits when using a Simple Key"
+  },
+  {
+    "description": "Shopkeeper's Key (Item)",
+    "key": "SlyKey",
+    "tooltip": "Splits when obtaining the Shopkeeper's Key"
+  },
+  {
+    "description": "Elegant Key (Item)",
+    "key": "ElegantKey",
+    "tooltip": "Splits when obtaining the Elegant Key"
+  },
+  {
+    "description": "Love Key (Item)",
+    "key": "LoveKey",
+    "tooltip": "Splits when obtaining the Love Key"
+  },
+  {
+    "description": "Pale Lurker Key (Item)",
+    "key": "PaleLurkerKey",
+    "tooltip": "Splits when obtaining the Simple Key from the Pale Lurker"
+  },
+  {
+    "description": "Sly Simple Key (Item)",
+    "key": "SlySimpleKey",
+    "tooltip": "Splits when buying the simple key from Sly"
+  },
+  {
+    "description": "King's Brand (Item)",
+    "key": "KingsBrand",
+    "tooltip": "Splits when obtaining the King's Brand"
+  },
+  {
+    "description": "Tram Pass (Item)",
+    "key": "TramPass",
+    "tooltip": "Splits when obtaining the Tram Pass"
+  },
+  {
+    "description": "Pale Ore (Obtain)",
+    "key": "OnObtainPaleOre",
+    "tooltip": "Splits when obtaining a Pale Ore"
+  },
+  {
+    "description": "Pale Ore 1 (Ore)",
+    "key": "Ore1",
+    "tooltip": "Splits after obtaining the first pale ore."
+  },
+  {
+    "description": "Pale Ore 2 (Ore)",
+    "key": "Ore2",
+    "tooltip": "Splits after obtaining the second pale ore."
+  },
+  {
+    "description": "Pale Ore 3 (Ore)",
+    "key": "Ore3",
+    "tooltip": "Splits after obtaining the third pale ore."
+  },
+  {
+    "description": "Pale Ore 4 (Ore)",
+    "key": "Ore4",
+    "tooltip": "Splits after obtaining the fourth pale ore."
+  },
+  {
+    "description": "Pale Ore 5 (Ore)",
+    "key": "Ore5",
+    "tooltip": "Splits after obtaining the fifth pale ore."
+  },
+  {
+    "description": "Pale Ore 6 (Ore)",
+    "key": "Ore6",
+    "tooltip": "Splits after obtaining the sixth pale ore."
+  },
+  {
+    "description": "Pale Ore - Any (Item)",
+    "key": "PaleOre",
+    "tooltip": "Splits if you've obtained any Pale Ore"
+  },
+  {
+    "description": "Nail 1 (Upgrade)",
+    "key": "NailUpgrade1",
+    "tooltip": "Splits upon upgrading to the Sharpened Nail"
+  },
+  {
+    "description": "Nail 2 (Upgrade)",
+    "key": "NailUpgrade2",
+    "tooltip": "Splits upon upgrading to the Channeled Nail"
+  },
+  {
+    "description": "Nail 3 (Upgrade)",
+    "key": "NailUpgrade3",
+    "tooltip": "Splits upon upgrading to the Coiled Nail"
+  },
+  {
+    "description": "Nail 4 (Upgrade)",
+    "key": "NailUpgrade4",
+    "tooltip": "Splits upon upgrading to the Pure Nail"
+  },
+  {
+    "description": "Mask Shard (Obtain)",
+    "key": "OnObtainMaskShard",
+    "tooltip": "Splits when obtaining a Mask Shard or upgrade for complete Mask"
+  },
+  {
+    "description": "Mask Shard 1 (Fragment)",
+    "key": "MaskFragment1",
+    "tooltip": "Splits when getting 1st Mask Shard"
+  },
+  {
+    "description": "Mask Shard 2 (Fragment)",
+    "key": "MaskFragment2",
+    "tooltip": "Splits when getting 2nd Mask Shard"
+  },
+  {
+    "description": "Mask Shard 3 (Fragment)",
+    "key": "MaskFragment3",
+    "tooltip": "Splits when getting 3rd Mask Shard"
+  },
+  {
+    "description": "Mask Upgrade 4 (Upgrade)",
+    "key": "Mask1",
+    "tooltip": "Splits when getting 1 extra Mask (6 base HP)"
+  },
+  {
+    "description": "Mask Shard 5 (Fragment)",
+    "key": "MaskFragment5",
+    "tooltip": "Splits when getting 5th Mask Shard"
+  },
+  {
+    "description": "Mask Shard 6 (Fragment)",
+    "key": "MaskFragment6",
+    "tooltip": "Splits when getting 6th Mask Shard"
+  },
+  {
+    "description": "Mask Shard 7 (Fragment)",
+    "key": "MaskFragment7",
+    "tooltip": "Splits when getting 7th Mask Shard"
+  },
+  {
+    "description": "Mask Upgrade 8 (Upgrade)",
+    "key": "Mask2",
+    "tooltip": "Splits when getting 2 extra Masks (7 base HP)"
+  },
+  {
+    "description": "Mask Shard 9 (Fragment)",
+    "key": "MaskFragment9",
+    "tooltip": "Splits when getting 9th Mask Shard"
+  },
+  {
+    "description": "Mask Shard 10 (Fragment)",
+    "key": "MaskFragment10",
+    "tooltip": "Splits when getting 10th Mask Shard"
+  },
+  {
+    "description": "Mask Shard 11 (Fragment)",
+    "key": "MaskFragment11",
+    "tooltip": "Splits when getting 11th Mask Shard"
+  },
+  {
+    "description": "Mask Upgrade 12 (Upgrade)",
+    "key": "Mask3",
+    "tooltip": "Splits when getting 3 extra Masks (8 base HP)"
+  },
+  {
+    "description": "Mask Shard 13 (Fragment)",
+    "key": "MaskFragment13",
+    "tooltip": "Splits when getting 13th Mask Shard"
+  },
+  {
+    "description": "Mask Shard 14 (Fragment)",
+    "key": "MaskFragment14",
+    "tooltip": "Splits when getting 14th Mask Shard"
+  },
+  {
+    "description": "Mask Shard 15 (Fragment)",
+    "key": "MaskFragment15",
+    "tooltip": "Splits when getting 15th Mask Shard"
+  },
+  {
+    "description": "Mask Upgrade 16 (Upgrade)",
+    "key": "Mask4",
+    "tooltip": "Splits when getting 4 extra Masks (9 base HP)"
+  },
+  {
+    "description": "Mask Upgrade 20 (Upgrade)",
+    "key": "Mask5",
+    "tooltip": "(Glitched Only) Splits when getting 5 extra Masks (10 base HP)"
+  },
+  {
+    "description": "Brooding Mawlek Mask Shard (Obtain)",
+    "key": "MaskShardMawlek",
+    "tooltip": "Splits when getting the Mask Shard from Brooding Mawlek"
+  },
+  {
+    "description": "Grub Reward Mask Shard (Obtain)",
+    "key": "MaskShardGrubfather",
+    "tooltip": "Splits when getting the Mask Shard given by Grubfather"
+  },
+  {
+    "description": "Goam Mask Shard (Obtain)",
+    "key": "MaskShardGoam",
+    "tooltip": "Splits when getting the Goam Mask Shard in Forgotten Crossroads"
+  },
+  {
+    "description": "Queen's Station Mask Shard (Obtain)",
+    "key": "MaskShardQueensStation",
+    "tooltip": "Splits when getting the Mask Shard in Queen's Station"
+  },
+  {
+    "description": "Bretta Mask Shard (Obtain)",
+    "key": "MaskShardBretta",
+    "tooltip": "Splits when getting the Mask Shard in Bretta's hut in Dirtmouth"
+  },
+  {
+    "description": "Stone Sanctuary Mask Shard (Obtain)",
+    "key": "MaskShardStoneSanctuary",
+    "tooltip": "Splits when getting the Mask Shard in Stone Sanctuary"
+  },
+  {
+    "description": "Waterways Mask Shard (Obtain)",
+    "key": "MaskShardWaterways",
+    "tooltip": "Splits when getting the Mask Shard in Royal Waterways"
+  },
+  {
+    "description": "Fungal Core Mask Shard (Obtain)",
+    "key": "MaskShardFungalCore",
+    "tooltip": "Splits when getting the Mask Shard below Fungal Core"
+  },
+  {
+    "description": "Enraged Guardian Mask Shard (Obtain)",
+    "key": "MaskShardEnragedGuardian",
+    "tooltip": "Splits when getting the Mask Shard from Enraged Guardian"
+  },
+  {
+    "description": "Hive Mask Shard (Obtain)",
+    "key": "MaskShardHive",
+    "tooltip": "Splits when getting the Mask Shard in the Hive"
+  },
+  {
+    "description": "Seer Mask Shard (Obtain)",
+    "key": "MaskShardSeer",
+    "tooltip": "Splits when getting the Mask Shard from Seer"
+  },
+  {
+    "description": "Grey Mourner Mask Shard (Obtain)",
+    "key": "MaskShardFlower",
+    "tooltip": "Splits when getting the Mask Shard from Grey Mourner"
+  },
+  {
+    "description": "Vessel Fragment (Obtain)",
+    "key": "OnObtainVesselFragment",
+    "tooltip": "Splits when obtaining a Vessel Fragment or on upgrade for full Soul Vessel"
+  },
+  {
+    "description": "Vessel Fragment 1 (Fragment)",
+    "key": "VesselFragment1",
+    "tooltip": "Splits when getting 1st Soul Vessel Fragment"
+  },
+  {
+    "description": "Vessel Fragment 2 (Fragment)",
+    "key": "VesselFragment2",
+    "tooltip": "Splits when getting 2nd Soul Vessel Fragment"
+  },
+  {
+    "description": "Soul Vessel 1 (Upgrade)",
+    "key": "Vessel1",
+    "tooltip": "Splits when upgrading to 1 Soul Vessel (3 Soul Vessel Fragments)"
+  },
+  {
+    "description": "Vessel Fragment 4 (Fragment)",
+    "key": "VesselFragment4",
+    "tooltip": "Splits when getting 4th Soul Vessel Fragment"
+  },
+  {
+    "description": "Vessel Fragment 5 (Fragment)",
+    "key": "VesselFragment5",
+    "tooltip": "Splits when getting 5th Soul Vessel Fragment"
+  },
+  {
+    "description": "Soul Vessel 2 (Upgrade)",
+    "key": "Vessel2",
+    "tooltip": "Splits when upgrading to 2 Soul Vessels (6 Soul Vessel Fragments)"
+  },
+  {
+    "description": "Vessel Fragment 7 (Fragment)",
+    "key": "VesselFragment7",
+    "tooltip": "Splits when getting 7th Soul Vessel Fragment"
+  },
+  {
+    "description": "Vessel Fragment 8 (Fragment)",
+    "key": "VesselFragment8",
+    "tooltip": "Splits when getting 8th Soul Vessel Fragment"
+  },
+  {
+    "description": "Soul Vessel 3 (Upgrade)",
+    "key": "Vessel3",
+    "tooltip": "Splits when upgrading to 3 Soul Vessels (9 Soul Vessel Fragments)"
+  },
+  {
+    "description": "Greenpath Vessel Fragment (Obtain)",
+    "key": "VesselFragGreenpath",
+    "tooltip": "Splits when getting Vessel Fragment in Greenpath"
+  },
+  {
+    "description": "Crossroads Vessel Fragment (Obtain)",
+    "key": "VesselFragCrossroadsLift",
+    "tooltip": "Splits when getting the Vessel Fragment in Forgotten Crossroads"
+  },
+  {
+    "description": "King's Station Vessel Fragment (Obtain)",
+    "key": "VesselFragKingsStation",
+    "tooltip": "Splits when getting the Vessel Fragment after the arena above King's Station"
+  },
+  {
+    "description": "Deepnest Vessel Fragment (Obtain)",
+    "key": "VesselFragGarpedes",
+    "tooltip": "Splits when getting the Vessel Fragment in Deepnest"
+  },
+  {
+    "description": "Stag Nest Vessel Fragment (Obtain)",
+    "key": "VesselFragStagNest",
+    "tooltip": "Splits when getting the Vessel Fragment in Stag Nest"
+  },
+  {
+    "description": "Seer Vessel Fragment (Obtain)",
+    "key": "VesselFragSeer",
+    "tooltip": "Splits when getting the Vessel Fragment from Seer"
+  },
+  {
+    "description": "Basin Fountain Vessel Fragment (Obtain)",
+    "key": "VesselFragFountain",
+    "tooltip": "Splits when getting the Vessel Fragment from the fountain in Ancient Basin"
+  },
+  {
+    "description": "Shrumal Ogres (Charm Notch)",
+    "key": "NotchShrumalOgres",
+    "tooltip": "Splits when obtaining the charm notch after defeating the Shrumal Ogres"
+  },
+  {
+    "description": "Salubra 1 (Charm Notch)",
+    "key": "NotchSalubra1",
+    "tooltip": "Splits when obtaining the first charm notch from Salubra"
+  },
+  {
+    "description": "Salubra 2 (Charm Notch)",
+    "key": "NotchSalubra2",
+    "tooltip": "Splits when obtaining the second charm notch from Salubra"
+  },
+  {
+    "description": "Salubra 3 (Charm Notch)",
+    "key": "NotchSalubra3",
+    "tooltip": "Splits when obtaining the third charm notch from Salubra"
+  },
+  {
+    "description": "Salubra 4 (Charm Notch)",
+    "key": "NotchSalubra4",
+    "tooltip": "Splits when obtaining the fourth charm notch from Salubra"
+  },
+  {
+    "description": "Fog Canyon (Charm Notch)",
+    "key": "NotchFogCanyon",
+    "tooltip": "Splits when obtaining the charm notch in Fog Canyon"
+  },
+  {
+    "description": "Grimm (Charm Notch)",
+    "key": "NotchGrimm",
+    "tooltip": "Splits when obtaining the charm notch after Grimm"
+  },
+  {
+    "description": "Charm Notch (Obtain)",
+    "key": "OnObtainCharmNotch",
+    "tooltip": "Splits when obtaining a new Charm Slot"
+  },
+  {
+    "description": "Can Overcharm (Event)",
+    "key": "CanOvercharm",
+    "tooltip": "Splits when overcharming is enabled"
+  },
+  {
+    "description": "Gathering Swarm (Charm)",
+    "key": "GatheringSwarm",
+    "tooltip": "Splits when obtaining the Gathering Swarm charm"
+  },
+  {
+    "description": "Wayward Compass (Charm)",
+    "key": "WaywardCompass",
+    "tooltip": "Splits when obtaining Wayward Compass charm"
+  },
+  {
+    "description": "Grubsong (Charm)",
+    "key": "Grubsong",
+    "tooltip": "Splits when obtaining the Grubsong charm"
+  },
+  {
+    "description": "Stalwart Shell (Charm)",
+    "key": "StalwartShell",
+    "tooltip": "Splits when obtaining Stalwart Shell charm"
+  },
+  {
+    "description": "Baldur Shell (Charm)",
+    "key": "BaldurShell",
+    "tooltip": "Splits when obtaining the Baldur Shell charm"
+  },
+  {
+    "description": "Fury of the Fallen (Charm)",
+    "key": "FuryOfTheFallen",
+    "tooltip": "Splits when obtaining the Fury of the Fallen charm"
+  },
+  {
+    "description": "Quick Focus (Charm)",
+    "key": "QuickFocus",
+    "tooltip": "Splits when obtaining the Quick Focus charm"
+  },
+  {
+    "description": "Lifeblood Heart (Charm)",
+    "key": "LifebloodHeart",
+    "tooltip": "Splits when obtaining the Lifeblood Heart charm"
+  },
+  {
+    "description": "Lifeblood Core (Charm)",
+    "key": "LifebloodCore",
+    "tooltip": "Splits when obtaining the Lifeblood Core charm"
+  },
+  {
+    "description": "Defenders Crest (Charm)",
+    "key": "DefendersCrest",
+    "tooltip": "Splits when obtaining the Defenders Crest charm"
+  },
+  {
+    "description": "Flukenest (Charm)",
+    "key": "Flukenest",
+    "tooltip": "Splits when obtaining the Flukenest charm"
+  },
+  {
+    "description": "Thorns of Agony (Charm)",
+    "key": "ThornsOfAgony",
+    "tooltip": "Splits when obtaining Thorns of Agony charm"
+  },
+  {
+    "description": "Mark of Pride (Charm)",
+    "key": "MarkOfPride",
+    "tooltip": "Splits when obtaining the Mark of Pride charm"
+  },
+  {
+    "description": "Steady Body (Charm)",
+    "key": "SteadyBody",
+    "tooltip": "Splits when obtaining the Steady Body charm"
+  },
+  {
+    "description": "Heavy Blow (Charm)",
+    "key": "HeavyBlow",
+    "tooltip": "Splits when obtaining the Heavy Blow charm"
+  },
+  {
+    "description": "Sharp Shadow (Charm)",
+    "key": "SharpShadow",
+    "tooltip": "Splits when obtaining Sharp Shadow charm"
+  },
+  {
+    "description": "Spore Shroom (Charm)",
+    "key": "SporeShroom",
+    "tooltip": "Splits when obtaining the Spore Shroom charm"
+  },
+  {
+    "description": "Longnail (Charm)",
+    "key": "Longnail",
+    "tooltip": "Splits when obtaining the Longnail charm"
+  },
+  {
+    "description": "Shaman Stone (Charm)",
+    "key": "ShamanStone",
+    "tooltip": "Splits when obtaining Shaman Stone charm"
+  },
+  {
+    "description": "Soul Catcher (Charm)",
+    "key": "SoulCatcher",
+    "tooltip": "Splits when obtaining the Soul Catcher charm"
+  },
+  {
+    "description": "Soul Eater (Charm)",
+    "key": "SoulEater",
+    "tooltip": "Splits when obtaining the Soul Eater charm"
+  },
+  {
+    "description": "Glowing Womb (Charm)",
+    "key": "GlowingWomb",
+    "tooltip": "Splits when obtaining the Glowing Womb charm"
+  },
+  {
+    "description": "Nailmaster's Glory (Charm)",
+    "key": "NailmastersGlory",
+    "tooltip": "Splits when obtaining the Nailmaster's Glory charm"
+  },
+  {
+    "description": "Joni's Blessing (Charm)",
+    "key": "JonisBlessing",
+    "tooltip": "Splits when obtaining the Joni's Blessing charm"
+  },
+  {
+    "description": "Shape of Unn (Charm)",
+    "key": "ShapeOfUnn",
+    "tooltip": "Splits when obtaining Shape of Unn charm"
+  },
+  {
+    "description": "Hiveblood (Charm)",
+    "key": "Hiveblood",
+    "tooltip": "Splits when obtaining the Hiveblood charm"
+  },
+  {
+    "description": "Dream Wielder (Charm)",
+    "key": "DreamWielder",
+    "tooltip": "Splits when obtaining the Dream Wielder charm"
+  },
+  {
+    "description": "Dashmaster (Charm)",
+    "key": "Dashmaster",
+    "tooltip": "Splits when obtaining the Dashmaster charm"
+  },
+  {
+    "description": "Main Menu w/ Dashmaster (Menu)",
+    "key": "MenuDashmaster",
+    "tooltip": "Splits on transition to the main menu after Dashmaster acquired"
+  },
+  {
+    "description": "Quick Slash (Charm)",
+    "key": "QuickSlash",
+    "tooltip": "Splits when obtaining the Quick Slash charm"
+  },
+  {
+    "description": "Spell Twister (Charm)",
+    "key": "SpellTwister",
+    "tooltip": "Splits when obtaining the Spell Twister charm"
+  },
+  {
+    "description": "Deep Focus (Charm)",
+    "key": "DeepFocus",
+    "tooltip": "Splits when obtaining the Deep Focus charm"
+  },
+  {
+    "description": "Grubberfly's Elegy (Charm)",
+    "key": "GrubberflysElegy",
+    "tooltip": "Splits when obtaining the Grubberfly's Elegy charm"
+  },
+  {
+    "description": "Sprintmaster (Charm)",
+    "key": "Sprintmaster",
+    "tooltip": "Splits when obtaining the Sprintmaster charm"
+  },
+  {
+    "description": "Dreamshield (Charm)",
+    "key": "Dreamshield",
+    "tooltip": "Splits when obtaining the Dreamshield charm"
+  },
+  {
+    "description": "Weaversong (Charm)",
+    "key": "Weaversong",
+    "tooltip": "Splits when obtaining the Weaversong charm"
+  },
+  {
+    "description": "Fragile Heart (Charm)",
+    "key": "FragileHeart",
+    "tooltip": "Splits when obtaining the Fragile Heart charm"
+  },
+  {
+    "description": "Unbreakable Heart (Charm)",
+    "key": "UnbreakableHeart",
+    "tooltip": "Splits when obtaining the Unbreakable Heart charm"
+  },
+  {
+    "description": "Fragile Greed (Charm)",
+    "key": "FragileGreed",
+    "tooltip": "Splits when obtaining the Fragile Greed charm"
+  },
+  {
+    "description": "Unbreakable Greed (Charm)",
+    "key": "UnbreakableGreed",
+    "tooltip": "Splits when obtaining the Unbreakable Greed charm"
+  },
+  {
+    "description": "Fragile Strength (Charm)",
+    "key": "FragileStrength",
+    "tooltip": "Splits when obtaining the Fragile Strength charm"
+  },
+  {
+    "description": "Unbreakable Strength (Charm)",
+    "key": "UnbreakableStrength",
+    "tooltip": "Splits when obtaining the Unbreakable Strength charm"
+  },
+  {
+    "description": "All Breakables (Event)",
+    "key": "AllBreakables",
+    "tooltip": "Splits when all 3 fragile charms are broken"
+  },
+  {
+    "description": "All Unbreakables (Charm)",
+    "key": "AllUnbreakables",
+    "tooltip": "Splits when all 3 unbreakable charms are obtained"
+  },
+  {
+    "description": "Grimmchild (Charm)",
+    "key": "Grimmchild",
+    "tooltip": "Splits when obtaining the Grimmchild charm"
+  },
+  {
+    "description": "Grimmchild Lvl 2 (Charm)",
+    "key": "Grimmchild2",
+    "tooltip": "Splits when upgrading Grimmchild to level 2"
+  },
+  {
+    "description": "Grimmchild Lvl 3 (Charm)",
+    "key": "Grimmchild3",
+    "tooltip": "Splits when upgrading Grimmchild to level 3"
+  },
+  {
+    "description": "Grimmchild Lvl 4 (Charm)",
+    "key": "Grimmchild4",
+    "tooltip": "Splits when upgrading Grimmchild to level 4"
+  },
+  {
+    "description": "Carefree Melody (Charm)",
+    "key": "CarefreeMelody",
+    "tooltip": "Splits when obtaining the Carefree Melody charm"
+  },
+  {
+    "description": "Grimm Flame 1 (Flame)",
+    "key": "Flame1",
+    "tooltip": "Splits after obtaining the first flame."
+  },
+  {
+    "description": "Grimm Flame 2 (Flame)",
+    "key": "Flame2",
+    "tooltip": "Splits after obtaining the second flame."
+  },
+  {
+    "description": "Grimm Flame 3 (Flame)",
+    "key": "Flame3",
+    "tooltip": "Splits after obtaining the third flame."
+  },
+  {
+    "description": "Grimm Flame 1 (Transition)",
+    "key": "TransFlame1",
+    "tooltip": "Splits on transition after obtaining the first flame on current Grimmchild cycle."
+  },
+  {
+    "description": "Grimm Flame 2 (Transition)",
+    "key": "TransFlame2",
+    "tooltip": "Splits on transition after obtaining the second flame on current Grimmchild cycle."
+  },
+  {
+    "description": "Grimm Flame 3 (Transition)",
+    "key": "TransFlame3",
+    "tooltip": "Splits on transition after obtaining the third flame on current Grimmchild cycle."
+  },
+  {
+    "description": "Brumm Flame (NPC)",
+    "key": "BrummFlame",
+    "tooltip": "Splits when collecting Brumm's flame in Deepnest"
+  },
+  {
+    "description": "White Fragment - Queen's (Charm)",
+    "key": "WhiteFragmentLeft",
+    "tooltip": "Splits on picking up the left White Fragment from the White Lady"
+  },
+  {
+    "description": "White Fragment - King's (Charm)",
+    "key": "WhiteFragmentRight",
+    "tooltip": "Splits on picking up the right White Fragment from the Pale King"
+  },
+  {
+    "description": "White Fragment (Obtain)",
+    "key": "OnObtainWhiteFragment",
+    "tooltip": "Splits when obtaining any White Fragment, or Void Heart"
+  },
+  {
+    "description": "Kingsoul (Charm)",
+    "key": "Kingsoul",
+    "tooltip": "Splits when obtaining the completed Kingsoul charm"
+  },
+  {
+    "description": "Void Heart (Charm)",
+    "key": "VoidHeart",
+    "tooltip": "Splits when changing the Kingsoul to the Void Heart charm"
+  },
+  {
+    "description": "Main Menu w/ Void Heart (Menu)",
+    "key": "MenuVoidHeart",
+    "tooltip": "Splits on transition to the main menu after Void Heart acquired"
+  },
+  {
+    "description": "Riding Stag (Event)",
+    "key": "RidingStag",
+    "tooltip": "Splits while riding the stag"
+  },
+  {
+    "description": "Stag Position Updated (Event)",
+    "key": "StagMoved",
+    "tooltip": "Splits when the stag is called"
+  },
+  {
+    "description": "Forgotten Crossroads (Stag Station)",
+    "key": "CrossroadsStation",
+    "tooltip": "Splits when opening the Forgotten Crossroads Stag Station"
+  },
+  {
+    "description": "Greenpath (Stag Station)",
+    "key": "GreenpathStation",
+    "tooltip": "Splits when obtaining Greenpath Stag Station"
+  },
+  {
+    "description": "Queen's Station (Stag Station)",
+    "key": "QueensStationStation",
+    "tooltip": "Splits when obtaining Queen's Station Stag Station"
+  },
+  {
+    "description": "City Storerooms (Stag Station)",
+    "key": "StoreroomsStation",
+    "tooltip": "Splits when obtaining City Storerooms Stag Station"
+  },
+  {
+    "description": "King's Station (Stag Station)",
+    "key": "KingsStationStation",
+    "tooltip": "Splits when obtaining King's Station Stag Station"
+  },
+  {
+    "description": "Resting Grounds (Stag Station)",
+    "key": "RestingGroundsStation",
+    "tooltip": "Splits when obtaining Resting Grounds Stag Station"
+  },
+  {
+    "description": "Hidden Station (Stag Station)",
+    "key": "HiddenStationStation",
+    "tooltip": "Splits when obtaining Hidden Station Stag Station"
+  },
+  {
+    "description": "Distant Village (Stag Station)",
+    "key": "DeepnestStation",
+    "tooltip": "Splits when obtaining Distant Village Stag Station"
+  },
+  {
+    "description": "Queen's Gardens (Stag Station)",
+    "key": "QueensGardensStation",
+    "tooltip": "Splits when obtaining Queen's Gardens Stag Station"
+  },
+  {
+    "description": "Stagnest (Stag Station)",
+    "key": "StagnestStation",
+    "tooltip": "Splits when traveling to Stagnest (Requires Ordered Splits)"
+  },
+  {
+    "description": "Stagnest Buy (Stag Station)",
+    "key": "StagnestStationBuy",
+    "tooltip": "Splits when obtaining Stagnest Station (Not for All Stag Stations)"
+  },
+  {
+    "description": "Wanderer's Journal (Obtain)",
+    "key": "OnObtainWanderersJournal",
+    "tooltip": "Splits when obtaining a Wanderer's Journal"
+  },
+  {
+    "description": "All Seals (Item)",
+    "key": "AllSeals",
+    "tooltip": "Splits when 17 Hallownest Seals have been collected"
+  },
+  {
+    "description": "Hallownest Seal (Obtain)",
+    "key": "OnObtainHallownestSeal",
+    "tooltip": "Splits when obtaining a Hallownest Seal"
+  },
+  {
+    "description": "Soul Sanctum Hallownest Seal (Item)",
+    "key": "SoulSanctumSeal",
+    "tooltip": "Splits when the Hallownest Seal in Soul Sanctum is collected"
+  },
+  {
+    "description": "King's Idol (Obtain)",
+    "key": "OnObtainKingsIdol",
+    "tooltip": "Splits when obtaining a King's Idol"
+  },
+  {
+    "description": "Glade Idol (Item)",
+    "key": "GladeIdol",
+    "tooltip": "Splits when picking up the King's Idol in the Spirits' Glade"
+  },
+  {
+    "description": "Dung Defender Idol (Item)",
+    "key": "DungDefenderIdol",
+    "tooltip": "Splits when picking up Dung Defender idol as the first idol"
+  },
+  {
+    "description": "Arcane Egg 8 (Obtain)",
+    "key": "ArcaneEgg8",
+    "tooltip": "Splits when obtaining 8 Arcane Eggs"
+  },
+  {
+    "description": "Arcane Egg (Obtain)",
+    "key": "OnObtainArcaneEgg",
+    "tooltip": "Splits when obtaining an Arcane Egg"
+  },
+  {
+    "description": "Rancid Egg (Obtain)",
+    "key": "OnObtainRancidEgg",
+    "tooltip": "Splits when obtaining a Rancid Egg"
+  },
+  {
+    "description": "All Eggs (Item)",
+    "key": "AllEggs",
+    "tooltip": "Splits when 21 Rancid Eggs have been collected"
+  },
+  {
+    "description": "Ghost Coins Incremented (Event)",
+    "key": "OnGhostCoinsIncremented",
+    "tooltip": "Splits when the ghostCoins PlayerData is updated. Unused by unmodded game, intended for use with mods."
+  },
+  {
+    "description": "All Skills Shuffle Item (Obtain)",
+    "key": "OnObtainAllSkillsShuffleItem",
+    "tooltip": "Splits when obtaining any randomized and required item in All Skills Shuffle: Movement skills, Nail arts, Spells, Dream nail, and Dreamers, making 19 items total."
+  },
+  {
+    "description": "Rescued Grub 1 (Grub)",
+    "key": "Grub1",
+    "tooltip": "Splits when rescuing grub #1"
+  },
+  {
+    "description": "Rescued Grub 2 (Grub)",
+    "key": "Grub2",
+    "tooltip": "Splits when rescuing grub #2"
+  },
+  {
+    "description": "Rescued Grub 3 (Grub)",
+    "key": "Grub3",
+    "tooltip": "Splits when rescuing grub #3"
+  },
+  {
+    "description": "Rescued Grub 4 (Grub)",
+    "key": "Grub4",
+    "tooltip": "Splits when rescuing grub #4"
+  },
+  {
+    "description": "Rescued Grub 5 (Grub)",
+    "key": "Grub5",
+    "tooltip": "Splits when rescuing grub #5"
+  },
+  {
+    "description": "Rescued Grub 6 (Grub)",
+    "key": "Grub6",
+    "tooltip": "Splits when rescuing grub #6"
+  },
+  {
+    "description": "Rescued Grub 7 (Grub)",
+    "key": "Grub7",
+    "tooltip": "Splits when rescuing grub #7"
+  },
+  {
+    "description": "Rescued Grub 8 (Grub)",
+    "key": "Grub8",
+    "tooltip": "Splits when rescuing grub #8"
+  },
+  {
+    "description": "Rescued Grub 9 (Grub)",
+    "key": "Grub9",
+    "tooltip": "Splits when rescuing grub #9"
+  },
+  {
+    "description": "Rescued Grub 10 (Grub)",
+    "key": "Grub10",
+    "tooltip": "Splits when rescuing grub #10"
+  },
+  {
+    "description": "Rescued Grub 11 (Grub)",
+    "key": "Grub11",
+    "tooltip": "Splits when rescuing grub #11"
+  },
+  {
+    "description": "Rescued Grub 12 (Grub)",
+    "key": "Grub12",
+    "tooltip": "Splits when rescuing grub #12"
+  },
+  {
+    "description": "Rescued Grub 13 (Grub)",
+    "key": "Grub13",
+    "tooltip": "Splits when rescuing grub #13"
+  },
+  {
+    "description": "Rescued Grub 14 (Grub)",
+    "key": "Grub14",
+    "tooltip": "Splits when rescuing grub #14"
+  },
+  {
+    "description": "Rescued Grub 15 (Grub)",
+    "key": "Grub15",
+    "tooltip": "Splits when rescuing grub #15"
+  },
+  {
+    "description": "Rescued Grub 16 (Grub)",
+    "key": "Grub16",
+    "tooltip": "Splits when rescuing grub #16"
+  },
+  {
+    "description": "Rescued Grub 17 (Grub)",
+    "key": "Grub17",
+    "tooltip": "Splits when rescuing grub #17"
+  },
+  {
+    "description": "Rescued Grub 18 (Grub)",
+    "key": "Grub18",
+    "tooltip": "Splits when rescuing grub #18"
+  },
+  {
+    "description": "Rescued Grub 19 (Grub)",
+    "key": "Grub19",
+    "tooltip": "Splits when rescuing grub #19"
+  },
+  {
+    "description": "Rescued Grub 20 (Grub)",
+    "key": "Grub20",
+    "tooltip": "Splits when rescuing grub #20"
+  },
+  {
+    "description": "Rescued Grub 21 (Grub)",
+    "key": "Grub21",
+    "tooltip": "Splits when rescuing grub #21"
+  },
+  {
+    "description": "Rescued Grub 22 (Grub)",
+    "key": "Grub22",
+    "tooltip": "Splits when rescuing grub #22"
+  },
+  {
+    "description": "Rescued Grub 23 (Grub)",
+    "key": "Grub23",
+    "tooltip": "Splits when rescuing grub #23"
+  },
+  {
+    "description": "Rescued Grub 24 (Grub)",
+    "key": "Grub24",
+    "tooltip": "Splits when rescuing grub #24"
+  },
+  {
+    "description": "Rescued Grub 25 (Grub)",
+    "key": "Grub25",
+    "tooltip": "Splits when rescuing grub #25"
+  },
+  {
+    "description": "Rescued Grub 26 (Grub)",
+    "key": "Grub26",
+    "tooltip": "Splits when rescuing grub #26"
+  },
+  {
+    "description": "Rescued Grub 27 (Grub)",
+    "key": "Grub27",
+    "tooltip": "Splits when rescuing grub #27"
+  },
+  {
+    "description": "Rescued Grub 28 (Grub)",
+    "key": "Grub28",
+    "tooltip": "Splits when rescuing grub #28"
+  },
+  {
+    "description": "Rescued Grub 29 (Grub)",
+    "key": "Grub29",
+    "tooltip": "Splits when rescuing grub #29"
+  },
+  {
+    "description": "Rescued Grub 30 (Grub)",
+    "key": "Grub30",
+    "tooltip": "Splits when rescuing grub #30"
+  },
+  {
+    "description": "Rescued Grub 31 (Grub)",
+    "key": "Grub31",
+    "tooltip": "Splits when rescuing grub #31"
+  },
+  {
+    "description": "Rescued Grub 32 (Grub)",
+    "key": "Grub32",
+    "tooltip": "Splits when rescuing grub #32"
+  },
+  {
+    "description": "Rescued Grub 33 (Grub)",
+    "key": "Grub33",
+    "tooltip": "Splits when rescuing grub #33"
+  },
+  {
+    "description": "Rescued Grub 34 (Grub)",
+    "key": "Grub34",
+    "tooltip": "Splits when rescuing grub #34"
+  },
+  {
+    "description": "Rescued Grub 35 (Grub)",
+    "key": "Grub35",
+    "tooltip": "Splits when rescuing grub #35"
+  },
+  {
+    "description": "Rescued Grub 36 (Grub)",
+    "key": "Grub36",
+    "tooltip": "Splits when rescuing grub #36"
+  },
+  {
+    "description": "Rescued Grub 37 (Grub)",
+    "key": "Grub37",
+    "tooltip": "Splits when rescuing grub #37"
+  },
+  {
+    "description": "Rescued Grub 38 (Grub)",
+    "key": "Grub38",
+    "tooltip": "Splits when rescuing grub #38"
+  },
+  {
+    "description": "Rescued Grub 39 (Grub)",
+    "key": "Grub39",
+    "tooltip": "Splits when rescuing grub #39"
+  },
+  {
+    "description": "Rescued Grub 40 (Grub)",
+    "key": "Grub40",
+    "tooltip": "Splits when rescuing grub #40"
+  },
+  {
+    "description": "Rescued Grub 41 (Grub)",
+    "key": "Grub41",
+    "tooltip": "Splits when rescuing grub #41"
+  },
+  {
+    "description": "Rescued Grub 42 (Grub)",
+    "key": "Grub42",
+    "tooltip": "Splits when rescuing grub #42"
+  },
+  {
+    "description": "Rescued Grub 43 (Grub)",
+    "key": "Grub43",
+    "tooltip": "Splits when rescuing grub #43"
+  },
+  {
+    "description": "Rescued Grub 44 (Grub)",
+    "key": "Grub44",
+    "tooltip": "Splits when rescuing grub #44"
+  },
+  {
+    "description": "Rescued Grub 45 (Grub)",
+    "key": "Grub45",
+    "tooltip": "Splits when rescuing grub #45"
+  },
+  {
+    "description": "Rescued Grub 46 (Grub)",
+    "key": "Grub46",
+    "tooltip": "Splits when rescuing grub #46"
+  },
+  {
+    "description": "Rescued Any Grub (Grub)",
+    "key": "OnObtainGrub",
+    "tooltip": "Splits when rescuing any grub"
+  },
+  {
+    "description": "Rescued Grub Basin Dive (Grub)",
+    "key": "GrubBasinDive",
+    "tooltip": "Splits when rescuing the grub in Abyss_17"
+  },
+  {
+    "description": "Rescued Grub Basin Wings (Grub)",
+    "key": "GrubBasinWings",
+    "tooltip": "Splits when rescuing the grub in Abyss_19"
+  },
+  {
+    "description": "Rescued Grub City Below Love Tower (Grub)",
+    "key": "GrubCityBelowLoveTower",
+    "tooltip": "Splits when rescuing the grub in Ruins2_07"
+  },
+  {
+    "description": "Rescued Grub City Below Sanctum (Grub)",
+    "key": "GrubCityBelowSanctum",
+    "tooltip": "Splits when rescuing the grub in Ruins1_05"
+  },
+  {
+    "description": "Rescued Grub City Collector All (Grub)",
+    "key": "GrubCityCollectorAll",
+    "tooltip": "Splits when rescuing all three grubs in Ruins2_11. (On 1221, splits for right grub)"
+  },
+  {
+    "description": "Rescued Grub City Collector (Grub)",
+    "key": "GrubCityCollector",
+    "tooltip": "Splits when rescuing any grub in Ruins2_11"
+  },
+  {
+    "description": "Rescued Grub City Guard House (Grub)",
+    "key": "GrubCityGuardHouse",
+    "tooltip": "Splits when rescuing the grub in Ruins_House_01"
+  },
+  {
+    "description": "Rescued Grub City Sanctum (Grub)",
+    "key": "GrubCitySanctum",
+    "tooltip": "Splits when rescuing the grub in Ruins1_32"
+  },
+  {
+    "description": "Rescued Grub City Spire (Grub)",
+    "key": "GrubCitySpire",
+    "tooltip": "Splits when rescuing the grub in Ruins2_03"
+  },
+  {
+    "description": "Rescued Grub Cliffs Baldur Shell (Grub)",
+    "key": "GrubCliffsBaldurShell",
+    "tooltip": "Splits when rescuing the grub in Fungus1_28"
+  },
+  {
+    "description": "Rescued Grub Crossroads Acid (Grub)",
+    "key": "GrubCrossroadsAcid",
+    "tooltip": "Splits when rescuing the grub in Crossroads_35"
+  },
+  {
+    "description": "Rescued Grub Crossroads Guarded (Grub)",
+    "key": "GrubCrossroadsGuarded",
+    "tooltip": "Splits when rescuing the grub in Crossroads_48"
+  },
+  {
+    "description": "Rescued Grub Crossroads Spikes (Grub)",
+    "key": "GrubCrossroadsSpikes",
+    "tooltip": "Splits when rescuing the grub in Crossroads_31"
+  },
+  {
+    "description": "Rescued Grub Crossroads Vengefly (Grub)",
+    "key": "GrubCrossroadsVengefly",
+    "tooltip": "Splits when rescuing the grub in Crossroads_05"
+  },
+  {
+    "description": "Rescued Grub Crossroads Wall (Grub)",
+    "key": "GrubCrossroadsWall",
+    "tooltip": "Splits when rescuing the grub in Crossroads_03"
+  },
+  {
+    "description": "Rescued Grub Crystal Peak Bottom Lever (Grub)",
+    "key": "GrubCrystalPeaksBottomLever",
+    "tooltip": "Splits when rescuing the grub in Mines_04"
+  },
+  {
+    "description": "Rescued Grub Crystal Peak Crown (Grub)",
+    "key": "GrubCrystalPeaksCrown",
+    "tooltip": "Splits when rescuing the grub in Mines_24"
+  },
+  {
+    "description": "Rescued Grub Crystal Peak Crushers (Grub)",
+    "key": "GrubCrystalPeaksCrushers",
+    "tooltip": "Splits when rescuing the grub in Mines_19"
+  },
+  {
+    "description": "Rescued Grub Crystal Peak Crystal Heart (Grub)",
+    "key": "GrubCrystalPeaksCrystalHeart",
+    "tooltip": "Splits when rescuing the grub in Mines_31"
+  },
+  {
+    "description": "Rescued Grub Crystal Peak Mimic (Grub)",
+    "key": "GrubCrystalPeaksMimics",
+    "tooltip": "Splits when rescuing the grub in Mines_16"
+  },
+  {
+    "description": "Rescued Grub Crystal Peak Mound (Grub)",
+    "key": "GrubCrystalPeaksMound",
+    "tooltip": "Splits when rescuing the grub in Mines_35"
+  },
+  {
+    "description": "Rescued Grub Crystal Peak Spikes (Grub)",
+    "key": "GrubCrystalPeaksSpikes",
+    "tooltip": "Splits when rescuing the grub in Mines_03"
+  },
+  {
+    "description": "Rescued Grub Deepnest Beast's Den (Grub)",
+    "key": "GrubDeepnestBeastsDen",
+    "tooltip": "Splits when rescuing the grub in Deepnest_Spider_Town"
+  },
+  {
+    "description": "Rescued Grub Deepnest Dark (Grub)",
+    "key": "GrubDeepnestDark",
+    "tooltip": "Splits when rescuing the grub in Deepnest_39"
+  },
+  {
+    "description": "Rescued Grub Deepnest Mimics (Grub)",
+    "key": "GrubDeepnestMimics",
+    "tooltip": "Splits when rescuing the grub in Deepnest_36"
+  },
+  {
+    "description": "Rescued Grub Deepnest Nosk (Grub)",
+    "key": "GrubDeepnestNosk",
+    "tooltip": "Splits when rescuing the grub in Deepnest_31"
+  },
+  {
+    "description": "Rescued Grub Deepnest Spikes (Grub)",
+    "key": "GrubDeepnestSpikes",
+    "tooltip": "Splits when rescuing the grub in Deepnest_03"
+  },
+  {
+    "description": "Rescued Grub Fog Canyon Archives (Grub)",
+    "key": "GrubFogCanyonArchives",
+    "tooltip": "Splits when rescuing the grub in Fungus3_47"
+  },
+  {
+    "description": "Rescued Grub Fungal Bouncy (Grub)",
+    "key": "GrubFungalBouncy",
+    "tooltip": "Splits when rescuing the grub in Fungus2_18"
+  },
+  {
+    "description": "Rescued Grub Fungal Spore Shroom (Grub)",
+    "key": "GrubFungalSporeShroom",
+    "tooltip": "Splits when rescuing the grub in Fungus2_20"
+  },
+  {
+    "description": "Rescued Grub Greenpath Cornifer (Grub)",
+    "key": "GrubGreenpathCornifer",
+    "tooltip": "Splits when rescuing the grub in Fungus1_06"
+  },
+  {
+    "description": "Rescued Grub Greenpath Hunter (Grub)",
+    "key": "GrubGreenpathHunter",
+    "tooltip": "Splits when rescuing the grub in Fungus1_07"
+  },
+  {
+    "description": "Rescued Grub Greenpath Moss Knight (Grub)",
+    "key": "GrubGreenpathMossKnight",
+    "tooltip": "Splits when rescuing the grub in Fungus1_21"
+  },
+  {
+    "description": "Rescued Grub Greenpath Vessel Fragment (Grub)",
+    "key": "GrubGreenpathVesselFragment",
+    "tooltip": "Splits when rescuing the grub in Fungus1_13"
+  },
+  {
+    "description": "Rescued Grub Hive External (Grub)",
+    "key": "GrubHiveExternal",
+    "tooltip": "Splits when rescuing the grub in Hive_03"
+  },
+  {
+    "description": "Rescued Grub Hive Internal (Grub)",
+    "key": "GrubHiveInternal",
+    "tooltip": "Splits when rescuing the grub in Hive_04"
+  },
+  {
+    "description": "Rescued Grub Kingdom's Edge Center (Grub)",
+    "key": "GrubKingdomsEdgeCenter",
+    "tooltip": "Splits when rescuing the grub in Deepnest_East_11"
+  },
+  {
+    "description": "Rescued Grub Kingdom's Edge Oro (Grub)",
+    "key": "GrubKingdomsEdgeOro",
+    "tooltip": "Splits when rescuing the grub in Deepnest_East_14"
+  },
+  {
+    "description": "Rescued Grub Queen's Gardens Below Stag (Grub)",
+    "key": "GrubQueensGardensBelowStag",
+    "tooltip": "Splits when rescuing the grub in Fungus3_10"
+  },
+  {
+    "description": "Rescued Grub Queen's Gardens Upper (Grub)",
+    "key": "GrubQueensGardensUpper",
+    "tooltip": "Splits when rescuing the grub in Fungus3_22"
+  },
+  {
+    "description": "Rescued Grub Queen's Gardens White Lady (Grub)",
+    "key": "GrubQueensGardensWhiteLady",
+    "tooltip": "Splits when rescuing the grub in Fungus3_48"
+  },
+  {
+    "description": "Rescued Grub Resting Grounds Crypts (Grub)",
+    "key": "GrubRestingGroundsCrypts",
+    "tooltip": "Splits when rescuing the grub in RestingGrounds_10"
+  },
+  {
+    "description": "Rescued Grub Waterways Center (Grub)",
+    "key": "GrubWaterwaysCenter",
+    "tooltip": "Splits when rescuing the grub in Waterways_04"
+  },
+  {
+    "description": "Rescued Grub Waterways Hwurmps (Grub)",
+    "key": "GrubWaterwaysHwurmps",
+    "tooltip": "Splits when rescuing the grub in Waterways_14"
+  },
+  {
+    "description": "Rescued Grub Waterways Isma (Grub)",
+    "key": "GrubWaterwaysIsma",
+    "tooltip": "Splits when rescuing the grub in Waterways_13"
+  },
+  {
+    "description": "Mimic 1 (Killed)",
+    "key": "Mimic1",
+    "tooltip": "Splits when rescuing mimic #1"
+  },
+  {
+    "description": "Mimic 2 (Killed)",
+    "key": "Mimic2",
+    "tooltip": "Splits when rescuing mimic #2"
+  },
+  {
+    "description": "Mimic 3 (Killed)",
+    "key": "Mimic3",
+    "tooltip": "Splits when rescuing mimic #3"
+  },
+  {
+    "description": "Mimic 4 (Killed)",
+    "key": "Mimic4",
+    "tooltip": "Splits when rescuing mimic #4"
+  },
+  {
+    "description": "Mimic 5 (Killed)",
+    "key": "Mimic5",
+    "tooltip": "Splits when rescuing mimic #5"
+  },
+  {
+    "description": "100 Essence (Essence)",
+    "key": "Essence100",
+    "tooltip": "Splits upon obtaining 100 Essence"
+  },
+  {
+    "description": "200 Essence (Essence)",
+    "key": "Essence200",
+    "tooltip": "Splits upon obtaining 200 Essence"
+  },
+  {
+    "description": "300 Essence (Essence)",
+    "key": "Essence300",
+    "tooltip": "Splits upon obtaining 300 Essence"
+  },
+  {
+    "description": "400 Essence (Essence)",
+    "key": "Essence400",
+    "tooltip": "Splits upon obtaining 400 Essence"
+  },
+  {
+    "description": "500 Essence (Essence)",
+    "key": "Essence500",
+    "tooltip": "Splits upon obtaining 500 Essence"
+  },
+  {
+    "description": "600 Essence (Essence)",
+    "key": "Essence600",
+    "tooltip": "Splits upon obtaining 600 Essence"
+  },
+  {
+    "description": "700 Essence (Essence)",
+    "key": "Essence700",
+    "tooltip": "Splits upon obtaining 700 Essence"
+  },
+  {
+    "description": "800 Essence (Essence)",
+    "key": "Essence800",
+    "tooltip": "Splits upon obtaining 800 Essence"
+  },
+  {
+    "description": "900 Essence (Essence)",
+    "key": "Essence900",
+    "tooltip": "Splits upon obtaining 900 Essence"
+  },
+  {
+    "description": "1000 Essence (Essence)",
+    "key": "Essence1000",
+    "tooltip": "Splits upon obtaining 1000 Essence"
+  },
+  {
+    "description": "1100 Essence (Essence)",
+    "key": "Essence1100",
+    "tooltip": "Splits upon obtaining 1100 Essence"
+  },
+  {
+    "description": "1200 Essence (Essence)",
+    "key": "Essence1200",
+    "tooltip": "Splits upon obtaining 1200 Essence"
+  },
+  {
+    "description": "1300 Essence (Essence)",
+    "key": "Essence1300",
+    "tooltip": "Splits upon obtaining 1300 Essence"
+  },
+  {
+    "description": "1400 Essence (Essence)",
+    "key": "Essence1400",
+    "tooltip": "Splits upon obtaining 1400 Essence"
+  },
+  {
+    "description": "1500 Essence (Essence)",
+    "key": "Essence1500",
+    "tooltip": "Splits upon obtaining 1500 Essence"
+  },
+  {
+    "description": "1600 Essence (Essence)",
+    "key": "Essence1600",
+    "tooltip": "Splits upon obtaining 1600 Essence"
+  },
+  {
+    "description": "1700 Essence (Essence)",
+    "key": "Essence1700",
+    "tooltip": "Splits upon obtaining 1700 Essence"
+  },
+  {
+    "description": "1800 Essence (Essence)",
+    "key": "Essence1800",
+    "tooltip": "Splits upon obtaining 1800 Essence"
+  },
+  {
+    "description": "1900 Essence (Essence)",
+    "key": "Essence1900",
+    "tooltip": "Splits upon obtaining 1900 Essence"
+  },
+  {
+    "description": "2000 Essence (Essence)",
+    "key": "Essence2000",
+    "tooltip": "Splits upon obtaining 2000 Essence"
+  },
+  {
+    "description": "2100 Essence (Essence)",
+    "key": "Essence2100",
+    "tooltip": "Splits upon obtaining 2100 Essence"
+  },
+  {
+    "description": "2200 Essence (Essence)",
+    "key": "Essence2200",
+    "tooltip": "Splits upon obtaining 2200 Essence"
+  },
+  {
+    "description": "2300 Essence (Essence)",
+    "key": "Essence2300",
+    "tooltip": "Splits upon obtaining 2300 Essence"
+  },
+  {
+    "description": "2400 Essence (Essence)",
+    "key": "Essence2400",
+    "tooltip": "Splits upon obtaining 2400 Essence"
+  },
+  {
+    "description": "Whispering Root (Ancestral Mound)",
+    "key": "TreeMound",
+    "tooltip": "Splits upon completing the whispering root in the Ancestral Mound"
+  },
+  {
+    "description": "Whispering Root (City of Tears)",
+    "key": "TreeCity",
+    "tooltip": "Splits upon completing the whispering root in the City of Tears"
+  },
+  {
+    "description": "Whispering Root (Crystal Peak)",
+    "key": "TreePeak",
+    "tooltip": "Splits upon completing the whispering root in Crystal Peak"
+  },
+  {
+    "description": "Whispering Root (Deepnest)",
+    "key": "TreeDeepnest",
+    "tooltip": "Splits upon completing the whispering root in Deepnest"
+  },
+  {
+    "description": "Whispering Root (Forgotten Crossroads)",
+    "key": "TreeCrossroads",
+    "tooltip": "Splits upon completing the whispering root in the Forgotten Crossroads"
+  },
+  {
+    "description": "Whispering Root (Leg Eater)",
+    "key": "TreeLegEater",
+    "tooltip": "Splits upon completing the whispering root left from Leg Eater"
+  },
+  {
+    "description": "Whispering Root (Mantis Village)",
+    "key": "TreeMantisVillage",
+    "tooltip": "Splits upon completing the whispering root above the Mantis Village"
+  },
+  {
+    "description": "Whispering Root (Greenpath)",
+    "key": "TreeGreenpath",
+    "tooltip": "Splits upon completing the whispering root in Greenpath"
+  },
+  {
+    "description": "Whispering Root (Hive)",
+    "key": "TreeHive",
+    "tooltip": "Splits upon completing the whispering root in the Hive"
+  },
+  {
+    "description": "Whispering Root (Howling Cliffs)",
+    "key": "TreeCliffs",
+    "tooltip": "Splits upon completing the whispering root in the Howling Cliifs"
+  },
+  {
+    "description": "Whispering Root (Kingdom's Edge)",
+    "key": "TreeKingdomsEdge",
+    "tooltip": "Splits upon completing the whispering root in the Kingdom's Edge"
+  },
+  {
+    "description": "Whispering Root (Queen's Gardens)",
+    "key": "TreeQueensGardens",
+    "tooltip": "Splits upon completing the whispering root in the Queen's Gardens"
+  },
+  {
+    "description": "Whispering Root (Resting Grounds)",
+    "key": "TreeRestingGrounds",
+    "tooltip": "Splits upon completing the whispering root in the Resting Grounds"
+  },
+  {
+    "description": "Whispering Root (Royal Waterways)",
+    "key": "TreeWaterways",
+    "tooltip": "Splits upon completing the whispering root in the Royal Waterways"
+  },
+  {
+    "description": "Whispering Root (Spirits' Glade)",
+    "key": "TreeGlade",
+    "tooltip": "Splits upon completing the whispering root in the Spirits' Glade"
+  },
+  {
+    "description": "Dream Nail Marissa (Obtain)",
+    "key": "OnObtainGhostMarissa",
+    "tooltip": "Splits when obtaining the essence from Marissa"
+  },
+  {
+    "description": "Dream Nail Caelif and Fera (Obtain)",
+    "key": "OnObtainGhostCaelifFera",
+    "tooltip": "Splits when obtaining the essence from Caelif and Fera Orthop"
+  },
+  {
+    "description": "Dream Nail Poggy (Obtain)",
+    "key": "OnObtainGhostPoggy",
+    "tooltip": "Splits when obtaining the essence from Poggy Thorax"
+  },
+  {
+    "description": "Dream Nail Gravedigger (Obtain)",
+    "key": "OnObtainGhostGravedigger",
+    "tooltip": "Splits when obtaining the essence from Gravedigger"
+  },
+  {
+    "description": "Dream Nail Joni (Obtain)",
+    "key": "OnObtainGhostJoni",
+    "tooltip": "Splits when obtaining the essence from Blue Child Joni"
+  },
+  {
+    "description": "Dream Nail Cloth (Obtain)",
+    "key": "OnObtainGhostCloth",
+    "tooltip": "Splits when obtaining the essence from Cloth"
+  },
+  {
+    "description": "Dream Nail Vespa (Obtain)",
+    "key": "OnObtainGhostVespa",
+    "tooltip": "Splits when obtaining the essence from Hive Queen Vespa"
+  },
+  {
+    "description": "Dream Nail Revek (Obtain)",
+    "key": "OnObtainGhostRevek",
+    "tooltip": "Splits when obtaining essence in Spirits' Glade after Revek is obtainable"
+  },
+  {
+    "description": "Map Dirtmouth (Item)",
+    "key": "MapDirtmouth",
+    "tooltip": "Splits when acquiring the Dirtmouth map"
+  },
+  {
+    "description": "Map Crossroads (Item)",
+    "key": "MapCrossroads",
+    "tooltip": "Splits when acquiring the Crossroads map"
+  },
+  {
+    "description": "Has Map Crossroads (Transition)",
+    "key": "TransMapCrossroads",
+    "tooltip": "Splits on transition after Crossroads Map acquired"
+  },
+  {
+    "description": "Map Greenpath (Item)",
+    "key": "MapGreenpath",
+    "tooltip": "Splits when acquiring the Greenpath map"
+  },
+  {
+    "description": "Map Fog Canyon (Item)",
+    "key": "MapFogCanyon",
+    "tooltip": "Splits when acquiring the Fog Canyon map"
+  },
+  {
+    "description": "Map Queen's Gardens (Item)",
+    "key": "MapRoyalGardens",
+    "tooltip": "Splits when acquiring the QG map"
+  },
+  {
+    "description": "Map Fungal Wastes (Item)",
+    "key": "MapFungalWastes",
+    "tooltip": "Splits when acquiring the Fungal Wastes map"
+  },
+  {
+    "description": "Map City of Tears (Item)",
+    "key": "MapCity",
+    "tooltip": "Splits when acquiring the City map"
+  },
+  {
+    "description": "Map Waterways (Item)",
+    "key": "MapWaterways",
+    "tooltip": "Splits when acquiring the Waterways map"
+  },
+  {
+    "description": "Map Crystal Peak (Item)",
+    "key": "MapMines",
+    "tooltip": "Splits when acquiring the Crystal Peak map"
+  },
+  {
+    "description": "Map Deepnest (Item)",
+    "key": "MapDeepnest",
+    "tooltip": "Splits when acquiring the Deepnest map"
+  },
+  {
+    "description": "Map Howling Cliffs (Item)",
+    "key": "MapCliffs",
+    "tooltip": "Splits when acquiring the Howling Cliffs map"
+  },
+  {
+    "description": "Map Kingdom's Edge (Item)",
+    "key": "MapOutskirts",
+    "tooltip": "Splits when acquiring the KE map"
+  },
+  {
+    "description": "Map Resting Grounds (Item)",
+    "key": "MapRestingGrounds",
+    "tooltip": "Splits when acquiring the Resting Grounds map"
+  },
+  {
+    "description": "Map Ancient Basin (Item)",
+    "key": "MapAbyss",
+    "tooltip": "Splits when acquiring the Abyss map"
+  },
+  {
+    "description": "Cornifer at Home (Transition)",
+    "key": "CorniferAtHome",
+    "tooltip": "Splits when entering Iselda's hut while Cornifer is sleeping"
+  },
+  {
+    "description": "King's Pass (Transition)",
+    "key": "KingsPass",
+    "tooltip": "Splits when entering Dirtmouth from King's Pass"
+  },
+  {
+    "description": "Dirtmouth (Transition)",
+    "key": "EnterDirtmouth",
+    "tooltip": "Splits on any transition into Dirtmouth Town"
+  },
+  {
+    "description": "King's Pass from Town (Transition)",
+    "key": "KingsPassEnterFromTown",
+    "tooltip": "Splits when entering King's Pass from Dirtmouth"
+  },
+  {
+    "description": "Dirtmouth (Area)",
+    "key": "Dirtmouth",
+    "tooltip": "Splits when entering Dirtmouth text first appears"
+  },
+  {
+    "description": "SlyShopExit",
+    "key": "SlyShopExit",
+    "tooltip": null
+  },
+  {
+    "description": "106% Pre-Grimm Shop (Event)",
+    "key": "PreGrimmShop",
+    "tooltip": "Lumafly Lantern Shoptimisation\nSplits when obtaining Lantern + a Sly Mask Shard or Vessel Fragment"
+  },
+  {
+    "description": "106% Pre-Grimm Shop (Transition)",
+    "key": "PreGrimmShopTrans",
+    "tooltip": "Deprecated: use Shop Lumafly Lantern (Transition) instead"
+  },
+  {
+    "description": "Elegant Key Shoptimisation (Item)",
+    "key": "ElegantKeyShoptimised",
+    "tooltip": "Splits when obtaining Elegant Key + a Sly Mask Shard or Vessel Fragment"
+  },
+  {
+    "description": "1xx% Sly Final Shop (Transition)",
+    "key": "SlyShopFinished",
+    "tooltip": "Splits on leaving Sly's shop with all Sly shop charms, shards, fragments, and Lantern"
+  },
+  {
+    "description": "Elderbug Flower Quest (NPC)",
+    "key": "ElderbugFlower",
+    "tooltip": "Splits when giving the flower to the Elderbug"
+  },
+  {
+    "description": "Enter Troupe Master Grimm (Transition)",
+    "key": "EnterTMG",
+    "tooltip": "Splits when entering Grimm tent with requirements to trigger Troupe Master Grimm boss"
+  },
+  {
+    "description": "Troupe Master Grimm (Boss)",
+    "key": "TroupeMasterGrimm",
+    "tooltip": "Splits when killing Troupe Master Grimm"
+  },
+  {
+    "description": "NKG Dream (Transition)",
+    "key": "EnterNKG",
+    "tooltip": "Splits on transition into Nightmare King Grimm dream"
+  },
+  {
+    "description": "Nightmare King Grimm (Boss)",
+    "key": "NightmareKingGrimm",
+    "tooltip": "Splits when killing Nightmare King Grimm"
+  },
+  {
+    "description": "Bretta House (Transition)",
+    "key": "BrettaHouse",
+    "tooltip": "Splits on transition to Bretta's House"
+  },
+  {
+    "description": "Modded: Bretta House Bubbles (Transition)",
+    "key": "BrettaHouseBubbles",
+    "tooltip": "Splits on transition to the fourth room of Bretta's House C-Side ('Scattered and Lost' mod)"
+  },
+  {
+    "description": "Modded: Bretta House Bumpers (Transition)",
+    "key": "BrettaHouseBumpers",
+    "tooltip": "Splits on transition to the third room of Bretta's House C-Side ('Scattered and Lost' mod)"
+  },
+  {
+    "description": "Modded: Bretta House Switches (Transition)",
+    "key": "BrettaHouseSwitches",
+    "tooltip": "Splits on transition to the second room of Bretta's House C-Side ('Scattered and Lost' mod)"
+  },
+  {
+    "description": "Modded: Bretta House Zippers (Transition)",
+    "key": "BrettaHouseZippers",
+    "tooltip": "Splits on transition to the first room of Bretta's House C-Side ('Scattered and Lost' mod)"
+  },
+  {
+    "description": "Grey Prince Zote (Boss)",
+    "key": "GreyPrince",
+    "tooltip": "Splits when killing Grey Prince"
+  },
+  {
+    "description": "Grey Prince Zote (Essence)",
+    "key": "GreyPrinceEssence",
+    "tooltip": "Splits when getting Grey Prince Zote essence"
+  },
+  {
+    "description": "Grey Prince Zote Level (Boss)",
+    "key": "OnDefeatGPZ",
+    "tooltip": "Splits each time defeating Grey Prince Zote in Bretta's dream"
+  },
+  {
+    "description": "Forgotten Crossroads (Area)",
+    "key": "ForgottenCrossroads",
+    "tooltip": "Splits when entering Forgotten Crossroads text first appears"
+  },
+  {
+    "description": "Infected Crossroads (Area)",
+    "key": "InfectedCrossroads",
+    "tooltip": "Splits when entering Infected Crossroads text first appears"
+  },
+  {
+    "description": "Menderbug (Killed)",
+    "key": "MenderBug",
+    "tooltip": "Splits when killing Menderbug"
+  },
+  {
+    "description": "Enter Brooding Mawlek (Transition)",
+    "key": "EnterBroodingMawlek",
+    "tooltip": "Splits when entering the Brooding Mawlek arena transition in Forgotten Crossroads"
+  },
+  {
+    "description": "Brooding Mawlek (Boss)",
+    "key": "BroodingMawlek",
+    "tooltip": "Splits when killing Brooding Mawlek"
+  },
+  {
+    "description": "Aspid Hunter (Mini Boss)",
+    "key": "AspidHunter",
+    "tooltip": "Splits when killing 3 Aspid Hunters in a row (ideally Aspid Arena)"
+  },
+  {
+    "description": "Crossroads Stag (Bench)",
+    "key": "BenchCrossroadsStag",
+    "tooltip": "Splits when sitting on the bench at Crossroads Stag"
+  },
+  {
+    "description": "Gruz Mother (Boss)",
+    "key": "GruzMother",
+    "tooltip": "Splits when killing Gruz Mother"
+  },
+  {
+    "description": "Sly Rescued (NPC)",
+    "key": "SlyRescued",
+    "tooltip": "Splits when saving Sly"
+  },
+  {
+    "description": "False Knight (Boss)",
+    "key": "FalseKnight",
+    "tooltip": "Splits when killing False Knight"
+  },
+  {
+    "description": "Failed Champion (Boss)",
+    "key": "FailedKnight",
+    "tooltip": "Splits when killing Failed Champion"
+  },
+  {
+    "description": "Failed Champion (Essence)",
+    "key": "FailedChampionEssence",
+    "tooltip": "Splits when getting Failed Champion essence"
+  },
+  {
+    "description": "Maggots (Killed)",
+    "key": "Maggots",
+    "tooltip": "Splits when killing both Maggots"
+  },
+  {
+    "description": "Ancestral Mound (Transition)",
+    "key": "AncestralMound",
+    "tooltip": "Splits on transition into Ancestral Mound"
+  },
+  {
+    "description": "Little Baldur Hunter's Notes (Killed)",
+    "key": "RollerHuntersNotes",
+    "tooltip": "Splits when killing all little Baldurs needed for Hunter's Notes journal completion"
+  },
+  {
+    "description": "Salubra's Blessing (Item)",
+    "key": "SalubrasBlessing",
+    "tooltip": "Splits when obtaining Salubra's Blessing"
+  },
+  {
+    "description": "Salubra Exit (Transition)",
+    "key": "SalubraExit",
+    "tooltip": "Splits on the transition out of Salubra's Hut"
+  },
+  {
+    "description": "Shape of Unn Synergies / Pure Snail (Event)",
+    "key": "PureSnail",
+    "tooltip": "Splits when focusing with Spore Shroom, Quick Focus, Baldur Shell, and Shape of Unn equipped"
+  },
+  {
+    "description": "EnterHollowKnight",
+    "key": "EnterHollowKnight",
+    "tooltip": null
+  },
+  {
+    "description": "Chains Broken - Hollow Knight (Event)",
+    "key": "UnchainedHollowKnight",
+    "tooltip": "Splits at the end of the first Hollow Knight scream after the chains are broken"
+  },
+  {
+    "description": "Segment Practice - THK (Boss)",
+    "key": "HollowKnightBoss",
+    "tooltip": "Splits when killing The Hollow Knight"
+  },
+  {
+    "description": "Radiance Dream Entry (Event)",
+    "key": "HollowKnightDreamnail",
+    "tooltip": "Splits upon entering the Radiance dream\nSkips upon killing the Hollow Knight"
+  },
+  {
+    "description": "Segment Practice - Radiance (Boss)",
+    "key": "RadianceBoss",
+    "tooltip": "Splits when killing The Radiance"
+  },
+  {
+    "description": "Greenpath (Transition)",
+    "key": "EnterGreenpath",
+    "tooltip": "Splits when entering Greenpath"
+  },
+  {
+    "description": "Greenpath w/ Unlocked Overcharm (Transition)",
+    "key": "EnterGreenpathWithOvercharm",
+    "tooltip": "Splits when entering Greenpath with overcharming unlocked"
+  },
+  {
+    "description": "Greenpath (Area)",
+    "key": "Greenpath",
+    "tooltip": "Splits when entering Greenpath text first appears"
+  },
+  {
+    "description": "Moss Knight (Mini Boss)",
+    "key": "MossKnight",
+    "tooltip": "Splits when killing Moss Knight"
+  },
+  {
+    "description": "Zote Rescued - Vengefly King (Mini Boss)",
+    "key": "Zote1",
+    "tooltip": "Splits when rescuing Zote from the Vengefly King"
+  },
+  {
+    "description": "Vengefly King Killed (Transition)",
+    "key": "VengeflyKingTrans",
+    "tooltip": "Splits on transition after Vengefly King in Greenpath killed"
+  },
+  {
+    "description": "Greenpath Stag (Bench)",
+    "key": "BenchGreenpathStag",
+    "tooltip": "Splits when sitting on the bench at Greenpath Stag"
+  },
+  {
+    "description": "Enter Hornet 1 (Transition)",
+    "key": "EnterHornet1",
+    "tooltip": "Splits when entering Hornet boss arena transition in Greenpath"
+  },
+  {
+    "description": "Hornet 1 (Boss)",
+    "key": "Hornet1",
+    "tooltip": "Splits when killing Hornet Protector in Greenpath"
+  },
+  {
+    "description": "Aluba (Killed)",
+    "key": "Aluba",
+    "tooltip": "Splits when killing an Aluba"
+  },
+  {
+    "description": "Hunter's Mark (Item)",
+    "key": "HuntersMark",
+    "tooltip": "Splits when obtaining the Hunter's Mark"
+  },
+  {
+    "description": "No Eyes (Boss)",
+    "key": "NoEyes",
+    "tooltip": "Splits when killing No Eyes"
+  },
+  {
+    "description": "No Eyes (Essence)",
+    "key": "NoEyesEssence",
+    "tooltip": "Splits when absorbing essence from No Eyes"
+  },
+  {
+    "description": "Massive Moss Charger (Boss)",
+    "key": "MegaMossCharger",
+    "tooltip": "Splits when killing Massive Moss Charger"
+  },
+  {
+    "description": "Massive Moss Charger Killed (Transition)",
+    "key": "MegaMossChargerTrans",
+    "tooltip": "Splits on transition after Massive Moss Charger is killed"
+  },
+  {
+    "description": "Happy Couple (Event)",
+    "key": "HappyCouplePlayerDataEvent",
+    "tooltip": "Splits when talking to Nailsmith in Sheo's hut for the first time"
+  },
+  {
+    "description": "Fungal Wastes Entry (Transition)",
+    "key": "FungalWastesEntry",
+    "tooltip": "Splits on transition to Fungal Wastes\n(Room below Crossroads, right of Queen's Station, left of Waterways or Spore Shroom room)"
+  },
+  {
+    "description": "Fungal Wastes (Area)",
+    "key": "FungalWastes",
+    "tooltip": "Splits when entering Fungal Wastes text first appears"
+  },
+  {
+    "description": "Queen's Station (Bench)",
+    "key": "BenchQueensStation",
+    "tooltip": "Splits when sitting on the bench in Queen's Station"
+  },
+  {
+    "description": "Shrumal Ogres (Mini Boss)",
+    "key": "MushroomBrawler",
+    "tooltip": "Splits when killing 2 Shrumal Ogres in a row (ideally Shrumal Ogre Notch arena)"
+  },
+  {
+    "description": "Elder Hu (Boss)",
+    "key": "ElderHu",
+    "tooltip": "Splits when killing Elder Hu"
+  },
+  {
+    "description": "Elder Hu (Essence)",
+    "key": "ElderHuEssence",
+    "tooltip": "Splits when absorbing essence from Elder Hu"
+  },
+  {
+    "description": "Elder Hu Killed (Transition)",
+    "key": "ElderHuTrans",
+    "tooltip": "Splits on the transition after killing Elder Hu"
+  },
+  {
+    "description": "Bretta Rescued (NPC)",
+    "key": "BrettaRescued",
+    "tooltip": "Splits when saving Bretta"
+  },
+  {
+    "description": "Mantis Lords (Boss)",
+    "key": "MantisLords",
+    "tooltip": "Splits when killing Mantis Lords"
+  },
+  {
+    "description": "Gorb (Boss)",
+    "key": "Gorb",
+    "tooltip": "Splits when killing Gorb"
+  },
+  {
+    "description": "Gorb (Essence)",
+    "key": "GorbEssence",
+    "tooltip": "Splits when absorbing essence from Gorb"
+  },
+  {
+    "description": "Nightmare Lantern Lit (Event)",
+    "key": "NightmareLantern",
+    "tooltip": "Splits when initially lighting the Nightmare Lantern"
+  },
+  {
+    "description": "Nightmare Lantern Destroyed (Event)",
+    "key": "NightmareLanternDestroyed",
+    "tooltip": "Splits when destroying the Nightmare Lantern"
+  },
+  {
+    "description": "Blue Lake (Transition)",
+    "key": "BlueLake",
+    "tooltip": "Splits on transition to Blue Lake from either side"
+  },
+  {
+    "description": "Enter Any Dream (Transition)",
+    "key": "EnterAnyDream",
+    "tooltip": "Splits when entering any dream world"
+  },
+  {
+    "description": "DreamNailExit",
+    "key": "DreamNailExit",
+    "tooltip": null
+  },
+  {
+    "description": "Resting Grounds (Area)",
+    "key": "RestingGrounds",
+    "tooltip": "Splits when entering Resting Grounds text first appears"
+  },
+  {
+    "description": "Resting Grounds Stag (Bench)",
+    "key": "BenchRGStag",
+    "tooltip": "Splits when sitting on the bench at Resting Grounds Stag"
+  },
+  {
+    "description": "Xero (Boss)",
+    "key": "Xero",
+    "tooltip": "Splits when killing Xero"
+  },
+  {
+    "description": "Xero (Essence)",
+    "key": "XeroEssence",
+    "tooltip": "Splits when absorbing essence from Xero"
+  },
+  {
+    "description": "Spirit Glade Door (Event)",
+    "key": "SpiritGladeOpen",
+    "tooltip": "Splits when the Seer opens the Spirits' Glade after bringing back 200 essence"
+  },
+  {
+    "description": "Seer Departs (Event)",
+    "key": "SeerDeparts",
+    "tooltip": "Splits when the Seer Departs after bringing back 2400 essence"
+  },
+  {
+    "description": "Catacombs Entry (Transition)",
+    "key": "CatacombsEntry",
+    "tooltip": "Splits on entry to the catacombs below Resting Grounds"
+  },
+  {
+    "description": "Met Grey Mourner (NPC)",
+    "key": "MetGreyMourner",
+    "tooltip": "Splits when talking to Grey Mourner for the first time"
+  },
+  {
+    "description": "Mourner w/ Seer Ascended (NPC)",
+    "key": "GreyMournerSeerAscended",
+    "tooltip": "Splits when both talked to Grey Mourner and Seer has ascended"
+  },
+  {
+    "description": "Delicate Flower (Item)",
+    "key": "HasDelicateFlower",
+    "tooltip": "Splits when flower is in inventory"
+  },
+  {
+    "description": "Flower Quest Reward (Event)",
+    "key": "FlowerRewardGiven",
+    "tooltip": "Splits when Grey Mourner gives you the Flower Quest reward"
+  },
+  {
+    "description": "City Gate (Event)",
+    "key": "CityGateOpen",
+    "tooltip": "Splits when using the City Crest to open the gate"
+  },
+  {
+    "description": "City Gate w/ Mantis Lords defeated (Event)",
+    "key": "CityGateAndMantisLords",
+    "tooltip": "To make sure you don't forget Mantis Lords"
+  },
+  {
+    "description": "City of Tears (Area)",
+    "key": "CityOfTears",
+    "tooltip": "Splits when entering City of Tears text first appears"
+  },
+  {
+    "description": "Gorgeous Husk (Killed)",
+    "key": "GorgeousHusk",
+    "tooltip": "Splits when killing Gorgeous Husk"
+  },
+  {
+    "description": "Gorgeous Husk Killed (Transition)",
+    "key": "TransGorgeousHusk",
+    "tooltip": "Splits on transition after Gorgeous Husk defeated"
+  },
+  {
+    "description": "Main Menu w/ Ghusk (Menu)",
+    "key": "MenuGorgeousHusk",
+    "tooltip": "Splits on transition to the main menu after Gorgeous Husk defeated"
+  },
+  {
+    "description": "Rafters (Transition)",
+    "key": "EnterRafters",
+    "tooltip": "Splits on any transition into the City Rafters room"
+  },
+  {
+    "description": "Lemm Shop (NPC)",
+    "key": "Lemm2",
+    "tooltip": "Splits when talking to Lemm in the shop for the first time"
+  },
+  {
+    "description": "Lemm - ACN (Event)",
+    "key": "AllCharmNotchesLemm2CP",
+    "tooltip": "Splits on having sold at least 6100 geo worth of relics to Lemm"
+  },
+  {
+    "description": "Lemm Shop Exit (Transition)",
+    "key": "LemmShopExit",
+    "tooltip": "Splits on transition after talking to Lemm in the shop"
+  },
+  {
+    "description": "City Toll Bench Room (Transition)",
+    "key": "EnterCityTollBenchRoom",
+    "tooltip": "Splits when entering the city toll bench room"
+  },
+  {
+    "description": "Sanctum Bench (Toll)",
+    "key": "TollBenchCity",
+    "tooltip": "Splits when buying City/Sanctum toll bench by Cornifer's location"
+  },
+  {
+    "description": "Soul Twister (Killed)",
+    "key": "KilledSoulTwister",
+    "tooltip": "Splits on first Soul Twister kill"
+  },
+  {
+    "description": "Soul Sanctum (Transition)",
+    "key": "EnterSanctum",
+    "tooltip": "Splits when entering Soul Sanctum"
+  },
+  {
+    "description": "Soul Sanctum w/ Shade Soul (Transition)",
+    "key": "EnterSanctumWithShadeSoul",
+    "tooltip": "Splits when entering Soul Sanctum after obtaining Shade Soul"
+  },
+  {
+    "description": "Soul Warrior (Killed)",
+    "key": "KilledSanctumWarrior",
+    "tooltip": "Splits on first Soul Warrior kill"
+  },
+  {
+    "description": "Enter Soul Master (Transition)",
+    "key": "EnterSoulMaster",
+    "tooltip": "Splits when entering Soul Master boss arena transition"
+  },
+  {
+    "description": "Soul Master Encountered (Boss)",
+    "key": "SoulMasterEncountered",
+    "tooltip": "Splits when Soul Master is activated the first time as the gate closes"
+  },
+  {
+    "description": "Soul Master - Fake Spell Pickup (Boss)",
+    "key": "SoulMasterPhase1",
+    "tooltip": "Splits when triggering Soul Master phase 2 the first time"
+  },
+  {
+    "description": "Soul Master (Boss)",
+    "key": "SoulMaster",
+    "tooltip": "Splits when killing Soul Master"
+  },
+  {
+    "description": "Soul Tyrant (Boss)",
+    "key": "SoulTyrant",
+    "tooltip": "Splits when killing Soul Tyrant"
+  },
+  {
+    "description": "Soul Tyrant (Essence)",
+    "key": "SoulTyrantEssence",
+    "tooltip": "Splits when getting Soul Tyrant essence"
+  },
+  {
+    "description": "Soul Tyrant w/ Sanctum Grub (Essence)",
+    "key": "SoulTyrantEssenceWithSanctumGrub",
+    "tooltip": "Splits when getting Soul Tyrant essence and Sanctum fakedive grub"
+  },
+  {
+    "description": "Storerooms (Bench)",
+    "key": "BenchStorerooms",
+    "tooltip": "Splits when sitting on the bench in City Storerooms"
+  },
+  {
+    "description": "King's Station (Bench)",
+    "key": "BenchKingsStation",
+    "tooltip": "Splits when sitting on the bench in King's Station"
+  },
+  {
+    "description": "Great Husk Sentry (Killed)",
+    "key": "GreatHuskSentry",
+    "tooltip": "Splits when killing a Great Husk Sentry"
+  },
+  {
+    "description": "Watcher's Spire (Bench)",
+    "key": "BenchSpire",
+    "tooltip": "Splits when sitting on the bench in Watcher's Spire"
+  },
+  {
+    "description": "Watcher's Spire + Killed Great Husk Sentry (Bench)",
+    "key": "BenchSpireGHS",
+    "tooltip": "Splits when sitting on the bench in Watcher's Spire after killing a Great Husk Sentry"
+  },
+  {
+    "description": "Spire Bench Exit (Transition)",
+    "key": "SpireBenchExit",
+    "tooltip": "Splits on the transition out of the bench room in Watcher's Spire"
+  },
+  {
+    "description": "EnterBlackKnight",
+    "key": "EnterBlackKnight",
+    "tooltip": null
+  },
+  {
+    "description": "Chandelier - Watcher Knights (Event)",
+    "key": "WatcherChandelier",
+    "tooltip": "Splits when dropping the chandelier on one of the Watcher Knights"
+  },
+  {
+    "description": "Watcher Knight (Boss)",
+    "key": "BlackKnight",
+    "tooltip": "Splits when killing Watcher Knights"
+  },
+  {
+    "description": "Watcher Knight Killed (Transition)",
+    "key": "BlackKnightTrans",
+    "tooltip": "Splits on the transition after killing Watcher Knights"
+  },
+  {
+    "description": "Tower of Love (Transition)",
+    "key": "EnterLoveTower",
+    "tooltip": "Splits when entering the Tower of Love"
+  },
+  {
+    "description": "Collector (Boss)",
+    "key": "Collector",
+    "tooltip": "Splits when killing Collector"
+  },
+  {
+    "description": "Collector Defeated (Transition)",
+    "key": "TransCollector",
+    "tooltip": "Splits on transition after defeating the Collector"
+  },
+  {
+    "description": "Nailsmith Killed (Event)",
+    "key": "NailsmithKilled",
+    "tooltip": "Splits when Nailsmith is killed"
+  },
+  {
+    "description": "Nailsmith Killed/Spared (Event)",
+    "key": "NailsmithChoice",
+    "tooltip": "Splits when Nailsmith is killed\nSkips when nailsmith is spared"
+  },
+  {
+    "description": "Crystal Peak Entry (Transition)",
+    "key": "CrystalPeakEntry",
+    "tooltip": "Splits on transition to the room where the dive and toll entrances meet, or the room right of Dirtmouth"
+  },
+  {
+    "description": "Crystal Peak (Area)",
+    "key": "CrystalPeak",
+    "tooltip": "Splits when entering Crystal Peak text first appears"
+  },
+  {
+    "description": "Husk Miner (Killed)",
+    "key": "HuskMiner",
+    "tooltip": "Splits when killing a Husk Miner"
+  },
+  {
+    "description": "Crystal Guardian (Boss)",
+    "key": "CrystalGuardian1",
+    "tooltip": "Splits when killing the Crystal Guardian"
+  },
+  {
+    "description": "Enraged Guardian (Boss)",
+    "key": "CrystalGuardian2",
+    "tooltip": "Splits when killing the Enraged Guardian"
+  },
+  {
+    "description": "Hallownest's Crown (Transition)",
+    "key": "EnterCrown",
+    "tooltip": "Splits on transition into the room with the Whispering Root at the base of Hallownest's Crown"
+  },
+  {
+    "description": "Crystal Mound Exit (Transition)",
+    "key": "CrystalMoundExit",
+    "tooltip": "Splits on transition from Crystal Mound"
+  },
+  {
+    "description": "Crystal Peak Hunter's Notes (Killed)",
+    "key": "CrystalPeakHuntersNotes",
+    "tooltip": "Splits when killing all Crystal Peak enemies needed for Hunter's Notes journal completion\n(Includes Crystal Crawler, Crystal Guardian 1&2, Crystal Hunter, Crystallised Husk, Glimback, Husk Miner, and Shardmite. Excludes Bluggsac, Grimmkin Novice, and Grub Mimic.)"
+  },
+  {
+    "description": "Crystal Peak Lift Opened (Event)",
+    "key": "MineLiftOpened",
+    "tooltip": "Splits when opening the lever for the lift between Dirtmouth and Crystal Peak"
+  },
+  {
+    "description": "Waterways Manhole (Toll)",
+    "key": "WaterwaysManhole",
+    "tooltip": "Splits when opening the Waterways Manhole"
+  },
+  {
+    "description": "Waterways (Transition)",
+    "key": "WaterwaysEntry",
+    "tooltip": "Splits on transition to Waterways (Simple Key manhole or Spike-tunnel)"
+  },
+  {
+    "description": "Royal Waterways (Area)",
+    "key": "RoyalWaterways",
+    "tooltip": "Splits when entering Royal Waterways text first appears"
+  },
+  {
+    "description": "Dung Defender (Boss)",
+    "key": "DungDefender",
+    "tooltip": "Splits when killing Dung Defender"
+  },
+  {
+    "description": "White Defender (Boss)",
+    "key": "WhiteDefender",
+    "tooltip": "Splits when killing White Defender"
+  },
+  {
+    "description": "White Defender (Essence)",
+    "key": "WhiteDefenderEssence",
+    "tooltip": "Splits when getting White Defender essence"
+  },
+  {
+    "description": "White Defender Level (Boss)",
+    "key": "OnDefeatWhiteDefender",
+    "tooltip": "Splits each time defeating White Defender in Dung Defender's dream"
+  },
+  {
+    "description": "Stinky (Event)",
+    "key": "WhiteDefenderStatueUnlocked",
+    "tooltip": "Splits when seeing the Dung Defender's statue of the Knight"
+  },
+  {
+    "description": "Met Emilitia (Event)",
+    "key": "MetEmilitia",
+    "tooltip": "Splits when talking to Emilitia for the first time"
+  },
+  {
+    "description": "Emilitia Flower (NPC)",
+    "key": "GivenEmilitiaFlower",
+    "tooltip": "Splits when giving Emilita a flower"
+  },
+  {
+    "description": "Flukemarm (Boss)",
+    "key": "Flukemarm",
+    "tooltip": "Splits when killing Flukemarm"
+  },
+  {
+    "description": "Junk Pit (Transition)",
+    "key": "EnterJunkPit",
+    "tooltip": "Splits on transition into Junk Pit"
+  },
+  {
+    "description": "Ancient Basin (Transition)",
+    "key": "BasinEntry",
+    "tooltip": "Splits on transition to Ancient Basin"
+  },
+  {
+    "description": "Ancient Basin (Area)",
+    "key": "Abyss",
+    "tooltip": "Splits when entering Ancient Basin text first appears"
+  },
+  {
+    "description": "Saved Cloth (Event)",
+    "key": "SavedCloth",
+    "tooltip": "Splits when saving Cloth in Ancient Basin"
+  },
+  {
+    "description": "Basin Bench (Toll)",
+    "key": "TollBenchBasin",
+    "tooltip": "Splits when buying Ancient Basin toll bench"
+  },
+  {
+    "description": "Basin Spike Pit Exit (Transition)",
+    "key": "BasinSpikePitExit",
+    "tooltip": "Splits on transition after crossing the Spike Pit from Basin Toll Bench towards Broken Vessel"
+  },
+  {
+    "description": "Broken Vessel (Boss)",
+    "key": "BrokenVessel",
+    "tooltip": "Splits when killing Broken Vessel"
+  },
+  {
+    "description": "Broken Vessel (Transition)",
+    "key": "BrokenVesselTrans",
+    "tooltip": "Splits on any non-death transition after defeating Broken Vessel"
+  },
+  {
+    "description": "Lost Kin (Boss)",
+    "key": "LostKin",
+    "tooltip": "Splits when killing Lost Kin"
+  },
+  {
+    "description": "Lost Kin (Essence)",
+    "key": "LostKinEssence",
+    "tooltip": "Splits when getting Lost Kin essence"
+  },
+  {
+    "description": "Hidden Station (Bench)",
+    "key": "BenchHiddenStation",
+    "tooltip": "Splits when sitting on the bench in Hidden Station"
+  },
+  {
+    "description": "Abyss Door (Event)",
+    "key": "AbyssDoor",
+    "tooltip": "Splits on the Abyss door opening"
+  },
+  {
+    "description": "Abyss Lighthouse (Event)",
+    "key": "AbyssLighthouse",
+    "tooltip": "Splits on the Abyss Lighthouse being lit"
+  },
+  {
+    "description": "White Palace Entry (Transition)",
+    "key": "WhitePalaceEntry",
+    "tooltip": "Splits when entering the first White Palace scene"
+  },
+  {
+    "description": "White Palace - Lower Entry (Room)",
+    "key": "WhitePalaceLowerEntry",
+    "tooltip": "Splits on transition to White_Palace_01"
+  },
+  {
+    "description": "White Palace (Area)",
+    "key": "WhitePalace",
+    "tooltip": "Splits when entering White Palace text for the first time"
+  },
+  {
+    "description": "White Palace - Lower Orb (Room)",
+    "key": "WhitePalaceLowerOrb",
+    "tooltip": "Splits on transition to White_Palace_02"
+  },
+  {
+    "description": "White Palace - Lower Orb (Lever)",
+    "key": "WhitePalaceOrb1",
+    "tooltip": "Splits when lighting the orb in White Palace lowest floor"
+  },
+  {
+    "description": "White Palace - Atrium (Room)",
+    "key": "WhitePalaceAtrium",
+    "tooltip": "Splits on any transition to White_Palace_03_Hub"
+  },
+  {
+    "description": "White Palace - Left Entry (Room)",
+    "key": "WhitePalaceLeftEntry",
+    "tooltip": "Splits on transition to White_Palace_04"
+  },
+  {
+    "description": "White Palace - Left Midpoint (Room)",
+    "key": "WhitePalaceLeftWingMid",
+    "tooltip": "Splits on transition between White_Palace_04 and _14"
+  },
+  {
+    "description": "White Palace - Left Orb (Lever)",
+    "key": "WhitePalaceOrb3",
+    "tooltip": "Splits when lighting the orb in White Palace left wing"
+  },
+  {
+    "description": "White Palace - Right Side Entry (Room)",
+    "key": "WhitePalaceRightEntry",
+    "tooltip": "Splits on transition between White_Palace_03_Hub and _15"
+  },
+  {
+    "description": "White Palace - Right Side Climb (Room)",
+    "key": "WhitePalaceRightClimb",
+    "tooltip": "Splits on transition between White_Palace_05 and _16"
+  },
+  {
+    "description": "White Palace - Right Side Saw Squeeze (Room)",
+    "key": "WhitePalaceRightSqueeze",
+    "tooltip": "Splits on transition between White_Palace_16 and _05"
+  },
+  {
+    "description": "White Palace - Right Side Exit (Room)",
+    "key": "WhitePalaceRightDone",
+    "tooltip": "Splits on transition between White_Palace_05 and _15"
+  },
+  {
+    "description": "White Palace - Right Orb (Lever)",
+    "key": "WhitePalaceOrb2",
+    "tooltip": "Splits when lighting the orb in White Palace right wing"
+  },
+  {
+    "description": "White Palace - Top Entry (Room)",
+    "key": "WhitePalaceTopEntry",
+    "tooltip": "Splits on transition between White_Palace_03_Hub and _06"
+  },
+  {
+    "description": "Path of Pain Room 1 (Room)",
+    "key": "PathOfPainEntry",
+    "tooltip": "Splits on transition to the first room in PoP (entry to PoP)"
+  },
+  {
+    "description": "Path of Pain Room 2 (Room)",
+    "key": "PathOfPainTransition1",
+    "tooltip": "Splits on transition to the second room in PoP"
+  },
+  {
+    "description": "Path of Pain Room 3 (Room)",
+    "key": "PathOfPainTransition2",
+    "tooltip": "Splits on transition to the third room in PoP"
+  },
+  {
+    "description": "Path of Pain Room 4 (Room)",
+    "key": "PathOfPainTransition3",
+    "tooltip": "Splits on transition to the fourth room in PoP (Final room)"
+  },
+  {
+    "description": "Path of Pain Room 4 DDark (Event)",
+    "key": "PathOfPainRoom4DDark",
+    "tooltip": "Splits on landing with Descending Dark in fourth room of PoP"
+  },
+  {
+    "description": "Path of Pain (Completed)",
+    "key": "PathOfPain",
+    "tooltip": "Splits when completing the Path of Pain in White Palace"
+  },
+  {
+    "description": "White Palace - Top Cursed Cycle (Room)",
+    "key": "WhitePalaceTopClimb",
+    "tooltip": "Splits on transition between White_Palace_06 and _07"
+  },
+  {
+    "description": "White Palace - Top Lever (Room)",
+    "key": "WhitePalaceTopLeverRoom",
+    "tooltip": "Splits on transition between White_Palace_07 and _12"
+  },
+  {
+    "description": "White Palace - Top Final Platforming (Room)",
+    "key": "WhitePalaceTopLastPlats",
+    "tooltip": "Splits on transition between White_Palace_12 and _13"
+  },
+  {
+    "description": "White Palace - Workshop (Area)",
+    "key": "WhitePalaceSecretRoom",
+    "tooltip": "Splits when visiting the secret room in White Palace"
+  },
+  {
+    "description": "White Palace - Throne Room (Room)",
+    "key": "WhitePalaceThroneRoom",
+    "tooltip": "Splits on transition between White_Palace_13 and _09"
+  },
+  {
+    "description": "Kingdom's Edge (Transition)",
+    "key": "KingdomsEdgeEntry",
+    "tooltip": "Splits on transition to Kingdom's Edge from King's Station"
+  },
+  {
+    "description": "Kingdom's Edge Overcharmed (Transition)",
+    "key": "KingdomsEdgeOvercharmedEntry",
+    "tooltip": "Splits on transition to Kingdom's Edge from King's Station while overcharmed"
+  },
+  {
+    "description": "Kingdom's Edge (Area)",
+    "key": "KingdomsEdge",
+    "tooltip": "Splits when entering Kingdom's Edge text first appears"
+  },
+  {
+    "description": "Hive (Transition)",
+    "key": "HiveEntry",
+    "tooltip": "Splits on transition to Hive"
+  },
+  {
+    "description": "Hive (Area)",
+    "key": "Hive",
+    "tooltip": "Splits when entering Hive text first appears"
+  },
+  {
+    "description": "Enter Hive Knight (Transition)",
+    "key": "EnterHiveKnight",
+    "tooltip": "Splits when entering Hive Knight boss arena transition"
+  },
+  {
+    "description": "Hive Knight (Boss)",
+    "key": "HiveKnight",
+    "tooltip": "Splits when killing Hive Knight"
+  },
+  {
+    "description": "Great Hopper (Killed)",
+    "key": "GreatHopper",
+    "tooltip": "Splits when killing a Great Hopper"
+  },
+  {
+    "description": "Oro Flower (NPC)",
+    "key": "GivenOroFlower",
+    "tooltip": "Splits when giving Oro a flower"
+  },
+  {
+    "description": "Enter Hornet 2 (Transition)",
+    "key": "EnterHornet2",
+    "tooltip": "Splits when entering Hornet boss arena transition in Kingdom's Edge"
+  },
+  {
+    "description": "Hornet 2 (Boss)",
+    "key": "Hornet2",
+    "tooltip": "Splits when killing Hornet Sentinel in Kingdom's Edge"
+  },
+  {
+    "description": "Markoth (Boss)",
+    "key": "Markoth",
+    "tooltip": "Splits when killing Markoth"
+  },
+  {
+    "description": "Markoth (Essence)",
+    "key": "MarkothEssence",
+    "tooltip": "Splits when absorbing essence from Markoth"
+  },
+  {
+    "description": "Kingdom's Edge Acid (Dreamgate)",
+    "key": "DgateKingdomsEdgeAcid",
+    "tooltip": "Splits when placing Dreamgate by KE Acid (hopefully)"
+  },
+  {
+    "description": "Little Fool (NPC)",
+    "key": "LittleFool",
+    "tooltip": "Splits when talking to the Little Fool for the first time"
+  },
+  {
+    "description": "Colosseum Unlocked 1 (Trial)",
+    "key": "ColosseumBronzeUnlocked",
+    "tooltip": "Splits when the knight unlocks the Trial of the Warrior at Little Fool"
+  },
+  {
+    "description": "Colosseum Entrance 1 (Transition)",
+    "key": "ColosseumBronzeEntry",
+    "tooltip": "Splits on the transition into the Trial of the Warrior"
+  },
+  {
+    "description": "Colosseum (Area)",
+    "key": "Colosseum",
+    "tooltip": "Splits when entering Colosseum text first appears"
+  },
+  {
+    "description": "Colo 1 Wave 1a",
+    "key": "Bronze1a",
+    "tooltip": "Splits upon killing the first Sheilded Fool in wave 1\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 1b",
+    "key": "Bronze1b",
+    "tooltip": "Splits upon killing the pair of Sheilded fools in wave 1\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 1c",
+    "key": "Bronze1c",
+    "tooltip": "Splits upon killing the pair of Sharp Baldurs at the end of wave 1\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 2",
+    "key": "Bronze2",
+    "tooltip": "Splits upon killing all five Sharp Baldurs in wave 2\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 3a",
+    "key": "Bronze3a",
+    "tooltip": "Splits upon killing the first Sturdy Fool in wave 3\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 3b",
+    "key": "Bronze3b",
+    "tooltip": "Splits upon killing the pair of Sturdy Fools at the end of wave 3\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 4",
+    "key": "Bronze4",
+    "tooltip": "Splits upon killing the pair of Primal Aspids in wave 4\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 5",
+    "key": "Bronze5",
+    "tooltip": "Splits upon killing the pair of Primal Aspids in wave 5\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 6",
+    "key": "Bronze6",
+    "tooltip": "Splits upon killing all three Sturdy Fools on the raised platforms in wave 6\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 7",
+    "key": "Bronze7",
+    "tooltip": "Splits upon killing both Primal Aspids and Sharp Baldurs in wave 7\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 8a",
+    "key": "Bronze8a",
+    "tooltip": "Splits upon killing all four Vengeflies in wave 8\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 8b",
+    "key": "Bronze8b",
+    "tooltip": "Splits upon killing the Vengefly King in wave 8\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 9",
+    "key": "Bronze9",
+    "tooltip": "Splits upon killing the Sharp Baldur after the Primal Aspid at the end of wave 9\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 10",
+    "key": "Bronze10",
+    "tooltip": "Splits upon killing the third Sharp Baldur in the low ceiling section in wave 10\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 11a",
+    "key": "Bronze11a",
+    "tooltip": "Splits upon killing the first pair of Volatile Gruzzers in wave 11\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 Wave 11b",
+    "key": "Bronze11b",
+    "tooltip": "Splits upon killing the final group of Volatile Gruzzers at the end of wave 11\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 1 End",
+    "key": "BronzeEnd",
+    "tooltip": "Splits upon killing the pair Gruz Mothers at the end of Trial of the Warrior\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Zote Defeated - Colosseum (Mini Boss)",
+    "key": "ZoteKilled",
+    "tooltip": "Splits when defeating Zote in the Colosseum"
+  },
+  {
+    "description": "Colosseum Fight 1 (Trial)",
+    "key": "ColosseumBronze",
+    "tooltip": "Splits when beating the Trial of the Warrior"
+  },
+  {
+    "description": "Colosseum Exit 1 (Transition)",
+    "key": "ColosseumBronzeExit",
+    "tooltip": "Splits on the transition out of the trial, or in the load-in after quitout"
+  },
+  {
+    "description": "Colosseum Unlocked 2 (Trial)",
+    "key": "ColosseumSilverUnlocked",
+    "tooltip": "Splits when the knight unlocks the Trial of the Conqueror at Little Fool"
+  },
+  {
+    "description": "Colosseum Entrance 2 (Transition)",
+    "key": "ColosseumSilverEntry",
+    "tooltip": "Splits on the transition into the Trial of the Conqueror"
+  },
+  {
+    "description": "Colo 2 Wave 1",
+    "key": "Silver1",
+    "tooltip": "Splits upon completing wave 1\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 2",
+    "key": "Silver2",
+    "tooltip": "Splits upon completing wave 2\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 3",
+    "key": "Silver3",
+    "tooltip": "Splits upon completing wave 3\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 4",
+    "key": "Silver4",
+    "tooltip": "Splits upon completing wave 4\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 5",
+    "key": "Silver5",
+    "tooltip": "Splits upon completing wave 5\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 6",
+    "key": "Silver6",
+    "tooltip": "Splits upon the death of the 3 Belflies after the Heavy Fool\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 7",
+    "key": "Silver7",
+    "tooltip": "Splits on the death of the single Belfly\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 8",
+    "key": "Silver8",
+    "tooltip": "Splits upon killing the first Great Hopper\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 9",
+    "key": "Silver9",
+    "tooltip": "Splits upon killing the second Great Hopper\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 10",
+    "key": "Silver10",
+    "tooltip": "Splits upon killing the Mimic\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 11",
+    "key": "Silver11",
+    "tooltip": "Splits upon completing wave 11\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 12",
+    "key": "Silver12",
+    "tooltip": "Splits upon completing wave 12\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 13",
+    "key": "Silver13",
+    "tooltip": "Splits upon completing wave 13\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 14",
+    "key": "Silver14",
+    "tooltip": "Splits upon completing wave 14\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 15",
+    "key": "Silver15",
+    "tooltip": "Splits upon completing wave 15\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 Wave 16",
+    "key": "Silver16",
+    "tooltip": "Splits upon completing wave 16\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 2 End",
+    "key": "SilverEnd",
+    "tooltip": "Splits upon killing both Oblobbles at the end of Trial of the Conqueror\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Oblobbles (Boss)",
+    "key": "KilledOblobbles",
+    "tooltip": "Splits when 2 Oblobbles are defeated (ideally the first pair you encounter in Colo 2)"
+  },
+  {
+    "description": "Colosseum Fight 2 (Trial)",
+    "key": "ColosseumSilver",
+    "tooltip": "Splits when beating the Trial of the Conqueror"
+  },
+  {
+    "description": "Colosseum Exit 2 (Transition)",
+    "key": "ColosseumSilverExit",
+    "tooltip": "Splits on the transition out of the trial, or in the load-in after quitout"
+  },
+  {
+    "description": "Colosseum Unlocked 3 (Trial)",
+    "key": "ColosseumGoldUnlocked",
+    "tooltip": "Splits when the knight unlocks the Trial of the Fool at Little Fool"
+  },
+  {
+    "description": "Colosseum Entrance 3 (Transition)",
+    "key": "ColosseumGoldEntry",
+    "tooltip": "Splits on the transition into the Trial of the Warrior"
+  },
+  {
+    "description": "Colo 3 Wave 1",
+    "key": "Gold1",
+    "tooltip": "Splits upon completing wave 1\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 3",
+    "key": "Gold3",
+    "tooltip": "Splits upon completing waves 2 and 3\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 4",
+    "key": "Gold4",
+    "tooltip": "Splits upon completing wave 4\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 5",
+    "key": "Gold5",
+    "tooltip": "Splits upon killing the first wave of 3 Loodles\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 6",
+    "key": "Gold6",
+    "tooltip": "Splits upon killing the set of 5 Loodles\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 7",
+    "key": "Gold7",
+    "tooltip": "Splits upon killing the second wave of 3 Loodles\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 8a",
+    "key": "Gold8a",
+    "tooltip": "Splits upon completing the first half of wave 8, before the garpedes\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 8b",
+    "key": "Gold8",
+    "tooltip": "Splits upon completing wave 8\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 9a",
+    "key": "Gold9a",
+    "tooltip": "Splits upon killing the fools and mantises in wave 9\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 9b",
+    "key": "Gold9b",
+    "tooltip": "Splits upon killing the Soul Warrior in wave 9\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 10",
+    "key": "Gold10",
+    "tooltip": "Splits upon completing wave 10\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 11",
+    "key": "Gold11",
+    "tooltip": "Splits upon completing wave 11\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 12a",
+    "key": "Gold12a",
+    "tooltip": "Splits upon killing second set of 2 Lesser Mawleks and Winged Fool\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 12b",
+    "key": "Gold12b",
+    "tooltip": "Splits upon killing the Brooding Mawlek\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 14a",
+    "key": "Gold14a",
+    "tooltip": "Splits upon killing the Squits, Petras and Primal Aspids in wave 14\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 14b",
+    "key": "Gold14b",
+    "tooltip": "Splits upon killing the Winged Fools and Battle Obbles in wave 14\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 15",
+    "key": "Gold15",
+    "tooltip": "Splits upon killing both Squits in wave 15\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 16",
+    "key": "Gold16",
+    "tooltip": "Splits upon the death of all 14 Death Loodles in wave 16\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 17a",
+    "key": "Gold17a",
+    "tooltip": "Splits upon killing the first two phases of fools and mantises in wave 17\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 17b",
+    "key": "Gold17b",
+    "tooltip": "Splits upon killing the fools, Volt Twister and Soul Twister in wave 17\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 Wave 17c",
+    "key": "Gold17c",
+    "tooltip": "Splits upon killing all the regular enemies in wave 17\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "Colo 3 End",
+    "key": "GoldEnd",
+    "tooltip": "Splits upon killing God Tamer\nRecommended for use with a pre-set save file"
+  },
+  {
+    "description": "God Tamer (Boss)",
+    "key": "GodTamer",
+    "tooltip": "Splits when killing the God Tamer"
+  },
+  {
+    "description": "Colosseum Fight 3 (Trial)",
+    "key": "ColosseumGold",
+    "tooltip": "Splits when beating the Trial of the Warrior"
+  },
+  {
+    "description": "Colosseum Exit 3 (Transition)",
+    "key": "ColosseumGoldExit",
+    "tooltip": "Splits on the transition out of the trial, or in the load-in after quitout"
+  },
+  {
+    "description": "Fog Canyon (Transition)",
+    "key": "FogCanyonEntry",
+    "tooltip": "Splits on transition to Fog Canyon"
+  },
+  {
+    "description": "Fog Canyon (Area)",
+    "key": "FogCanyon",
+    "tooltip": "Splits when entering Fog Canyon text first appears"
+  },
+  {
+    "description": "Teachers Archive (Area)",
+    "key": "TeachersArchive",
+    "tooltip": "Splits when entering Teachers Archive for the first time"
+  },
+  {
+    "description": "Uumuu Encountered (Boss)",
+    "key": "UumuuEncountered",
+    "tooltip": "Splits Uumuu is activated the first time as the gate closes"
+  },
+  {
+    "description": "Uumuu (Boss)",
+    "key": "Uumuu",
+    "tooltip": "Splits when killing Uumuu"
+  },
+  {
+    "description": "Queen's Gardens or Deepnest (Transition)",
+    "key": "EnterQueensGardensOrDeepnest",
+    "tooltip": "Splits on transition into either Queen's Gardens or Deepnest"
+  },
+  {
+    "description": "Queen's Garden Entry (Transition)",
+    "key": "QueensGardensEntry",
+    "tooltip": "Splits on transition to QG scene following QGA or above Deepnest"
+  },
+  {
+    "description": "Queen's Gardens (Area)",
+    "key": "QueensGardens",
+    "tooltip": "Splits when entering Queen's Gardens text first appears"
+  },
+  {
+    "description": "Petra Arena (Mini Boss)",
+    "key": "PetraArena",
+    "tooltip": "Splits when killing 3 Mantis Petras in a row (ideally Petra Arena)"
+  },
+  {
+    "description": "Queen's Garden Bench (Toll)",
+    "key": "TollBenchQG",
+    "tooltip": "Splits when buying Queen's Garden toll bench"
+  },
+  {
+    "description": "Queen's Garden - Post-Upper Arena (Transition)",
+    "key": "QueensGardensPostArenaTransition",
+    "tooltip": "Splits on transition to room after upper arena in QG"
+  },
+  {
+    "description": "Flower Quest (Event)",
+    "key": "FlowerQuest",
+    "tooltip": "Splits when placing the flower at the grave of the Traitors' Child"
+  },
+  {
+    "description": "Queen's Garden - Frogs (Transition)",
+    "key": "QueensGardensFrogsTrans",
+    "tooltip": "Splits on transition to QG frogs scene"
+  },
+  {
+    "description": "Marmu (Boss)",
+    "key": "Marmu",
+    "tooltip": "Splits when killing Marmu"
+  },
+  {
+    "description": "Marmu (Essence)",
+    "key": "MarmuEssence",
+    "tooltip": "Splits when absorbing essence from Marmu"
+  },
+  {
+    "description": "Queen's Gardens Stag (Bench)",
+    "key": "BenchQGStag",
+    "tooltip": "Splits when sitting on the bench at Queen's Gardens Stag"
+  },
+  {
+    "description": "Traitor Lord (Boss)",
+    "key": "TraitorLord",
+    "tooltip": "Splits when killing Traitor Lord"
+  },
+  {
+    "description": "White Lady Flower (NPC)",
+    "key": "GivenWhiteLadyFlower",
+    "tooltip": "Splits when giving White Lady a flower"
+  },
+  {
+    "description": "Deepnest (Transition)",
+    "key": "EnterDeepnest",
+    "tooltip": "Splits on transition into Deepnest"
+  },
+  {
+    "description": "Deepnest (Area)",
+    "key": "Deepnest",
+    "tooltip": "Splits when entering Deepnest text first appears"
+  },
+  {
+    "description": "Deepnest Spa (Area)",
+    "key": "DeepnestSpa",
+    "tooltip": "Splits when entering the Deepnest Spa area with bench"
+  },
+  {
+    "description": "Zote Rescued - Deepnest (Mini Boss)",
+    "key": "Zote2",
+    "tooltip": "Splits when rescuing Zote in Deepnest"
+  },
+  {
+    "description": "Tram Deepnest (Tram)",
+    "key": "TramDeepnest",
+    "tooltip": "Splits when unlocking the tram in Deepnest"
+  },
+  {
+    "description": "Nosk (Transition)",
+    "key": "EnterNosk",
+    "tooltip": "Splits when entering Nosk boss arena transition"
+  },
+  {
+    "description": "Nosk (Boss)",
+    "key": "Nosk",
+    "tooltip": "Splits when killing Nosk"
+  },
+  {
+    "description": "Galien (Boss)",
+    "key": "Galien",
+    "tooltip": "Splits when killing Galien"
+  },
+  {
+    "description": "Galien (Essence)",
+    "key": "GalienEssence",
+    "tooltip": "Splits when absorbing essence from Galien"
+  },
+  {
+    "description": "Beast Den (Transition)",
+    "key": "EnterBeastDen",
+    "tooltip": "Splits on transition into Beast Den"
+  },
+  {
+    "description": "Trap Bench (Event)",
+    "key": "BeastsDenTrapBench",
+    "tooltip": "Splits when getting the trap bench in Beasts Den"
+  },
+  {
+    "description": "God Tuner (Item)",
+    "key": "GodTuner",
+    "tooltip": "Splits when obtaining the God Tuner"
+  },
+  {
+    "description": "Godseeker Flower (NPC)",
+    "key": "GivenGodseekerFlower",
+    "tooltip": "Splits when giving Godseeker a flower"
+  },
+  {
+    "description": "Godhome (Transition)",
+    "key": "EnterGodhome",
+    "tooltip": "Splits on transition to Godhome"
+  },
+  {
+    "description": "Godhome (Area)",
+    "key": "Godhome",
+    "tooltip": "Splits when entering Godhome text first appears"
+  },
+  {
+    "description": "Eternal Ordeal Unlocked (Event)",
+    "key": "EternalOrdealUnlocked",
+    "tooltip": "Splits when breaking the wall to the Zote statue in Godhome"
+  },
+  {
+    "description": "Eternal Ordeal Achieved (Event)",
+    "key": "EternalOrdealAchieved",
+    "tooltip": "Splits when achieving the ordeal (57th Zote killed)"
+  },
+  {
+    "description": "Pantheon 1-4 (Transition)",
+    "key": "Pantheon1to4Entry",
+    "tooltip": "Splits on entry to any of Pantheon 1 - 4"
+  },
+  {
+    "description": "Vengefly King (Pantheon)",
+    "key": "VengeflyKingP",
+    "tooltip": "Splits after killing Vengefly King in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Gruz Mother (Pantheon)",
+    "key": "GruzMotherP",
+    "tooltip": "Splits after killing Gruz Mother in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "False Knight (Pantheon)",
+    "key": "FalseKnightP",
+    "tooltip": "Splits after killing False Knight in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Massive Moss Charger (Pantheon)",
+    "key": "MassiveMossChargerP",
+    "tooltip": "Splits after killing Massive Moss Charger in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Hornet 1 (Pantheon)",
+    "key": "Hornet1P",
+    "tooltip": "Splits after killing Hornet Protector in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Godhome Bench (Transition)",
+    "key": "GodhomeBench",
+    "tooltip": "Splits when leaving a Godhome Bench room"
+  },
+  {
+    "description": "Gorb (Pantheon)",
+    "key": "GorbP",
+    "tooltip": "Splits after killing Gorb in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Dung Defender (Pantheon)",
+    "key": "DungDefenderP",
+    "tooltip": "Splits after killing Dung Defender in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Soul Warrior (Pantheon)",
+    "key": "SoulWarriorP",
+    "tooltip": "Splits after killing Soul Warrior in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Brooding Mawlek (Pantheon)",
+    "key": "BroodingMawlekP",
+    "tooltip": "Splits after killing Brooding Mawlek in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Godhome Lore Room (Transition)",
+    "key": "GodhomeLoreRoom",
+    "tooltip": "Splits when leaving a Godhome lore room"
+  },
+  {
+    "description": "Oro & Mato Nail Bros (Boss)",
+    "key": "MatoOroNailBros",
+    "tooltip": "Splits when defeating Brothers Oro & Mato"
+  },
+  {
+    "description": "Oro & Mato Nail Bros (Pantheon)",
+    "key": "OroMatoNailBrosP",
+    "tooltip": "Splits after killing Brothers Oro & Mato in Pantheon 1 or Pantheon 5"
+  },
+  {
+    "description": "Pantheon 1 (Trial)",
+    "key": "Pantheon1",
+    "tooltip": "Splits when beating the Pantheon of the Master"
+  },
+  {
+    "description": "Xero (Pantheon)",
+    "key": "XeroP",
+    "tooltip": "Splits after killing Xero in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Crystal Guardian (Pantheon)",
+    "key": "CrystalGuardianP",
+    "tooltip": "Splits after killing Crystal Guardian in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Soul Master (Pantheon)",
+    "key": "SoulMasterP",
+    "tooltip": "Splits after killing Soul Master in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Oblobbles (Pantheon)",
+    "key": "OblobblesP",
+    "tooltip": "Splits after killing Oblobbles in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Mantis Lords (Pantheon)",
+    "key": "MantisLordsP",
+    "tooltip": "Splits after killing Mantis Lords in Pantheon 2 or Sisters of Battle Pantheon 5"
+  },
+  {
+    "description": "Marmu (Pantheon)",
+    "key": "MarmuP",
+    "tooltip": "Splits after killing Marmu in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Nosk (Pantheon)",
+    "key": "NoskP",
+    "tooltip": "Splits after killing Nosk in Pantheon 2"
+  },
+  {
+    "description": "Flukemarm (Pantheon)",
+    "key": "FlukemarmP",
+    "tooltip": "Splits after killing Flukemarm in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Broken Vessel (Pantheon)",
+    "key": "BrokenVesselP",
+    "tooltip": "Splits after killing Broken Vessel in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Paintmaster Sheo (Boss)",
+    "key": "SheoPaintmaster",
+    "tooltip": "Splits when killing Paintmaster Sheo"
+  },
+  {
+    "description": "Paintmaster Sheo (Pantheon)",
+    "key": "SheoPaintmasterP",
+    "tooltip": "Splits after killing Paintmaster Sheo in Pantheon 2 or Pantheon 5"
+  },
+  {
+    "description": "Pantheon 2 (Trial)",
+    "key": "Pantheon2",
+    "tooltip": "Splits when beating the Pantheon of the Artist"
+  },
+  {
+    "description": "Hive Knight (Pantheon)",
+    "key": "HiveKnightP",
+    "tooltip": "Splits after killing Hive Knight in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Elder Hu (Pantheon)",
+    "key": "ElderHuP",
+    "tooltip": "Splits after killing Elder Hu in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Collector (Pantheon)",
+    "key": "CollectorP",
+    "tooltip": "Splits after killing The Collector in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "God Tamer (Pantheon)",
+    "key": "GodTamerP",
+    "tooltip": "Splits after killing God Tamer in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Troupe Master Grimm (Pantheon)",
+    "key": "TroupeMasterGrimmP",
+    "tooltip": "Splits after killing Troupe Master Grimm in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Galien (Pantheon)",
+    "key": "GalienP",
+    "tooltip": "Splits after killing Galien in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Grey Prince Zote (Pantheon)",
+    "key": "GreyPrinceZoteP",
+    "tooltip": "Splits after killing Grey Prince Zote in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Uumuu (Pantheon)",
+    "key": "UumuuP",
+    "tooltip": "Splits after killing Uumuu in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Hornet 2 (Pantheon)",
+    "key": "Hornet2P",
+    "tooltip": "Splits after killing Hornet Sentinel in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Great Nailsage Sly (Boss)",
+    "key": "SlyNailsage",
+    "tooltip": "Splits when killing Great Nailsage Sly"
+  },
+  {
+    "description": "Great Nailsage Sly (Pantheon)",
+    "key": "SlyP",
+    "tooltip": "Splits after killing Great Nailsage Sly in Pantheon 3 or Pantheon 5"
+  },
+  {
+    "description": "Pantheon 3 (Trial)",
+    "key": "Pantheon3",
+    "tooltip": "Splits when beating the Pantheon of the Sage"
+  },
+  {
+    "description": "Enraged Guardian (Pantheon)",
+    "key": "EnragedGuardianP",
+    "tooltip": "Splits after killing Enraged Guardian in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Lost Kin (Pantheon)",
+    "key": "LostKinP",
+    "tooltip": "Splits after killing Lost Kin in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "No Eyes (Pantheon)",
+    "key": "NoEyesP",
+    "tooltip": "Splits after killing No Eyes in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Traitor Lord (Pantheon)",
+    "key": "TraitorLordP",
+    "tooltip": "Splits after killing Traitor Lord in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "White Defender (Pantheon)",
+    "key": "WhiteDefenderP",
+    "tooltip": "Splits after killing White Defender in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Failed Champion (Pantheon)",
+    "key": "FailedChampionP",
+    "tooltip": "Splits after killing Failed Champion in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Markoth (Pantheon)",
+    "key": "MarkothP",
+    "tooltip": "Splits after killing Markoth in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Watcher Knights (Pantheon)",
+    "key": "WatcherKnightsP",
+    "tooltip": "Splits after killing Watcher Knights in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Soul Tyrant (Pantheon)",
+    "key": "SoulTyrantP",
+    "tooltip": "Splits after killing Soul Tyrant in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Pure Vessel (Boss)",
+    "key": "PureVessel",
+    "tooltip": "Splits when killing Pure Vessel"
+  },
+  {
+    "description": "Pure Vessel (Pantheon)",
+    "key": "PureVesselP",
+    "tooltip": "Splits after killing Pure Vessel in Pantheon 4 or Pantheon 5"
+  },
+  {
+    "description": "Pantheon 4 (Trial)",
+    "key": "Pantheon4",
+    "tooltip": "Splits when beating the Pantheon of the Knight"
+  },
+  {
+    "description": "Pantheon 5 (Transition)",
+    "key": "Pantheon5Entry",
+    "tooltip": "Splits on entry to Pantheon 5"
+  },
+  {
+    "description": "Winged Nosk (Pantheon)",
+    "key": "NoskHornetP",
+    "tooltip": "Splits after killing Winged Nosk in Pantheon 5"
+  },
+  {
+    "description": "Nightmare King Grimm (Pantheon)",
+    "key": "NightmareKingGrimmP",
+    "tooltip": "Splits after killing Nightmare King Grimm in Pantheon 5"
+  },
+  {
+    "description": "Absolute Radiance (Ending)",
+    "key": "RadianceP",
+    "tooltip": "Splits after killing Absolute Radiance in Pantheon 5, Godhome Ending"
+  },
+  {
+    "description": "Pantheon 5 (Trial)",
+    "key": "Pantheon5",
+    "tooltip": "Splits when beating the Pantheon of Hallownest"
+  }
+]

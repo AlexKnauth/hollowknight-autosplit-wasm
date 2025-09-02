@@ -5,7 +5,7 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
@@ -17,7 +17,7 @@ use core::cell::OnceCell;
 use core::iter::FusedIterator;
 use core::mem;
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 use crate::file;
 
 // --------------------------------------------------------
@@ -2523,14 +2523,14 @@ impl GameManagerFinder {
     }
 
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
-        #[cfg(target_os = "wasi")]
+        #[cfg(not(target_os = "unknown"))]
         let pointer_size = process_pointer_size(process).unwrap_or(PointerSize::Bit64);
-        #[cfg(target_os = "wasi")]
+        #[cfg(not(target_os = "unknown"))]
         asr::print_message(&format!(
             "GameManagerFinder wait_attach: pointer_size = {:?}",
             pointer_size
         ));
-        #[cfg(not(target_os = "wasi"))]
+        #[cfg(target_os = "unknown")]
         let pointer_size = PointerSize::Bit64;
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
@@ -7423,7 +7423,7 @@ pub fn attach_hollow_knight() -> Option<Process> {
     HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
 }
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 fn process_pointer_size(process: &Process) -> Option<PointerSize> {
     let path = process.get_path().ok()?;
     let bytes = file::file_read_all_bytes(path).ok()?;

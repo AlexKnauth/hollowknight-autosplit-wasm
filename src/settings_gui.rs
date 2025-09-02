@@ -3,13 +3,13 @@ use alloc::vec;
 use alloc::vec::Vec;
 
 use asr::settings::gui::{Gui, Title};
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 use asr::{
     settings::gui::{FileSelect, Widget},
     watcher::Pair,
 };
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 use ugly_widget::{args::SetHeadingLevel, ugly_list::UglyListArgs};
 use ugly_widget::{
     radio_button::{options_str, RadioButtonOptions},
@@ -17,14 +17,14 @@ use ugly_widget::{
     ugly_list::UglyList,
 };
 
-#[cfg(target_os = "wasi")]
+#[cfg(not(target_os = "unknown"))]
 use crate::auto_splitter_settings::asr_settings_from_file;
 use crate::{auto_splitter_settings::wait_asr_settings_init, splits::Split};
 
 #[derive(Gui)]
 pub struct SettingsGui {
     /// Import Splits
-    #[cfg(target_os = "wasi")]
+    #[cfg(not(target_os = "unknown"))]
     #[filter((_, "*.lss *.lsl"))]
     import: Pair<FileSelect>,
     /// General Settings
@@ -40,7 +40,7 @@ pub struct SettingsGui {
 
 impl StoreGui for SettingsGui {
     fn post_update(&mut self) {
-        #[cfg(target_os = "wasi")]
+        #[cfg(not(target_os = "unknown"))]
         if self.import.changed() {
             asr::print_message(&format!("import {}", self.import.current.path));
             if let Some(settings_map) = asr_settings_from_file(&self.import.current.path) {
