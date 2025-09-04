@@ -5,7 +5,7 @@
 /// this value for indexing.
 pub fn maybe_timer_current_split_index() -> Option<i32> {
     #[cfg(feature = "unstable")]
-    return Some(asr::timer::current_split_index());
+    return Some(asr::timer::current_split_index().map_or(-1, |i| i as i32));
     #[allow(unreachable_code)]
     None
 }
