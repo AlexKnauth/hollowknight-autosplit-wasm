@@ -26,7 +26,7 @@ use alloc::format;
 use alloc::vec::Vec;
 
 use asr::future::{next_tick, retry};
-use asr::game_engine::unity::SceneManager;
+use asr::game_engine::unity::scene_manager::SceneManager;
 use asr::Process;
 use game_time::{GameTime, GameTimePlusVars};
 use hit_counter::{HitCounter, DASH};

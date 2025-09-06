@@ -9,7 +9,7 @@ use alloc::vec::Vec;
 use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
-use asr::game_engine::unity::{get_scene_name, SceneManager};
+use asr::game_engine::unity::scene_manager::{self, SceneManager};
 use asr::string::ArrayCString;
 use asr::watcher::Pair;
 use asr::{Address, Address16, Address32, Address64, PointerSize, Process};
@@ -7473,7 +7473,7 @@ fn attach_auto_detect(process: &Process) -> Option<mono::Module> {
 }
 
 fn scene_path_to_name_string<const N: usize>(scene_path: ArrayCString<N>) -> Option<String> {
-    String::from_utf8(get_scene_name(&scene_path).to_vec()).ok()
+    String::from_utf8(scene_manager::get_name(&scene_path).to_vec()).ok()
 }
 
 fn read_string_object(
