@@ -66,11 +66,6 @@ via a LiveSplit Layout (`.lsl`) file.
 Make sure to use a different copy of your Layout for every
 different splits file you run with this autosplitter.
 
-For hit-counter mode, best to use a layout that formats
-times and deltas without the decimals, such as the
-[splits/hits/hits-windows-ls.lsl](splits/hits/hits-windows-ls.lsl)
-file included in this repository.
-
 Right-click -> `Edit Layout...` and you should see a Layout
 Editor with components like `Title`, `Splits`, `Timer`, etc.
 If it does not have a component named `Auto Splitting Runtime`,
@@ -79,9 +74,6 @@ Once that's there, click `Layout Settings` -> `Auto Splitting Runtime`,
 and next to `Script Path`, click `Browse...`,
 then navigate to the `hollowknight_autosplit_wasm_stable.wasm` file.
 Then click `Import Splits` and select your splits file.
-
-For hit-counter mode, change the `Timing Method` setting to
-either `Hits / dream falls` or `Hits / damage`.
 
 Click `Ok` and and save the layout with `Save Layout As...`,
 with a name specific to the splits you're running with.
@@ -118,11 +110,6 @@ On Windows, extract the `obs-livesplit-one.dll` to either
 `C:\Program Files\obs-studio\obs-plugins\64bit` or
 `C:\Program Files (x86)\obs-studio\obs-plugins\64bit`.
 
-For hit-counter mode, modify your splits file,
-near the end after `</Splits>` but before `</AutoSplitterSettings>`,
-so that it contains `<TimingMethod>HitsDreamFalls</TimingMethod>`
-or `<TimingMethod>HitsDamage</TimingMethod>`.
-
 Add OBS Source Livesplit One.
 
 Properties:
@@ -154,14 +141,6 @@ be up-to-date enough to run this autosplitter.
 To install my fork, go to the
 [AlexKnauth LiveSplit One Druid Latest Release](https://github.com/AlexKnauth/livesplit-one-druid/releases/latest) page, and under the `Assets` section,
 download the one for your architecture and operating system.
-
-For hit-counter mode,
-modify your splits file before you open it in LiveSplit One Druid:
-near the end after `</Splits>` but before `</AutoSplitterSettings>`,
-so that it contains `<TimingMethod>HitsDreamFalls</TimingMethod>`
-or `<TimingMethod>HitsDamage</TimingMethod>`.
-If you need to after you've opened and saved it:
-modify it so it contains `<Setting id="timing_method" type="string" value="HitsDreamFalls" />` or `<Setting id="timing_method" type="string" value="HitsDamage" />`.
 
 When you run LiveSplit One Druid,
 it needs to have permission to read memory of other processes.
@@ -262,11 +241,6 @@ For example in the `livesplit-one-desktop` repository, you can run
 cargo build --release
 sudo ./target/release/livesplit-one
 ```
-
-For hit-counter mode, modify your splits file,
-near the end after `</Splits>` but before `</AutoSplitterSettings>`,
-so that it contains `<TimingMethod>HitsDreamFalls</TimingMethod>`
-or `<TimingMethod>HitsDamage</TimingMethod>`.
 
 Finally, do not manually split or skip while running with this autosplitter,
 unless either it's explicitly marked as `ManualSplit` or it's the end-split.
