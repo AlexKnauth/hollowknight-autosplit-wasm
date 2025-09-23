@@ -2,7 +2,7 @@ use core::fmt::Debug;
 
 use alloc::collections::BTreeMap;
 use alloc::format;
-use alloc::string::String;
+use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 
 use asr::settings::gui::{add_bool, add_title, set_tooltip, Widget};
@@ -147,7 +147,10 @@ pub fn options_normalize<T: RadioButtonOptions + Debug>(s: &str) -> String {
         if options_value::<T>(&r).is_some_and(|rv| rv == v) {
             r
         } else {
-            asr::print_message(&format!("options_normalize failed: s = {}, r = {}, return s", s, r));
+            asr::print_message(&format!(
+                "options_normalize failed: s = {}, r = {}, return s",
+                s, r
+            ));
             s.to_string()
         }
     } else {
