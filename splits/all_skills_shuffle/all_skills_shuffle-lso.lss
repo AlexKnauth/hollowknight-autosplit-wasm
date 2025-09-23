@@ -307,6 +307,7 @@
       <Setting id="splits_18_action" type="string" value="None" />
       <Setting id="splits_19_action" type="string" value="None" />
       <Setting id="splits_20_action" type="string" value="None" />
+      <Setting id="hit_counter" type="string" value="None" />
     </CustomSettings>
   </AutoSplitterSettings>
 </Run>
