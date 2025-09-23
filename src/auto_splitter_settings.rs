@@ -20,14 +20,8 @@ pub async fn wait_asr_settings_init() -> asr::settings::Map {
         .is_some_and(|v| v.get_list().is_some_and(|l| !l.is_empty()))
     {
         asr::print_message("Settings from asr::settings::Map::load");
-        if let Some(l) = settings1.get("splits").unwrap().get_list() {
-            asr::print_message(&l.get(l.len() - 1).unwrap().get_string().unwrap());
-        }
         if asr_settings_normalize(&settings1).is_some() {
             asr::print_message("Settings normalized");
-            if let Some(l) = settings1.get("splits").unwrap().get_list() {
-                asr::print_message(&l.get(l.len() - 1).unwrap().get_string().unwrap());
-            }
             settings1.store();
         }
         return settings1;
