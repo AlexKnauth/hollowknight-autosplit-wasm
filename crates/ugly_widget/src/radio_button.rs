@@ -1,3 +1,5 @@
+use core::fmt::Debug;
+
 use alloc::collections::BTreeMap;
 use alloc::format;
 use alloc::string::String;
@@ -137,6 +139,20 @@ pub fn options_value<T: RadioButtonOptions>(s: &str) -> Option<T> {
             None
         }
     })
+}
+
+pub fn options_normalize<T: RadioButtonOptions + Debug>(s: &str) -> String {
+    if let Some(v) = options_value::<T>(s) {
+        let r = format!("{:?}", v);
+        if options_value::<T>(&r).is_some_and(|rv| rv == v) {
+            r
+        } else {
+            asr::print_message(&format!("options_normalize failed: s = {}, r = {}, return s", s, r));
+            s.to_string()
+        }
+    } else {
+        s.to_string()
+    }
 }
 
 fn single_from_bool_map<K>(bool_map: &BTreeMap<K, bool>) -> Option<&K> {

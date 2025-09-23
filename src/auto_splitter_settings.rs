@@ -3,6 +3,7 @@ use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
 use asr::future::retry;
+use ugly_widget::radio_button::options_normalize;
 use core::str;
 use roxmltree::Node;
 #[cfg(not(target_os = "unknown"))]
@@ -10,7 +11,7 @@ use std::path::Path;
 
 #[cfg(not(target_os = "unknown"))]
 use crate::file;
-use crate::{asr_xml, legacy_xml};
+use crate::{asr_xml, legacy_xml, splits::Split};
 
 pub async fn wait_asr_settings_init() -> asr::settings::Map {
     let settings1 = asr::settings::Map::load();
@@ -19,6 +20,16 @@ pub async fn wait_asr_settings_init() -> asr::settings::Map {
         .is_some_and(|v| v.get_list().is_some_and(|l| !l.is_empty()))
     {
         asr::print_message("Settings from asr::settings::Map::load");
+        if let Some(l) = settings1.get("splits").unwrap().get_list() {
+            asr::print_message(&l.get(l.len() - 1).unwrap().get_string().unwrap());
+        }
+        if asr_settings_normalize(&settings1).is_some() {
+            asr::print_message("Settings normalized");
+            if let Some(l) = settings1.get("splits").unwrap().get_list() {
+                asr::print_message(&l.get(l.len() - 1).unwrap().get_string().unwrap());
+            }
+            settings1.store();
+        }
         return settings1;
     }
     if let Some(legacy_raw_xml) = settings1.get("legacy_raw_xml").and_then(|v| v.get_string()) {
@@ -43,7 +54,9 @@ pub fn asr_settings_from_file<P: AsRef<Path>>(path: P) -> Option<asr::settings::
     let bs = file::file_read_all_bytes(path).ok()?;
     let d = roxmltree::Document::parse(str::from_utf8(bs.as_slice()).ok()?).ok()?;
     let xml_nodes = xml_find_auto_splitter_settings(d.root_element())?;
-    asr_settings_from_xml_nodes(xml_nodes)
+    let m = asr_settings_from_xml_nodes(xml_nodes)?;
+    asr_settings_normalize(&m);
+    Some(m)
 }
 
 fn asr_settings_from_xml_string(xml_string: &str) -> Option<asr::settings::Map> {
@@ -61,6 +74,27 @@ fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings::Ma
         asr_xml::asr_settings_from_xml_nodes(xml_nodes)
     } else {
         legacy_xml::asr_settings_from_xml_nodes(xml_nodes)
+    }
+}
+
+fn asr_settings_normalize(m: &asr::settings::Map) -> Option<()> {
+    let old_splits = m.get("splits")?.get_list()?;
+    let new_splits = asr::settings::List::new();
+    let mut changed = false;
+    for (i, old_split) in old_splits.iter().enumerate() {
+        let old_string = old_split.get_string()?;
+        let new_string = options_normalize::<Split>(&old_string);
+        new_splits.push(new_string.as_str());
+        if old_string != new_string {
+            changed = true;
+            m.insert(&format!("splits_{}_item", i), new_string.as_str());
+        }
+    }
+    if changed {
+        m.insert("splits", new_splits);
+        Some(())
+    } else {
+        None
     }
 }
 
