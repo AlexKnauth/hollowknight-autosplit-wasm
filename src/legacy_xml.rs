@@ -6,6 +6,7 @@ use asr::settings::AsValue;
 use roxmltree::Node;
 use ugly_widget::radio_button::{options_str, options_value};
 
+use crate::auto_splitter_settings::this_script_name;
 use crate::{
     settings_gui::{HitsMethod, TimingMethod},
     splits::Split,
@@ -19,6 +20,7 @@ pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings
     let splits = splits_from_settings(&xml_settings)?;
     // new empty map, which will only include the new splits
     let settings_map = asr::settings::Map::new();
+    settings_map.insert("script_name", this_script_name());
     settings_map.insert("splits", asr_list_from_iter(splits.iter().map(options_str)));
     if let Some(timing_method) = xml_settings.dict_get("TimingMethod") {
         let tm = timing_method_from_settings_str(timing_method).unwrap_or_default();

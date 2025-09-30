@@ -3,18 +3,43 @@ use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
 use asr::future::retry;
-use ugly_widget::radio_button::options_normalize;
 use core::str;
 use roxmltree::Node;
 #[cfg(not(target_os = "unknown"))]
 use std::path::Path;
+use ugly_widget::radio_button::options_normalize;
 
 #[cfg(not(target_os = "unknown"))]
 use crate::file;
 use crate::{asr_xml, legacy_xml, splits::Split};
 
+// --------------------------------------------------------
+
+static MODULE_PATH: &str = module_path!();
+
+pub fn this_script_name() -> &'static str {
+    MODULE_PATH
+        .split_once("::")
+        .map_or(MODULE_PATH, |(base, _)| base)
+}
+
+// --------------------------------------------------------
+
 pub async fn wait_asr_settings_init() -> asr::settings::Map {
     let settings1 = asr::settings::Map::load();
+    let this_script = this_script_name();
+    if let Some(script_name) = settings1.get("script_name") {
+        if script_name.get_string().unwrap_or_default() != this_script {
+            asr::print_message(&format!(
+                "error: settings for wrong script_name: {:?} vs {}",
+                script_name, this_script
+            ));
+            panic!(
+                "error: settings for wrong script_name: {:?} vs {}",
+                script_name, this_script
+            );
+        }
+    }
     if settings1
         .get("splits")
         .is_some_and(|v| v.get_list().is_some_and(|l| !l.is_empty()))
@@ -75,6 +100,14 @@ fn asr_settings_normalize(m: &asr::settings::Map) -> Option<()> {
     let old_splits = m.get("splits")?.get_list()?;
     let new_splits = asr::settings::List::new();
     let mut changed = false;
+    let this_script = this_script_name();
+    if !m
+        .get("script_name")
+        .is_some_and(|v| v.get_string().unwrap_or_default() == this_script)
+    {
+        changed = true;
+        m.insert("script_name", this_script);
+    }
     for (i, old_split) in old_splits.iter().enumerate() {
         let old_string = old_split.get_string()?;
         let new_string = options_normalize::<Split>(&old_string);
