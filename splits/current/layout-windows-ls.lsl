@@ -216,6 +216,7 @@
         <Version>1.0</Version>
         <ScriptPath>C:\Users\Owner\Documents\git\LiveSplit\hollowknight-autosplit-wasm\target\wasm32-wasip1\release\hollowknight_autosplit_wasm.wasm</ScriptPath>
         <CustomSettings>
+          <Setting id="script_name" type="string" value="hollowknight_autosplit_wasm" />
           <Setting id="splits" type="list">
             <Setting type="string" value="StartNewGame" />
             <Setting type="string" value="KingsPass" />

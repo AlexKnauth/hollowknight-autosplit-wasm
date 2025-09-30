@@ -240,6 +240,7 @@
     <Version>1.0.0.0</Version>
     <ScriptPath />
     <CustomSettings>
+      <Setting id="script_name" type="string" value="hollowknight_autosplit_wasm" />
       <Setting id="splits" type="list">
         <Setting type="string" value="RandoWake" />
         <Setting type="string" value="OnObtainAllSkillsShuffleItem" />
