@@ -127,7 +127,7 @@ impl<T> UglyList<T> {
     }
 }
 
-impl<T: Clone + Widget> Widget for UglyList<T>
+impl<T: Clone + Default + Widget> Widget for UglyList<T>
 where
     T::Args: SetHeadingLevel,
 {
@@ -228,10 +228,20 @@ where
             self.ulis[new_i].action = ListItemAction::None;
         }
         self.len = new_len;
+        // -----------------
+        // Proper Items Done
+        // -----------------
+        for i in self.len..self.ulis.len() {
+            self.ulis[i].item = T::default();
+            self.ulis[i].action = ListItemAction::Remove;
+        }
+        // --------------------
+        // Improper Items Wiped
+        // --------------------
     }
 }
 
-impl<T: Clone + StoreWidget> StoreWidget for UglyList<T>
+impl<T: Clone + Default + StoreWidget> StoreWidget for UglyList<T>
 where
     T::Args: SetHeadingLevel,
 {
@@ -280,6 +290,10 @@ where
             for i in self.len..self.ulis.len() {
                 let key_i = format!("{}_{}", key, i);
                 set_tooltip(&key_i, &format!("DOES NOT EXIST"));
+                let key_i_item = format!("{}_item", key_i);
+                T::default().insert_into(settings_map, &key_i_item);
+                let key_i_action = format!("{}_action", key_i);
+                ListItemAction::Remove.insert_into(settings_map, &key_i_action);
             }
             settings_map.insert(key, &new_list);
             set_tooltip(key, &format!("{:?}", new_list));
