@@ -50,7 +50,7 @@ jobs:
 
       - name: Build
         run: |
-          cargo release --locked --target ${{matrix.target}} --features ${{ matrix.features }}
+          cargo release --locked --target ${{matrix.target}} ${{ matrix.features }}
           ls -lh target/${{matrix.target}}/release/hollowknight_autosplit_wasm.wasm
 
       - name: Prepare Release
