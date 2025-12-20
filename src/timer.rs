@@ -1,4 +1,4 @@
-#[cfg(feature = "unstable")]
+#[cfg(feature = "split-index")]
 use alloc::format;
 
 use asr::timer::TimerState;
@@ -132,7 +132,7 @@ impl Timer {
 
     pub fn update<R: Resettable>(&mut self, r: &mut R) {
         self.update_state(r);
-        #[cfg(feature = "unstable")]
+        #[cfg(feature = "split-index")]
         self.update_index();
     }
 
@@ -172,7 +172,7 @@ impl Timer {
         self.last_state = asr_state;
     }
 
-    #[cfg(feature = "unstable")]
+    #[cfg(feature = "split-index")]
     fn update_index(&mut self) -> Option<()> {
         let asr_index = maybe_timer_current_split_index()?;
         if asr_index == self.last_split_index {

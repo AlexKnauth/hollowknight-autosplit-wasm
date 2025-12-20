@@ -20,21 +20,24 @@ jobs:
       matrix:
         label:
           - Stable
-          - Unstable
+          - Legacy
           - Unknown
         include:
           - label: Stable
             postfix: _stable
             target: wasm32-wasip1
-            features: '""'
-          - label: Unstable
-            postfix: _unstable
+            features: '--features "split-index"'
+            sleep: 0
+          - label: Legacy
+            postfix: _legacy
             target: wasm32-wasip1
-            features: '"unstable"'
+            features: '--no-default-features'
+            sleep: 10
           - label: Unknown
             postfix: _unknown
             target: wasm32-unknown-unknown
-            features: '""'
+            features: '--no-default-features'
+            sleep: 20
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v4
@@ -48,11 +51,12 @@ jobs:
       - name: Build
         run: |
           cargo release --locked --target ${{matrix.target}} --features ${{ matrix.features }}
+          ls -lh target/${{matrix.target}}/release/hollowknight_autosplit_wasm.wasm
 
       - name: Prepare Release
         run: |
           cp target/${{matrix.target}}/release/hollowknight_autosplit_wasm.wasm hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
-          ls -lh hollowknight_autosplit_wasm${{ matrix.postfix }}.wasm
+          sleep ${{matrix.sleep}}
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')

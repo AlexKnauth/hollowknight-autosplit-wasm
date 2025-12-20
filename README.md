@@ -89,11 +89,6 @@ check the `Use Layout` checkbox, click `Browse` next to that,
 and navigate to the Layout file from before.
 Select it and click `Ok`.
 
-Finally, do not manually split or skip while running with this autosplitter,
-unless either it's explicitly marked as `ManualSplit` or it's the end-split.
-Don't manually split, skip, or undo splits in any other situation.
-The autosplitter will not know that you did that, and the autosplitter's state will be out of sync with LiveSplit's state.
-
 ## Instructions for OBS LiveSplit One
 
 OBS LiveSplit One works best on Windows or Linux.
@@ -162,21 +157,6 @@ Right-click or Control-click for the context menu:
 - Compare Against: Game Time.
 - Settings: Configure the hotkeys you want.
 
-Finally, do not manually split or skip while running with this autosplitter,
-unless either it's explicitly marked as `ManualSplit` or it's the end-split.
-Don't manually split, skip, or undo splits in any other situation.
-The autosplitter will not know that you did that,
-and the autosplitter's state will be out of sync with LiveSplit One Druid's state.
-
-### Unstable version for LiveSplit One Druid only
-
-If you're only going to use this auto-splitter with LiveSplit One Druid 0.4.1 or later,
-you can download the `hollowknight_autosplit_wasm_unstable.wasm` file from the
-[Latest Release](https://github.com/AlexKnauth/hollowknight-autosplit-wasm/releases/latest),
-instead of the stable version.
-
-The unstable version works with manual split/skip/undo when used with LiveSplit One Druid, but it will crash if you try to use it with any other timer.
-
 ## Instructions for livesplit-one-desktop
 
 Note: The main `livesplit-one-desktop` repository might not
@@ -241,12 +221,6 @@ For example in the `livesplit-one-desktop` repository, you can run
 cargo build --release
 sudo ./target/release/livesplit-one
 ```
-
-Finally, do not manually split or skip while running with this autosplitter,
-unless either it's explicitly marked as `ManualSplit` or it's the end-split.
-Don't manually split, skip, or undo splits in any other situation.
-The autosplitter will not know that you did that,
-and the autosplitter's state will be out of sync with `livesplit-one-desktop`'s state.
 
 The keyboard shortcuts of `livesplit-one-desktop` assume the Qwerty keyboard layout,
 so you may need to press where the key would be if you were using Qwerty.
