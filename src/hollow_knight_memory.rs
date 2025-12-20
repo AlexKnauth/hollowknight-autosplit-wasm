@@ -5,8 +5,6 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
-#[cfg(not(target_os = "unknown"))]
-use asr::file_format::{elf, pe};
 use asr::future::{next_tick, retry};
 use asr::game_engine::unity::mono::{self, Image, Module, UnityPointer};
 use asr::game_engine::unity::scene_manager::{self, SceneManager};
@@ -16,9 +14,6 @@ use asr::{Address, Address16, Address32, Address64, PointerSize, Process};
 use core::cell::OnceCell;
 use core::iter::FusedIterator;
 use core::mem;
-
-#[cfg(not(target_os = "unknown"))]
-use crate::file;
 
 // --------------------------------------------------------
 
@@ -2504,13 +2499,9 @@ pub struct GameManagerFinder {
 }
 
 impl GameManagerFinder {
-    fn new(
-        pointer_size: PointerSize,
-        module: mono::Module,
-        image: mono::Image,
-    ) -> GameManagerFinder {
+    fn new(module: mono::Module, image: mono::Image) -> GameManagerFinder {
         GameManagerFinder {
-            string_list_offests: Box::new(StringListOffsets::new(pointer_size)),
+            string_list_offests: Box::new(StringListOffsets::new(module.get_pointer_size())),
             module: Box::new(module),
             image,
             pointers: Box::new(GameManagerPointers::new()),
@@ -2523,29 +2514,6 @@ impl GameManagerFinder {
     }
 
     pub async fn wait_attach(process: &Process) -> GameManagerFinder {
-        #[cfg(not(target_os = "unknown"))]
-        let pointer_size = match process_pointer_size(process) {
-            Some(s) => {
-                asr::print_message(&format!(
-                    "GameManagerFinder wait_attach: pointer_size = {:?}",
-                    s
-                ));
-                s
-            }
-            None => {
-                asr::print_message(&format!(
-                    "GameManagerFinder wait_attach: pointer_size not found, guessing Bit64"
-                ));
-                PointerSize::Bit64
-            }
-        };
-        #[cfg(target_os = "unknown")]
-        let pointer_size = {
-            asr::print_message(&format!(
-                "GameManagerFinder wait_attach: unknown, guessing Bit64"
-            ));
-            PointerSize::Bit64
-        };
         asr::print_message("GameManagerFinder wait_attach: Module wait_attach_auto_detect...");
         next_tick().await;
         let mut found_module = false;
@@ -2559,9 +2527,12 @@ impl GameManagerFinder {
             }
             for _ in 0..0x10 {
                 if let Some(image) = module.get_default_image(process) {
-                    asr::print_message("GameManagerFinder wait_attach: got module and image");
+                    asr::print_message(&format!(
+                        "GameManagerFinder wait_attach: got module and image, pointer_size = {:?}",
+                        module.get_pointer_size()
+                    ));
                     next_tick().await;
-                    return GameManagerFinder::new(pointer_size, module, image);
+                    return GameManagerFinder::new(module, image);
                 }
                 next_tick().await;
             }
@@ -7435,37 +7406,6 @@ impl SceneDataStore {
 
 pub fn attach_hollow_knight() -> Option<Process> {
     HOLLOW_KNIGHT_NAMES.into_iter().find_map(Process::attach)
-}
-
-#[cfg(not(target_os = "unknown"))]
-fn process_pointer_size(process: &Process) -> Option<PointerSize> {
-    let path = process.get_path().ok()?;
-    let bytes = file::file_read_all_bytes(path).ok()?;
-    if bytes.starts_with(&[0x4D, 0x5A]) {
-        // PE
-        let mono_addr = ["mono.dll", "mono-2.0-bdwgc.dll"]
-            .into_iter()
-            .find_map(|mono_name| process.get_module_address(mono_name).ok())?;
-        pe::MachineType::read(process, mono_addr)?.pointer_size()
-    } else if bytes.starts_with(&[0x7F, 0x45, 0x4C, 0x46]) {
-        // ELF
-        let mono_addr = ["libmono.so", "libmonobdwgc-2.0.so"]
-            .into_iter()
-            .find_map(|mono_name| process.get_module_address(mono_name).ok())?;
-        elf::pointer_size(process, mono_addr)
-    } else if bytes.starts_with(&[0xFE, 0xED, 0xFA, 0xCE])
-        | bytes.starts_with(&[0xCE, 0xFA, 0xED, 0xFE])
-    {
-        // MachO 32-bit
-        Some(PointerSize::Bit32)
-    } else if bytes.starts_with(&[0xFE, 0xED, 0xFA, 0xCF])
-        | bytes.starts_with(&[0xCF, 0xFA, 0xED, 0xFE])
-    {
-        // MachO 64-bit
-        Some(PointerSize::Bit64)
-    } else {
-        None
-    }
 }
 
 async fn wait_attach_auto_detect(process: &Process) -> mono::Module {

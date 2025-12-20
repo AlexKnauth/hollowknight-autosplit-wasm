@@ -1,3 +1,6 @@
+#[cfg(feature = "unstable")]
+use alloc::format;
+
 use asr::timer::TimerState;
 
 use crate::unstable::maybe_timer_current_split_index;
