@@ -11,7 +11,7 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index#469688256cb01a963007b3283d8165ad967b6648"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#3cdf36fa0ca1306c9f4000369ccb7761bff0830f"
 dependencies = [
  "arrayvec",
  "asr-derive",
@@ -25,7 +25,7 @@ dependencies = [
 [[package]]
 name = "asr-derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index#469688256cb01a963007b3283d8165ad967b6648"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#3cdf36fa0ca1306c9f4000369ccb7761bff0830f"
 dependencies = [
  "heck",
  "proc-macro2",
