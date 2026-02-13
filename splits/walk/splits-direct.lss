@@ -12,7 +12,7 @@
   </Metadata>
   <LayoutPath />
   <Offset>00:00:00.000000000</Offset>
-  <AttemptCount>25</AttemptCount>
+  <AttemptCount>35</AttemptCount>
   <AttemptHistory>
     <Attempt id="1" started="02/14/2024 19:36:43" isStartedSynced="False" ended="02/14/2024 19:36:44" isEndedSynced="False" />
     <Attempt id="2" started="02/14/2024 19:36:56" isStartedSynced="False" ended="02/14/2024 19:36:58" isEndedSynced="False" />
@@ -69,6 +69,46 @@
       <GameTime>00:00:21.502933000</GameTime>
     </Attempt>
     <Attempt id="25" started="02/14/2024 19:47:39" isStartedSynced="False" ended="02/14/2024 19:47:41" isEndedSynced="False" />
+    <Attempt id="26" started="02/13/2026 05:52:13" isStartedSynced="False" ended="02/13/2026 05:52:36" isEndedSynced="False">
+      <RealTime>00:00:23.601239200</RealTime>
+      <GameTime>00:00:21.751608900</GameTime>
+    </Attempt>
+    <Attempt id="27" started="02/13/2026 05:53:10" isStartedSynced="False" ended="02/13/2026 05:53:34" isEndedSynced="False">
+      <RealTime>00:00:23.597913300</RealTime>
+      <GameTime>00:00:21.759987600</GameTime>
+    </Attempt>
+    <Attempt id="28" started="02/13/2026 05:54:05" isStartedSynced="False" ended="02/13/2026 05:54:28" isEndedSynced="False">
+      <RealTime>00:00:23.588274900</RealTime>
+      <GameTime>00:00:21.770506400</GameTime>
+    </Attempt>
+    <Attempt id="29" started="02/13/2026 05:55:04" isStartedSynced="False" ended="02/13/2026 05:55:28" isEndedSynced="False">
+      <RealTime>00:00:23.613257800</RealTime>
+      <GameTime>00:00:21.765046400</GameTime>
+    </Attempt>
+    <Attempt id="30" started="02/13/2026 05:56:00" isStartedSynced="False" ended="02/13/2026 05:56:24" isEndedSynced="False">
+      <RealTime>00:00:23.607626500</RealTime>
+      <GameTime>00:00:21.754817300</GameTime>
+    </Attempt>
+    <Attempt id="31" started="02/13/2026 05:56:56" isStartedSynced="False" ended="02/13/2026 05:57:20" isEndedSynced="False">
+      <RealTime>00:00:23.610891600</RealTime>
+      <GameTime>00:00:21.768403400</GameTime>
+    </Attempt>
+    <Attempt id="32" started="02/13/2026 05:57:54" isStartedSynced="False" ended="02/13/2026 05:58:18" isEndedSynced="False">
+      <RealTime>00:00:23.585970800</RealTime>
+      <GameTime>00:00:21.753175900</GameTime>
+    </Attempt>
+    <Attempt id="33" started="02/13/2026 05:58:50" isStartedSynced="False" ended="02/13/2026 05:59:13" isEndedSynced="False">
+      <RealTime>00:00:23.604586700</RealTime>
+      <GameTime>00:00:21.775784500</GameTime>
+    </Attempt>
+    <Attempt id="34" started="02/13/2026 05:59:46" isStartedSynced="False" ended="02/13/2026 06:00:10" isEndedSynced="False">
+      <RealTime>00:00:23.582018300</RealTime>
+      <GameTime>00:00:21.752731600</GameTime>
+    </Attempt>
+    <Attempt id="35" started="02/13/2026 06:00:42" isStartedSynced="False" ended="02/13/2026 06:01:06" isEndedSynced="False">
+      <RealTime>00:00:23.592726700</RealTime>
+      <GameTime>00:00:21.760300100</GameTime>
+    </Attempt>
   </AttemptHistory>
   <Segments>
     <Segment>
@@ -83,7 +123,7 @@
         </SplitTime>
       </SplitTimes>
       <BestSegmentTime>
-        <RealTime>00:00:11.969881600</RealTime>
+        <RealTime>00:00:11.888508200</RealTime>
         <GameTime>00:00:10.863938400</GameTime>
       </BestSegmentTime>
       <SegmentHistory>
@@ -127,6 +167,46 @@
           <RealTime>00:00:11.977919700</RealTime>
           <GameTime>00:00:10.868843800</GameTime>
         </Time>
+        <Time id="26">
+          <RealTime>00:00:11.918645100</RealTime>
+          <GameTime>00:00:11.007704900</GameTime>
+        </Time>
+        <Time id="27">
+          <RealTime>00:00:11.906171000</RealTime>
+          <GameTime>00:00:10.994022200</GameTime>
+        </Time>
+        <Time id="28">
+          <RealTime>00:00:11.888508200</RealTime>
+          <GameTime>00:00:10.979206700</GameTime>
+        </Time>
+        <Time id="29">
+          <RealTime>00:00:11.929981700</RealTime>
+          <GameTime>00:00:10.990346200</GameTime>
+        </Time>
+        <Time id="30">
+          <RealTime>00:00:11.916361200</RealTime>
+          <GameTime>00:00:10.990331400</GameTime>
+        </Time>
+        <Time id="31">
+          <RealTime>00:00:11.916951100</RealTime>
+          <GameTime>00:00:10.996445500</GameTime>
+        </Time>
+        <Time id="32">
+          <RealTime>00:00:11.918177800</RealTime>
+          <GameTime>00:00:11.006167200</GameTime>
+        </Time>
+        <Time id="33">
+          <RealTime>00:00:11.929486800</RealTime>
+          <GameTime>00:00:11.009580200</GameTime>
+        </Time>
+        <Time id="34">
+          <RealTime>00:00:11.910942000</RealTime>
+          <GameTime>00:00:11.003322200</GameTime>
+        </Time>
+        <Time id="35">
+          <RealTime>00:00:11.899126100</RealTime>
+          <GameTime>00:00:10.994982400</GameTime>
+        </Time>
       </SegmentHistory>
     </Segment>
     <Segment>
@@ -141,7 +221,7 @@
         </SplitTime>
       </SplitTimes>
       <BestSegmentTime>
-        <RealTime>00:00:11.735063700</RealTime>
+        <RealTime>00:00:11.667793000</RealTime>
         <GameTime>00:00:10.620091700</GameTime>
       </BestSegmentTime>
       <SegmentHistory>
@@ -185,16 +265,67 @@
           <RealTime>00:00:11.763119300</RealTime>
           <GameTime>00:00:10.634089200</GameTime>
         </Time>
+        <Time id="26">
+          <RealTime>00:00:11.682594100</RealTime>
+          <GameTime>00:00:10.743904000</GameTime>
+        </Time>
+        <Time id="27">
+          <RealTime>00:00:11.691742300</RealTime>
+          <GameTime>00:00:10.765965400</GameTime>
+        </Time>
+        <Time id="28">
+          <RealTime>00:00:11.699766700</RealTime>
+          <GameTime>00:00:10.791299700</GameTime>
+        </Time>
+        <Time id="29">
+          <RealTime>00:00:11.683276100</RealTime>
+          <GameTime>00:00:10.774700200</GameTime>
+        </Time>
+        <Time id="30">
+          <RealTime>00:00:11.691265300</RealTime>
+          <GameTime>00:00:10.764485900</GameTime>
+        </Time>
+        <Time id="31">
+          <RealTime>00:00:11.693940500</RealTime>
+          <GameTime>00:00:10.771957900</GameTime>
+        </Time>
+        <Time id="32">
+          <RealTime>00:00:11.667793000</RealTime>
+          <GameTime>00:00:10.747008700</GameTime>
+        </Time>
+        <Time id="33">
+          <RealTime>00:00:11.675099900</RealTime>
+          <GameTime>00:00:10.766204300</GameTime>
+        </Time>
+        <Time id="34">
+          <RealTime>00:00:11.671076300</RealTime>
+          <GameTime>00:00:10.749409400</GameTime>
+        </Time>
+        <Time id="35">
+          <RealTime>00:00:11.693600600</RealTime>
+          <GameTime>00:00:10.765317700</GameTime>
+        </Time>
       </SegmentHistory>
     </Segment>
   </Segments>
   <AutoSplitterSettings>
-    <Ordered>True</Ordered>
-    <AutosplitEndRuns>True</AutosplitEndRuns>
-    <AutosplitStartRuns>TransitionAfterSaveState</AutosplitStartRuns>
-    <Splits>
-      <Split>TransitionAfterSaveState</Split>
-      <Split>TransitionAfterSaveState</Split>
-    </Splits>
+    <Version>1.0</Version>
+    <CustomSettings>
+      <Setting id="script_name" type="string" value="hollowknight_autosplit_wasm" />
+      <Setting id="splits" type="list">
+        <Setting type="string" value="TransitionAfterSaveState" />
+        <Setting type="string" value="TransitionAfterSaveState" />
+        <Setting type="string" value="TransitionAfterSaveState" />
+      </Setting>
+      <Setting id="splits_0_item" type="string" value="TransitionAfterSaveState" />
+      <Setting id="splits_1_item" type="string" value="TransitionAfterSaveState" />
+      <Setting id="splits_2_item" type="string" value="TransitionAfterSaveState" />
+      <Setting id="timing_method" type="string" value="LoadRemovedTime" />
+      <Setting id="hit_counter" type="string" value="None" />
+      <Setting id="splits_insert_0" type="bool">False</Setting>
+      <Setting id="splits_0_action" type="string" value="None" />
+      <Setting id="splits_1_action" type="string" value="None" />
+      <Setting id="splits_2_action" type="string" value="None" />
+    </CustomSettings>
   </AutoSplitterSettings>
 </Run>
