@@ -253,7 +253,7 @@
                 "left_center_color": null,
                 "right_color": null,
                 "text": {
-                    "Center": "Windows LiveSplit One Druid 0.3.2"
+                    "Center": "Windows LiveSplit One Druid 0.7.1"
                 }
             }
         },
@@ -264,7 +264,7 @@
                 "left_center_color": null,
                 "right_color": null,
                 "text": {
-                    "Center": "hollowknight-autosplit-wasm 1.5.2"
+                    "Center": "hollowknight-autosplit-wasm 1.5.3"
                 }
             }
         }
@@ -274,6 +274,12 @@
         "timer_font": null,
         "times_font": null,
         "text_font": null,
+        "text_shadow": [
+            0.0,
+            0.0,
+            0.0,
+            0.5
+        ],
         "background": {
             "Plain": [
                 0.06,
@@ -347,7 +353,6 @@
             1.0,
             1.0,
             1.0
-        ],
-        "mouse_pass_through_while_running": false
+        ]
     }
 }
