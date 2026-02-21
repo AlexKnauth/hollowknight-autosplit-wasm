@@ -56,15 +56,6 @@ Right-click or Control-click for the context menu:
 - Compare Against: Game Time.
 - Hotkeys: Configure the hotkeys you want. The default hotkeys use numpad, so if your computer doesn't have a numpad, configure them differently.
 
-<!---
-TODO:
-Test whether the new Public Beta v1.5.12331 patch, or whatever new patch follows it,
-works as-is for Mac users, or whether it requires Mac users to run HK under Rosetta,
-like they have to do for Silksong.
-If it does require Rosetta, add a sub-section about that similar to:
-https://github.com/AlexKnauth/silksong-autosplit-wasm?tab=readme-ov-file#mac-requirement-rosetta
--->
-
 ### OBS LiveSplit One (Windows, Linux)
 
 Go to the [OBS LiveSplit One Latest Release](https://github.com/AlexKnauth/obs-livesplit-one/releases/latest) page,
