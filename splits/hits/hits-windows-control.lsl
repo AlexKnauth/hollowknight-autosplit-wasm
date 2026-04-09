@@ -43,6 +43,8 @@
     <ImageBlur>0</ImageBlur>
     <Opacity>0.59</Opacity>
     <MousePassThroughWhileRunning>False</MousePassThroughWhileRunning>
+    <AllowResizing>True</AllowResizing>
+    <AllowMoving>True</AllowMoving>
   </Settings>
   <Components>
     <Component>
