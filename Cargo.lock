@@ -11,13 +11,12 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index-arm64#5e4f770173ec9cbd10e0689c730e425191b3e015"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#c15a8690ba5aabed95ed150973e188e4851e2dec"
 dependencies = [
  "arrayvec",
  "asr-derive",
  "bytemuck",
  "itoa",
- "memchr",
  "time",
  "wasi",
 ]
@@ -25,7 +24,7 @@ dependencies = [
 [[package]]
 name = "asr-derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index-arm64#5e4f770173ec9cbd10e0689c730e425191b3e015"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#c15a8690ba5aabed95ed150973e188e4851e2dec"
 dependencies = [
  "heck",
  "proc-macro2",
