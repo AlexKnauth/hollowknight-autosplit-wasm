@@ -3320,7 +3320,7 @@ pub fn transition_splits(
     prc: &Process,
     g: &GameManagerFinder,
     pds: &mut PlayerDataStore,
-) -> SplitterAction {
+) -> Option<SplitterAction> {
     match s {
         // region: Start, End, and Menu
         Split::EndingSplit => should_split(p.current.starts_with("Cinematic_Ending")),
@@ -3889,7 +3889,7 @@ pub fn transition_once_splits(
     prc: &Process,
     g: &GameManagerFinder,
     _pds: &mut PlayerDataStore,
-) -> SplitterAction {
+) -> Option<SplitterAction> {
     match s {
         // region: Start
         Split::StartNewGame => should_split(
@@ -3919,9 +3919,9 @@ pub fn continuous_splits(
     ss: &SceneStore,
     pds: &mut PlayerDataStore,
     sds: &mut SceneDataStore,
-) -> SplitterAction {
+) -> Option<SplitterAction> {
     match s {
-        Split::ManualSplit => SplitterAction::ManualSplit,
+        Split::ManualSplit => Some(SplitterAction::ManualSplit),
         Split::RandoWake => should_split(
             g.disable_pause(p).is_some_and(|d| !d)
                 && g.get_game_state(p).is_some_and(|s| s == GAME_STATE_PLAYING)
@@ -5246,7 +5246,7 @@ pub fn splits(
     ss: &mut SceneStore,
     pds: &mut PlayerDataStore,
     sds: &mut SceneDataStore,
-) -> SplitterAction {
+) -> Option<SplitterAction> {
     #[cfg(debug_assertions)]
     pds.get_game_state(prc, g);
     let a1 = continuous_splits(s, prc, g, ss, pds, sds).or_else(|| {
@@ -5254,17 +5254,17 @@ pub fn splits(
         let a2 = if !ss.split_this_transition {
             transition_once_splits(s, &pair, prc, g, pds)
         } else {
-            SplitterAction::Pass
+            None
         };
         a2.or_else(|| {
             if trans_now {
                 transition_splits(s, &pair, prc, g, pds)
             } else {
-                SplitterAction::Pass
+                None
             }
         })
     });
-    if a1 != SplitterAction::Pass {
+    if a1.is_some() {
         ss.split_this_transition = true;
     }
     a1

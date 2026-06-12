@@ -9,10 +9,8 @@ pub fn is_timer_state_between_runs(s: TimerState) -> bool {
     s == TimerState::NotRunning || s == TimerState::Ended
 }
 
-#[derive(Clone, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum SplitterAction {
-    #[default]
-    Pass,
     Split,
     Skip,
     #[allow(dead_code)]
@@ -20,37 +18,28 @@ pub enum SplitterAction {
     ManualSplit,
 }
 
-impl SplitterAction {
-    pub fn or_else<F: FnOnce() -> SplitterAction>(self, f: F) -> SplitterAction {
-        match self {
-            SplitterAction::Pass => f(),
-            a => a,
-        }
+pub fn should_split(b: bool) -> Option<SplitterAction> {
+    if b {
+        Some(SplitterAction::Split)
+    } else {
+        None
     }
 }
 
-pub fn should_split(b: bool) -> SplitterAction {
+pub fn should_skip(b: bool) -> Option<SplitterAction> {
     if b {
-        SplitterAction::Split
+        Some(SplitterAction::Skip)
     } else {
-        SplitterAction::Pass
-    }
-}
-
-pub fn should_skip(b: bool) -> SplitterAction {
-    if b {
-        SplitterAction::Skip
-    } else {
-        SplitterAction::Pass
+        None
     }
 }
 
 /// Interprets Some(true) as Split, Some(false) as Skip, and None as Pass
-pub fn should_split_skip(mb: Option<bool>) -> SplitterAction {
+pub fn should_split_skip(mb: Option<bool>) -> Option<SplitterAction> {
     match mb {
-        Some(true) => SplitterAction::Split,
-        Some(false) => SplitterAction::Skip,
-        None => SplitterAction::Pass,
+        Some(true) => Some(SplitterAction::Split),
+        Some(false) => Some(SplitterAction::Skip),
+        None => None,
     }
 }
 
@@ -200,18 +189,18 @@ impl Timer {
         Some(())
     }
 
-    pub fn action<R: Resettable>(&mut self, a: SplitterAction, r: &mut R) {
+    pub fn action<R: Resettable>(&mut self, a: Option<SplitterAction>, r: &mut R) {
         match a {
-            SplitterAction::Pass => (),
-            SplitterAction::Reset => {
+            None => (),
+            Some(SplitterAction::Reset) => {
                 self.reset();
                 r.reset();
             }
-            SplitterAction::Skip => {
+            Some(SplitterAction::Skip) => {
                 asr::timer::skip_split();
                 self.i += 1;
             }
-            SplitterAction::Split => {
+            Some(SplitterAction::Split) => {
                 if self.i == 0 {
                     asr::timer::reset();
                     asr::timer::start();
@@ -222,7 +211,7 @@ impl Timer {
                 }
                 self.i += 1;
             }
-            SplitterAction::ManualSplit => {
+            Some(SplitterAction::ManualSplit) => {
                 if self.last_split_index == -2 && 0 < self.i && self.i + 1 < self.n {
                     self.i += 1;
                 }
