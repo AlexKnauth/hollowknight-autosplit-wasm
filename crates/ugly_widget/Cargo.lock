@@ -11,13 +11,12 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index#3cdf36fa0ca1306c9f4000369ccb7761bff0830f"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#4732a4c1c12ef292b10c17d32e4343c2908951f3"
 dependencies = [
  "arrayvec",
  "asr-derive",
  "bytemuck",
  "itoa",
- "memchr",
  "time",
  "wasi",
 ]
@@ -25,7 +24,7 @@ dependencies = [
 [[package]]
 name = "asr-derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index#3cdf36fa0ca1306c9f4000369ccb7761bff0830f"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#4732a4c1c12ef292b10c17d32e4343c2908951f3"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -73,12 +72,6 @@ name = "itoa"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
-
-[[package]]
-name = "memchr"
-version = "2.7.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
 
 [[package]]
 name = "num-conv"
