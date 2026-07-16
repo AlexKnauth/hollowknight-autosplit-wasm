@@ -84,6 +84,8 @@ pub struct Timer {
     n: usize,
     /// The set of timer states where it is safe to use auto-reset.
     auto_reset: &'static [TimerState],
+    /// Whether GameTime has been initialized
+    initialized_game_time: bool,
 }
 
 impl Resettable for Timer {
@@ -106,6 +108,7 @@ impl Timer {
             last_split_index: asr_index.unwrap_or(-2),
             n,
             auto_reset,
+            initialized_game_time: false,
         }
     }
 
@@ -148,12 +151,21 @@ impl Timer {
                 self.i = 0;
                 r.reset();
                 asr::print_message("Detected a manual reset.");
+                self.initialized_game_time = false;
             }
             // detect manual starts
-            TimerState::Running if is_timer_state_between_runs(self.state) => {
-                self.i = 1;
-                r.reset();
-                asr::print_message("Detected a manual start.");
+            TimerState::Running => {
+                if is_timer_state_between_runs(self.state) {
+                    self.i = 1;
+                    r.reset();
+                    asr::print_message("Detected a manual start.");
+                }
+                // InitializeGameTime
+                if !self.initialized_game_time {
+                    asr::timer::pause_game_time();
+                    asr::timer::resume_game_time();
+                    self.initialized_game_time = true;
+                }
             }
             // detect manual end-splits
             TimerState::Ended => {
@@ -165,6 +177,7 @@ impl Timer {
                     self.i = self.n;
                 }
                 asr::print_message("Detected a manual end-split.");
+                self.initialized_game_time = false;
             }
             _ => (),
         }
@@ -206,6 +219,7 @@ impl Timer {
             SplitterAction::Reset => {
                 self.reset();
                 r.reset();
+                self.initialized_game_time = false;
             }
             SplitterAction::Skip => {
                 asr::timer::skip_split();
@@ -217,6 +231,12 @@ impl Timer {
                     asr::timer::start();
                     r.reset();
                     self.state = TimerState::Running;
+                    // InitializeGameTime
+                    if asr::timer::state() == TimerState::Running {
+                        asr::timer::pause_game_time();
+                        asr::timer::resume_game_time();
+                        self.initialized_game_time = true;
+                    }
                 } else {
                     asr::timer::split();
                 }
@@ -236,6 +256,7 @@ impl Timer {
                 // 0: either NotRunning, or Ended with auto-reset safe
                 self.i = 0;
             }
+            self.initialized_game_time = false;
         }
     }
 }
