@@ -136,3 +136,17 @@ when you save your changes.
 The debugger is able to step through the code. You can set breakpoints in VSCode
 and it should stop there when the breakpoint is hit. Inspecting variables
 currently does not work all the time.
+
+## Deploying a new release
+
+My approach to deploying a new release looks like this:
+1. Review Pull Requests, and merge those that are good and ready to the master branch.
+2. Update `splits.json` with the command `make examples/splits.json`. If `make` says it's up-to-date and you know it isn't, `touch src/splits.rs` before running `make` again.
+3. Update `Cargo.toml` with the new version number, following [Semantic Versioning](https://semver.org/). Given `MAJOR.MINOR.PATCH`:
+   - Increment `PATCH` when just releasing bug-fixes that don't add any new settings or splits.
+   - Increment `MINOR` when the release includes new features, new settings, or new splits.
+   - Increment `MAJOR` if there've been incompatible settings changes, but like... try to avoid those if possible.
+4. Run both `cargo b` and `cargo release`, each in both `--no-default-features` and default-features mode. Check that `Cargo.lock` has been updated.
+5. Commit those changes, which should include `splits.json`, `Cargo.toml`, and `Cargo.lock`, with a commit name starting with `Release` and then the new version number.
+6. Add a tag with the new version number on the Release commit, and push both master and the tag.
+7. Check the CI to make sure all jobs pass. Sometimes there's a data race between jobs for `legacy` vs `stable` vs `unknown`, where 2 of them try to create their own release at the same time, so a release with only one of them is created as the other fails. When this happens, re-run the failed jobs to ensure that the release contains all 3 of the variants: `legacy`, `stable`, and `unknown`.
