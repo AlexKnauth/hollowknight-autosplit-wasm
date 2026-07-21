@@ -3436,13 +3436,14 @@ pub fn transition_splits(
         }
         // endregion: Crossroads
         // region: Greenpath
-        Split::EnterGreenpath => {
-            should_split(p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"))
-        }
+        Split::EnterGreenpath => should_split(
+            (p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"))
+                || (p.current.starts_with("Fungus1_11") && !p.old.starts_with("Fungus1_")),
+        ),
         Split::EnterGreenpathWithOvercharm => should_split(
             pds.can_overcharm(prc, g)
-                && p.current.starts_with("Fungus1_01")
-                && !p.old.starts_with("Fungus1_01"),
+                && ((p.current.starts_with("Fungus1_01") && !p.old.starts_with("Fungus1_01"))
+                    || (p.current.starts_with("Fungus1_11") && !p.old.starts_with("Fungus1_"))),
         ),
         Split::VengeflyKingTrans => {
             should_split(pds.zote_rescued_buzzer(prc, g) && p.current != p.old)
