@@ -43,7 +43,7 @@ pub struct HitCounter {
     last_recoil: bool,
     last_hazard: bool,
     last_dead_or_0: bool,
-    last_exiting_level: Option<String>,
+    last_exiting_dream: Option<String>,
 }
 
 impl Resettable for HitCounter {
@@ -84,7 +84,7 @@ impl HitCounter {
             last_recoil: false,
             last_hazard: false,
             last_dead_or_0: false,
-            last_exiting_level: None,
+            last_exiting_dream: None,
         }
     }
 
@@ -182,19 +182,21 @@ impl GameTime for HitCounter {
 
         if self.count_dream_falling {
             if let Some(s) = maybe_scene_name {
-                if maybe_game_state == Some(GAME_STATE_ENTERING_LEVEL)
-                    && self.last_exiting_level.as_deref() == Some(&s)
+                if maybe_game_state == Some(GAME_STATE_EXITING_LEVEL)
+                    && self.last_exiting_dream.is_none()
                     && is_dream(&s)
                 {
-                    self.add_hit();
-                    asr::print_message(&format!("hit: {}, from dream falling", self.hits));
-                }
-                if maybe_game_state == Some(GAME_STATE_EXITING_LEVEL) {
-                    if self.last_exiting_level.is_none() {
-                        self.last_exiting_level = Some(s);
+                    self.last_exiting_dream = Some(s);
+                } else if maybe_game_state == Some(GAME_STATE_PLAYING) {
+                    if self.last_exiting_dream.as_deref() == Some(&s) {
+                        self.add_hit();
+                        asr::print_message(&format!("hit: {}, from dream falling", self.hits));
                     }
-                } else {
-                    self.last_exiting_level = None;
+                    self.last_exiting_dream = None;
+                } else if maybe_game_state == Some(GAME_STATE_CUTSCENE) {
+                    self.last_exiting_dream = None;
+                } else if maybe_game_state == Some(GAME_STATE_MAIN_MENU) {
+                    self.last_exiting_dream = None;
                 }
             }
         }
