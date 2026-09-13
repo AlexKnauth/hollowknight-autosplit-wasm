@@ -150,6 +150,7 @@ async fn main() {
 
                     state.load_remover.update_game_time(
                         &state.timer,
+                        &gui,
                         &process,
                         &game_manager_finder,
                     );

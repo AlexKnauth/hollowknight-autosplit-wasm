@@ -172,10 +172,27 @@ pub static NON_CONTINUOUS_GAME_STATES: [i32; 4] = [
     GAME_STATE_EXITING_LEVEL,
 ];
 
+pub const UI_STATE_MENU_HOME: i32 = 1;
+pub const UI_STATE_MENU_PROFILES: i32 = 3;
 pub const UI_STATE_PLAYING: i32 = 6;
 pub const UI_STATE_PAUSED: i32 = 7;
 
 pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
+
+/*
+public enum MainMenuState
+{
+    LOGO,
+    MAIN_MENU,
+    OPTIONS_MENU,
+    GAMEPAD_MENU,
+    ADVANCED_GAMEPAD_MENU, // 1.5.12459
+    KEYBOARD_MENU,
+    SAVE_PROFILES,
+    ...
+}
+*/
+pub const MAIN_MENU_STATE_SAVE_PROFILES: i32 = 6;
 
 #[derive(bytemuck::CheckedBitPattern, Clone, Copy)]
 #[repr(C)]
@@ -193,6 +210,8 @@ struct GameManagerPointers {
     game_state: UnityPointer<2>,
     ui_state_vanilla: UnityPointer<3>,
     ui_state_modded: UnityPointer<3>,
+    menu_state_vanilla: UnityPointer<3>,
+    menu_state_modded: UnityPointer<3>,
     camera_teleporting: UnityPointer<3>,
     camera_target_destination: UnityPointer<4>,
     accepting_input: UnityPointer<3>,
@@ -234,6 +253,16 @@ impl GameManagerPointers {
                 "GameManager",
                 0,
                 &["_instance", "_uiInstance", "uiState"],
+            ),
+            menu_state_vanilla: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "<ui>k__BackingField", "menuState"],
+            ),
+            menu_state_modded: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "_uiInstance", "menuState"],
             ),
             camera_teleporting: UnityPointer::new(
                 "GameManager",
@@ -2495,6 +2524,7 @@ pub struct GameManagerFinder {
     completion_pointers: Box<CompletionPointers>,
     scene_data_pointers: Box<SceneDataPointers>,
     ui_state_offset: OnceCell<u32>,
+    menu_state_offset: OnceCell<u32>,
     modded: OnceCell<bool>,
 }
 
@@ -2509,6 +2539,7 @@ impl GameManagerFinder {
             completion_pointers: Box::new(CompletionPointers::new()),
             scene_data_pointers: Box::new(SceneDataPointers::new()),
             ui_state_offset: OnceCell::new(),
+            menu_state_offset: OnceCell::new(),
             modded: OnceCell::new(),
         }
     }
@@ -2567,6 +2598,8 @@ impl GameManagerFinder {
         retry(|| self.get_game_state(process)).await;
         next_tick().await;
         retry(|| self.get_ui_state(process)).await;
+        next_tick().await;
+        retry(|| self.get_menu_state(process)).await;
         next_tick().await;
         retry(|| self.get_scene_name(process)).await;
         next_tick().await;
@@ -2679,6 +2712,61 @@ impl GameManagerFinder {
         } else {
             Some(ui)
         }
+    }
+
+    pub fn get_menu_state(&self, process: &Process) -> Option<i32> {
+        // save the menuState offset so it doesn't have to find it in the UIManager class every time
+        let menu_state_offset = if let Some(menu_state_offset) = self.menu_state_offset.get() {
+            menu_state_offset
+        } else {
+            let ui_manager_class = self.image.get_class(process, &self.module, "UIManager")?;
+            let menu_state_offset =
+                ui_manager_class.get_field_offset(process, &self.module, "menuState")?;
+            self.menu_state_offset.get_or_init(|| menu_state_offset)
+        };
+        let mut menu = if let Some(&modded) = self.modded.get() {
+            if modded {
+                self.pointers
+                    .menu_state_modded
+                    .deref(process, &self.module, &self.image)
+                    .ok()?
+            } else {
+                self.pointers
+                    .menu_state_vanilla
+                    .deref(process, &self.module, &self.image)
+                    .ok()?
+            }
+        } else {
+            if let Ok(menu) =
+                self.pointers
+                    .menu_state_vanilla
+                    .deref(process, &self.module, &self.image)
+            {
+                self.modded.set(false).ok();
+                menu
+            } else if let Ok(menu) =
+                self.pointers
+                    .menu_state_modded
+                    .deref(process, &self.module, &self.image)
+            {
+                self.modded.set(true).ok();
+                menu
+            } else {
+                return None;
+            }
+        };
+        // not 1.5.12459
+        if menu_state_offset != &0x2f8 {
+            // ADVANCED_GAMEPAD_MENU
+            if menu >= 4 {
+                menu += 1;
+            }
+            // ADVANCED_VIDEO_MENU
+            if menu >= 9 {
+                menu += 1;
+            }
+        }
+        Some(menu)
     }
 
     pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {

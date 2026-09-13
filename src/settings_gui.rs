@@ -19,7 +19,25 @@ use ugly_widget::{
 
 #[cfg(not(target_os = "unknown"))]
 use crate::auto_splitter_settings::asr_settings_from_file;
-use crate::{auto_splitter_settings::wait_asr_settings_init, splits::Split};
+use crate::{
+    auto_splitter_settings::{this_script_name, wait_asr_settings_init, CARGO_PKG_VERSION},
+    splits::Split,
+};
+
+struct PkgVersion(Title);
+
+impl Widget for PkgVersion {
+    type Args = <Title as Widget>::Args;
+
+    fn register(key: &str, _: &str, args: Self::Args) -> Self {
+        let desc = format!("{} {}", this_script_name(), CARGO_PKG_VERSION);
+        Self(Title::register(key, &desc, args))
+    }
+
+    fn update_from(&mut self, settings_map: &asr::settings::Map, key: &str, args: Self::Args) {
+        self.0.update_from(settings_map, key, args);
+    }
+}
 
 #[derive(Gui)]
 pub struct SettingsGui {
@@ -27,8 +45,12 @@ pub struct SettingsGui {
     #[cfg(not(target_os = "unknown"))]
     #[filter((_, "*.lss *.lsl"))]
     import: Pair<FileSelect>,
+    _pkg_version: PkgVersion,
     /// General Settings
     _general_settings: Title,
+    /// Pause on File Select (Required Off for All Glitches)
+    #[default = false]
+    pause_on_file_select: bool,
     /// Timing Method
     timing_method: TimingMethod,
     /// Hit Counter
@@ -69,6 +91,9 @@ impl StoreGui for SettingsGui {
 }
 
 impl SettingsGui {
+    pub fn get_pause_on_file_select(&self) -> bool {
+        self.pause_on_file_select
+    }
     pub fn get_timing_method(&self) -> TimingMethod {
         self.timing_method
     }

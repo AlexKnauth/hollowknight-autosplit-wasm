@@ -4,18 +4,21 @@ use alloc::vec::Vec;
 use asr::Process;
 
 use crate::hollow_knight_memory::GameManagerFinder;
+use crate::settings_gui::SettingsGui;
 use crate::timer::{Resettable, Timer};
 
 pub trait GameTime: Resettable {
     fn update_variables(
         &mut self,
         timer: &Timer,
+        settings: &SettingsGui,
         process: &Process,
         game_manager_finder: &GameManagerFinder,
     );
     fn update_game_time(
         &mut self,
         timer: &Timer,
+        settings: &SettingsGui,
         process: &Process,
         game_manager_finder: &GameManagerFinder,
     );
@@ -59,26 +62,28 @@ impl GameTime for GameTimePlusVars {
     fn update_variables(
         &mut self,
         timer: &Timer,
+        settings: &SettingsGui,
         process: &Process,
         game_manager_finder: &GameManagerFinder,
     ) {
         self.main
-            .update_variables(timer, process, game_manager_finder);
+            .update_variables(timer, settings, process, game_manager_finder);
         for v in self.vars.iter_mut() {
-            v.update_variables(timer, process, game_manager_finder);
+            v.update_variables(timer, settings, process, game_manager_finder);
         }
     }
 
     fn update_game_time(
         &mut self,
         timer: &Timer,
+        settings: &SettingsGui,
         process: &Process,
         game_manager_finder: &GameManagerFinder,
     ) {
         self.main
-            .update_game_time(timer, process, game_manager_finder);
+            .update_game_time(timer, settings, process, game_manager_finder);
         for v in self.vars.iter_mut() {
-            v.update_variables(timer, process, game_manager_finder);
+            v.update_variables(timer, settings, process, game_manager_finder);
         }
     }
 }
