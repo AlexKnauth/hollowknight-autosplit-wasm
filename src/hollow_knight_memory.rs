@@ -2524,7 +2524,6 @@ pub struct GameManagerFinder {
     completion_pointers: Box<CompletionPointers>,
     scene_data_pointers: Box<SceneDataPointers>,
     ui_state_offset: OnceCell<u32>,
-    menu_state_offset: OnceCell<u32>,
     modded: OnceCell<bool>,
 }
 
@@ -2539,7 +2538,6 @@ impl GameManagerFinder {
             completion_pointers: Box::new(CompletionPointers::new()),
             scene_data_pointers: Box::new(SceneDataPointers::new()),
             ui_state_offset: OnceCell::new(),
-            menu_state_offset: OnceCell::new(),
             modded: OnceCell::new(),
         }
     }
@@ -2715,15 +2713,6 @@ impl GameManagerFinder {
     }
 
     pub fn get_menu_state(&self, process: &Process) -> Option<i32> {
-        // save the menuState offset so it doesn't have to find it in the UIManager class every time
-        let menu_state_offset = if let Some(menu_state_offset) = self.menu_state_offset.get() {
-            menu_state_offset
-        } else {
-            let ui_manager_class = self.image.get_class(process, &self.module, "UIManager")?;
-            let menu_state_offset =
-                ui_manager_class.get_field_offset(process, &self.module, "menuState")?;
-            self.menu_state_offset.get_or_init(|| menu_state_offset)
-        };
         let mut menu = if let Some(&modded) = self.modded.get() {
             if modded {
                 self.pointers
@@ -2756,7 +2745,7 @@ impl GameManagerFinder {
             }
         };
         // not 1.5.12459
-        if menu_state_offset != &0x2f8 {
+        if !self.has_advanced_gamepad_menu(process) {
             // ADVANCED_GAMEPAD_MENU
             if menu >= 4 {
                 menu += 1;
@@ -2899,6 +2888,11 @@ impl GameManagerFinder {
                 .map(|s| s.parse().unwrap_or(0))
                 .collect(),
         )
+    }
+
+    fn has_advanced_gamepad_menu(&self, process: &Process) -> bool {
+        self.get_version_vec(process)
+            .is_some_and(|v| &v[..] >= &[1, 5, 12459])
     }
 
     pub fn disable_pause(&self, process: &Process) -> Option<bool> {
