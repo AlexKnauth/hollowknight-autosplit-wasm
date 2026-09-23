@@ -240,18 +240,18 @@ async fn tick_action(
             scene_data_store,
         );
         match a {
-            SplitterAction::Split | SplitterAction::ManualSplit => {
+            Some(SplitterAction::Split | SplitterAction::ManualSplit) => {
                 state.timer.action(a, &mut state.load_remover);
                 next_tick().await;
                 asr::timer::set_variable("item", "");
                 break;
             }
-            SplitterAction::Skip | SplitterAction::Reset => {
+            Some(SplitterAction::Skip | SplitterAction::Reset) => {
                 state.timer.action(a, &mut state.load_remover);
                 next_tick().await;
                 // no break, allow other actions after a skip or reset
             }
-            SplitterAction::Pass => {
+            None => {
                 if state.timer.is_auto_reset_safe() {
                     let a0 = splits::splits(
                         &state.splits[0],
@@ -263,7 +263,7 @@ async fn tick_action(
                         scene_data_store,
                     );
                     match a0 {
-                        SplitterAction::Split | SplitterAction::Reset => {
+                        Some(SplitterAction::Split | SplitterAction::Reset) => {
                             state.timer.reset();
                             state.timer.action(a0, &mut state.load_remover);
                         }
