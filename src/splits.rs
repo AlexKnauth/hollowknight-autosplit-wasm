@@ -223,6 +223,10 @@ pub enum Split {
     ///
     /// Splits when obtaining Abyss Shriek
     AbyssShriek,
+    /// Has Abyss Shriek (Transition)
+    ///
+    /// Splits on transition after Abyss Shriek acquired
+    TransAbyssShriek,
     // endregion: Spell Levels
 
     // region: Movement Abilities
@@ -3561,6 +3565,9 @@ pub fn transition_splits(
             pds.killed_infected_knight(prc, g) && g.get_health(prc).is_some_and(|h| 0 < h),
         ),
         Split::MenuWings => should_split(pds.has_double_jump(prc, g) && p.current == MENU_TITLE),
+        Split::TransAbyssShriek => {
+            should_split(2 <= pds.get_scream_level(prc, g) && p.current != p.old)
+        }
         Split::MenuVoidHeart => {
             should_split(pds.got_shade_charm(prc, g) && p.current == MENU_TITLE)
         }

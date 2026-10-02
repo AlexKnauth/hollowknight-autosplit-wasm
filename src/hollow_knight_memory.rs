@@ -5279,6 +5279,11 @@ impl PlayerDataStore {
             .unwrap_or(0)
     }
 
+    pub fn get_scream_level(&mut self, p: &Process, g: &GameManagerFinder) -> i32 {
+        self.get_i32(p, g, "scream_level", &g.player_data_pointers.scream_level)
+            .unwrap_or(0)
+    }
+
     pub fn has_dash(&mut self, p: &Process, g: &GameManagerFinder) -> bool {
         self.get_bool(p, g, "has_dash", &g.player_data_pointers.has_dash)
             .unwrap_or(false)
