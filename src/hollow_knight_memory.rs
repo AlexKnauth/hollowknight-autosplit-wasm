@@ -7494,7 +7494,7 @@ pub fn is_dream(s: &str) -> bool {
 }
 
 pub fn is_play_scene(s: &str) -> bool {
-    !NON_PLAY_SCENES.contains(&s) && !BAD_SCENE_NAMES.contains(&s)
+    !s.is_empty() && !NON_PLAY_SCENES.contains(&s) && !BAD_SCENE_NAMES.contains(&s)
 }
 
 pub fn is_debug_save_state_scene(s: &str) -> bool {

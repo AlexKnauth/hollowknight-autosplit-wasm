@@ -69,6 +69,11 @@ pub enum Split {
     ///
     /// Splits on the main menu
     Menu,
+    /// Modded: Benchwarp (Transition)
+    ///
+    /// Splits when warping to a bench with the Benchwarp mod
+    /// (excludes deaths, save-quits, and warping to a transition)
+    Benchwarp,
     /// Any Bench (Bench)
     ///
     /// Splits when sitting on a bench
@@ -3338,6 +3343,13 @@ pub fn transition_splits(
         Split::EndingD => should_split(p.current == "Cinematic_Ending_D"),
         Split::EndingE => should_split(p.current == "Cinematic_Ending_E"),
         Split::Menu => should_split(p.current == MENU_TITLE),
+        Split::Benchwarp => should_split(
+            g.get_entry_gate_name(prc).is_some_and(|s| s.is_empty())
+                && g.get_health(prc).is_some_and(|h| h > 0)
+                && g.hero_dead(prc).is_some_and(|d| !d)
+                && is_play_scene(p.current)
+                && is_play_scene(p.old),
+        ),
         Split::AnyTransition => {
             should_split(p.current != p.old && !(is_menu(p.old) || is_menu(p.current)))
         }
