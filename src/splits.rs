@@ -69,6 +69,11 @@ pub enum Split {
     ///
     /// Splits on the main menu
     Menu,
+    /// Modded: Benchwarp (Transition)
+    ///
+    /// Splits when warping to a bench with the Benchwarp mod
+    /// (excludes deaths, save-quits, and warping to a transition)
+    Benchwarp,
     /// Any Bench (Bench)
     ///
     /// Splits when sitting on a bench
@@ -207,6 +212,10 @@ pub enum Split {
     ///
     /// Splits when obtaining Desolate Dive
     DesolateDive,
+    /// Has Desolate Dive (Transition)
+    ///
+    /// Splits on transition after Desolate Dive acquired
+    TransDesolateDive,
     /// Descending Dark (Skill)
     ///
     /// Splits when obtaining Descending Dark
@@ -223,6 +232,10 @@ pub enum Split {
     ///
     /// Splits when obtaining Abyss Shriek
     AbyssShriek,
+    /// Has Abyss Shriek (Transition)
+    ///
+    /// Splits on transition after Abyss Shriek acquired
+    TransAbyssShriek,
     // endregion: Spell Levels
 
     // region: Movement Abilities
@@ -3330,6 +3343,13 @@ pub fn transition_splits(
         Split::EndingD => should_split(p.current == "Cinematic_Ending_D"),
         Split::EndingE => should_split(p.current == "Cinematic_Ending_E"),
         Split::Menu => should_split(p.current == MENU_TITLE),
+        Split::Benchwarp => should_split(
+            g.get_entry_gate_name(prc).is_some_and(|s| s.is_empty())
+                && g.get_health(prc).is_some_and(|h| h > 0)
+                && g.hero_dead(prc).is_some_and(|d| !d)
+                && is_play_scene(p.current)
+                && is_play_scene(p.old),
+        ),
         Split::AnyTransition => {
             should_split(p.current != p.old && !(is_menu(p.old) || is_menu(p.current)))
         }
@@ -3510,6 +3530,9 @@ pub fn transition_splits(
         Split::EnterSoulMaster => {
             should_split(p.current.starts_with("Ruins1_24") && p.current != p.old)
         }
+        Split::TransDesolateDive => {
+            should_split(1 <= pds.get_quake_level(prc, g) && p.current != p.old)
+        }
         Split::TransShadeSoul => {
             should_split(2 <= pds.get_fireball_level(prc, g) && p.current != p.old)
         }
@@ -3561,6 +3584,9 @@ pub fn transition_splits(
             pds.killed_infected_knight(prc, g) && g.get_health(prc).is_some_and(|h| 0 < h),
         ),
         Split::MenuWings => should_split(pds.has_double_jump(prc, g) && p.current == MENU_TITLE),
+        Split::TransAbyssShriek => {
+            should_split(2 <= pds.get_scream_level(prc, g) && p.current != p.old)
+        }
         Split::MenuVoidHeart => {
             should_split(pds.got_shade_charm(prc, g) && p.current == MENU_TITLE)
         }
