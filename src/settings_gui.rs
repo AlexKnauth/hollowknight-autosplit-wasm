@@ -4,10 +4,7 @@ use alloc::vec::Vec;
 
 use asr::settings::gui::{Gui, Title, Widget};
 #[cfg(not(target_os = "unknown"))]
-use asr::{
-    settings::gui::{FileSelect},
-    watcher::Pair,
-};
+use asr::{settings::gui::FileSelect, watcher::Pair};
 
 #[cfg(not(target_os = "unknown"))]
 use ugly_widget::{args::SetHeadingLevel, ugly_list::UglyListArgs};
