@@ -172,6 +172,8 @@ pub static NON_CONTINUOUS_GAME_STATES: [i32; 4] = [
     GAME_STATE_EXITING_LEVEL,
 ];
 
+pub const UI_STATE_MENU_HOME: i32 = 1;
+pub const UI_STATE_MENU_PROFILES: i32 = 3;
 pub const UI_STATE_PLAYING: i32 = 6;
 pub const UI_STATE_PAUSED: i32 = 7;
 
