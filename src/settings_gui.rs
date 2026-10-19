@@ -2,10 +2,10 @@ use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
-use asr::settings::gui::{Gui, Title};
+use asr::settings::gui::{Gui, Title, Widget};
 #[cfg(not(target_os = "unknown"))]
 use asr::{
-    settings::gui::{FileSelect, Widget},
+    settings::gui::{FileSelect},
     watcher::Pair,
 };
 
