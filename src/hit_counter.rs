@@ -9,6 +9,7 @@ use asr::Process;
 
 use crate::game_time::GameTime;
 use crate::hollow_knight_memory::*;
+use crate::settings_gui::SettingsGui;
 use crate::timer::{Resettable, Timer};
 
 /// The dash symbol to use for generic dashes in text.
@@ -116,6 +117,7 @@ impl GameTime for HitCounter {
     fn update_variables(
         &mut self,
         timer: &Timer,
+        _: &SettingsGui,
         process: &Process,
         game_manager_finder: &GameManagerFinder,
     ) {
@@ -204,12 +206,13 @@ impl GameTime for HitCounter {
     fn update_game_time(
         &mut self,
         timer: &Timer,
+        settings: &SettingsGui,
         process: &Process,
         game_manager_finder: &GameManagerFinder,
     ) {
         asr::timer::pause_game_time();
 
-        self.update_variables(timer, process, game_manager_finder);
+        self.update_variables(timer, settings, process, game_manager_finder);
 
         // Even set hits when it hasn't incremented,
         // in case this auto-splitter is fighting with something else trying to advance the timer.

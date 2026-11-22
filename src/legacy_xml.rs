@@ -22,6 +22,11 @@ pub fn asr_settings_from_xml_nodes(xml_nodes: Vec<Node>) -> Option<asr::settings
     let settings_map = asr::settings::Map::new();
     settings_map.insert("script_name", this_script_name());
     settings_map.insert("splits", asr_list_from_iter(splits.iter().map(options_str)));
+    if let Some(pause_on_main_menu) = xml_settings.dict_get("PauseOnMainMenu") {
+        if let Some(p) = pause_on_main_menu.as_bool() {
+            settings_map.insert("pause_on_main_menu", p);
+        }
+    }
     if let Some(timing_method) = xml_settings.dict_get("TimingMethod") {
         let tm = timing_method_from_settings_str(timing_method).unwrap_or_default();
         settings_map.insert("timing_method", options_str(&tm));

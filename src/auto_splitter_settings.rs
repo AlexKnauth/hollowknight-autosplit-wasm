@@ -23,6 +23,8 @@ pub fn this_script_name() -> &'static str {
         .map_or(MODULE_PATH, |(base, _)| base)
 }
 
+pub static CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 // --------------------------------------------------------
 
 pub async fn wait_asr_settings_init() -> asr::settings::Map {

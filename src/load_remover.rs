@@ -6,6 +6,7 @@ use asr::Process;
 
 use crate::game_time::GameTime;
 use crate::hollow_knight_memory::*;
+use crate::settings_gui::SettingsGui;
 use crate::timer::{Resettable, Timer};
 
 pub struct LoadRemover {
@@ -40,11 +41,13 @@ impl LoadRemover {
 }
 
 impl GameTime for LoadRemover {
-    fn update_variables(&mut self, _: &Timer, _: &Process, _: &GameManagerFinder) {}
+    fn update_variables(&mut self, _: &Timer, _: &SettingsGui, _: &Process, _: &GameManagerFinder) {
+    }
 
     fn update_game_time(
         &mut self,
         _: &Timer,
+        settings: &SettingsGui,
         process: &Process,
         game_manager_finder: &GameManagerFinder,
     ) {
@@ -113,8 +116,12 @@ impl GameTime for LoadRemover {
                         || (ui_state != UI_STATE_PAUSED
                             && (!is_none_or_empty(maybe_next_scene.as_deref())
                                 || scene_name == "_test_charms")))
-                    && maybe_next_scene != Some(scene_name))
-                || (tile_map_dirty && !uses_scene_transition_routine);
+                    && maybe_next_scene.as_ref() != Some(&scene_name))
+                || (tile_map_dirty && !uses_scene_transition_routine)
+                || (settings.get_pause_on_main_menu()
+                    && game_state == GAME_STATE_MAIN_MENU
+                    && (ui_state >= UI_STATE_MENU_HOME && ui_state <= UI_STATE_MENU_PROFILES)
+                    && scene_name == MENU_TITLE);
         if is_game_time_paused {
             asr::timer::pause_game_time();
         } else {
