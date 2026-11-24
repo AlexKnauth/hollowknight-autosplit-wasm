@@ -123,7 +123,8 @@ impl GameTime for LoadRemover {
                 || (settings.get_pause_on_main_menu()
                     && game_state == GAME_STATE_MAIN_MENU
                     && (ui_state == UI_STATE_MENU_HOME || ui_state == UI_STATE_MENU_PROFILES)
-                    && (menu_state == MAIN_MENU_STATE_MAIN_MENU || menu_state == MAIN_MENU_STATE_SAVE_PROFILES)
+                    && (menu_state == MAIN_MENU_STATE_MAIN_MENU
+                        || menu_state == MAIN_MENU_STATE_SAVE_PROFILES)
                     && scene_name == MENU_TITLE);
         if is_game_time_paused {
             asr::timer::pause_game_time();
