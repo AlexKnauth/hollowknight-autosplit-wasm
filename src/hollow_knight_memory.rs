@@ -179,6 +179,22 @@ pub const UI_STATE_PAUSED: i32 = 7;
 
 pub const HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL: i32 = 2;
 
+/*
+public enum MainMenuState
+{
+    LOGO,
+    MAIN_MENU,
+    OPTIONS_MENU,
+    GAMEPAD_MENU,
+    ADVANCED_GAMEPAD_MENU, // 1.5.12459
+    KEYBOARD_MENU,
+    SAVE_PROFILES,
+    ...
+}
+*/
+pub const MAIN_MENU_STATE_MAIN_MENU: i32 = 1;
+pub const MAIN_MENU_STATE_SAVE_PROFILES: i32 = 6;
+
 #[derive(bytemuck::CheckedBitPattern, Clone, Copy)]
 #[repr(C)]
 pub struct Vector3 {
@@ -195,6 +211,8 @@ struct GameManagerPointers {
     game_state: UnityPointer<2>,
     ui_state_vanilla: UnityPointer<3>,
     ui_state_modded: UnityPointer<3>,
+    menu_state_vanilla: UnityPointer<3>,
+    menu_state_modded: UnityPointer<3>,
     camera_teleporting: UnityPointer<3>,
     camera_target_destination: UnityPointer<4>,
     accepting_input: UnityPointer<3>,
@@ -236,6 +254,16 @@ impl GameManagerPointers {
                 "GameManager",
                 0,
                 &["_instance", "_uiInstance", "uiState"],
+            ),
+            menu_state_vanilla: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "<ui>k__BackingField", "menuState"],
+            ),
+            menu_state_modded: UnityPointer::new(
+                "GameManager",
+                0,
+                &["_instance", "_uiInstance", "menuState"],
             ),
             camera_teleporting: UnityPointer::new(
                 "GameManager",
@@ -2570,6 +2598,8 @@ impl GameManagerFinder {
         next_tick().await;
         retry(|| self.get_ui_state(process)).await;
         next_tick().await;
+        retry(|| self.get_menu_state(process)).await;
+        next_tick().await;
         retry(|| self.get_scene_name(process)).await;
         next_tick().await;
         retry(|| self.get_next_scene_name(process)).await;
@@ -2681,6 +2711,52 @@ impl GameManagerFinder {
         } else {
             Some(ui)
         }
+    }
+
+    pub fn get_menu_state(&self, process: &Process) -> Option<i32> {
+        let mut menu = if let Some(&modded) = self.modded.get() {
+            if modded {
+                self.pointers
+                    .menu_state_modded
+                    .deref(process, &self.module, &self.image)
+                    .ok()?
+            } else {
+                self.pointers
+                    .menu_state_vanilla
+                    .deref(process, &self.module, &self.image)
+                    .ok()?
+            }
+        } else {
+            if let Ok(menu) =
+                self.pointers
+                    .menu_state_vanilla
+                    .deref(process, &self.module, &self.image)
+            {
+                self.modded.set(false).ok();
+                menu
+            } else if let Ok(menu) =
+                self.pointers
+                    .menu_state_modded
+                    .deref(process, &self.module, &self.image)
+            {
+                self.modded.set(true).ok();
+                menu
+            } else {
+                return None;
+            }
+        };
+        // not 1.5.12459
+        if !self.has_advanced_gamepad_menu(process) {
+            // ADVANCED_GAMEPAD_MENU
+            if menu >= 4 {
+                menu += 1;
+            }
+            // ADVANCED_VIDEO_MENU
+            if menu >= 9 {
+                menu += 1;
+            }
+        }
+        Some(menu)
     }
 
     pub fn camera_teleporting(&self, process: &Process) -> Option<bool> {
@@ -2813,6 +2889,11 @@ impl GameManagerFinder {
                 .map(|s| s.parse().unwrap_or(0))
                 .collect(),
         )
+    }
+
+    fn has_advanced_gamepad_menu(&self, process: &Process) -> bool {
+        self.get_version_vec(process)
+            .is_some_and(|v| &v[..] >= &[1, 5, 12459])
     }
 
     pub fn disable_pause(&self, process: &Process) -> Option<bool> {

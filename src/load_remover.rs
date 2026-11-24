@@ -53,6 +53,7 @@ impl GameTime for LoadRemover {
     ) {
         // Initialize pointers for load-remover before timer is running
         let maybe_ui_state = game_manager_finder.get_ui_state(process);
+        let maybe_menu_state = game_manager_finder.get_menu_state(process);
         let maybe_scene_name = game_manager_finder.get_scene_name(process);
         let maybe_next_scene = game_manager_finder.get_next_scene_name(process);
         let maybe_teleporting = game_manager_finder.camera_teleporting(process);
@@ -71,6 +72,7 @@ impl GameTime for LoadRemover {
         }
 
         let ui_state = maybe_ui_state.unwrap_or_default();
+        let menu_state = maybe_menu_state.unwrap_or_default();
 
         let scene_name = maybe_scene_name.clone().unwrap_or_default();
         fn is_none_or_empty(ms: Option<&str>) -> bool {
@@ -120,7 +122,9 @@ impl GameTime for LoadRemover {
                 || (tile_map_dirty && !uses_scene_transition_routine)
                 || (settings.get_pause_on_main_menu()
                     && game_state == GAME_STATE_MAIN_MENU
-                    && (ui_state >= UI_STATE_MENU_HOME && ui_state <= UI_STATE_MENU_PROFILES)
+                    && (ui_state == UI_STATE_MENU_HOME || ui_state == UI_STATE_MENU_PROFILES)
+                    && (menu_state == MAIN_MENU_STATE_MAIN_MENU
+                        || menu_state == MAIN_MENU_STATE_SAVE_PROFILES)
                     && scene_name == MENU_TITLE);
         if is_game_time_paused {
             asr::timer::pause_game_time();
